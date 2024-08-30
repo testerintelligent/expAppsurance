@@ -42,7 +42,7 @@ const LoginPage = () => {
       </div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <button type="submit" className="loginButton" onClick={handleLogin}>Submit</button>
-      <a href="192.168.99.141:3000/register" className="loginLink"><h4>Register new account</h4></a>
+      <a href="/register" className="loginLink"><h4>Register new account</h4></a>
       <a href="" className="loginLink"><h4>Forgot password</h4></a>
       </div>
     </div>
