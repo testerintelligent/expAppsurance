@@ -6,9 +6,9 @@ WORKDIR /app
 
 RUN rm -rf subdirectory
 
-COPY . ./subdirectory
+COPY . ./Server/subdirectory
 
-WORKDIR /app/subdirectory
+WORKDIR /app/subdirectory/
 
 RUN npm cache clean --force \
     && rm -rf node_modules package-lock.json \
@@ -16,8 +16,6 @@ RUN npm cache clean --force \
     && npm run build \
     && npm install -g serve
 
-# CMD ["serve", "-s", "build"]
-CMD ["npm", "start"]
+CMD ["serve", "-s", "build"]
 
 EXPOSE 3000
-
