@@ -1,6 +1,7 @@
 import React, { useEffect ,useState} from "react";
 import Cards from "./Cards";
 import axios from "axios";
+import "../style/HomePage.css"
 const HomePage=()=>{
     const [message, setMessage] = useState('');
     const [users, setUsers] = useState([]);
@@ -34,19 +35,22 @@ const HomePage=()=>{
     return(
         <div className="Homepage-container">
             <h3>Welcome to Home Page</h3>
-            <div className="card-container">
-      {users.map((user, index) => (
-        <div>
-          {/* <table>
+            {/* <table>
               <tr className="tableHead">
-                    <th><strong>Name:</strong></th>
-                    <th><strong>Email:</strong></th>
-                    <th><strong>Start Date:</strong></th>
-                    <th><strong>End Date:</strong></th>
-                    <th><strong>Address:</strong></th>
-                    <th><strong>Phone Number:</strong></th>
+                    <th className="tabletitle"><strong>Name</strong></th>
+                    <th className="tabletitle"><strong>Email</strong></th>
+                    <th className="tabletitle"><strong>Start Date</strong></th>
+                    <th className="tabletitle"><strong>End Date</strong></th>
+                    <th className="tabletitle"><strong>Address</strong></th>
+                    <th className="tabletitle"><strong>Phone Number</strong></th>
+                    <th className="tabletitle"><strong>DeleteButton</strong></th>
                 </tr>
           </table> */}
+            <div className="card-container">
+           
+      {users.map((user, index) => (
+        <div>
+          
         <Cards
           key={index}
           firstName={user.firstName}
@@ -60,7 +64,7 @@ const HomePage=()=>{
           setUsers={setUsers}
           id={user._id}
         />
-        <button onClick={() => handleDelete(user._id)}>Delete</button>
+        {/* <button onClick={() => handleDelete(user._id)}>Delete</button> */}
         </div>
       ))}
     </div>
