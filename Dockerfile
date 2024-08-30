@@ -23,7 +23,7 @@ ENV PATH /app/Server/node_modules/.bin:$PATH
 COPY Server/package*.json ./
 RUN npm install --silent
  
-COPY server/ ./
+COPY Server/ ./
  
 # Stage 3: Create the production image
 FROM node:18.17.1-alpine
