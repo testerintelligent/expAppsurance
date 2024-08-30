@@ -1,4 +1,4 @@
-FROM node:18.17.1-alpine AS client-builder
+FROM node:18.17.1-alpine AS Client-builder
  
 RUN apk update
 RUN apk add git
@@ -14,7 +14,7 @@ RUN npm install --silent
 COPY Client/ ./
  
 # Stage 2: Set up the server
-FROM node:18.17.1-alpine AS server-setup
+FROM node:18.17.1-alpine AS Server-setup
  
 WORKDIR /app/Server
  
@@ -34,8 +34,8 @@ WORKDIR /app
 RUN npm install -g concurrently
  
 # Copy client build and server code from previous stages
-COPY --from=client-builder /app/Client /app/Client
-COPY --from=server-setup /app/Server /app/Server
+COPY --from=Client-builder /app/Client /app/Client
+COPY --from=Server-setup /app/Server /app/Server
  
 EXPOSE 3000 5000
  
