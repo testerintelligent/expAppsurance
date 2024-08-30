@@ -1,0 +1,80 @@
+import React, { useEffect ,useState} from "react";
+import Cards from "./Cards";
+import axios from "axios";
+const HomePage=()=>{
+    const [message, setMessage] = useState('');
+    const [users, setUsers] = useState([]);
+    useEffect(() => { 
+        
+        axios.get('http://localhost:5000/register') 
+          .then(response => {
+            setUsers(response.data);
+            setMessage(response.data.message); 
+            console.log('Response:', response.data); 
+          })
+          .catch(error => {
+            setMessage(error.response ? error.response.data.message : 'An error occurred'); // Error handling
+            console.error('Error fetching data:', error); 
+          });
+      }, []);
+      useEffect(()=>{
+        console.log("the datass"+users)
+      },[users])
+      const handleDelete = (id) => {
+        axios.delete(`http://localhost:5000/${id}`)
+          .then(response => {
+            console.log('User deleted:', response.data);
+            setUsers(users.filter(user => user._id !== id));
+          })
+          .catch(error => {
+            console.error('Error deleting user:', error);
+          });
+      };
+    
+    return(
+        <div className="Homepage-container">
+            <h3>Welcome to Home Page</h3>
+            <div className="card-container">
+      {users.map((user, index) => (
+        <div>
+          {/* <table>
+              <tr className="tableHead">
+                    <th><strong>Name:</strong></th>
+                    <th><strong>Email:</strong></th>
+                    <th><strong>Start Date:</strong></th>
+                    <th><strong>End Date:</strong></th>
+                    <th><strong>Address:</strong></th>
+                    <th><strong>Phone Number:</strong></th>
+                </tr>
+          </table> */}
+        <Cards
+          key={index}
+          firstName={user.firstName}
+          lastName={user.lastName}
+          email={user.email}
+          startDate={user.startDate}
+          endDate={user.endDate}
+          address={user.address}
+          phoneNumber={user.phoneNumber}
+          users={users}
+          setUsers={setUsers}
+          id={user._id}
+        />
+        <button onClick={() => handleDelete(user._id)}>Delete</button>
+        </div>
+      ))}
+    </div>
+       {/* {message && <p>{message}</p>}
+            <ul>
+            {users.map((user) => ( 
+          <li key={user._id}>
+            {user.firstName} {user.lastName} {user.email} {user.startDate} {user.endDate} {user.address} {user.phoneNumber}
+            
+          </li>
+        ))}
+        </ul>
+        </div> */}
+        </div>
+    );
+}
+export default HomePage;

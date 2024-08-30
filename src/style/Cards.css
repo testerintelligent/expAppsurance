@@ -1,0 +1,21 @@
+.user-card {
+    background-color: #fff;  /* White background for the card */
+    padding: 15px;           /* Padding around the content */
+    margin: 10px;            /* Margin around each card */
+    border-radius: 8px;      /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+    width: 100%;            /* Fixed width for the card */
+    flex-shrink: 0;          /* Prevent cards from shrinking */
+  }
+  
+  .user-card p {
+    display: flex;
+    justify-content:stretch;
+    margin: 5px 0;           /* Margin between paragraphs */
+    font-size: 14px;         /* Font size */
+  }
+  td{
+    margin: 10px;
+    padding: 10px;
+  }
+  

@@ -1,0 +1,8 @@
+.tableHead{
+    margin: 10px;
+    padding: 10px;
+    display: flex;
+    justify-content:stretch;
+    margin: 5px 0;           /* Margin between paragraphs */
+    font-size: 14px; 
+}
