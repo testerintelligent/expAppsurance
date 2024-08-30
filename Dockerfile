@@ -1,23 +1,44 @@
-FROM node:14-alpine
-
-RUN apk add --no-cache git
-
+FROM node:18.17.1-alpine AS client-builder
+ 
+RUN apk update
+RUN apk add git
+ 
+ 
+WORKDIR /app/Client
+ 
+# ENV PATH /app/Client/node_modules/.bin:$PATH
+ 
+COPY Client/package*.json ./
+RUN npm install --silent
+ 
+COPY Client/ ./
+ 
+# Stage 2: Set up the server
+FROM node:18.17.1-alpine AS server-setup
+ 
+WORKDIR /app/Server
+ 
+ENV PATH /app/Server/node_modules/.bin:$PATH
+ 
+COPY Server/package*.json ./
+RUN npm install --silent
+ 
+COPY server/ ./
+ 
+# Stage 3: Create the production image
+FROM node:18.17.1-alpine
+ 
 WORKDIR /app
-
-RUN rm -rf subdirectory
-
-COPY . ./subdirectory
-
-WORKDIR /app/subdirectory
-
-RUN npm cache clean --force \
-    && rm -rf node_modules package-lock.json \
-    && npm install \
-    && npm run build \
-    && npm install -g serve
-
-# CMD ["serve", "-s", "build"]
-CMD ["npm", "start"]
-
-EXPOSE 3000
+ 
+# Install 'concurrently' to run both client and server
+RUN npm install -g concurrently
+ 
+# Copy client build and server code from previous stages
+COPY --from=client-builder /app/Client /app/Client
+COPY --from=server-setup /app/Server /app/Server
+ 
+EXPOSE 3000 5000
+ 
+# Start both client and server using concurrently
+CMD ["concurrently", "cd /app/Client && npm start", "cd /app/Server && node server.js"]
 
