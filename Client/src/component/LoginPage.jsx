@@ -17,7 +17,7 @@ const LoginPage = () => {
       });
       console.log('Response:', response);
       if (response.status === 200) {
-        navigate('/home');
+        navigate('/insurance');
       }
     } catch (error) {
       setError('Invalid username or password'); 
@@ -43,7 +43,7 @@ const LoginPage = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <button type="submit" className="loginButton" onClick={handleLogin}>Submit</button>
       <a href="/register" className="loginLink"><h4>Register new account</h4></a>
-      <a href="" className="loginLink"><h4>Forgot password</h4></a>
+      <a href="/forgotPassword" className="loginLink"><h4>Forgot password</h4></a>
       </div>
     </div>
   );

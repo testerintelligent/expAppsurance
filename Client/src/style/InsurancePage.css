@@ -1,0 +1,56 @@
+ .insurance-page {
+    max-width: 50%;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  /*
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }*/
+  
+  .insurance-form {
+    display: flex;
+    flex-direction: column;
+  }
+  /*
+  .form-group {
+    margin-bottom: 15px;
+  }
+  */
+  .insuranceLabel {
+    display: flex;
+    justify-content: left;
+    margin-bottom: 5px; 
+    font-weight: bold; 
+  }
+  .insuranceInput{
+    display: flex;
+    justify-content: right;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    width: 100%; 
+  }
+  .insuranceButton{
+    padding: 10px 20px; 
+    border: none;
+    border-radius: 4px;
+    background-color: #4CAF50; 
+    color: white; 
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%; 
+    margin-top: 20px; 
+  }
+  .insuranceButton:hover {
+    background-color: #45a049; 
+  }
+  #claim-date{
+    font-size: 15px;
+   font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }

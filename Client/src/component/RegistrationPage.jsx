@@ -1,8 +1,10 @@
 import React, { useState,useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import '../style/RegistrationPage.css'; 
 
 const RegistrationPage = () => {
+  const navigate = useNavigate();
   const [message, setMessage] = useState('');
   const [formData, setFormData] = useState({
     firstName: '',
@@ -24,8 +26,13 @@ const RegistrationPage = () => {
       [name]: value,
     });
   };
+  const navigateLoginPage=()=>{
+    navigate('/');
+  }
   const handleSubmit=(event)=>{
-    {<h5>{message}</h5>}
+    {<div><h5>{message}</h5>
+          </div>
+  }
     event.preventDefault();
     axios.post('http://localhost:5000/register', formData)
       .then(response => {
@@ -57,7 +64,10 @@ const RegistrationPage = () => {
         
         <h3 className='registerTitle'>Create an Account</h3>
         {submitted?(
-          <div className="success-message">Registration successful!</div>
+          <div className="success-message">Registration successful!
+          <button className='navLogin' onClick={navigateLoginPage}>Navigate to login Page
+          </button>
+          </div>
         ):(
           <form onSubmit={handleSubmit}>
           <div className="registerinput">
@@ -154,7 +164,8 @@ const RegistrationPage = () => {
         </form>
        
       )}
-       { <p>{message}</p>}
+       { <p>{message}
+       </p>}
       </div>  
     </div>
   );

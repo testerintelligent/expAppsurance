@@ -4,7 +4,7 @@ import "../style/Cards.css"
 const Cards=(user)=>{
    const[data,setData]=useState('');
     const handleDelete = async(id) => {
-        await axios.delete(`http://192.168.99.141:5000/${id}`)
+        await axios.delete(`http://localhost:5000/${id}`)
           .then(response => {
             console.log('User deleted:', response.data);
             console.log('User ',user.users)
