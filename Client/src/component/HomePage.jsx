@@ -7,7 +7,7 @@ const HomePage=()=>{
     const [users, setUsers] = useState([]);
     useEffect(() => { 
         
-        axios.get('http://192.168.99.141:5000/register') 
+        axios.get('http://localhost:5000/register') 
           .then(response => {
             setUsers(response.data);
             setMessage(response.data.message); 
@@ -22,7 +22,7 @@ const HomePage=()=>{
         console.log("the datass"+users)
       },[users])
       const handleDelete = (id) => {
-        axios.delete(`http://192.168.99.141:5000/${id}`)
+        axios.delete(`http://localhost:5000/${id}`)
           .then(response => {
             console.log('User deleted:', response.data);
             setUsers(users.filter(user => user._id !== id));
