@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  client:
+    build:
+      context: ./Client
+      dockerfile: Dockerfile.client
+    container_name: reactclient
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: ./Server
+      dockerfile: Dockerfile.server
+    container_name: expressserver
+    ports:
+      - "5000:5000"
+    environment:
+      MONGO_URI:mongodb://demo:magesh@192.168.99.141:27017/registeredUser
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

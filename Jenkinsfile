@@ -1,10 +1,7 @@
 pipeline {
     agent { label 'Linux' }
     environment {
-        DOCKER_IMAGE = "reactapplication:latest"
-        CONTAINER_NAME = "reactcontainer"
         GIT_REPO_URL = 'https://github.com/Mageshpoopathi/MERN.git'
-        APP_PORT = '3000'
     }
 
     stages {
@@ -13,56 +10,26 @@ pipeline {
                 git branch: 'main', url: "${env.GIT_REPO_URL}"
             }
         }
- 
-        stage('Build Docker Image') {
+
+        stage('Build and Run Containers') {
             steps {
                 script {
-
-                    sh "sudo docker build -t ${env.DOCKER_IMAGE} ."
-
-                }
-
-            }
-
-        }
- 
-        stage('Run Docker Container') {
-
-            steps {
-
-                script {
-
+                    // Build and run all containers using Docker Compose
                     sh """
-
-                    sudo docker stop ${env.CONTAINER_NAME} || true
-
-                    sudo docker rm ${env.CONTAINER_NAME} || true
-
-                    sudo docker run -d --name ${env.CONTAINER_NAME} -p ${env.APP_PORT}:${env.APP_PORT} ${env.DOCKER_IMAGE}
-
+                    sudo docker-compose down || true
+                    sudo docker-compose up --build -d
                     """
-
                 }
-
             }
-
         }
- 
+
         stage('Display URL') {
-
             steps {
-
                 script {
-
-                    def url = "192.168.99.141:${env.APP_PORT}"
+                    def url = "192.168.99.141:3000"
                     echo "Application is running at ${url}"
                 }
-
             }
-
         }
-
     }
-
 }
- 
