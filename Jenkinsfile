@@ -14,10 +14,9 @@ pipeline {
         stage('Build and Run Containers') {
             steps {
                 script {
-                    // Build and run all containers using Docker Compose
                     sh """
-                    sudo docker-compose down || true
-                    sudo docker-compose up --build -d
+                     docker-compose down || true
+                     docker-compose up --build -d
                     """
                 }
             }
