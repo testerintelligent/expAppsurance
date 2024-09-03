@@ -19,7 +19,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      MONGO_URI: mongodb://demo:magesh@192.168.99.141:27017/registeredUser
+      MONGO_URI: mongodb://192.168.99.141:27017/registeredUser
     depends_on:
       - mongo
 
