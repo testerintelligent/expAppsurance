@@ -15,8 +15,8 @@ pipeline {
             steps {
                 script {
                     sh """
-                     docker-compose down || true
-                     docker-compose up --build -d
+                     sudo docker-compose down || true
+                     sudo docker-compose up --build -d
                     """
                 }
             }
