@@ -41,6 +41,8 @@ const LoginPage = () => {
         onChange={(e)=>setPassword(e.target.value)} />
       </div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      <h4>Default Email:test@test.com</h4>
+      <h4>Default Password:12345</h4>
       <button type="submit" className="loginButton" onClick={handleLogin}>Submit</button>
       <a href="/register" className="loginLink"><h4>Register new account</h4></a>
       <a href="/forgotPassword" className="loginLink"><h4>Forgot password</h4></a>

@@ -25,9 +25,53 @@ mongoose.connect(mongoURI)
     endDate: Date,
     address: String,
     phoneNumber: String,
-   
   });
- const User = mongoose.model('users', userSchema);
+  const User = mongoose.model('users', userSchema);
+
+  const InsuranceSchema = new mongoose.Schema({
+    Name: String,
+    email: { type: String, unique: true },
+    Address: String,
+    DateOfBirth: Date,
+    PolicyType: String,
+    SumInsured: Number,
+    Premium: Number,
+  });
+  
+  const Insurance = mongoose.model('Insurance', InsuranceSchema);
+  
+  app.post('/Dashboard', async (req, res) => {
+  try {
+    const newInsurance = new Insurance({
+      Name: req.body.Name,
+      email: req.body.email,
+      Address: req.body.Address,
+      DateOfBirth: req.body.DateOfBirth,
+      PolicyType: req.body.PolicyType,
+      SumInsured: req.body.SumInsured,
+      Premium: req.body.Premium,
+    });
+
+    const savedInsurance = await newInsurance.save();
+    res.status(201).json({ Insurance: savedInsurance });
+  } catch (error) {
+    console.error('Error saving user to MongoDB:', error);
+    res.status(500).json({ message: 'Error registering user', error });
+  }
+});
+  
+  app.get('/Dashboard', async (req, res) => {
+    try {
+      const insurances = await Insurance.find({});
+      res.status(200).json(insurances);
+    } catch (error) {
+      console.error('Error fetching insurances:', error);
+      res.status(500).json({ error: 'Failed to fetch insurances' });
+    }
+  });
+
+
+
 
  app.get('/home', async (req, res) => { 
   try {
@@ -35,7 +79,7 @@ mongoose.connect(mongoURI)
     res.status(200).json(users); 
   } catch (error) {
     console.error('Error fetching users:', error);
-    res.status(500).json({ error: 'Failed to fetch users' }); 
+    res.status(500).json({ error: 'Failed to fetch users' });
   }
 });
 
@@ -81,7 +125,6 @@ app.post('/home',async (req,res) =>{
   }
 })
   app.post('/register', async (req, res) => {
-    //const { firstName, lastName, email, password,confirmPassword, startDate, endDate, address, phoneNumber } = req.body;
     try {
       const newUser = new User({
         firstName: req.body.firstName,

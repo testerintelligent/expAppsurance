@@ -1,94 +1,97 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import '../style/InsurancePage.css';
 
 const InsurancePage = () => {
+  const navigate = useNavigate();
+  const [insuranceData, setInsuranceData] = useState({
+    Name: '',
+    email: '',
+    Address: '',
+    DateOfBirth: '',
+    PolicyType: '',
+    SumInsured: '',
+    Premium: '',
+  });
+  console.log(insuranceData);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInsuranceData({
+      ...insuranceData,
+      [name]: value,
+    });
+  };
+
+  const handleInsurance = (event) => {
+    event.preventDefault();
+    axios.post('http://192.168.99.141:5000/Dashboard', insuranceData)
+      .then(response => {
+        console.log(response.data);
+        // Optionally reset form after submission
+        setInsuranceData({
+          Name: '',
+          email: '',
+          Address: '',
+          DateOfBirth: '',
+          PolicyType: '',
+          SumInsured: '',
+          Premium: '',
+        });
+        navigate('/Dashboard');
+      })
+      .catch(error => {
+        console.log("Error:", error);
+      });
+  };
+
   return (
     <div className="insurance-page">
       <h1>Insurance Policy Details</h1>
-      <form className="insurance-form">
+      <form className="insurance-form" onSubmit={handleInsurance}>
         <div className="form-group">
-          <label className="insuranceLabel" htmlFor="name">Name:</label>
-          <input className='insuranceInput' type="text" id="name" name="name" />
+          <label className="insuranceLabel" htmlFor="Name">Name:</label>
+          <input className='insuranceInput' type="text" id="Name" onChange={handleChange} name="Name" value={insuranceData.Name} />
+        </div>
+        <div className="form-group">
+          <label className="insuranceLabel" htmlFor="email">Email:</label>
+          <input className='insuranceInput' type="email" id="email" onChange={handleChange} name="email" value={insuranceData.email} />
         </div>
 
         <div className="form-group">
-          <label className="insuranceLabel" htmlFor="address">Address:</label>
-          <input className='insuranceInput' type="text" id="address" name="address" />
+          <label className="insuranceLabel" htmlFor="Address">Address:</label>
+          <input className='insuranceInput' type="text" id="Address" onChange={handleChange} name="Address" value={insuranceData.Address} />
         </div>
 
         <div className="form-group">
-          <label className="insuranceLabel" htmlFor="dob">Date of Birth:</label>
-          <input className='insuranceInput' type="date" id="dob" name="dob" />
+          <label className="insuranceLabel" htmlFor="DateOfBirth">Date of Birth:</label>
+          <input className='insuranceInput' onChange={handleChange} type="date" id="DateOfBirth" name="DateOfBirth" value={insuranceData.DateOfBirth} />
         </div>
 
         <div className="form-group">
-          <label className="insuranceLabel" htmlFor="policy-number">Policy Number:</label>
-          <input className='insuranceInput' type="text" id="policy-number" name="policy-number" />
+          <label className="insuranceLabel" htmlFor="PolicyType">Policy Type:</label>
+          <select onChange={handleChange} className="insuranceInput" name="PolicyType" value={insuranceData.PolicyType}>
+            <option value="">Select a policy</option>
+            <option value="Health Insurance">Health Insurance</option>
+            <option value="Life Insurance">Life Insurance</option>
+            <option value="Vehicle Insurance">Vehicle Insurance</option>
+          </select>
         </div>
 
         <div className="form-group">
-          <label className="insuranceLabel" htmlFor="policy-type">Policy Type:</label>
-          <input className='insuranceInput' type="text" id="policy-type" name="policy-type" />
+          <label className="insuranceLabel" htmlFor="SumInsured">Sum Insured:</label>
+          <select onChange={handleChange} className="insuranceInput" name="SumInsured" value={insuranceData.SumInsured}>
+            <option value="">Select Sum Insured</option>
+            <option value="100000">1,00,000</option>
+            <option value="300000">3,00,000</option>
+            <option value="500000">5,00,000</option>
+            <option value="1000000">10,00,000</option>
+          </select>
         </div>
 
         <div className="form-group">
-          <label className="insuranceLabel" htmlFor="effective-date">Effective Date:</label>
-          <input className='insuranceInput' type="date" id="date" name="effective-date" />
-        </div>
-
-        <div className="form-group">
-          <label className="insuranceLabel" htmlFor="expiration-date">Expiration Date:</label>
-          <input className='insuranceInput' type="date" id="date" name="expiration-date" />
-        </div>
-
-        <div className="form-group">
-          <label className="insuranceLabel" htmlFor="coverage-limits">Coverage Limits:</label>
-          <input className='insuranceInput' type="text" id="coverage-limits" name="coverage-limits" />
-        </div>
-
-        <div className="form-group">
-          <label className="insuranceLabel" htmlFor="premium">Premium:</label>
-          <input className='insuranceInput' type="number" id="premium" name="premium" />
-        </div>
-
-        <div className="form-group">
-          <label className="insuranceLabel" htmlFor="deductible">Deductible:</label>
-          <input className='insuranceInput' type="number" id="deductible" name="deductible" />
-        </div>
-
-        <div className="form-group">
-          <label className="insuranceLabel" htmlFor="beneficiaries">Beneficiaries:</label>
-          <input className='insuranceInput' type="text" id="beneficiaries" name="beneficiaries" />
-        </div>
-
-        <div className="form-group">
-          <label className="insuranceLabel" htmlFor="exclusions">Exclusions:</label>
-          <textarea id="exclusions" name="exclusions" />
-        </div>
-
-        <div className="form-group">
-          <label className="insuranceLabel" htmlFor="riders">Riders:</label>
-          <input className='insuranceInput' type="text" id="riders" name="riders" />
-        </div>
-
-        <div className="form-group">
-          <label className="insuranceLabel" htmlFor="claim-number">Claim Number:</label>
-          <input className='insuranceInput' type="text" id="claim-number" name="claim-number" />
-        </div>
-
-        <div className="form-group">
-          <label className="insuranceLabel" htmlFor="claim-date">Claim Date:</label>
-          <input className='insuranceInput' type="date" id="date" name="claim-date" />
-        </div>
-
-        <div className="form-group">
-          <label className="insuranceLabel" htmlFor="claim-status">Claim Status:</label>
-          <input className='insuranceInput' type="text" id="claim-status" name="claim-status" />
-        </div>
-
-        <div className="form-group">
-          <label className="insuranceLabel" htmlFor="claim-amount">Claim Amount:</label>
-          <input className='insuranceInput' type="number" id="claim-amount" name="claim-amount" />
+          <label className="insuranceLabel" htmlFor="Premium">Premium:</label>
+          <input className='insuranceInput' onChange={handleChange} type="number" id="Premium" step="0.01" name="Premium" value={insuranceData.Premium} />
         </div>
 
         <button className='insuranceButton' type="submit">Submit</button>
