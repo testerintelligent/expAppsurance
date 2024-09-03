@@ -7,7 +7,7 @@ const HomePage=()=>{
     const [users, setUsers] = useState([]);
     useEffect(() => { 
         
-        axios.get('http://localhost:5000/register') 
+        axios.get('http://192.168.99.141:5000/register') 
           .then(response => {
             setUsers(response.data);
             setMessage(response.data.message); 

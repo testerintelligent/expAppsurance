@@ -34,7 +34,7 @@ const RegistrationPage = () => {
           </div>
   }
     event.preventDefault();
-    axios.post('http://localhost:5000/register', formData)
+    axios.post('http://192.168.99.141:5000/register', formData)
       .then(response => {
         setMessage(response.data.message);
         setSubmitted(true);
