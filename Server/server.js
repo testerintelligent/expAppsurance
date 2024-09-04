@@ -85,7 +85,28 @@ mongoose.connect(mongoURI)
   });
   
 
-
+  app.post('/forgot-password/:id', async (req, res) => {
+    const { id } = req.params; // Extract the ID from the URL
+    const { newPassword } = req.body; // Extract new password from the request body
+  
+    try {
+      // Find user by ID
+      const user = await User.findById(id);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Update user password
+      user.password = newPassword; // Directly set new password (not recommended without hashing)
+      await user.save();
+  
+      res.json({ message: 'Password has been reset successfully' });
+    } catch (err) {
+      console.error('Error resetting password:', err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
 
 
  app.get('/home', async (req, res) => { 
