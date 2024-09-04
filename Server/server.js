@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const bcrypt = require('bcrypt'); 
 
 require('dotenv').config();
 
@@ -85,28 +86,32 @@ mongoose.connect(mongoURI)
   });
   
 
-  app.post('/forgot-password/:id', async (req, res) => {
-    const { id } = req.params; // Extract the ID from the URL
-    const { newPassword } = req.body; // Extract new password from the request body
   
+
+app.post('/forgot-password', async (req, res) => {
+    const { email, newPassword } = req.body; // Extract email and new password from the request body
+
     try {
-      // Find user by ID
-      const user = await User.findById(id);
-  
+      // Find user by email
+      const user = await User.findOne({ email });
+
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-  
-      // Update user password
-      user.password = newPassword; // Directly set new password (not recommended without hashing)
+
+      // Hash the new password before saving
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedPassword;
+
       await user.save();
-  
+
       res.json({ message: 'Password has been reset successfully' });
     } catch (err) {
       console.error('Error resetting password:', err);
       res.status(500).json({ message: 'Server error' });
     }
-  });
+});
+
 
 
  app.get('/home', async (req, res) => { 

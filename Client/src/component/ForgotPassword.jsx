@@ -18,7 +18,7 @@ const ForgotPasswordPage = () => {
     }
 
     try {
-      const response = await axios.post('http://192.168.99.141:5000/forgot-password/:id', {
+      const response = await axios.post('http://192.168.99.141:5000/forgot-password', {
         email,
         newPassword,
       });
