@@ -70,13 +70,12 @@ const InsurancePage = () => {
   const handleInsurance = (event) => {
     event.preventDefault();
 
-    // Check if all fields are valid before making the request
+   
     if (validateFields()) {
       axios.post('http://192.168.99.141:5000/Dashboard', insuranceData)
         .then(response => {
           console.log(response.data);
           setMessage(response.data.message);
-          // Optionally reset form after submission
           setInsuranceData({
             Name: '',
             email: '',

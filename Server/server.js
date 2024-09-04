@@ -52,12 +52,16 @@ mongoose.connect(mongoURI)
       SumInsured: req.body.SumInsured,
       Premium: req.body.Premium,
     });
+    const existingUser = await newInsurance.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists. Cannot create a new policy.' });
+    }
 
     const savedInsurance = await newInsurance.save();
     res.status(201).json({ Insurance: savedInsurance });
   } catch (error) {
     console.error('Error saving user to MongoDB:', error);
-    res.status(500).json({ message: 'The user has the option to create one insurance', error });
+    res.status(500).json({ message: 'Insurance policy creation faced on error', error });
   }
 });
   
