@@ -98,11 +98,14 @@ const InsurancePage = () => {
       console.log("Validation failed");
     }
   };
-  
+  const handleDashboardButton=()=>{
+    navigate('/Dashboard')
+  }
 
   return (
     <div className="insurance-page">
       <h1>Insurance Policy Details</h1>
+      <button className='insuranceDashboardButton' type="submit" onClick={handleDashboardButton}>Go to Dashboard</button>
       <form className="insurance-form" onSubmit={handleInsurance}>
         <div className="form-group">
           <label className="insuranceLabel" htmlFor="Name">Name:</label>
