@@ -34,3 +34,10 @@ tr:hover {
 .deleteButton{
     align-items: center;
 }
+.error {
+    color: red;
+    justify-content: right;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
