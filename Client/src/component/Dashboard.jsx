@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import "../style/Dashboard.css"
 
 const Dashboard = () => {
   const [insuranceData, setInsuranceData] = useState([]);
@@ -18,6 +19,17 @@ const Dashboard = () => {
   useEffect(()=>{
     console.log("the datass"+insurancePolicy)
   },[insurancePolicy])
+  
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(`http://192.168.99.141:5000/Dashboard/${id}`);
+      console.log('Insurance deleted:', response.data);
+      // Update state after deletion
+      setInsuranceData(insuranceData.filter(insurance => insurance._id !== id));
+    } catch (error) {
+      console.error('Error deleting policy:', error);
+    }
+  };
 
   return (
     <div>
@@ -33,6 +45,7 @@ const Dashboard = () => {
               <th>Policy Type</th>
               <th>Sum Insured</th>
               <th>Premium</th>
+              <th>Delete Record</th>
             </tr>
           </thead>
           <tbody>
@@ -45,7 +58,8 @@ const Dashboard = () => {
                 <td>{insurance.PolicyType}</td>
                 <td>{insurance.SumInsured}</td>
                 <td>{insurance.Premium}</td>
-                <td>{setInsurancePolicy}</td>
+                {/* <td>{setInsurancePolicy}</td> */}
+                <td className='deleteButton'><button className='DashboardDeleteButton' onClick={() => handleDelete(insurance._id)}>Delete Policy</button></td>
               </tr>
             ))}
           </tbody>

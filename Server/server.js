@@ -69,6 +69,21 @@ mongoose.connect(mongoURI)
       res.status(500).json({ error: 'Failed to fetch insurances' });
     }
   });
+  app.delete('/Dashboard/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const result = await Insurance.findById(id); // Use findById to locate by _id
+      if (!result) {
+        return res.status(404).json({ message: 'Policy not found' });
+      }
+      await Insurance.findByIdAndDelete(id);
+      res.status(200).json({ message: "Insurance deleted successfully" });
+    } catch (error) {
+      console.error('Error deleting Insurance:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
 
 
 
