@@ -19,7 +19,7 @@ const HomePage=()=>{
           });
       }, []);
       useEffect(()=>{
-        console.log("the datass"+users)
+        console.log("the data"+users)
       },[users])
       const handleDelete = (id) => {
         axios.delete(`http://192.168.99.141:5000/${id}`)

@@ -69,13 +69,12 @@ const InsurancePage = () => {
 
   const handleInsurance = (event) => {
     event.preventDefault();
-
-   
+  
     if (validateFields()) {
       axios.post('http://192.168.99.141:5000/Dashboard', insuranceData)
         .then(response => {
           console.log(response.data);
-          setMessage(response.data.message);
+          setMessage(response.data.message || 'Policy created successfully.'); // Set success or error message
           setInsuranceData({
             Name: '',
             email: '',
@@ -89,11 +88,17 @@ const InsurancePage = () => {
         })
         .catch(error => {
           console.log("Error:", error);
+          if (error.response && error.response.data.message) {
+            setMessage(error.response.data.message); // Display error message from server
+          } else {
+            setMessage('An error occurred. Please try again.'); // General error message
+          }
         });
     } else {
       console.log("Validation failed");
     }
   };
+  
 
   return (
     <div className="insurance-page">

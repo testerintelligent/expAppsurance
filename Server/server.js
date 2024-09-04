@@ -42,28 +42,30 @@ mongoose.connect(mongoURI)
   const Insurance = mongoose.model('Insurance', InsuranceSchema);
   
   app.post('/Dashboard', async (req, res) => {
-  try {
-    const newInsurance = new Insurance({
-      Name: req.body.Name,
-      email: req.body.email,
-      Address: req.body.Address,
-      DateOfBirth: req.body.DateOfBirth,
-      PolicyType: req.body.PolicyType,
-      SumInsured: req.body.SumInsured,
-      Premium: req.body.Premium,
-    });
-    const existingUser = await newInsurance.findOne({ email :req.body.email});
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists. Cannot create a new policy.' });
+    try {
+      const { Name, email, Address, DateOfBirth, PolicyType, SumInsured, Premium } = req.body;
+      const existingPolicy = await Insurance.findOne({ email });
+      if (existingPolicy) {
+        return res.status(400).json({ message: 'User already exists. Cannot create a new policy.' });
+      }
+      const newInsurance = new Insurance({
+        Name,
+        email,
+        Address,
+        DateOfBirth,
+        PolicyType,
+        SumInsured,
+        Premium,
+      });
+  
+      const savedInsurance = await newInsurance.save();
+      res.status(201).json({ message: 'Insurance policy created successfully.' });
+    } catch (error) {
+      console.error('Error saving policy to MongoDB:', error);
+      res.status(500).json({ message: 'Insurance policy creation faced an error', error });
     }
-
-    const savedInsurance = await newInsurance.save();
-    res.status(201).json({ Insurance: savedInsurance });
-  } catch (error) {
-    console.error('Error saving user to MongoDB:', error);
-    res.status(500).json({ message: 'Insurance policy creation faced on error', error });
-  }
-});
+  });
+  
   
   app.get('/Dashboard', async (req, res) => {
     try {

@@ -17,7 +17,7 @@ const Dashboard = () => {
       });
   }, []);
   useEffect(()=>{
-    console.log("the datass"+insurancePolicy)
+    console.log("the data"+insurancePolicy)
   },[insurancePolicy])
   
   const handleDelete = async (id) => {
