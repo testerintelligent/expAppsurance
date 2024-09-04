@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import "../style/Dashboard.css"
+import Navbar from './NavBar';
 
 const Dashboard = () => {
   const [insuranceData, setInsuranceData] = useState([]);
@@ -33,6 +34,7 @@ const Dashboard = () => {
 
   return (
     <div>
+      <Navbar/>
       <h1>Welcome to the Dashboard</h1>
       {insuranceData.length > 0 ? (
         <table>

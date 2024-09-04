@@ -2,6 +2,7 @@ import React, { useEffect ,useState} from "react";
 import Cards from "./Cards";
 import axios from "axios";
 import "../style/HomePage.css"
+import Navbar from './NavBar';
 const HomePage=()=>{
     const [message, setMessage] = useState('');
     const [users, setUsers] = useState([]);
@@ -21,19 +22,20 @@ const HomePage=()=>{
       useEffect(()=>{
         console.log("the data"+users)
       },[users])
-      const handleDelete = (id) => {
-        axios.delete(`http://192.168.99.141:5000/${id}`)
-          .then(response => {
-            console.log('User deleted:', response.data);
-            setUsers(users.filter(user => user._id !== id));
-          })
-          .catch(error => {
-            console.error('Error deleting user:', error);
-          });
-      };
+      // const handleDelete = (id) => {
+      //   axios.delete(`http://192.168.99.141:5000/${id}`)
+      //     .then(response => {
+      //       console.log('User deleted:', response.data);
+      //       setUsers(users.filter(user => user._id !== id));
+      //     })
+      //     .catch(error => {
+      //       console.error('Error deleting user:', error);
+      //     });
+      // };
     
     return(
         <div className="Homepage-container">
+          <Navbar/>
             <h3>Welcome to Home Page</h3>
             {/* <table>
               <tr className="tableHead">

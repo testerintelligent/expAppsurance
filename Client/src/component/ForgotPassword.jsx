@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import "../style/ForgotPassword.css";
 import { useNavigate } from 'react-router-dom';
+import Navbar from './NavBar';
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
@@ -31,6 +32,7 @@ const ForgotPasswordPage = () => {
 
   return (
     <div className="forgot-password-page">
+      <Navbar/>
       <h1>Forgot Password</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">

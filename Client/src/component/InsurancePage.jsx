@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../style/InsurancePage.css';
+import Navbar from './NavBar';
 
 const InsurancePage = () => {
   const [Message, setMessage] = useState('');
@@ -104,6 +105,7 @@ const InsurancePage = () => {
 
   return (
     <div className="insurance-page">
+      <Navbar/>
       <h1>Insurance Policy Details</h1>
       <button className='insuranceDashboardButton' type="submit" onClick={handleDashboardButton}>Go to Dashboard</button>
       <form className="insurance-form" onSubmit={handleInsurance}>

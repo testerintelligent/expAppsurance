@@ -2,8 +2,10 @@ import React, { useState,useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import '../style/RegistrationPage.css'; 
+import Navbar from './NavBar';
 
 const RegistrationPage = () => {
+  
   const navigate = useNavigate();
   const [message, setMessage] = useState('');
   const [formData, setFormData] = useState({
@@ -60,8 +62,9 @@ const RegistrationPage = () => {
   
   return (
     <div className="registrationPage">
+      
       <div className='registration_container'>
-        
+      <Navbar/>
         <h3 className='registerTitle'>Create an Account</h3>
         {submitted?(
           <div className="success-message">Registration successful!
