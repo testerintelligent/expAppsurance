@@ -56,7 +56,7 @@ mongoose.connect(mongoURI)
     res.status(201).json({ Insurance: savedInsurance });
   } catch (error) {
     console.error('Error saving user to MongoDB:', error);
-    res.status(500).json({ message: 'Error registering user', error });
+    res.status(500).json({ message: 'The user has the option to create one insurance', error });
   }
 });
   

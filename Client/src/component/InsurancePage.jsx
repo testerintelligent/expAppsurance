@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import '../style/InsurancePage.css';
 
 const InsurancePage = () => {
+  const [Message,setMessage]=useState('');
   const navigate = useNavigate();
   const [insuranceData, setInsuranceData] = useState({
     Name: '',
@@ -28,6 +29,7 @@ const InsurancePage = () => {
     axios.post('http://192.168.99.141:5000/Dashboard', insuranceData)
       .then(response => {
         console.log(response.data);
+        setMessage(response.data.message); 
         // Optionally reset form after submission
         setInsuranceData({
           Name: '',
@@ -93,9 +95,10 @@ const InsurancePage = () => {
           <label className="insuranceLabel" htmlFor="Premium">Premium:</label>
           <input className='insuranceInput' onChange={handleChange} type="number" id="Premium" step="0.01" name="Premium" value={insuranceData.Premium} />
         </div>
-
+        {Message && <p>{Message}</p>}
         <button className='insuranceButton' type="submit">Submit</button>
       </form>
+      
     </div>
   );
 };
