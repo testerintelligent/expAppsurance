@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import "../style/ForgotPassword.css";
+import { useNavigate } from 'react-router-dom';
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [message, setMessage] = useState('');
+  const navigate=useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Client-side validation to check if passwords match
     if (newPassword !== confirmPassword) {
       setMessage('New password and confirm password do not match.');
       return;
@@ -26,6 +26,7 @@ const ForgotPasswordPage = () => {
     } catch (error) {
       setMessage('Error resetting password');
     }
+    navigate('/');
   };
 
   return (

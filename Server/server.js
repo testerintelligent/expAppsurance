@@ -73,7 +73,7 @@ mongoose.connect(mongoURI)
   app.delete('/Dashboard/:id', async (req, res) => {
     try {
       const { id } = req.params;
-      const result = await Insurance.findById(id); // Use findById to locate by _id
+      const result = await Insurance.findById(id);
       if (!result) {
         return res.status(404).json({ message: 'Policy not found' });
       }
@@ -89,22 +89,15 @@ mongoose.connect(mongoURI)
   
 
 app.post('/forgot-password', async (req, res) => {
-    const { email, newPassword } = req.body; // Extract email and new password from the request body
-
-    try {
-      // Find user by email
+    const { email, newPassword } = req.body;
+    try {  
       const user = await User.findOne({ email });
 
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-
-      // Hash the new password before saving
-     // const hashedPassword = await bcrypt.hash(newPassword, 10);
       user.password = newPassword;
-
       await user.save();
-
       res.json({ message: 'Password has been reset successfully' });
     } catch (err) {
       console.error('Error resetting password:', err);
