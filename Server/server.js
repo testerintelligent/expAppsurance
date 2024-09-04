@@ -52,7 +52,7 @@ mongoose.connect(mongoURI)
       SumInsured: req.body.SumInsured,
       Premium: req.body.Premium,
     });
-    const existingUser = await newInsurance.findOne({ email });
+    const existingUser = await newInsurance.findOne({ email :req.body.email});
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists. Cannot create a new policy.' });
     }
