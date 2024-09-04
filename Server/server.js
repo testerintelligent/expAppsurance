@@ -100,8 +100,8 @@ app.post('/forgot-password', async (req, res) => {
       }
 
       // Hash the new password before saving
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
-      user.password = hashedPassword;
+     // const hashedPassword = await bcrypt.hash(newPassword, 10);
+      user.password = newPassword;
 
       await user.save();
 
