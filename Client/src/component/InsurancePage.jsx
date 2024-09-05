@@ -21,7 +21,7 @@ const InsurancePage = () => {
   useEffect(() => {
     const sessionKey = sessionStorage.getItem('sessionKey');
     if (!sessionKey) {
-      navigate('/login');
+      navigate('/');
     }
   }, [navigate]);
 
@@ -97,7 +97,11 @@ const InsurancePage = () => {
   };
 
   const handleDashboardButton = () => {
-    navigate('/Dashboard');
+    const sessionKey = sessionStorage.getItem('sessionKey');
+    if (!sessionKey) {
+      navigate('/Dashboard');
+    }
+   // navigate('/Dashboard');
   };
 
   return (
