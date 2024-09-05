@@ -67,9 +67,10 @@ const RegistrationPage = () => {
       <Navbar/>
         <h3 className='registerTitle'>Create an Account</h3>
         {submitted?(
-          <div className="success-message">Registration successful!
-          <button className='navLogin' onClick={navigateLoginPage}>Navigate to login Page
-          </button>
+          <div className="success-message"><h2>Registration successful!</h2>
+           <button className='navLogin' onClick={navigateLoginPage}>Navigate to login Page
+           </button>
+         
           </div>
         ):(
           <form onSubmit={handleSubmit}>
