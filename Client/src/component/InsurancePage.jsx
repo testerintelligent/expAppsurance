@@ -81,7 +81,10 @@ const InsurancePage = () => {
             SumInsured: '',
             Premium: '',
           });
-          navigate('/Dashboard');
+          const sessionKey = sessionStorage.getItem('sessionKey');
+          if (!sessionKey) {
+            navigate('/Dashboard');
+          }
         })
         .catch(error => {
           console.log("Error:", error);
@@ -97,11 +100,14 @@ const InsurancePage = () => {
   };
 
   const handleDashboardButton = () => {
-    const sessionKey = sessionStorage.getItem('sessionKey');
-    if (!sessionKey) {
-      navigate('/Dashboard');
-    }
-  };
+  const sessionKey = sessionStorage.getItem('sessionKey');
+  if (sessionKey) {
+    navigate('/Dashboard');
+  } else {
+    navigate('/'); 
+  }
+};
+
 
   return (
     <div className="insurance-page">

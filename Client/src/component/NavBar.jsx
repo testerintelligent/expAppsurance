@@ -12,7 +12,7 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <h1 className="navbar-title">InsuranceMaking</h1>
+      <h1 className="navbar-title">AppInsurance</h1>
       <button className="logout-button" onClick={handleLogout}>Logout</button>
     </nav>
   );
