@@ -2,10 +2,18 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import "../style/Dashboard.css"
 import Navbar from './NavBar';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [insuranceData, setInsuranceData] = useState([]);
     const[insurancePolicy,setInsurancePolicy]=useState('');
+    const navigate = useNavigate();
+    useEffect(() => {
+      const sessionKey = sessionStorage.getItem('sessionKey');
+      if (!sessionKey) {
+        navigate('/insurance');
+      }
+    }, [navigate]);
   useEffect(() => { 
     axios.get('http://192.168.99.141:5000/Dashboard') 
       .then(response => {

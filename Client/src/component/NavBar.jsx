@@ -6,6 +6,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    sessionStorage.removeItem('sessionKey');
     navigate('/'); 
   };
 
