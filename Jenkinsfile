@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'Linux' }
     environment {
         GIT_REPO_URL = 'https://github.com/Mageshpoopathi/MERN.git'
     }
