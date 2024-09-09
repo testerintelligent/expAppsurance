@@ -113,7 +113,6 @@ const InsurancePage = () => {
     <div className="insurance-page">
       <Navbar />
       <h1>Insurance Policy Details</h1>
-      <button className='insuranceDashboardButton' type="button" onClick={handleDashboardButton}>Go to Dashboard</button>
       <form className="insurance-form" onSubmit={handleInsurance}>
         {/* Input fields for the insurance form */}
         <div className="form-group">
@@ -163,6 +162,7 @@ const InsurancePage = () => {
           {errors.Premium && <p className="error">{errors.Premium}</p>}
         </div>
         <button className='insuranceButton' type="submit">Submit</button>
+        <button className='insuranceDashboardButton' type="button" onClick={handleDashboardButton}>Go to Dashboard</button>
       </form>
       {Message && <p>{Message}</p>}
     </div>

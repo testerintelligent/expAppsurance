@@ -30,15 +30,24 @@ const Dashboard = () => {
   },[insurancePolicy])
   
   const handleDelete = async (id) => {
-    try {
-      const response = await axios.delete(`http://192.168.99.141:5000/Dashboard/${id}`);
-      console.log('Insurance deleted:', response.data);
-      // Update state after deletion
-      setInsuranceData(insuranceData.filter(insurance => insurance._id !== id));
-    } catch (error) {
-      console.error('Error deleting policy:', error);
+    // Show confirmation alert before proceeding
+    const confirmDelete = window.confirm('Are you sure you want to delete this insurance policy?');
+  
+    if (confirmDelete) {
+      try {
+        const response = await axios.delete(`http://192.168.99.141:5000/Dashboard/${id}`);
+        console.log('Insurance deleted:', response.data);
+        // Update state after deletion
+        setInsuranceData(insuranceData.filter(insurance => insurance._id !== id));
+      } catch (error) {
+        console.error('Error deleting policy:', error);
+        alert('Failed to delete the policy. Please try again.');
+      }
+    } else {
+      console.log('Delete operation canceled by user.');
     }
   };
+  
 
   return (
     <div>
