@@ -84,7 +84,7 @@ const Dashboard = () => {
           <tbody>
             {insuranceData.map((insurance, index) => (
               <tr key={index}>
-                <td>{insurance.CurrentDate}</td>
+                <td>{formatDate(insurance.CurrentDate)}</td>
                 <td>{insurance.Name}</td>
                 <td>{insurance.email}</td>
                 <td>{insurance.Address}</td>
