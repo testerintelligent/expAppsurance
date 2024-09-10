@@ -70,7 +70,7 @@ const Dashboard = () => {
         <table>
           <thead>
             <tr>
-              <th>Date</th>
+              <th>Policy Create Date</th>
               <th>Name</th>
               <th>Email</th>
               <th>Address</th>
