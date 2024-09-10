@@ -8,7 +8,15 @@ const InsurancePage = () => {
   const [Message, setMessage] = useState('');
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
   const [insuranceData, setInsuranceData] = useState({
+    CurrentDate:new Date(),
     Name: '',
     email: '',
     Address: '',
@@ -63,16 +71,17 @@ const InsurancePage = () => {
     setErrors(errors);
     return Object.keys(errors).length === 0; 
   };
+ 
 
   const handleInsurance = (event) => {
     event.preventDefault();
-  
     if (validateFields()) {
+      console.log("Submitting Data:", insuranceData);
       axios.post('http://192.168.99.141:5000/Dashboard', insuranceData)
         .then(response => {
-          console.log(response.data);
           setMessage(response.data.message || 'Policy created successfully.');
           setInsuranceData({
+            CurrentDate:'',
             Name: '',
             email: '',
             Address: '',

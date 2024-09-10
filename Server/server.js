@@ -30,6 +30,7 @@ mongoose.connect(mongoURI)
   const User = mongoose.model('users', userSchema);
 
   const InsuranceSchema = new mongoose.Schema({
+    CurrentDate: { type: Date, default: Date.now },
     Name: String,
     email: { type: String, unique: true },
     Address: String,
@@ -43,12 +44,13 @@ mongoose.connect(mongoURI)
   
   app.post('/Dashboard', async (req, res) => {
     try {
-      const { Name, email, Address, DateOfBirth, PolicyType, SumInsured, Premium } = req.body;
+      const { CurrentDate,Name, email, Address, DateOfBirth, PolicyType, SumInsured, Premium } = req.body;
       const existingPolicy = await Insurance.findOne({ email });
       if (existingPolicy) {
         return res.status(400).json({ message: 'User already exists. Cannot create a new policy.' });
       }
       const newInsurance = new Insurance({
+        CurrentDate,
         Name,
         email,
         Address,
