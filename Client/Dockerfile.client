@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Copy client files
 COPY . .
+rm -rf node_modules package-lock.json
 
 # Install dependencies
 RUN npm install --force
