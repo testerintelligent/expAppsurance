@@ -91,7 +91,7 @@ const Dashboard = () => {
                 <td>{insurance.email}</td>
                 <td>{insurance.Address}</td>
                 <td>{formatDate(insurance.DateOfBirth)}</td>
-                <td>{insurance.PolicyType}</td>
+                <td>{insurance.PolicyType.join(' ')}</td>
                 <td>{insurance.SumInsured}</td>
                 <td>{insurance.Premium}</td>
                 
