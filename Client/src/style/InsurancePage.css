@@ -68,3 +68,19 @@
   .insuranceDashboardButton:hover {
     background-color: #45a049; 
   }
+  .inputRadio{
+    margin: 5px;
+    font: bold;
+    font-size: 16px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  }
+  .inputRadiobutton{
+    size: 8px;
+  }
+  .inputCheckBox{
+   padding: 5px;
+    margin-top: 10px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    font: bold;
+  }

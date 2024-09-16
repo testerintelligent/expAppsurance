@@ -148,12 +148,12 @@ const InsurancePage = () => {
         <div className="form-group">
           <label className="insuranceLabel">Gender:</label>
           <div className="radio-group">
-            <label>
-              <input type="radio" name="Gender" value="Male" onChange={handleChange} checked={insuranceData.Gender === 'Male'} />
+            <label className='inputRadio'>
+              <input type="radio" className='inputRadiobutton' name="Gender" value="Male" onChange={handleChange} checked={insuranceData.Gender === 'Male'} />
               Male
             </label>
-            <label>
-              <input type="radio" name="Gender" value="Female" onChange={handleChange} checked={insuranceData.Gender === 'Female'} />
+            <label className='inputRadio'>
+              <input type="radio" className='inputRadiobutton' name="Gender" value="Female" onChange={handleChange} checked={insuranceData.Gender === 'Female'} />
               Female
             </label>
           </div>
@@ -164,16 +164,16 @@ const InsurancePage = () => {
         <div className="form-group">
           <label className="insuranceLabel">Policy Type:</label>
           <div className="checkbox-group">
-            <label>
-              <input type="checkbox" name="PolicyType" value="Health Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Health Insurance ')} />
+            <label className='inputCheckBox'>
+              <input type="checkbox" className='inputCheckBox' name="PolicyType" value="Health Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Health Insurance ')} />
               Health Insurance
-            </label>
-            <label>
-              <input type="checkbox" name="PolicyType" value="Life Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Life Insurance ')} />
+            </label >
+            <label className='inputCheckBox'>
+              <input type="checkbox" className='inputCheckBox' name="PolicyType" value="Life Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Life Insurance ')} />
               Life Insurance
             </label>
-            <label>
-              <input type="checkbox" name="PolicyType" value="Vehicle Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Vehicle Insurance ')} />
+            <label className='inputCheckBox'>
+              <input type="checkbox" className='inputCheckBox' name="PolicyType" value="Vehicle Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Vehicle Insurance ')} />
               Vehicle Insurance
             </label>
           </div>
