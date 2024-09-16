@@ -165,15 +165,15 @@ const InsurancePage = () => {
           <label className="insuranceLabel">Policy Type:</label>
           <div className="checkbox-group">
             <label>
-              <input type="checkbox" name="PolicyType" value="Health Insurance" onChange={handleChange} checked={insuranceData.PolicyType.includes('Health Insurance')} />
+              <input type="checkbox" name="PolicyType" value="Health Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Health Insurance ')} />
               Health Insurance
             </label>
             <label>
-              <input type="checkbox" name="PolicyType" value="Life Insurance" onChange={handleChange} checked={insuranceData.PolicyType.includes('Life Insurance')} />
+              <input type="checkbox" name="PolicyType" value="Life Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Life Insurance ')} />
               Life Insurance
             </label>
             <label>
-              <input type="checkbox" name="PolicyType" value="Vehicle Insurance" onChange={handleChange} checked={insuranceData.PolicyType.includes('Vehicle Insurance')} />
+              <input type="checkbox" name="PolicyType" value="Vehicle Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Vehicle Insurance ')} />
               Vehicle Insurance
             </label>
           </div>
