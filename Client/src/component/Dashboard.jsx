@@ -78,6 +78,7 @@ const Dashboard = () => {
               <th>Policy Type</th>
               <th>Sum Insured</th>
               <th>Premium</th>
+              <th>Gender</th>
               <th>Delete Record</th>
             </tr>
           </thead>
@@ -86,12 +87,14 @@ const Dashboard = () => {
               <tr key={index}>
                 <td>{formatDate(insurance.CurrentDate)}</td>
                 <td>{insurance.Name}</td>
+                <td>{insurance.Gender}</td>
                 <td>{insurance.email}</td>
                 <td>{insurance.Address}</td>
                 <td>{formatDate(insurance.DateOfBirth)}</td>
                 <td>{insurance.PolicyType}</td>
                 <td>{insurance.SumInsured}</td>
                 <td>{insurance.Premium}</td>
+                
                 <td className='deleteButton'>
                   <button className='DashboardDeleteButton' onClick={() => openModal(insurance._id)}>Delete Policy</button>
                 </td>

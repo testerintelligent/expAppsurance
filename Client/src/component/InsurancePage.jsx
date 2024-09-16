@@ -8,22 +8,17 @@ const InsurancePage = () => {
   const [Message, setMessage] = useState('');
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  const getCurrentDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+  
   const [insuranceData, setInsuranceData] = useState({
-    CurrentDate:new Date(),
+    CurrentDate: new Date(),
     Name: '',
     email: '',
     Address: '',
     DateOfBirth: '',
-    PolicyType: '',
+    PolicyType: [], // Change to an array for multiple selections
     SumInsured: '',
     Premium: '',
+    Gender: '', // Add Gender field
   });
 
   useEffect(() => {
@@ -34,11 +29,18 @@ const InsurancePage = () => {
   }, [navigate]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setInsuranceData({
-      ...insuranceData,
-      [name]: value,
-    });
+    const { name, value, type, checked } = e.target;
+
+    if (type === 'checkbox') {
+      const updatedPolicyTypes = checked
+        ? [...insuranceData.PolicyType, value]
+        : insuranceData.PolicyType.filter(policy => policy !== value);
+      setInsuranceData({ ...insuranceData, PolicyType: updatedPolicyTypes });
+    } else if (name === 'Gender') {
+      setInsuranceData({ ...insuranceData, [name]: value });
+    } else {
+      setInsuranceData({ ...insuranceData, [name]: value });
+    }
   };
 
   const validateFields = () => {
@@ -57,8 +59,8 @@ const InsurancePage = () => {
     if (!insuranceData.DateOfBirth) {
       errors.DateOfBirth = '*Date of Birth is required';
     }
-    if (!insuranceData.PolicyType) {
-      errors.PolicyType = '*Please select a Policy Type';
+    if (insuranceData.PolicyType.length === 0) {
+      errors.PolicyType = '*Please select at least one Policy Type';
     }
     if (!insuranceData.SumInsured) {
       errors.SumInsured = '*Please select Sum Insured';
@@ -68,27 +70,29 @@ const InsurancePage = () => {
     } else if (isNaN(insuranceData.Premium) || parseFloat(insuranceData.Premium) <= 0) {
       errors.Premium = '*Premium must be a positive number';
     }
+    if (!insuranceData.Gender) {
+      errors.Gender = '*Gender is required';
+    }
     setErrors(errors);
-    return Object.keys(errors).length === 0; 
+    return Object.keys(errors).length === 0;
   };
- 
 
   const handleInsurance = (event) => {
     event.preventDefault();
     if (validateFields()) {
-      console.log("Submitting Data:", insuranceData);
       axios.post('http://192.168.99.141:5000/Dashboard', insuranceData)
         .then(response => {
           setMessage(response.data.message || 'Policy created successfully.');
           setInsuranceData({
-            CurrentDate:'',
+            CurrentDate: '',
             Name: '',
             email: '',
             Address: '',
             DateOfBirth: '',
-            PolicyType: '',
+            PolicyType: [],
             SumInsured: '',
             Premium: '',
+            Gender: '',
           });
           const sessionKey = sessionStorage.getItem('sessionKey');
           if (!sessionKey) {
@@ -96,34 +100,29 @@ const InsurancePage = () => {
           }
         })
         .catch(error => {
-          console.log("Error:", error);
           if (error.response && error.response.data.message) {
             setMessage(error.response.data.message);
           } else {
             setMessage('An error occurred. Please try again.');
           }
         });
-    } else {
-      console.log("Validation failed");
     }
   };
 
   const handleDashboardButton = () => {
-  const sessionKey = sessionStorage.getItem('sessionKey');
-  if (sessionKey) {
-    navigate('/Dashboard');
-  } else {
-    navigate('/'); 
-  }
-};
-
+    const sessionKey = sessionStorage.getItem('sessionKey');
+    if (sessionKey) {
+      navigate('/Dashboard');
+    } else {
+      navigate('/');
+    }
+  };
 
   return (
     <div className="insurance-page">
       <Navbar />
       <h1>Insurance Policy Details</h1>
       <form className="insurance-form" onSubmit={handleInsurance}>
-        {/* Input fields for the insurance form */}
         <div className="form-group">
           <label className="insuranceLabel" htmlFor="Name">Name:</label>
           <input className='insuranceInput' type="text" id="Name" onChange={handleChange} name="Name" value={insuranceData.Name} />
@@ -144,16 +143,43 @@ const InsurancePage = () => {
           <input className='insuranceInput' onChange={handleChange} type="date" id="DateOfBirth" name="DateOfBirth" value={insuranceData.DateOfBirth} />
           {errors.DateOfBirth && <p className="error">{errors.DateOfBirth}</p>}
         </div>
+
+        {/* Gender Radio Buttons */}
         <div className="form-group">
-          <label className="insuranceLabel" htmlFor="PolicyType">Policy Type:</label>
-          <select onChange={handleChange} className="insuranceInput" name="PolicyType" value={insuranceData.PolicyType}>
-            <option value="">Select a policy</option>
-            <option value="Health Insurance">Health Insurance</option>
-            <option value="Life Insurance">Life Insurance</option>
-            <option value="Vehicle Insurance">Vehicle Insurance</option>
-          </select>
+          <label className="insuranceLabel">Gender:</label>
+          <div className="radio-group">
+            <label>
+              <input type="radio" name="Gender" value="Male" onChange={handleChange} checked={insuranceData.Gender === 'Male'} />
+              Male
+            </label>
+            <label>
+              <input type="radio" name="Gender" value="Female" onChange={handleChange} checked={insuranceData.Gender === 'Female'} />
+              Female
+            </label>
+          </div>
+          {errors.Gender && <p className="error">{errors.Gender}</p>}
+        </div>
+
+        {/* Policy Type as Checkboxes */}
+        <div className="form-group">
+          <label className="insuranceLabel">Policy Type:</label>
+          <div className="checkbox-group">
+            <label>
+              <input type="checkbox" name="PolicyType" value="Health Insurance" onChange={handleChange} checked={insuranceData.PolicyType.includes('Health Insurance')} />
+              Health Insurance
+            </label>
+            <label>
+              <input type="checkbox" name="PolicyType" value="Life Insurance" onChange={handleChange} checked={insuranceData.PolicyType.includes('Life Insurance')} />
+              Life Insurance
+            </label>
+            <label>
+              <input type="checkbox" name="PolicyType" value="Vehicle Insurance" onChange={handleChange} checked={insuranceData.PolicyType.includes('Vehicle Insurance')} />
+              Vehicle Insurance
+            </label>
+          </div>
           {errors.PolicyType && <p className="error">{errors.PolicyType}</p>}
         </div>
+
         <div className="form-group">
           <label className="insuranceLabel" htmlFor="SumInsured">Sum Insured:</label>
           <select onChange={handleChange} className="insuranceInput" name="SumInsured" value={insuranceData.SumInsured}>

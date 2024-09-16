@@ -35,9 +35,10 @@ mongoose.connect(mongoURI)
     email: { type: String, unique: true },
     Address: String,
     DateOfBirth: Date,
-    PolicyType: String,
+    PolicyType: [],
     SumInsured: Number,
     Premium: Number,
+    Gender:String
   });
   
   const Insurance = mongoose.model('Insurance', InsuranceSchema);
@@ -58,6 +59,7 @@ mongoose.connect(mongoURI)
         PolicyType,
         SumInsured,
         Premium,
+        Gender
       });
   
       const savedInsurance = await newInsurance.save();

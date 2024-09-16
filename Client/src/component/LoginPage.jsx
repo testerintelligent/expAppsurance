@@ -24,7 +24,7 @@ const LoginPage = () => {
         const sessionKey = uuid;
         console.log(uuid);
         sessionStorage.setItem('sessionKey', sessionKey);
-        navigate('/insurance');
+        navigate('/Dashboard');
       }
     } catch (error) {
       setError('Invalid username or password');
