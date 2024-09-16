@@ -45,7 +45,7 @@ mongoose.connect(mongoURI)
   
   app.post('/Dashboard', async (req, res) => {
     try {
-      const { CurrentDate,Name, email, Address, DateOfBirth, PolicyType, SumInsured, Premium } = req.body;
+      const { CurrentDate,Name, email, Address, DateOfBirth, PolicyType, SumInsured, Premium ,Gender} = req.body;
       const existingPolicy = await Insurance.findOne({ email });
       if (existingPolicy) {
         return res.status(400).json({ message: 'User already exists. Cannot create a new policy.' });
