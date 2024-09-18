@@ -32,7 +32,7 @@ const ForgotPasswordPage = () => {
 
   return (
     <div className="forgot-password-page">
-      <Navbar/>
+      
       <h1>Forgot Password</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">

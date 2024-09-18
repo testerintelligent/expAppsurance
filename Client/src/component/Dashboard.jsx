@@ -49,22 +49,30 @@ const Dashboard = () => {
   const handleNewInsurance = () => {
     navigate("/insurance");
   };
+
   const formatDate = (dateString) => {
     if (!dateString) return "N/A"; // Handle null or undefined dates
-    const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+  
     const date = new Date(dateString);
-    return isNaN(date.getTime()) ? "Invalid Date" : date.toLocaleDateString(undefined, options);
+  
+    if (isNaN(date.getTime())) return "Invalid Date"; // Handle invalid date strings
+  
+    const day = String(date.getDate()).padStart(2, '0');    // Get day and pad with 0 if needed
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Get month (months are 0-indexed)
+    const year = date.getFullYear(); // Get the full year
+  
+    return `${day}/${month}/${year}`; 
   };
   
   
 
   return (
     <div>
-      <Navbar />
-      <div className='dashboardGreeting'>
+    
+      {/* <div className='dashboardGreeting'>
         <h1>Welcome to the Dashboard</h1>
         <button type='submit' className="btnNewInsurance" onClick={handleNewInsurance}>Create New Insurance</button>
-      </div>
+      </div> */}
      
       {insuranceData.length > 0 ? (
         <div className='insuranceTable'>

@@ -120,7 +120,7 @@ const InsurancePage = () => {
 
   return (
     <div className="insurance-page">
-      <Navbar />
+      
       <h1>Insurance Policy Details</h1>
       <form  onSubmit={handleInsurance}>
         <div className="insurance-form">
