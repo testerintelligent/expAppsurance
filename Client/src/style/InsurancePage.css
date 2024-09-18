@@ -1,86 +1,89 @@
- .insurance-page {
-    max-width: 40%;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  /*
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-  }*/
+.insurance-page {
+  max-width: 50%;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.insurance-form{
+  display: flex;
+}
+.labels-fields{
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  align-items: center;
+  margin-top: 20px;
+  width: 30%;
+  padding: 10px;
+  align-items:end;
+}
+.inputFields{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-left: 10px;
+  margin-top: 20px;
+  margin-right: 10px;
+}
+.insuranceInput{
+  border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+
   
-  .insurance-form {
-    display: flex;
-    flex-direction: column;
-  }
-  /*
-  .form-group {
-    margin-bottom: 15px;
-  }
-  */
-  .insuranceLabel {
-    display: flex;
-    justify-content: left;
-    margin-bottom: 5px; 
-    font-weight: bold; 
-  }
-  .insuranceInput{
-    display: flex;
-    justify-content: right;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-    width: 100%; 
-  }
-  .insuranceButton{
-    padding: 10px 20px; 
-    border: none;
-    border-radius: 4px;
-    background-color: #4CAF50; 
-    color: white; 
-    font-size: 16px;
-    cursor: pointer;
-    width: 100%; 
-    margin-top: 20px; 
-  }
-  .insuranceButton:hover {
-    background-color: #45a049; 
-  }
-  #claim-date{
-    font-size: 15px;
-   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  }
-  .insuranceDashboardButton{
-    padding: 10px 20px; 
-    border: none;
-    border-radius: 4px;
-    background-color: #4CAF50; 
-    color: white; 
-    font-size: 16px;
-    cursor: pointer;
-    width: 100%; 
-    margin-top: 20px;
-  }
-  .insuranceDashboardButton:hover {
-    background-color: #45a049; 
-  }
-  .inputRadio{
-    margin: 5px;
-    font: bold;
-    font-size: 16px;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-  }
-  .inputRadiobutton{
-    size: 8px;
-  }
-  .inputCheckBox{
-   padding: 5px;
-    margin-top: 10px;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    font-size: 16px;
-    font: bold;
-  }
+}
+.insuranceLabel{
+  margin-bottom: 28px;
+  font-size: medium;
+  font-weight: bold;
+}
+
+.form-group-radio{
+  display: flex;
+}
+.inputRadio{
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+.form-group-CheckBox{
+  display: flex;
+}
+.inputCheckBox{
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+ margin-bottom: 20px;
+  
+}
+.insuranceDashboardButton{
+  border: none;
+  border-radius: 4px;
+  background-color: #4CAF50; 
+  color: white; 
+  font-size: 16px;
+  cursor: pointer;
+  width: 30%; 
+  margin-top: 20px;
+  padding: 10px;
+}
+.insuranceDashboardButton:hover {
+  background-color: #45a049; 
+}
+.insuranceButton{
+  border: none;
+  border-radius: 4px;
+  background-color: #4CAF50; 
+  color: white; 
+  font-size: 16px;
+  cursor: pointer;
+  width: 30%; 
+  margin-top: 20px;
+  padding: 10px;
+  margin-right: 5px;
+}
+.insuranceButton:hover{
+  background-color: #45a049; 
+}

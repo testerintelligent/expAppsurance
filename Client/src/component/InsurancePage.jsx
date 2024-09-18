@@ -122,32 +122,37 @@ const InsurancePage = () => {
     <div className="insurance-page">
       <Navbar />
       <h1>Insurance Policy Details</h1>
-      <form className="insurance-form" onSubmit={handleInsurance}>
+      <form  onSubmit={handleInsurance}>
+        <div className="insurance-form">
+        <div className='labels-fields'>
+            <label className="insuranceLabel" htmlFor="Name">Name: </label>
+            <label className="insuranceLabel" htmlFor="email">Email:  </label>
+            <label className="insuranceLabel" htmlFor="Address">Address:  </label>
+            <label className="insuranceLabel" htmlFor="DateOfBirth">Date of Birth:  </label>
+            <label className="insuranceLabel">Gender:    </label>
+            <label className="insuranceLabel">Policy Type:   </label>
+            <label className="insuranceLabel" htmlFor="SumInsured">Sum Insured:  </label>
+            <label className="insuranceLabel" htmlFor="Premium">Premium:  </label>
+
+        </div>
+        <div className='inputFields'>
         <div className="form-group">
-          <label className="insuranceLabel" htmlFor="Name">Name:</label>
-          <input className='insuranceInput' type="text" id="Name" onChange={handleChange} name="Name" value={insuranceData.Name} />
+           <input className='insuranceInput' type="text" id="Name" onChange={handleChange} name="Name" value={insuranceData.Name} />
           {errors.Name && <p className="error">{errors.Name}</p>}
         </div>
         <div className="form-group">
-          <label className="insuranceLabel" htmlFor="email">Email:</label>
-          <input className='insuranceInput' type="email" id="email" onChange={handleChange} name="email" value={insuranceData.email} />
-          {errors.email && <p className="error">{errors.email}</p>}
+         <input className='insuranceInput' type="email" id="email" onChange={handleChange} name="email" value={insuranceData.email} />
+         {errors.email && <p className="error">{errors.email}</p>}
         </div>
         <div className="form-group">
-          <label className="insuranceLabel" htmlFor="Address">Address:</label>
-          <input className='insuranceInput' type="text" id="Address" onChange={handleChange} name="Address" value={insuranceData.Address} />
-          {errors.Address && <p className="error">{errors.Address}</p>}
+         <input className='insuranceInput' type="text" id="Address" onChange={handleChange} name="Address" value={insuranceData.Address} />
+           {errors.Address && <p className="error">{errors.Address}</p>}
         </div>
         <div className="form-group">
-          <label className="insuranceLabel" htmlFor="DateOfBirth">Date of Birth:</label>
-          <input className='insuranceInput' onChange={handleChange} type="date" id="DateOfBirth" name="DateOfBirth" value={insuranceData.DateOfBirth} />
-          {errors.DateOfBirth && <p className="error">{errors.DateOfBirth}</p>}
+         <input className='insuranceInput' onChange={handleChange} type="date" id="DateOfBirth" name="DateOfBirth" value={insuranceData.DateOfBirth} />
+           {errors.DateOfBirth && <p className="error">{errors.DateOfBirth}</p>}
         </div>
-
-        {/* Gender Radio Buttons */}
-        <div className="form-group">
-          <label className="insuranceLabel">Gender:</label>
-          <div className="radio-group">
+        <div className="form-group-radio">
             <label className='inputRadio'>
               <input type="radio" className='inputRadiobutton' name="Gender" value="Male" onChange={handleChange} checked={insuranceData.Gender === 'Male'} />
               Male
@@ -156,33 +161,25 @@ const InsurancePage = () => {
               <input type="radio" className='inputRadiobutton' name="Gender" value="Female" onChange={handleChange} checked={insuranceData.Gender === 'Female'} />
               Female
             </label>
-          </div>
           {errors.Gender && <p className="error">{errors.Gender}</p>}
         </div>
-
-        {/* Policy Type as Checkboxes */}
-        <div className="form-group">
-          <label className="insuranceLabel">Policy Type:</label>
-          <div className="checkbox-group">
+        <div className="form-group-CheckBox">
             <label className='inputCheckBox'>
-              <input type="checkbox" className='inputCheckBox' name="PolicyType" value="Health Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Health Insurance ')} />
+              <input type="checkbox" className='inputCheckBoxtext' name="PolicyType" value="Health Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Health Insurance ')} />
               Health Insurance
             </label >
             <label className='inputCheckBox'>
-              <input type="checkbox" className='inputCheckBox' name="PolicyType" value="Life Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Life Insurance ')} />
+              <input type="checkbox" className='inputCheckBoxtext' name="PolicyType" value="Life Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Life Insurance ')} />
               Life Insurance
             </label>
             <label className='inputCheckBox'>
-              <input type="checkbox" className='inputCheckBox' name="PolicyType" value="Vehicle Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Vehicle Insurance ')} />
+              <input type="checkbox" className='inputCheckBoxtext' name="PolicyType" value="Vehicle Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Vehicle Insurance ')} />
               Vehicle Insurance
-            </label>
-          </div>
+            </label> 
           {errors.PolicyType && <p className="error">{errors.PolicyType}</p>}
         </div>
-
         <div className="form-group">
-          <label className="insuranceLabel" htmlFor="SumInsured">Sum Insured:</label>
-          <select onChange={handleChange} className="insuranceInput" name="SumInsured" value={insuranceData.SumInsured}>
+         <select onChange={handleChange} className="insuranceInput" name="SumInsured" value={insuranceData.SumInsured}>
             <option value="">Select Sum Insured</option>
             <option value="100000">1,00,000</option>
             <option value="300000">3,00,000</option>
@@ -192,9 +189,10 @@ const InsurancePage = () => {
           {errors.SumInsured && <p className="error">{errors.SumInsured}</p>}
         </div>
         <div className="form-group">
-          <label className="insuranceLabel" htmlFor="Premium">Premium:</label>
           <input className='insuranceInput' onChange={handleChange} type="number" id="Premium" step="0.01" name="Premium" value={insuranceData.Premium} />
-          {errors.Premium && <p className="error">{errors.Premium}</p>}
+         {errors.Premium && <p className="error">{errors.Premium}</p>}
+        </div>
+        </div>
         </div>
         <button className='insuranceButton' type="submit">Submit</button>
         <button className='insuranceDashboardButton' type="button" onClick={handleDashboardButton}>Go to Dashboard</button>
