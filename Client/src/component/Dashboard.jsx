@@ -72,13 +72,13 @@ const Dashboard = () => {
             <tr>
               <th>Policy Create Date</th>
               <th>Name</th>
+              <th>Gender</th>
               <th>Email</th>
               <th>Address</th>
               <th>Date of Birth</th>
-              <th>Policy Type</th>
+              <th>Policy type</th>
               <th>Sum Insured</th>
               <th>Premium</th>
-              <th>Gender</th>
               <th>Delete Record</th>
             </tr>
           </thead>
