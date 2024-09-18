@@ -1,14 +1,19 @@
 .DashboardDeleteButton{
-    padding: 10px 20px; 
+    
     border: none;
-    border-radius: 4px;
+    border-radius: 3px;
     background-color: #4CAF50; 
     color: white; 
-    font-size: 16px;
+    font-size: small;
     cursor: pointer;
    width: 100%;
     
 }
+.insuranceTable{
+  margin: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 
 .dashboardGreeting{
     display: flex;
@@ -35,8 +40,9 @@ table {
 
 th, td {
     border: 1px solid #ddd;
-    padding: 8px;
+    padding: 10px;
     text-align: center;
+    font-size: small;
 }
 
 th {

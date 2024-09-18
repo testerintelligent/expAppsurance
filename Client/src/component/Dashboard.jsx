@@ -67,6 +67,7 @@ const Dashboard = () => {
       </div>
      
       {insuranceData.length > 0 ? (
+        <div className='insuranceTable'>
         <table>
           <thead>
             <tr>
@@ -102,6 +103,7 @@ const Dashboard = () => {
             ))}
           </tbody>
         </table>
+        </div>
       ) : (
         <p>No insurance data available</p>
       )}
