@@ -8,7 +8,9 @@ import InsurancePage from './component/InsurancePage';
 import ForgotPasswordPage from './component/ForgotPassword';
 import Dashboard from './component/Dashboard';
 import Navbar from './component/NavBar';
+import Layout from './layout/layout';
 import About from './component/About';
+import "./style/tailwind.css";
 
 
 function App() {
@@ -17,15 +19,16 @@ function App() {
      
       <Router>
       <div>
-      <Navbar/>
         <Routes>
-        <Route path="/" element={<LoginPage/>} />
-          <Route path="/register" element={<RegistrationPage/>} />
-          <Route path='/home' element={<HomePage/>}/>
-          <Route path='/insurance' element={<InsurancePage/>}/>
-          <Route path='/forgotPassword' element={<ForgotPasswordPage/>}/>
-          <Route path='/Dashboard' element={<Dashboard/>}/>
-          <Route path='/about' element={<About/>}/>
+          <Route element={<Layout />}>
+            <Route path="/" element={<LoginPage/>} />
+            <Route path="/register" element={<RegistrationPage/>} />
+            <Route path='/home' element={<HomePage/>}/>
+            <Route path='/insurance' element={<InsurancePage/>}/>
+            <Route path='/forgotPassword' element={<ForgotPasswordPage/>}/>
+            <Route path='/Dashboard' element={<Dashboard/>}/>
+            <Route path='/about' element={<About/>}/>
+          </Route>
         </Routes>
       </div>
     </Router>
