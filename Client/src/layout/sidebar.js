@@ -1,9 +1,13 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink ,useNavigate} from 'react-router-dom';
 
 
 const Sidebar = () => {
-  
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    sessionStorage.removeItem('sessionKey');
+    navigate('/'); 
+  };
   return (
 <div className="h-screen text-black fixed top-0 left-0 w-64 bg-white shadow-lg">
   <div className="flex flex-col h-full justify-between">
@@ -51,8 +55,13 @@ const Sidebar = () => {
           </NavLink>
         </li>
       </ul>
+     
+     
     </div>
   </div>
+  <div className=" my-0">
+      <button className="logout-button" onClick={handleLogout}>Logout</button>
+      </div>
 </div>
 
   );

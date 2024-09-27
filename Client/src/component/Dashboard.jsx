@@ -77,10 +77,6 @@ const Dashboard = () => {
             <tr>
               <th>Policy Create Date</th>
               <th>Name</th>
-              <th>Gender</th>
-              <th>Email</th>
-              <th>Address</th>
-              <th>Date of Birth</th>
               <th>Policy type</th>
               <th>Sum Insured</th>
               <th>Premium</th>
@@ -92,10 +88,6 @@ const Dashboard = () => {
               <tr key={index}>
                 <td>{formatDate(insurance.CurrentDate)}</td>
                 <td>{insurance.Name}</td>
-                <td>{insurance.Gender}</td>
-                <td>{insurance.email}</td>
-                <td>{insurance.Address}</td>
-                <td>{formatDate(insurance.DateOfBirth)}</td>
                 <td>{insurance.PolicyType.join(' ')}</td>
                 <td>{insurance.SumInsured}</td>
                 <td>{insurance.Premium}</td>

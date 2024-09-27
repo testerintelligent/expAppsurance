@@ -16,12 +16,14 @@ import "./style/tailwind.css";
 function App() {
   return (
     <div className="App">
-     
+   
       <Router>
       <div>
         <Routes>
-          <Route element={<Layout />}>
+          
+       
             <Route path="/" element={<LoginPage/>} />
+            <Route element={<Layout />}>
             <Route path="/register" element={<RegistrationPage/>} />
             <Route path='/home' element={<HomePage/>}/>
             <Route path='/insurance' element={<InsurancePage/>}/>
