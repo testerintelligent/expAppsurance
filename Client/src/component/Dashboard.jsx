@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import "../style/Dashboard.css";
-import Navbar from './NavBar';
+
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {

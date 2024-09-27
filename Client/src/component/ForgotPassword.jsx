@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import "../style/ForgotPassword.css";
 import { useNavigate } from 'react-router-dom';
-import Navbar from './NavBar';
+
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
