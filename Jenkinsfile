@@ -1,7 +1,7 @@
 pipeline {
     agent  { label 'Linux-agent' }
     environment {
-        GIT_REPO_URL = 'https://github.com/Mageshpoopathi/MERN.git'
+        GIT_REPO_URL = 'https://github.com/testerintelligent/appInsurance.git/'
     }
 
     stages {
