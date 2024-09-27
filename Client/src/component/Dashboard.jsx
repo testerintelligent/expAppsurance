@@ -46,10 +46,6 @@ const Dashboard = () => {
     }
   };
 
-  const handleNewInsurance = () => {
-    navigate("/insurance");
-  };
-
   const formatDate = (dateString) => {
     if (!dateString) return "N/A"; // Handle null or undefined dates
   
