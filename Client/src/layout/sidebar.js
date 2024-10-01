@@ -9,12 +9,12 @@ const Sidebar = () => {
     navigate('/'); 
   };
   return (
-<div className="h-screen text-black fixed top-0 left-0 w-64 bg-white shadow-lg">
+<div className="h-screen text-white fixed top-0 left-0 w-64 bg-black shadow-lg">
   <div className="flex flex-col h-full justify-between">
     <div>
       <div className="px-4 py-6 flex items-center justify-center border-b border-gray-200">
         <NavLink to="/">
-          <p className="text-lg font-bold text-gray-900">App Insurance</p>
+          <p className="text-lg font-bold text-white">App Insurance</p>
         </NavLink>
       </div>
       <ul className="mt-4">
@@ -24,7 +24,7 @@ const Sidebar = () => {
             className={({ isActive }) =>
               isActive
                 ? "flex items-center py-3 px-4 bg-cyan-100 rounded-lg text-cyan-900 font-semibold"
-                : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-gray-700 font-semibold"
+                : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white font-semibold"
             }
           >
             Dashboard
@@ -36,7 +36,7 @@ const Sidebar = () => {
             className={({ isActive }) =>
               isActive
                 ? "flex items-center py-3 px-4 bg-cyan-100 rounded-lg text-cyan-900 font-semibold"
-                : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-gray-700 font-semibold"
+                : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white font-semibold"
             }
           >
             New Insurance
@@ -48,20 +48,19 @@ const Sidebar = () => {
             className={({ isActive }) =>
               isActive
                 ? "flex items-center py-3 px-4 bg-cyan-100 rounded-lg text-cyan-900 font-semibold"
-                : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-gray-700 font-semibold"
+                : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white font-semibold"
             }
           >
             About
           </NavLink>
+          <button className=" py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white justify-start font-semibold" onClick={handleLogout}>Logout</button>
         </li>
       </ul>
      
      
     </div>
   </div>
-  <div className=" my-0">
-      <button className="logout-button" onClick={handleLogout}>Logout</button>
-      </div>
+  
 </div>
 
   );

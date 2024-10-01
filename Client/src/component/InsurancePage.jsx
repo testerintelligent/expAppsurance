@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../style/InsurancePage.css';
-import Navbar from './NavBar';
 
 const InsurancePage = () => {
   const [Message, setMessage] = useState('');
@@ -119,67 +118,70 @@ const InsurancePage = () => {
   };
 
   return (
-    <div className="insurance-page">
+    <div className=' flex justify-center bg-violet-600 w-100% h-100% pb-10'>
+    <div className=" mt-4 h-500% w-115 ml-48 bg-white border-2 border-black rounded-lg">
+    <div className='h-14 bg-violet-600 text-center '>
+    <h1 className='font-bold p-3 text-white '>Insurance Policy Details</h1>
+    </div>
       
-      <h1>Insurance Policy Details</h1>
       <form  onSubmit={handleInsurance}>
         <div className="insurance-form">
         <div className='labels-fields'>
-            <label className="insuranceLabel" htmlFor="Name">Name: </label>
-            <label className="insuranceLabel" htmlFor="email">Email:  </label>
-            <label className="insuranceLabel" htmlFor="Address">Address:  </label>
-            <label className="insuranceLabel" htmlFor="DateOfBirth">Date of Birth:  </label>
-            <label className="insuranceLabel">Gender:    </label>
-            <label className="insuranceLabel">Policy Type:   </label>
-            <label className="insuranceLabel" htmlFor="SumInsured">Sum Insured:  </label>
-            <label className="insuranceLabel" htmlFor="Premium">Premium:  </label>
+            <label className="font-bold" htmlFor="Name">Name: </label>
+            <label className="font-bold pt-6" htmlFor="email">Email:  </label>
+            <label className="font-bold pt-8" htmlFor="Address">Address:  </label>
+            <label className="font-bold pl-3 pt-8" htmlFor="DateOfBirth">BirthDate:  </label>
+            <label className="font-bold pt-7">Gender:    </label>
+            <label className="font-bold pt-9">PolicyType:   </label>
+            <label className="font-bold pt-8" htmlFor="SumInsured">SumInsured:  </label>
+            <label className="font-bold pt-8" htmlFor="Premium">Premium:  </label>
 
         </div>
         <div className='inputFields'>
         <div className="form-group">
-           <input className='insuranceInput' type="text" id="Name" onChange={handleChange} name="Name" value={insuranceData.Name} />
+           <input className=' font-semibold p-2 h-10 w-80 border-2 border-black rounded-lg' type="text" id="Name" onChange={handleChange} name="Name" value={insuranceData.Name} placeholder='Enter your Name' />
           {errors.Name && <p className="error">{errors.Name}</p>}
         </div>
         <div className="form-group">
-         <input className='insuranceInput' type="email" id="email" onChange={handleChange} name="email" value={insuranceData.email} />
+         <input className='font-semibold p-2 h-10 w-80 border-2 border-black rounded-lg' type="email" id="email" onChange={handleChange} name="email" value={insuranceData.email} placeholder='Enter your Email' />
          {errors.email && <p className="error">{errors.email}</p>}
         </div>
         <div className="form-group">
-         <input className='insuranceInput' type="text" id="Address" onChange={handleChange} name="Address" value={insuranceData.Address} />
+         <input className='font-semibold  p-2 h-10 w-80 border-2 border-black rounded-lg' type="text" id="Address" onChange={handleChange} name="Address" value={insuranceData.Address} placeholder='Enter your Address'/>
            {errors.Address && <p className="error">{errors.Address}</p>}
         </div>
         <div className="form-group">
-         <input className='insuranceInput' onChange={handleChange} type="date" id="DateOfBirth" name="DateOfBirth" value={insuranceData.DateOfBirth} />
+         <input className='uppercase font-semibold  p-2 h-10 w-80 border-2 border-black rounded-lg' onChange={handleChange} type="date" id="DateOfBirth" name="DateOfBirth" value={insuranceData.DateOfBirth} placeholder='Select Your birth date'/>
            {errors.DateOfBirth && <p className="error">{errors.DateOfBirth}</p>}
         </div>
-        <div className="form-group-radio">
-            <label className='inputRadio'>
+        <div className="flex ">
+            <label className=' pl-1 p-2 font-semibold'>
               <input type="radio" className='inputRadiobutton' name="Gender" value="Male" onChange={handleChange} checked={insuranceData.Gender === 'Male'} />
-              Male
+              Male 
             </label>
-            <label className='inputRadio'>
+            <label className=' p-2 font-semibold'>
               <input type="radio" className='inputRadiobutton' name="Gender" value="Female" onChange={handleChange} checked={insuranceData.Gender === 'Female'} />
               Female
             </label>
           {errors.Gender && <p className="error">{errors.Gender}</p>}
         </div>
-        <div className="form-group-CheckBox">
-            <label className='inputCheckBox'>
+        <div className="flex sm:float-end">
+            <label className=' font-semibold p-3'>
               <input type="checkbox" className='inputCheckBoxtext' name="PolicyType" value="Health Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Health Insurance ')} />
               Health Insurance
             </label >
-            <label className='inputCheckBox'>
+            <label className=' font-semibold p-3'>
               <input type="checkbox" className='inputCheckBoxtext' name="PolicyType" value="Life Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Life Insurance ')} />
               Life Insurance
             </label>
-            <label className='inputCheckBox'>
+            <label className=' font-semibold p-3'>
               <input type="checkbox" className='inputCheckBoxtext' name="PolicyType" value="Vehicle Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Vehicle Insurance ')} />
               Vehicle Insurance
             </label> 
           {errors.PolicyType && <p className="error">{errors.PolicyType}</p>}
         </div>
         <div className="form-group">
-         <select onChange={handleChange} className="insuranceInput" name="SumInsured" value={insuranceData.SumInsured}>
+         <select onChange={handleChange} className="p-2 font-semibold h-10 w-80 border-2 border-black rounded-lg" name="SumInsured" value={insuranceData.SumInsured}>
             <option value="">Select Sum Insured</option>
             <option value="100000">1,00,000</option>
             <option value="300000">3,00,000</option>
@@ -189,15 +191,16 @@ const InsurancePage = () => {
           {errors.SumInsured && <p className="error">{errors.SumInsured}</p>}
         </div>
         <div className="form-group">
-          <input className='insuranceInput' onChange={handleChange} type="number" id="Premium" step="0.01" name="Premium" value={insuranceData.Premium} />
+          <input className='p-2 h-10 w-80 border-2 border-black rounded-lg' onChange={handleChange} type="number" id="Premium" step="0.01" name="Premium" value={insuranceData.Premium} placeholder='Enter you Premium amount' />
          {errors.Premium && <p className="error">{errors.Premium}</p>}
         </div>
         </div>
         </div>
-        <button className='insuranceButton' type="submit">Submit</button>
-        <button className='insuranceDashboardButton' type="button" onClick={handleDashboardButton}>Go to Dashboard</button>
+        <button className='border-2 border-black rounded-md p-2 mb-2 text-white bg-violet-600 hover:bg-white hover:text-black mr-2' type="submit">Submit</button>
+        <button className='border-2 border-black rounded-md p-2 mb-2 bg-violet-600 text-white hover:bg-white hover:text-black' type="button" onClick={handleDashboardButton}>Go to Dashboard</button>
       </form>
       {Message && <p>{Message}</p>}
+    </div>
     </div>
   );
 };

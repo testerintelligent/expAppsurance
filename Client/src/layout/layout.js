@@ -4,7 +4,7 @@ import Sidebar from "./sidebar";
 const Layout = () => {
   return (
     <div className="mainApp">
-      <aside className="w-[80px] float-left">
+      <aside className="w-[80px] float-left ">
         <Sidebar />
       </aside>
 

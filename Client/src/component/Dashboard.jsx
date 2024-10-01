@@ -63,7 +63,7 @@ const Dashboard = () => {
   
 
   return (
-    <div>
+    <div className='mt-0'>
     
       {/* <div className='dashboardGreeting'>
         <h1>Welcome to the Dashboard</h1>
@@ -71,34 +71,40 @@ const Dashboard = () => {
       </div> */}
      
       {insuranceData.length > 0 ? (
+        <div className='bg-violet-600  ml-44 w-max h-max'>
         <div className='insuranceTable'>
-        <table>
-          <thead>
-            <tr>
-              <th>Policy Create Date</th>
-              <th>Name</th>
-              <th>Policy type</th>
-              <th>Sum Insured</th>
-              <th>Premium</th>
-              <th>Delete Record</th>
+        <table  className='mt-0 border-2 border-white w-max '>
+          <thead className=''>
+            <tr className='border-2 border-white p-1'>
+              <th className=' bg-black text-white border-2 border-white p-0'>Policy Create Date</th>
+              <th className=' bg-black text-white border-2 border-white '>Policy ID</th>
+              <th className='bg-black text-white border-2 border-white'>Name</th>
+              <th className='bg-black text-white border-2 border-white'>Email</th>
+              <th className='bg-black text-white border-2 border-white'>Policy type</th>
+              <th className='bg-black text-white border-2 border-white'>Sum Insured</th>
+              <th className='bg-black text-white border-2 border-white'>Premium</th>
+              <th className='bg-black text-white border-2 border-white'>Delete Record</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className='' >
             {insuranceData.map((insurance, index) => (
-              <tr key={index}>
-                <td>{formatDate(insurance.CurrentDate)}</td>
-                <td>{insurance.Name}</td>
-                <td>{insurance.PolicyType.join(' ')}</td>
-                <td>{insurance.SumInsured}</td>
-                <td>{insurance.Premium}</td>
+              <tr className='hover:bg-black border-2 ' key={index}>
+                <td className='text-white border-white border-2 p-0'>{formatDate(insurance.CurrentDate)}</td>
+                <td className='text-white border-white border-2 p-0'>{insurance._id}</td>
+                <td className='text-white border-white border-2 p-0'>{insurance.Name}</td>
+                <td className='text-white border-white border-2 p-0'>{insurance.email}</td>
+                <td className='text-white border-white border-2 p-0'>{insurance.PolicyType.join(' ')}</td>
+                <td className='text-white border-white border-2 p-0'>{insurance.SumInsured}</td>
+                <td className='text-white border-white border-2 p-0'>{insurance.Premium}</td>
                 
                 <td className='deleteButton'>
-                  <button className='DashboardDeleteButton' onClick={() => openModal(insurance._id)}>Delete Policy</button>
+                  <button className='h-7 w-32 text-center hover:text-violet-400 text-white bg-black hover:bg-white  border-black rounded-md uppercase ' onClick={() => openModal(insurance._id)}>Delete Policy</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        </div>
         </div>
       ) : (
         <p>No insurance data available</p>
@@ -109,12 +115,14 @@ const Dashboard = () => {
         <div className="modal">
           <div className="modalContent">
             <p>Are you sure you want to delete this insurance policy?</p>
-            <button className='PopupAccept' onClick={handleDelete}>Yes</button>
-            <button className='PopupCancel' onClick={() => setShowModal(false)}>Cancel</button>
+            <button className='PopupAccept border-2 text-black bg-white  border-black rounded-md hover:bg-violet-600 hover:text-white' onClick={handleDelete}>Yes</button>
+            <button className='PopupCancel border-2 text-black bg-white  border-black rounded-md hover:bg-violet-600 hover:text-white' onClick={() => setShowModal(false)}>Cancel</button>
           </div>
         </div>
       )}
+      
     </div>
+    
   );
 };
 

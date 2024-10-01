@@ -7,7 +7,7 @@ import HomePage from './component/HomePage';
 import InsurancePage from './component/InsurancePage';
 import ForgotPasswordPage from './component/ForgotPassword';
 import Dashboard from './component/Dashboard';
-import Navbar from './component/NavBar';
+
 import Layout from './layout/layout';
 import About from './component/About';
 import "./style/tailwind.css";

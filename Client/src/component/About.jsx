@@ -2,6 +2,7 @@ import React from "react";
 
 const About=()=>{
  return(
+  <div className="flex justify-center bg-violet-600 w-100% h-100% pb-10">
   <div className="aboutPage">
         <p>
         Welcome to <span><b><span><b>AppInsurance</b></span></b></span>, your trusted partner in securing a brighter future. At <span><b><span><b>AppInsurance</b></span></b></span>, we are dedicated to offering comprehensive, reliable, and affordable insurance solutions tailored to your unique needs. Our diverse range of insurance plans includes <b>life insurance, health insurance, vehicle insurance</b>, and <b>home insurance</b>, each designed to safeguard you, your loved ones, and your possessions.</p>
@@ -23,6 +24,7 @@ We take pride in offering<b> customized coverage options</b> that cater to your 
 <p>
 Join us today and discover the convenience and reliability of having a trusted insurance partner by your side. At <span><b>AppInsurance</b></span>, we are here to help you navigate life's uncertainties and ensure that you are always protected.
 </p>
+  </div>
   </div>
  )
 }
