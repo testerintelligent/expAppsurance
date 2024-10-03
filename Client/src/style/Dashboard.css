@@ -55,3 +55,9 @@ th, td {
 .modalContent button {
   margin: 10px;
 }
+table tr:hover td:nth-child(8) { 
+
+  background-color: white;
+ color: black;
+
+}

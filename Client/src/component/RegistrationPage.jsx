@@ -32,7 +32,8 @@ const RegistrationPage = () => {
     navigate('/');
   }
   const handleSubmit=(event)=>{
-    {<div><h5>{message}</h5>
+    {<div>
+      <h5>{message}</h5>
           </div>
   }
     event.preventDefault();
@@ -61,11 +62,14 @@ const RegistrationPage = () => {
 
   
   return (
-    <div className="registrationPage">
+    <div className=' flex justify-center'>
+    <div className="p-7 rounded-t-lg  uppercase bg-violet-600 h-100%">
       
-      <div className='registration_container'>
-     
-        <h3 className='registerTitle'>Create an Account</h3>
+      <div className='bg-white rounded-md p-5 w-96'>
+     <div className=' font-semibold'>
+     <h3 className='registerTitle'>Create an Account</h3>
+     </div>
+       
         {submitted?(
           <div className="success-message"><h2>Registration successful!</h2>
            <button className='navLogin' onClick={navigateLoginPage}>Navigate to login Page
@@ -164,13 +168,14 @@ const RegistrationPage = () => {
           />
         </div>
           </div>
-          <button type="submit" className='registerButton'>Register</button>
+          <button type="submit" className='border-2 border-black p-2 rounded-md bg-violet-600 text-white hover:bg-white hover:text-black'>Register</button>
         </form>
        
       )}
        { <p>{message}
        </p>}
       </div>  
+    </div>
     </div>
   );
 }

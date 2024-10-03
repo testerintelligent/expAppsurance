@@ -53,11 +53,12 @@ const Sidebar = () => {
           >
             About
           </NavLink>
-          <button className=" py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white justify-start font-semibold" onClick={handleLogout}>Logout</button>
         </li>
       </ul>
      
-     
+      <div className=" px-4 py-3  hover:bg-cyan-50 flex items-center hover:text-cyan-900 text-white font-semibold rounded-lg">
+        <button className='w-64 text-left h-6' onClick={handleLogout}>Logout</button>
+      </div>
     </div>
   </div>
   

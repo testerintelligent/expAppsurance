@@ -41,9 +41,10 @@ const LoginPage = () => {
 
   return (
     <div className="flex  text-center justify-center  rounded-lg ">
-      <div className="border-2 h-96  w-96 m-9   border-black shadow-2xl bg-white rounded-lg">
+     
+      <div className="border-2 h-96 mt-32  w-120 m-9   border-black shadow-2xl bg-white rounded-lg">
         <div className="text-center  ">
-        <h1 className="p-7 rounded-t-lg font-text-lg font-black justify-center text-white uppercase bg-violet-600 text-xl">Sign in</h1>
+        <h1 className="p-7 rounded-t-md font-text-lg font-black  justify-center text-white uppercase bg-[#6946C6] text-xl">Sign in</h1>
         </div>
        <div className="p-7">
         <div className=" text-center m-2 ">
@@ -81,6 +82,10 @@ const LoginPage = () => {
           <h4 className="hover:text-slate-400 pb-3">Forgot password ?</h4>
         </a>
       </div>
+      
+      </div>
+      <div className="flex-col-reverse ">
+        <h2 className=" justify-end text-white uppercase font-semibold hover:text-black text-4xl size-96 pt-4 pl-64">[Expleosurance]</h2>
       </div>
     </div>
   );

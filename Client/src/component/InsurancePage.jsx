@@ -118,9 +118,9 @@ const InsurancePage = () => {
   };
 
   return (
-    <div className=' flex justify-center bg-violet-600 w-100% h-100% pb-10'>
-    <div className=" mt-4 h-500% w-115 ml-48 bg-white border-2 border-black rounded-lg">
-    <div className='h-14 bg-violet-600 text-center '>
+    <div className=' flex justify-center bg-[#6946C6] w-100% h-100% pb-10'>
+    <div className=" mt-4 h-500% w-180 ml-48 bg-white border-2 border-black rounded-lg">
+    <div className='h-14 bg-[#6946C6] text-center rounded-t-md'>
     <h1 className='font-bold p-3 text-white '>Insurance Policy Details</h1>
     </div>
       

@@ -23,11 +23,12 @@ function App() {
           
        
             <Route path="/" element={<LoginPage/>} />
-            <Route element={<Layout />}>
+            <Route path='/forgotPassword' element={<ForgotPasswordPage/>}/>
             <Route path="/register" element={<RegistrationPage/>} />
+            <Route element={<Layout />}>
             <Route path='/home' element={<HomePage/>}/>
             <Route path='/insurance' element={<InsurancePage/>}/>
-            <Route path='/forgotPassword' element={<ForgotPasswordPage/>}/>
+           
             <Route path='/Dashboard' element={<Dashboard/>}/>
             <Route path='/about' element={<About/>}/>
           </Route>

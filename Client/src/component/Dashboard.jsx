@@ -71,7 +71,7 @@ const Dashboard = () => {
       </div> */}
      
       {insuranceData.length > 0 ? (
-        <div className='bg-violet-600  ml-44 w-max h-max'>
+        <div className='bg-[#6946C6]  ml-44 w-max h-max'>
         <div className='insuranceTable'>
         <table  className='mt-0 border-2 border-white w-max '>
           <thead className=''>
@@ -88,7 +88,7 @@ const Dashboard = () => {
           </thead>
           <tbody className='' >
             {insuranceData.map((insurance, index) => (
-              <tr className='hover:bg-black border-2 ' key={index}>
+              <tr className='hover:bg-black border-2  ' key={index} >
                 <td className='text-white border-white border-2 p-0'>{formatDate(insurance.CurrentDate)}</td>
                 <td className='text-white border-white border-2 p-0'>{insurance._id}</td>
                 <td className='text-white border-white border-2 p-0'>{insurance.Name}</td>
@@ -98,7 +98,7 @@ const Dashboard = () => {
                 <td className='text-white border-white border-2 p-0'>{insurance.Premium}</td>
                 
                 <td className='deleteButton'>
-                  <button className='h-7 w-32 text-center hover:text-violet-400 text-white bg-black hover:bg-white  border-black rounded-md uppercase ' onClick={() => openModal(insurance._id)}>Delete Policy</button>
+                  <button className='text-center hover:text-red-600 text-black font-semibold    border-black rounded-md uppercase ' onClick={() => openModal(insurance._id)}>Delete Policy</button>
                 </td>
               </tr>
             ))}
