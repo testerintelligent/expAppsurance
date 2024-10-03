@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import "../style/ForgotPassword.css";
 import { useNavigate } from 'react-router-dom';
 
 
@@ -31,15 +30,20 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <div className="forgot-password-page border-2 bg-white">
-      
-      <h1>Forgot Password</h1>
+    <div className="bg-[#6946C6] p-7 flex ">
+       
+      <div className='  h-90 w-96  border-2  border-black rounded-lg bg-white'>
+        <div className='bg-[#6946C6] h-12 rounded-t-md '>
+        <h1 className='font-semibold uppercase pt-3 text-white'>Forgot Password</h1>
+        </div>
+     
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label className='passLabel'>Email:</label>
+          <label className='passLabel pl-6'>Email:</label>
           <input
-            className='passInput'
+            className='p-2 border-2 ml-6 border-black w-72 rounded-md h-10 mr-2'
             type="email"
+            placeholder='Enter your email here...'
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -47,10 +51,11 @@ const ForgotPasswordPage = () => {
         </div>
 
         <div className="form-group">
-          <label className='passLabel'>New Password:</label>
+          <label className='passLabel pl-6'>New Password:</label>
           <input
-            className='passInput'
+            className='p-2 border-2 ml-6 border-black w-72 rounded-md h-10  mr-2 '
             type="password"
+            placeholder='Enter your new password'
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             required
@@ -58,18 +63,23 @@ const ForgotPasswordPage = () => {
         </div>
 
         <div className="form-group">
-          <label className='passLabel'>Confirm Password:</label>
+          <label className='passLabel pl-6'>Confirm Password:</label>
           <input
-            className='passInput'
+            className='p-2 border-2 ml-6 border-black w-72 rounded-md h-10  mr-2'
             type="password"
+            placeholder='Confirm your new password'
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
         </div>
-        <button className='passButton' type="submit">Reset Password</button>
+        <button className='border-2 bg-white border-black p-3 rounded-md text-black hover:bg-[#6946C6] hover:text-white mt-2 mb-2' type="submit">Reset Password</button>
       </form>
       {message && <p>{message}</p>}
+      </div>
+      <div className=" lg:pl-96">
+        <h2 className=" text-white uppercase font-semibold hover:text-black sm:text-4xl size-96 mr-7 pr-10">[Expleosurance]</h2>
+      </div>
     </div>
   );
 };

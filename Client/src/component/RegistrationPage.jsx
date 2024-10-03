@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import '../style/RegistrationPage.css'; 
+
 
 
 const RegistrationPage = () => {
@@ -62,12 +62,12 @@ const RegistrationPage = () => {
 
   
   return (
-    <div className=' flex justify-center'>
-    <div className="p-7 rounded-t-lg  uppercase bg-violet-600 h-100%">
+    <div className=' flex justify-center h-100vh w-100vh p-14'>
+    <div className=" rounded-lg  uppercase   w-96 border-2 border-black bg-white ">
       
-      <div className='bg-white rounded-md p-5 w-96'>
-     <div className=' font-semibold'>
-     <h3 className='registerTitle'>Create an Account</h3>
+     
+     <div className=' font-semibold bg-[#6946C6] h-16 pt-5 text-white rounded-t-md'>
+     <h3 className=''>Create an Account</h3>
      </div>
        
         {submitted?(
@@ -78,97 +78,112 @@ const RegistrationPage = () => {
           </div>
         ):(
           <form onSubmit={handleSubmit}>
-          <div className="registerinput">
-            <label htmlFor="firstName">First Name:</label>
-            <input
+            <div className='flex-col'>
+              <div className='text-right '>
+              <label className='p-3' htmlFor="">First Name:</label>   
+              <input
+            className='border-2 border-black m-2 rounded-md '
               type="text"
               id="firstName"
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
             />
-          </div>
-          <div className="registerinput">
-            <label htmlFor="lastName">Last Name:</label>
+              </div >
+            <div className='flex-col'>
+            <label  className='p-3' htmlFor="lastName">Last Name:</label>
             <input
+              className='border-2 border-black m-2 rounded-md '
               type="text"
               id="lastName"
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
             />
-            <div className="registerinput">
-            <label htmlFor="email">Email:</label>
+            </div>
+            <div className='flex-col'>
+            <label className='p-3' htmlFor="email">Email:</label>
             <input
+              className='border-2 border-black m-2 rounded-md '
               type="email"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
             />
-          </div>
-          <div className="registerinput">
-          <label htmlFor="Password">Password:</label>
+            </div>
+            <div className='flex-col'>
+            <label className='p-3' htmlFor="Password">Password:</label>
             <input
+              className='border-2 border-black m-2 rounded-md '
               type="password"
               id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
             />
-          </div>
-          <div className="registerinput">
-          <label htmlFor="confirmPassword">ConfirmPassword:</label>
+            </div>
+            <div className='flex-col'>
+            <label className='p-3' htmlFor="confirmPassword">CheckPassword:</label>
             <input
+              className='border-2 border-black m-2 rounded-md '
               type="password"
               id="confirmPassword"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
             />
-          </div>
-          <div className="registerinput">
-          <label htmlFor="startDate">startDate:</label>
-          <input
+            </div>
+            <div className='flex-col'>
+            <label className='p-3' htmlFor="startDate">startDate:</label>
+            <input
+            className='border-2 border-black m-2 rounded-md '
             type="Date"
             id="startDate"
             name="startDate"
             value={formData.startDate}
             onChange={handleChange}
           />
-        </div>
-        <div className="registerinput">
-          <label htmlFor="endDate">EndDate:</label>
-          <input
+            </div>
+            <div className='flex-col'>
+            <label className='p-3' htmlFor="endDate">EndDate:</label>
+            <input
+            className='border-2 border-black m-2 rounded-md '
             type="Date"
             id="endDate"
             name="endDate"
             value={formData.endDate}
             onChange={handleChange}
           />
-        </div>
-        <div className="registerinput">
-          <label htmlFor="address">Address:</label>
-          <input
+            </div>
+            <div className='flex-col'>
+            <label className='p-3' htmlFor="address">Address:</label>
+            <input
+            className='border-2 border-black m-2 rounded-md '
             type="text"
             id="address"
             name="address"
             value={formData.address}
             onChange={handleChange}
           />
-        </div>
-        <div className="registerinput">
-          <label htmlFor="phoneNumber">PhoneNumber:</label>
+            </div>
+          <div className='flex-col'>
+          <label className='p-3' htmlFor="phoneNumber">PhoneNumber:</label>
           <input
+            className='border-2 border-black m-2 rounded-md '
             type="text"
             id="phoneNumber"
             name="phoneNumber"
             value={formData.phoneNumber}
             onChange={handleChange}
           />
-        </div>
           </div>
-          <button type="submit" className='border-2 border-black p-2 rounded-md bg-violet-600 text-white hover:bg-white hover:text-black'>Register</button>
+          <div>
+            
+          </div>
+            </div>
+          
+         <button type="submit" className=' mb-2 border-2 border-black p-2 rounded-md bg-violet-600 text-white hover:bg-white hover:text-black'>Register</button>
         </form>
        
       )}
@@ -176,7 +191,7 @@ const RegistrationPage = () => {
        </p>}
       </div>  
     </div>
-    </div>
+   
   );
 }
 

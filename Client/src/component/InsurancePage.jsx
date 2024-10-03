@@ -139,49 +139,49 @@ const InsurancePage = () => {
         </div>
         <div className='inputFields'>
         <div className="form-group">
-           <input className=' font-semibold p-2 h-10 w-80 border-2 border-black rounded-lg' type="text" id="Name" onChange={handleChange} name="Name" value={insuranceData.Name} placeholder='Enter your Name' />
+           <input className=' font-semibold p-2 h-10 w-80 border-2 border-black rounded-lg mb-2' type="text" id="Name" onChange={handleChange} name="Name" value={insuranceData.Name} placeholder='Enter your Name' />
           {errors.Name && <p className="error">{errors.Name}</p>}
         </div>
         <div className="form-group">
-         <input className='font-semibold p-2 h-10 w-80 border-2 border-black rounded-lg' type="email" id="email" onChange={handleChange} name="email" value={insuranceData.email} placeholder='Enter your Email' />
+         <input className='font-semibold p-2 h-10 w-80 border-2 border-black rounded-lg mb-2' type="email" id="email" onChange={handleChange} name="email" value={insuranceData.email} placeholder='Enter your Email' />
          {errors.email && <p className="error">{errors.email}</p>}
         </div>
         <div className="form-group">
-         <input className='font-semibold  p-2 h-10 w-80 border-2 border-black rounded-lg' type="text" id="Address" onChange={handleChange} name="Address" value={insuranceData.Address} placeholder='Enter your Address'/>
+         <input className='font-semibold  p-2 h-10 w-80 border-2 border-black rounded-lg mt-2' type="text" id="Address" onChange={handleChange} name="Address" value={insuranceData.Address} placeholder='Enter your Address'/>
            {errors.Address && <p className="error">{errors.Address}</p>}
         </div>
         <div className="form-group">
-         <input className='uppercase font-semibold  p-2 h-10 w-80 border-2 border-black rounded-lg' onChange={handleChange} type="date" id="DateOfBirth" name="DateOfBirth" value={insuranceData.DateOfBirth} placeholder='Select Your birth date'/>
+         <input className='uppercase font-semibold  p-2 h-10 w-80 border-2 border-black rounded-lg mt-4' onChange={handleChange} type="date" id="DateOfBirth" name="DateOfBirth" value={insuranceData.DateOfBirth} placeholder='Select Your birth date'/>
            {errors.DateOfBirth && <p className="error">{errors.DateOfBirth}</p>}
         </div>
         <div className="flex ">
             <label className=' pl-1 p-2 font-semibold'>
-              <input type="radio" className='inputRadiobutton' name="Gender" value="Male" onChange={handleChange} checked={insuranceData.Gender === 'Male'} />
+              <input type="radio" className='inputRadiobutton mt-5 ml-14' name="Gender" value="Male" onChange={handleChange} checked={insuranceData.Gender === 'Male'} />
               Male 
             </label>
             <label className=' p-2 font-semibold'>
-              <input type="radio" className='inputRadiobutton' name="Gender" value="Female" onChange={handleChange} checked={insuranceData.Gender === 'Female'} />
+              <input type="radio" className='inputRadiobutton mt-5' name="Gender" value="Female" onChange={handleChange} checked={insuranceData.Gender === 'Female'} />
               Female
             </label>
           {errors.Gender && <p className="error">{errors.Gender}</p>}
         </div>
         <div className="flex sm:float-end">
             <label className=' font-semibold p-3'>
-              <input type="checkbox" className='inputCheckBoxtext' name="PolicyType" value="Health Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Health Insurance ')} />
+              <input type="checkbox" className='inputCheckBoxtext mt-4 ml-7' name="PolicyType" value="Health Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Health Insurance ')} />
               Health Insurance
             </label >
             <label className=' font-semibold p-3'>
-              <input type="checkbox" className='inputCheckBoxtext' name="PolicyType" value="Life Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Life Insurance ')} />
+              <input type="checkbox" className='inputCheckBoxtext mt-4' name="PolicyType" value="Life Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Life Insurance ')} />
               Life Insurance
             </label>
             <label className=' font-semibold p-3'>
-              <input type="checkbox" className='inputCheckBoxtext' name="PolicyType" value="Vehicle Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Vehicle Insurance ')} />
+              <input type="checkbox" className='inputCheckBoxtext mt-4' name="PolicyType" value="Vehicle Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Vehicle Insurance ')} />
               Vehicle Insurance
             </label> 
           {errors.PolicyType && <p className="error">{errors.PolicyType}</p>}
         </div>
         <div className="form-group">
-         <select onChange={handleChange} className="p-2 font-semibold h-10 w-80 border-2 border-black rounded-lg" name="SumInsured" value={insuranceData.SumInsured}>
+         <select onChange={handleChange} className="p-2 font-semibold h-10 w-80 border-2 mb-2 border-black rounded-lg" name="SumInsured" value={insuranceData.SumInsured}>
             <option value="">Select Sum Insured</option>
             <option value="100000">1,00,000</option>
             <option value="300000">3,00,000</option>
@@ -196,8 +196,8 @@ const InsurancePage = () => {
         </div>
         </div>
         </div>
-        <button className='border-2 border-black rounded-md p-2 mb-2 text-white bg-violet-600 hover:bg-white hover:text-black mr-2' type="submit">Submit</button>
-        <button className='border-2 border-black rounded-md p-2 mb-2 bg-violet-600 text-white hover:bg-white hover:text-black' type="button" onClick={handleDashboardButton}>Go to Dashboard</button>
+        <button className='mt-2 border-2 border-black rounded-md p-2 mb-2 text-white bg-violet-600 hover:bg-white hover:text-black mr-2' type="submit">Submit</button>
+        <button className='mt-2  border-2 border-black rounded-md p-2 mb-2 bg-violet-600 text-white hover:bg-white hover:text-black' type="button" onClick={handleDashboardButton}>Go to Dashboard</button>
       </form>
       {Message && <p>{Message}</p>}
     </div>

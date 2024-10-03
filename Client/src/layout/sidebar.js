@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React from 'react';
 import { NavLink ,useNavigate} from 'react-router-dom';
 
@@ -14,7 +15,7 @@ const Sidebar = () => {
     <div>
       <div className="px-4 py-6 flex items-center justify-center border-b border-gray-200">
         <NavLink to="/">
-          <p className="text-lg font-bold text-white">App Insurance</p>
+          <p className="text-lg font-bold text-white">ExpleoSurance</p>
         </NavLink>
       </div>
       <ul className="mt-4">
