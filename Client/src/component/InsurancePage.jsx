@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../style/InsurancePage.css';
+// import '../style/InsurancePage.css';
 
 const InsurancePage = () => {
   const [Message, setMessage] = useState('');
@@ -154,9 +154,9 @@ const InsurancePage = () => {
          <input className='uppercase font-semibold  p-2 h-10 w-80 border-2 border-black rounded-lg mt-4' onChange={handleChange} type="date" id="DateOfBirth" name="DateOfBirth" value={insuranceData.DateOfBirth} placeholder='Select Your birth date'/>
            {errors.DateOfBirth && <p className="error">{errors.DateOfBirth}</p>}
         </div>
-        <div className="flex ">
-            <label className=' pl-1 p-2 font-semibold'>
-              <input type="radio" className='inputRadiobutton mt-5 ml-14' name="Gender" value="Male" onChange={handleChange} checked={insuranceData.Gender === 'Male'} />
+        <div className="flex">
+            <label className='p-2 font-semibold'>
+              <input type="radio" className='inputRadiobutton mt-5' name="Gender" value="Male" onChange={handleChange} checked={insuranceData.Gender === 'Male'} />
               Male 
             </label>
             <label className=' p-2 font-semibold'>
@@ -167,21 +167,21 @@ const InsurancePage = () => {
         </div>
         <div className="flex sm:float-end">
             <label className=' font-semibold p-3'>
-              <input type="checkbox" className='inputCheckBoxtext mt-4 ml-7' name="PolicyType" value="Health Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Health Insurance ')} />
-              Health Insurance
+              <input type="checkbox" className='inputCheckBoxtext mt-5' name="PolicyType" value="Health Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Health Insurance ')} />
+              Health
             </label >
             <label className=' font-semibold p-3'>
-              <input type="checkbox" className='inputCheckBoxtext mt-4' name="PolicyType" value="Life Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Life Insurance ')} />
-              Life Insurance
+              <input type="checkbox" className='inputCheckBoxtext mt-5' name="PolicyType" value="Life Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Life Insurance ')} />
+              Life
             </label>
             <label className=' font-semibold p-3'>
-              <input type="checkbox" className='inputCheckBoxtext mt-4' name="PolicyType" value="Vehicle Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Vehicle Insurance ')} />
-              Vehicle Insurance
+              <input type="checkbox" className='inputCheckBoxtext mt-5' name="PolicyType" value="Vehicle Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Vehicle Insurance ')} />
+              Vehicle
             </label> 
           {errors.PolicyType && <p className="error">{errors.PolicyType}</p>}
         </div>
         <div className="form-group">
-         <select onChange={handleChange} className="p-2 font-semibold h-10 w-80 border-2 mb-2 border-black rounded-lg" name="SumInsured" value={insuranceData.SumInsured}>
+         <select onChange={handleChange} className="mt-4 p-2 font-semibold h-10 w-80 border-2 mb-2 border-black rounded-lg" name="SumInsured" value={insuranceData.SumInsured}>
             <option value="">Select Sum Insured</option>
             <option value="100000">1,00,000</option>
             <option value="300000">3,00,000</option>
@@ -191,7 +191,7 @@ const InsurancePage = () => {
           {errors.SumInsured && <p className="error">{errors.SumInsured}</p>}
         </div>
         <div className="form-group">
-          <input className='p-2 h-10 w-80 border-2 border-black rounded-lg' onChange={handleChange} type="number" id="Premium" step="0.01" name="Premium" value={insuranceData.Premium} placeholder='Enter you Premium amount' />
+          <input className='mt-2 p-2 h-10 w-80 border-2 border-black rounded-lg' onChange={handleChange} type="number" id="Premium" step="0.01" name="Premium" value={insuranceData.Premium} placeholder='Enter you Premium amount' />
          {errors.Premium && <p className="error">{errors.Premium}</p>}
         </div>
         </div>

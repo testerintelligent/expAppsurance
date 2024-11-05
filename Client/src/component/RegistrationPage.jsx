@@ -77,114 +77,125 @@ const RegistrationPage = () => {
          
           </div>
         ):(
-          <form onSubmit={handleSubmit}>
-            <div className='flex-col'>
-              <div className='text-right '>
-              <label className='p-3' htmlFor="">First Name:</label>   
-              <input
-            className='border-2 border-black m-2 rounded-md '
-              type="text"
-              id="firstName"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-            />
-              </div >
-            <div className='flex-col'>
-            <label  className='p-3' htmlFor="lastName">Last Name:</label>
-            <input
-              className='border-2 border-black m-2 rounded-md '
-              type="text"
-              id="lastName"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-            />
-            </div>
-            <div className='flex-col'>
-            <label className='p-3' htmlFor="email">Email:</label>
-            <input
-              className='border-2 border-black m-2 rounded-md '
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-            </div>
-            <div className='flex-col'>
-            <label className='p-3' htmlFor="Password">Password:</label>
-            <input
-              className='border-2 border-black m-2 rounded-md '
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-            </div>
-            <div className='flex-col'>
-            <label className='p-3' htmlFor="confirmPassword">CheckPassword:</label>
-            <input
-              className='border-2 border-black m-2 rounded-md '
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-            />
-            </div>
-            <div className='flex-col'>
-            <label className='p-3' htmlFor="startDate">startDate:</label>
-            <input
-            className='border-2 border-black m-2 rounded-md '
-            type="Date"
-            id="startDate"
-            name="startDate"
-            value={formData.startDate}
-            onChange={handleChange}
-          />
-            </div>
-            <div className='flex-col'>
-            <label className='p-3' htmlFor="endDate">EndDate:</label>
-            <input
-            className='border-2 border-black m-2 rounded-md '
-            type="Date"
-            id="endDate"
-            name="endDate"
-            value={formData.endDate}
-            onChange={handleChange}
-          />
-            </div>
-            <div className='flex-col'>
-            <label className='p-3' htmlFor="address">Address:</label>
-            <input
-            className='border-2 border-black m-2 rounded-md '
-            type="text"
-            id="address"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-          />
-            </div>
-          <div className='flex-col'>
-          <label className='p-3' htmlFor="phoneNumber">PhoneNumber:</label>
-          <input
-            className='border-2 border-black m-2 rounded-md '
-            type="text"
-            id="phoneNumber"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-          />
-          </div>
-          <div>
-            
-          </div>
-            </div>
-          
-         <button type="submit" className=' mb-2 border-2 border-black p-2 rounded-md bg-violet-600 text-white hover:bg-white hover:text-black'>Register</button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-4 mr-5">
+  <div className="flex items-center mt-5">
+    <label className="w-1/3 text-right pr-4" htmlFor="firstName">First Name:</label>
+    <input
+      className="w-2/3 border-2 border-black rounded-md p-2"
+      type="text"
+      id="firstName"
+      name="firstName"
+      value={formData.firstName}
+      onChange={handleChange}
+    />
+  </div>
+
+  <div className="flex items-center">
+    <label className="w-1/3 text-right pr-4" htmlFor="lastName">Last Name:</label>
+    <input
+      className="w-2/3 border-2 border-black rounded-md p-2"
+      type="text"
+      id="lastName"
+      name="lastName"
+      value={formData.lastName}
+      onChange={handleChange}
+    />
+  </div>
+
+  <div className="flex items-center">
+    <label className="w-1/3 text-right pr-4" htmlFor="email">Email:</label>
+    <input
+      className="w-2/3 border-2 border-black rounded-md p-2"
+      type="email"
+      id="email"
+      name="email"
+      value={formData.email}
+      onChange={handleChange}
+    />
+  </div>
+
+  <div className="flex items-center">
+    <label className="w-1/3 text-right pr-4" htmlFor="password">Password:</label>
+    <input
+      className="w-2/3 border-2 border-black rounded-md p-2"
+      type="password"
+      id="password"
+      name="password"
+      value={formData.password}
+      onChange={handleChange}
+    />
+  </div>
+
+  <div className="flex items-center">
+    <label className="w-1/3 text-right pr-4" htmlFor="confirmPassword">Check Password:</label>
+    <input
+      className="w-2/3 border-2 border-black rounded-md p-2"
+      type="password"
+      id="confirmPassword"
+      name="confirmPassword"
+      value={formData.confirmPassword}
+      onChange={handleChange}
+    />
+  </div>
+
+  <div className="flex items-center">
+    <label className="w-1/3 text-right pr-4" htmlFor="startDate">Start Date:</label>
+    <input
+      className="w-2/3 border-2 border-black rounded-md p-2"
+      type="date"
+      id="startDate"
+      name="startDate"
+      value={formData.startDate}
+      onChange={handleChange}
+    />
+  </div>
+
+  <div className="flex items-center">
+    <label className="w-1/3 text-right pr-4" htmlFor="endDate">End Date:</label>
+    <input
+      className="w-2/3 border-2 border-black rounded-md p-2"
+      type="date"
+      id="endDate"
+      name="endDate"
+      value={formData.endDate}
+      onChange={handleChange}
+    />
+  </div>
+
+  <div className="flex items-center">
+    <label className="w-1/3 text-right pr-4" htmlFor="address">Address:</label>
+    <input
+      className="w-2/3 border-2 border-black rounded-md p-2"
+      type="text"
+      id="address"
+      name="address"
+      value={formData.address}
+      onChange={handleChange}
+    />
+  </div>
+
+  <div className="flex items-center">
+    <label className="w-1/3 text-right pr-4" htmlFor="phoneNumber">Phone Number:</label>
+    <input
+      className="w-2/3 border-2 border-black rounded-md p-2"
+      type="text"
+      id="phoneNumber"
+      name="phoneNumber"
+      value={formData.phoneNumber}
+      onChange={handleChange}
+    />
+  </div>
+
+  <div className="flex justify-center">
+    <button
+      type="submit"
+      className="mb-3 border-2 border-black p-2 rounded-md bg-violet-600 text-white hover:bg-white hover:text-black"
+    >
+      Register
+    </button>
+  </div>
+</form>
+
        
       )}
        { <p>{message}

@@ -48,5 +48,7 @@
 }
 
 @import '../src/style/About.css';
+@import '../src/style/Dashboard.css';
+@import '../src/style/InsurancePage.css';
 
 
