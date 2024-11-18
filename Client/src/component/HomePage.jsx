@@ -22,22 +22,26 @@ const HomePage=()=>{
       useEffect(()=>{
         console.log("the data"+users)
       },[users])
-      // const handleDelete = (id) => {
-      //   axios.delete(`http://192.168.99.141:5000/${id}`)
-      //     .then(response => {
-      //       console.log('User deleted:', response.data);
-      //       setUsers(users.filter(user => user._id !== id));
-      //     })
-      //     .catch(error => {
-      //       console.error('Error deleting user:', error);
-      //     });
-      // };
+      const handleDelete = async(user) => {
+        await axios.delete(`http://192.168.99.141:5000/${user.id}`)
+          .then(response => {
+            console.log('User deleted:', response.data);
+            console.log('User ',users)
+            setUsers(users.filter(user => user._id !== user.id))
+          })
+          .catch(error => {
+            console.error('Error deleting user:', error);
+          });
+      };
     
     return(
-        <div className="Homepage-container">
+        <div className="mt-0">
          
             <h3>Welcome to Home Page</h3>
-            {/* <table>
+            <div className='bg-[#6946C6]  ml-44 w-max h-max'>
+            <div className='insuranceTable'>
+            <table className='mt-0 border-2 border-white w-max '>
+            <thead className=''>
               <tr className="tableHead">
                     <th className="tabletitle"><strong>Name</strong></th>
                     <th className="tabletitle"><strong>Email</strong></th>
@@ -47,10 +51,29 @@ const HomePage=()=>{
                     <th className="tabletitle"><strong>Phone Number</strong></th>
                     <th className="tabletitle"><strong>DeleteButton</strong></th>
                 </tr>
-          </table> */}
-            <div className="card-container">
+                </thead>
+                <tbody className='' >
+                {users.map((user, index) => (
+              <tr className='hover:bg-black border-2  ' key={index}>
+                <td className='text-white border-white border-2 p-0'>{user.firstName} {user.lastName}</td>
+                <td className='text-white border-white border-2 p-0'>{user.email} </td>
+                <td className='text-white border-white border-2 p-0'>{user.startDate} </td>
+                <td className='text-white border-white border-2 p-0'>{user.endDate} </td>
+                <td className='text-white border-white border-2 p-0'>{user.address} </td>
+                <td className='text-white border-white border-2 p-0'>{user.phoneNumber}</td>
+                
+                <td className='deleteButton'>
+                  <button className='cardButton' onClick={() => handleDelete(user)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          </table>
+          </div>
+          </div>
+            
            
-      {users.map((user, index) => (
+      {/* {users.map((user, index) => (
         <div>
           
         <Cards
@@ -66,10 +89,10 @@ const HomePage=()=>{
           setUsers={setUsers}
           id={user._id}
         />
-        {/* <button onClick={() => handleDelete(user._id)}>Delete</button> */}
+        <button onClick={() => handleDelete(user._id)}>Delete</button> 
         </div>
-      ))}
-    </div>
+      ))} */}
+   
        {/* {message && <p>{message}</p>}
             <ul>
             {users.map((user) => ( 
