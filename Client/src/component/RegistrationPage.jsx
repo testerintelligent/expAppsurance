@@ -2,22 +2,16 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
-
-
+// Register New User page
 const RegistrationPage = () => {
-  
+  //navigate Variables
   const navigate = useNavigate();
+  //Usestae variables
   const [message, setMessage] = useState('');
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
-    startDate: '',
-    endDate: '',
-    address: '',
-    phoneNumber: '',
   });
   const [submitted, setSubmitted] = useState(false);
 
@@ -37,20 +31,14 @@ const RegistrationPage = () => {
           </div>
   }
     event.preventDefault();
-    axios.post('http://192.168.99.141:5000/register', formData)
+    axios.post('http://localhost:5000/register', formData)
       .then(response => {
         setMessage(response.data.message);
         setSubmitted(true);
         setFormData({
-          firstName: '',
-          lastName: '',
           email: '',
           password: '',
           confirmPassword: '',
-          startDate: '',
-          endDate: '',
-          address: '',
-          phoneNumber: '',
        } );
       })
       .catch(error => {
@@ -78,29 +66,8 @@ const RegistrationPage = () => {
           </div>
         ):(
           <form onSubmit={handleSubmit} className="space-y-4 mr-5">
-  <div className="flex items-center mt-5">
-    <label className="w-1/3 text-right pr-4" htmlFor="firstName">First Name:</label>
-    <input
-      className="w-2/3 border-2 border-black rounded-md p-2"
-      type="text"
-      id="firstName"
-      name="firstName"
-      value={formData.firstName}
-      onChange={handleChange}
-    />
-  </div>
+  
 
-  <div className="flex items-center">
-    <label className="w-1/3 text-right pr-4" htmlFor="lastName">Last Name:</label>
-    <input
-      className="w-2/3 border-2 border-black rounded-md p-2"
-      type="text"
-      id="lastName"
-      name="lastName"
-      value={formData.lastName}
-      onChange={handleChange}
-    />
-  </div>
 
   <div className="flex items-center">
     <label className="w-1/3 text-right pr-4" htmlFor="email">Email:</label>
@@ -115,9 +82,9 @@ const RegistrationPage = () => {
   </div>
 
   <div className="flex items-center">
-    <label className="w-1/3 text-right pr-4" htmlFor="password">Password:</label>
+    <label className="w-1/3 text-right pr-4 pt-2" htmlFor="password">Password:</label>
     <input
-      className="w-2/3 border-2 border-black rounded-md p-2"
+      className="w-2/3 border-2 border-black rounded-md pt-2 p-2"
       type="password"
       id="password"
       name="password"
@@ -138,54 +105,6 @@ const RegistrationPage = () => {
     />
   </div>
 
-  <div className="flex items-center">
-    <label className="w-1/3 text-right pr-4" htmlFor="startDate">Start Date:</label>
-    <input
-      className="w-2/3 border-2 border-black rounded-md p-2"
-      type="date"
-      id="startDate"
-      name="startDate"
-      value={formData.startDate}
-      onChange={handleChange}
-    />
-  </div>
-
-  <div className="flex items-center">
-    <label className="w-1/3 text-right pr-4" htmlFor="endDate">End Date:</label>
-    <input
-      className="w-2/3 border-2 border-black rounded-md p-2"
-      type="date"
-      id="endDate"
-      name="endDate"
-      value={formData.endDate}
-      onChange={handleChange}
-    />
-  </div>
-
-  <div className="flex items-center">
-    <label className="w-1/3 text-right pr-4" htmlFor="address">Address:</label>
-    <input
-      className="w-2/3 border-2 border-black rounded-md p-2"
-      type="text"
-      id="address"
-      name="address"
-      value={formData.address}
-      onChange={handleChange}
-    />
-  </div>
-
-  <div className="flex items-center">
-    <label className="w-1/3 text-right pr-4" htmlFor="phoneNumber">Phone Number:</label>
-    <input
-      className="w-2/3 border-2 border-black rounded-md p-2"
-      type="text"
-      id="phoneNumber"
-      name="phoneNumber"
-      value={formData.phoneNumber}
-      onChange={handleChange}
-    />
-  </div>
-
   <div className="flex justify-center">
     <button
       type="submit"
@@ -194,9 +113,7 @@ const RegistrationPage = () => {
       Register
     </button>
   </div>
-</form>
-
-       
+</form>  
       )}
        { <p>{message}
        </p>}

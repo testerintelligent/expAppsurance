@@ -33,6 +33,19 @@ const Sidebar = () => {
         </li>
         <li>
           <NavLink
+            to="/validateUser"
+            className={({ isActive }) =>
+              isActive
+                ? "flex items-center py-3 px-4 bg-cyan-100 rounded-lg text-cyan-900 font-semibold"
+                : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white font-semibold"
+            }
+          >
+            Policy Initiation
+          </NavLink>
+        </li>
+
+        <li>
+          <NavLink
             to="/insurance"
             className={({ isActive }) =>
               isActive
@@ -41,6 +54,90 @@ const Sidebar = () => {
             }
           >
             New Insurance
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/claimsManagement"
+            className={({ isActive }) =>
+              isActive
+                ? "flex items-center py-3 px-4 bg-cyan-100 rounded-lg text-cyan-900 font-semibold"
+                : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white font-semibold"
+            }
+          >
+            Claims Management
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/paymentPage"
+            className={({ isActive }) =>
+              isActive
+                ? "flex items-center py-3 px-4 bg-cyan-100 rounded-lg text-cyan-900 font-semibold"
+                : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white font-semibold"
+            }
+          >
+            Payment Page
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/policyManagement"
+            className={({ isActive }) =>
+              isActive
+                ? "flex items-center py-3 px-4 bg-cyan-100 rounded-lg text-cyan-900 font-semibold"
+                : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white font-semibold"
+            }
+          >
+            Policy Management
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/profileManagement"
+            className={({ isActive }) =>
+              isActive
+                ? "flex items-center py-3 px-4 bg-cyan-100 rounded-lg text-cyan-900 font-semibold"
+                : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white font-semibold"
+            }
+          >
+            Profile Management
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/quateGeneration"
+            className={({ isActive }) =>
+              isActive
+                ? "flex items-center py-3 px-4 bg-cyan-100 rounded-lg text-cyan-900 font-semibold"
+                : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white font-semibold"
+            }
+          >
+            Quate Generation
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/support"
+            className={({ isActive }) =>
+              isActive
+                ? "flex items-center py-3 px-4 bg-cyan-100 rounded-lg text-cyan-900 font-semibold"
+                : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white font-semibold"
+            }
+          >
+            Support
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/adminPanel"
+            className={({ isActive }) =>
+              isActive
+                ? "flex items-center py-3 px-4 bg-cyan-100 rounded-lg text-cyan-900 font-semibold"
+                : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white font-semibold"
+            }
+          >
+            Admin Panel
           </NavLink>
         </li>
         <li>
