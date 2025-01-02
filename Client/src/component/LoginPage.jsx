@@ -25,7 +25,7 @@ const LoginPage = () => {
       return; 
     }
     try {
-      const response = await axios.post(`http://localhost:5000/home`, {
+      const response = await axios.post(`http://192.168.99.141:5000/home`, {
         username,
         password,
       });

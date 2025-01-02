@@ -12,7 +12,7 @@ const HomePage=()=>{
     const [UserToDelete, setUserToDelete] = useState(null);
     useEffect(() => { 
         
-        axios.get('http://localhost:5000/register') 
+        axios.get('http://192.168.99.141:5000/register') 
           .then(response => {
             setUsers(response.data);
             setMessage(response.data.message); 
@@ -32,7 +32,7 @@ const HomePage=()=>{
         setShowModal(true); // Show the modal
       };
       const handleDelete = async(user) => {
-        await axios.delete(`http://localhost:5000/${UserToDelete}`)
+        await axios.delete(`http://192.168.99.141:5000/${UserToDelete}`)
           .then(response => {
             console.log('User deleted:', response.data);
             console.log('User ',users)
