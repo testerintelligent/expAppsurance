@@ -38,6 +38,9 @@ const InsurancePage = () => {
   const handlePolicySelectChange = (event) => {
    const value = event.target.value;
     setSelectedPolicy(value);
+    const updatedPolicyTypes = [...insuranceData.PolicyType, value]
+        
+    setInsuranceData({ ...insuranceData, PolicyType: updatedPolicyTypes });
     setSelectedCoverageOption('');
     setCoverageOptions(coverageMapping[value] || []); 
   };
