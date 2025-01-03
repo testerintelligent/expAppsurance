@@ -7,7 +7,9 @@ const InsurancePage = () => {
   const [Message, setMessage] = useState('');
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  
+  const [selectedPolicy, setSelectedPolicy] = useState('');
+  const [coverageOptions, setCoverageOptions] = useState([]);
+  const [selectedCoverageOption, setSelectedCoverageOption] = useState('');
   const [insuranceData, setInsuranceData] = useState({
     CurrentDate: new Date(),
     Name: '',
@@ -20,12 +22,29 @@ const InsurancePage = () => {
     Gender: '', // Add Gender field
   });
 
+  const coverageMapping = {
+    'Health': ['Hospitalization costs', 'Treatment Cost', 'Emergency Services', 'Laboratory Expenses', 'Prescription Drugs', 'Day-care procedures'],
+    'Life': ['Term', 'Endowment', 'Retirement', 'Money-Back'],
+    'Vehicle': ['Third-Party Liability', 'Comprehensive', 'Personal Vehicle Damage'],
+  };
+
   useEffect(() => {
     const sessionKey = sessionStorage.getItem('sessionKey');
     if (!sessionKey) {
       navigate('/');
     }
   }, [navigate]);
+
+  const handlePolicySelectChange = (event) => {
+   const value = event.target.value;
+    setSelectedPolicy(value);
+    setSelectedCoverageOption('');
+    setCoverageOptions(coverageMapping[value] || []); 
+  };
+  const handleCoverageChange = (event) => {
+    setSelectedCoverageOption(event.target.value);
+  };
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -133,6 +152,7 @@ const InsurancePage = () => {
             <label className="font-bold pl-3 pt-8" htmlFor="DateOfBirth">BirthDate:  </label>
             <label className="font-bold pt-7">Gender:    </label>
             <label className="font-bold pt-9">PolicyType:   </label>
+            <label className="font-bold pt-8" htmlFor="SumInsured">Coverage:  </label>
             <label className="font-bold pt-8" htmlFor="SumInsured">SumInsured:  </label>
             <label className="font-bold pt-8" htmlFor="Premium">Premium:  </label>
 
@@ -166,7 +186,7 @@ const InsurancePage = () => {
           {errors.Gender && <p className="error">{errors.Gender}</p>}
         </div>
         <div className="flex sm:float-end">
-            <label className=' font-semibold p-3'>
+            {/* <label className=' font-semibold p-3'>
               <input type="checkbox" className='inputCheckBoxtext mt-5' name="PolicyType" value="Health Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Health Insurance ')} />
               Health
             </label >
@@ -177,11 +197,28 @@ const InsurancePage = () => {
             <label className=' font-semibold p-3'>
               <input type="checkbox" className='inputCheckBoxtext mt-5' name="PolicyType" value="Vehicle Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Vehicle Insurance ')} />
               Vehicle
-            </label> 
+            </label>  */}
+            <select onChange={handlePolicySelectChange} className="mt-4 p-2 font-semibold h-10 w-80 border-2 mb-2 border-black rounded-lg" name="SumInsured" value={selectedPolicy}>
+            <option value="">-- Policy Type --</option>
+            <option value="Health">Health Insurance</option>
+            <option value="Life">Life Insurance</option>
+            <option value="Vehicle">Vehicle Insurance</option>
+          </select>
           {errors.PolicyType && <p className="error">{errors.PolicyType}</p>}
         </div>
         <div className="form-group">
-         <select onChange={handleChange} className="mt-4 p-2 font-semibold h-10 w-80 border-2 mb-2 border-black rounded-lg" name="SumInsured" value={insuranceData.SumInsured}>
+         <select onChange={handleCoverageChange} className="mt-4 p-2 font-semibold h-10 w-80 border-2 mb-2 border-black rounded-lg" name="SumInsured" value={selectedCoverageOption} disabled={!coverageOptions.length}>
+         <option value="">-- Coverage --</option>
+        {coverageOptions.map((coverageOption) => (
+          <option key={coverageOption} value={coverageOption}>
+            {coverageOption}
+          </option>
+        ))}
+          </select>
+          {errors.SumInsured && <p className="error">{errors.SumInsured}</p>}
+        </div>
+        <div className="form-group">
+         <select onChange={handleChange} className="mt-1 p-2 font-semibold h-10 w-80 border-2 mb-2 border-black rounded-lg" name="SumInsured" value={insuranceData.SumInsured}>
             <option value="">Select Sum Insured</option>
             <option value="100000">1,00,000</option>
             <option value="300000">3,00,000</option>
@@ -196,6 +233,29 @@ const InsurancePage = () => {
         </div>
         </div>
         </div>
+        <div className='yesOrNofield'>
+      <h3 className="font-bold pt-1">Do you have any existing policy?</h3>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }} className='ml-3 p-1'>
+      <label>
+        <input
+          type="radio"
+          name="policy"
+          value="Yes"
+          onChange={handleChange}
+        />
+        Yes
+      </label>
+      <label style={{ marginLeft: '10px' }}>
+        <input
+          type="radio"
+          name="policy"
+          value="No"
+          onChange={handleChange}
+        />
+        No
+      </label>
+      </div>
+      </div>
         <button className='mt-2 border-2 border-black rounded-md p-2 mb-2 text-white bg-violet-600 hover:bg-white hover:text-black mr-2' type="submit">Submit</button>
         <button className='mt-2  border-2 border-black rounded-md p-2 mb-2 bg-violet-600 text-white hover:bg-white hover:text-black' type="button" onClick={handleDashboardButton}>Go to Dashboard</button>
       </form>
