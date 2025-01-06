@@ -210,7 +210,7 @@ const InsurancePage = () => {
           {errors.PolicyType && <p className="error">{errors.PolicyType}</p>}
         </div>
         <div className="form-group">
-         <select onChange={handleCoverageChange} className="mt-4 p-2 font-semibold h-10 w-80 border-2 mb-2 border-black rounded-lg" name="SumInsured" value={selectedCoverageOption} disabled={!coverageOptions.length}>
+         <select onChange={handleCoverageChange} className="mt-4 p-2 font-semibold h-10 w-80 border-2 mb-2 border-black rounded-lg" name="coverage" value={selectedCoverageOption} disabled={!coverageOptions.length}>
          <option value="">-- Coverage --</option>
         {coverageOptions.map((coverageOption) => (
           <option key={coverageOption} value={coverageOption}>
