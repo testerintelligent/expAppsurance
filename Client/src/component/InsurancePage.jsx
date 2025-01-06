@@ -154,8 +154,8 @@ const InsurancePage = () => {
             <label className="font-bold pt-8" htmlFor="Address">Address:  </label>
             <label className="font-bold pl-3 pt-8" htmlFor="DateOfBirth">BirthDate:  </label>
             <label className="font-bold pt-7">Gender:    </label>
-            <label className="font-bold pt-9">PolicyType:   </label>
-            <label className="font-bold pt-8" htmlFor="SumInsured">Coverage:  </label>
+            <label className="font-bold pt-9" htmlFor="policyType">PolicyType:   </label>
+            <label className="font-bold pt-8" htmlFor="coverage">Coverage:  </label>
             <label className="font-bold pt-8" htmlFor="SumInsured">SumInsured:  </label>
             <label className="font-bold pt-8" htmlFor="Premium">Premium:  </label>
 
@@ -201,7 +201,7 @@ const InsurancePage = () => {
               <input type="checkbox" className='inputCheckBoxtext mt-5' name="PolicyType" value="Vehicle Insurance " onChange={handleChange} checked={insuranceData.PolicyType.includes('Vehicle Insurance ')} />
               Vehicle
             </label>  */}
-            <select onChange={handlePolicySelectChange} className="mt-4 p-2 font-semibold h-10 w-80 border-2 mb-2 border-black rounded-lg" name="SumInsured" value={selectedPolicy}>
+            <select onChange={handlePolicySelectChange} className="mt-4 p-2 font-semibold h-10 w-80 border-2 mb-2 border-black rounded-lg" name="policyType" value={selectedPolicy}>
             <option value="">-- Policy Type --</option>
             <option value="Health">Health Insurance</option>
             <option value="Life">Life Insurance</option>
@@ -218,7 +218,7 @@ const InsurancePage = () => {
           </option>
         ))}
           </select>
-          {errors.SumInsured && <p className="error">{errors.SumInsured}</p>}
+          {/* {errors.SumInsured && <p className="error">{errors.SumInsured}</p>} */}
         </div>
         <div className="form-group">
          <select onChange={handleChange} className="mt-1 p-2 font-semibold h-10 w-80 border-2 mb-2 border-black rounded-lg" name="SumInsured" value={insuranceData.SumInsured}>
