@@ -1,9 +1,9 @@
 import React, { useEffect ,useState} from "react";
 import { useNavigate } from 'react-router-dom';
-import Cards from "./Cards";
+
 import axios from "axios";
 import "../style/HomePage.css"
-import Navbar from './NavBar';
+
 const HomePage=()=>{
   const navigate=useNavigate();
     const [message, setMessage] = useState('');
@@ -45,17 +45,18 @@ const HomePage=()=>{
       };
     
     return(
+      <div className="bg-[#6946C6] p-2">
         <div className="mt-0">
          
-            <h3 className="p-10 text-white text-xl">Welcome to Home Page</h3>
+            <h3 className="p-10 text-white text-2xl">Welcome to Home Page</h3>
             <div className='bg-[#6946C6]  ml-44 w-max h-max'>
             <div className='insuranceTable ml-44'>
             <table className='mt-0 border-2 border-white w-max '>
             <thead className=''>
               <tr className="tableHead">
-                    <th className="tabletitle"><strong>Email</strong></th>
-                    <th className="tabletitle"><strong>Password</strong></th>
-                    <th className="tabletitle"><strong>DeleteButton</strong></th>
+                    <th className="tabletitle text-white bg-black border-white  border-2"><strong>Email</strong></th>
+                    <th className="tabletitle text-white bg-black border-white  border-2"><strong>Password</strong></th>
+                    <th className="tabletitle text-white bg-black border-white border-2"><strong>DeleteButton</strong></th>
                 </tr>
                 </thead>
                 <tbody className='' >
@@ -64,7 +65,7 @@ const HomePage=()=>{
                 <td className='text-white border-white border-2 p-10'>{user.email} </td>
                 <td className='text-white border-white border-2 p-10'>{user.password} </td>   
                 <td className='deleteButton'>
-                  <button className='cardButton hover:bg-white hover:text-black' onClick={() => openModal(user.email)}>Delete</button>
+                  <button className='cardButton hover:bg-white hover:text-black bg-[#6946C6] p-2 rounded-md text-white' onClick={() => openModal(user.email)}>Delete</button>
                 </td>
               </tr>
             ))}
@@ -82,6 +83,7 @@ const HomePage=()=>{
         </div>
       )}
       
+        </div>
         </div>
     );
 }

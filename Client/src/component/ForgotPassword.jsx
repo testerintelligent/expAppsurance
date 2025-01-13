@@ -30,7 +30,7 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <div className="bg-[#6946C6] p-7 flex ">
+    <div className="bg-[#6946C6] p-36 flex ">
        
       <div className='  h-90 w-96  border-2  border-black rounded-lg bg-white'>
         <div className='bg-[#6946C6] h-12 rounded-t-md '>

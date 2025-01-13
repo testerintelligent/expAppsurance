@@ -59,10 +59,17 @@ const Dashboard = () => {
   
     return `${day}/${month}/${year}`; 
   };
+  function generateRandomNumber() {
+    return Math.floor(100000 + Math.random() * 900000);
+  }
+  
+  console.log(generateRandomNumber());
+  
   
   
 
   return (
+    <div className='m-3 p-2'style={{ backgroundColor: '#6946C6' }}>
     <div className='mt-0'>
     
       {/* <div className='dashboardGreeting'>
@@ -90,10 +97,10 @@ const Dashboard = () => {
             {insuranceData.map((insurance, index) => (
               <tr className='hover:bg-black border-2  ' key={index} >
                 <td className='text-white border-white border-2 p-0'>{formatDate(insurance.CurrentDate)}</td>
-                <td className='text-white border-white border-2 p-0'>{insurance._id}</td>
-                <td className='text-white border-white border-2 p-0'>{insurance.Name}</td>
-                <td className='text-white border-white border-2 p-0'>{insurance.email}</td>
-                <td className='text-white border-white border-2 p-0'>{insurance.PolicyType.join(' ')}</td>
+                <td className='text-white border-white border-2 p-0'>{generateRandomNumber()}</td>
+                <td className='text-white border-white border-2 p-3'>{insurance.Name}</td>
+                <td className='text-white border-white border-2 p-3'>{insurance.email}</td>
+                <td className='text-white border-white border-2 p-3'>{insurance.PolicyType.join(' ')}</td>
                 <td className='text-white border-white border-2 p-0'>{insurance.SumInsured}</td>
                 <td className='text-white border-white border-2 p-0'>{insurance.Premium}</td>
                 
@@ -121,6 +128,7 @@ const Dashboard = () => {
         </div>
       )}
       
+    </div>
     </div>
     
   );

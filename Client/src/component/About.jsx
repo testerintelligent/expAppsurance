@@ -2,7 +2,7 @@ import React from "react";
 
 const About=()=>{
  return(
-  <div className="flex justify-center bg-violet-600 w-100% h-100% pb-10">
+  <div className="flex justify-center  w-100% h-100% pb-10" style={{ backgroundColor: '#6946C6' }}>
   <div className="aboutPage">
         <p>
         Welcome to <span><b><span><b>AppInsurance</b></span></b></span>, your trusted partner in securing a brighter future. At <span><b><span><b>AppInsurance</b></span></b></span>, we are dedicated to offering comprehensive, reliable, and affordable insurance solutions tailored to your unique needs. Our diverse range of insurance plans includes <b>life insurance, health insurance, vehicle insurance</b>, and <b>home insurance</b>, each designed to safeguard you, your loved ones, and your possessions.</p>

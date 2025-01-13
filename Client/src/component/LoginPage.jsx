@@ -47,6 +47,7 @@ const LoginPage = () => {
   };
 
   return (
+    <div className='p-10'style={{ backgroundColor: '#6946C6' }}>
     <div className="flex  text-center justify-center  rounded-lg ">
       <div className="border-2 h-96 mt-32  w-120 m-9   border-black shadow-2xl bg-white rounded-lg">
         <div className="text-center  ">
@@ -90,6 +91,7 @@ const LoginPage = () => {
       <div className="flex-col-reverse ">
         <h2 className=" justify-end text-white uppercase font-semibold hover:text-black text-4xl size-96 pt-4 pl-64">[Expleosurance]</h2>
       </div>
+    </div>
     </div>
   );
 };
