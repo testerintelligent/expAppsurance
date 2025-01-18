@@ -18,6 +18,7 @@ import ProfileManagement from './component/ProfileManagement';
 import QuateGeneration from './component/QuateGeneration';
 import Support from './component/Support';
 import PolicyInitiation from './component/PolicyInitiation';
+import LifeInsurance from './component/LifeInsurance';
 import "./style/tailwind.css";
 
 
@@ -45,6 +46,7 @@ function App() {
             <Route path='/home' element={<HomePage/>}/>
             <Route path='/insurance' element={<InsurancePage/>}/>
             <Route path='/Dashboard' element={<Dashboard/>}/>
+            <Route path='/LifeInsurance' element={<LifeInsurance/>}/>
             
           </Route>
         </Routes>

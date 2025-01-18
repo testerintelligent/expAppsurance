@@ -46,6 +46,19 @@ const Sidebar = () => {
 
             <li>
               <NavLink
+                to="/quateGeneration"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center py-3 px-4 bg-cyan-100 rounded-lg text-cyan-900 font-semibold"
+                    : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white font-semibold"
+                }
+              >
+                Quate Generation
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink
                 to="/insurance"
                 className={({ isActive }) =>
                   isActive
@@ -104,18 +117,7 @@ const Sidebar = () => {
                 Profile Management
               </NavLink>
             </li>
-            <li>
-              <NavLink
-                to="/quateGeneration"
-                className={({ isActive }) =>
-                  isActive
-                    ? "flex items-center py-3 px-4 bg-cyan-100 rounded-lg text-cyan-900 font-semibold"
-                    : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white font-semibold"
-                }
-              >
-                Quate Generation
-              </NavLink>
-            </li>
+         
             <li>
               <NavLink
                 to="/support"
