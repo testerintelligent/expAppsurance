@@ -3,16 +3,16 @@ import Sidebar from "./sidebar";
 
 const Layout = () => {
   return (
-    <div className="mainApp">
-      <aside className="w-[80px] float-left ">
+    <div className="flex h-screen">
+      <aside className="w-64 bg-gray-800 text-white">
         <Sidebar />
       </aside>
 
-      <main className="pages w-[calc(100%-80px)] float-right min-h-screen">
+      <main className="flex-1 bg-gray-100 p-6">
         <Outlet />
       </main>
     </div>
   );
 };
 
-export default Layout
+export default Layout;

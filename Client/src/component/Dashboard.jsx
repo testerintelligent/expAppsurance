@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import "../style/Dashboard.css";
-
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [insuranceData, setInsuranceData] = useState([]);
-  const [showModal, setShowModal] = useState(false); // State to manage modal visibility
-  const [policyToDelete, setPolicyToDelete] = useState(null); // State to keep track of the policy ID to delete
+  const [showModal, setShowModal] = useState(false);
+  const [policyToDelete, setPolicyToDelete] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,7 +20,7 @@ const Dashboard = () => {
     axios.get('http://192.168.99.141:5000/Dashboard') 
       .then(response => {
         console.log('Response:', response.data);
-        setInsuranceData(response.data); // Save fetched data to state
+        setInsuranceData(response.data);
       })
       .catch(error => {
         console.error('Error fetching data:', error); 
@@ -29,108 +28,93 @@ const Dashboard = () => {
   }, []);
 
   const openModal = (id) => {
-    setPolicyToDelete(id); // Set the policy ID to delete
-    setShowModal(true); // Show the modal
+    setPolicyToDelete(id);
+    setShowModal(true);
   };
 
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(`http://192.168.99.141:5000/Dashboard/${policyToDelete}`);
-      console.log('Insurance deleted:', response.data);
+      await axios.delete(`http://192.168.99.141:5000/Dashboard/${policyToDelete}`);
       setInsuranceData(insuranceData.filter(insurance => insurance._id !== policyToDelete));
     } catch (error) {
       console.error('Error deleting policy:', error);
       alert('Failed to delete the policy. Please try again.');
     } finally {
-      setShowModal(false); // Close the modal
+      setShowModal(false);
     }
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return "N/A"; // Handle null or undefined dates
-  
+    if (!dateString) return "N/A";
     const date = new Date(dateString);
-  
-    if (isNaN(date.getTime())) return "Invalid Date"; // Handle invalid date strings
-  
-    const day = String(date.getDate()).padStart(2, '0');    // Get day and pad with 0 if needed
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Get month (months are 0-indexed)
-    const year = date.getFullYear(); // Get the full year
-  
-    return `${day}/${month}/${year}`; 
+    if (isNaN(date.getTime())) return "Invalid Date";
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
+
   function generateRandomNumber() {
     return Math.floor(100000 + Math.random() * 900000);
   }
-  
-  console.log(generateRandomNumber());
-  
-  
-  
 
   return (
-    <div className='m-3 p-2'style={{ backgroundColor: '#6946C6' }}>
-    <div className='mt-0'>
-    
-      {/* <div className='dashboardGreeting'>
-        <h1>Welcome to the Dashboard</h1>
-        <button type='submit' className="btnNewInsurance" onClick={handleNewInsurance}>Create New Insurance</button>
-      </div> */}
-     
-      {insuranceData.length > 0 ? (
-        <div className='bg-[#6946C6]  ml-44 w-max h-max'>
-        <div className='insuranceTable'>
-        <table  className='mt-0 border-2 border-white w-max '>
-          <thead className=''>
-            <tr className='border-2 border-white p-1'>
-              <th className=' bg-black text-white border-2 border-white p-0'>Policy Create Date</th>
-              <th className=' bg-black text-white border-2 border-white '>Policy ID</th>
-              <th className='bg-black text-white border-2 border-white'>Name</th>
-              <th className='bg-black text-white border-2 border-white'>Email</th>
-              <th className='bg-black text-white border-2 border-white'>Policy type</th>
-              <th className='bg-black text-white border-2 border-white'>Sum Insured</th>
-              <th className='bg-black text-white border-2 border-white'>Premium</th>
-              <th className='bg-black text-white border-2 border-white'>Delete Record</th>
-            </tr>
-          </thead>
-          <tbody className='' >
-            {insuranceData.map((insurance, index) => (
-              <tr className='hover:bg-black border-2  ' key={index} >
-                <td className='text-white border-white border-2 p-0'>{formatDate(insurance.CurrentDate)}</td>
-                <td className='text-white border-white border-2 p-0'>{generateRandomNumber()}</td>
-                <td className='text-white border-white border-2 p-3'>{insurance.Name}</td>
-                <td className='text-white border-white border-2 p-3'>{insurance.email}</td>
-                <td className='text-white border-white border-2 p-3'>{insurance.PolicyType.join(' ')}</td>
-                <td className='text-white border-white border-2 p-0'>{insurance.SumInsured}</td>
-                <td className='text-white border-white border-2 p-0'>{insurance.Premium}</td>
-                
-                <td className='deleteButton'>
-                  <button className='text-center hover:text-red-600 text-black font-semibold    border-black rounded-md uppercase ' onClick={() => openModal(insurance._id)}>Delete Policy</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        </div>
-        </div>
-      ) : (
-        <p>No insurance data available</p>
-      )}
-
-      {/* Custom Modal */}
-      {showModal && (
-        <div className="modal">
-          <div className="modalContent">
-            <p>Are you sure you want to delete this insurance policy?</p>
-            <button className='PopupAccept border-2 text-black bg-white  border-black rounded-md hover:bg-violet-600 hover:text-white' onClick={handleDelete}>Yes</button>
-            <button className='PopupCancel border-2 text-black bg-white  border-black rounded-md hover:bg-violet-600 hover:text-white' onClick={() => setShowModal(false)}>Cancel</button>
+    <div className='dashboard-container'>
+      <div className='dashboard-content'>
+        {insuranceData.length > 0 ? (
+          <div className='insuranceTable'>
+            <table>
+              <thead>
+                <tr>
+                  <th>Policy Create Date</th>
+                  <th>Policy Number</th>
+                  <th>Full Name</th>
+                  <th>Email ID</th>
+                  <th>Address</th>
+                  <th>Date of Birth</th>
+                  <th>Gender</th>
+                  <th>Policy Type</th>
+                  <th>Sum Insured</th>
+                  <th>Premium</th>
+                  <th>Delete Record</th>
+                </tr>
+              </thead>
+              <tbody>
+                {insuranceData.map((insurance, index) => (
+                  <tr key={index}>
+                    <td>{formatDate(insurance.CurrentDate)}</td>
+                    <td>{insurance.policyNumber || generateRandomNumber()}</td>
+                    <td>{insurance.Name}</td>
+                    <td>{insurance.email}</td>
+                    <td>{insurance.Address}</td>
+                    <td>{formatDate(insurance.DateOfBirth)}</td>
+                    <td>{insurance.Gender}</td>
+                    <td>{insurance.PolicyType.join(', ')}</td>
+                    <td>{insurance.SumInsured}</td>
+                    <td>{insurance.Premium}</td>
+                    <td className='deleteButton'>
+                      <button onClick={() => openModal(insurance._id)}>Delete Policy</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </div>
-      )}
-      
+        ) : (
+          <p>No insurance data available</p>
+        )}
+
+        {showModal && (
+          <div className="modal">
+            <div className="modalContent">
+              <p>Are you sure you want to delete this insurance policy?</p>
+              <button className='PopupAccept' onClick={handleDelete}>Yes</button>
+              <button className='PopupCancel' onClick={() => setShowModal(false)}>Cancel</button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
-    </div>
-    
   );
 };
 

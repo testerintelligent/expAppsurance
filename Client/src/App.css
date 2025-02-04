@@ -1,15 +1,26 @@
 .App {
-  /* #6946C6 -expleo color */
   text-align: center;
   background-color: white;
- /* Path to your background image */
-  background-size: cover; /* Ensures the image covers the entire container */
-  background-position: center; /* Centers the image */
-  background-repeat: no-repeat; /* Prevents the image from repeating */
-  height: 100%;
-  width: 100%; /* Full width */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh; /* Use full viewport height */
+  width: 100%;
   position: relative;
-  opacity: 0.8;
+}
+
+.App::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.8; /* Apply opacity only to background */
+  z-index: -1; /* Ensure it stays behind the content */
 }
 
 .App-logo {
@@ -47,8 +58,7 @@
   }
 }
 
+/* Import additional CSS files */
 @import '../src/style/About.css';
 @import '../src/style/Dashboard.css';
 @import '../src/style/InsurancePage.css';
-
-

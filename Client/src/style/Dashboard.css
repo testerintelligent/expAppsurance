@@ -1,34 +1,75 @@
-.PopupAccept{
-  padding: 10px 20px; 
-  font-size: 16px;
-  cursor: pointer;
-  width: 20%; 
-  margin: 3px;
-  align-content: center;
+/* Dashboard Container */
+.dashboard-container {
+  background-color: #6946C6;
+  padding: 20px;
 }
-.PopupCancel{
-  padding: 10px 10px; 
-  font-size: 16px;
-  cursor: pointer;
-  width: 20%; 
-  margin: 3px;
-  align-content: center;
+
+.dashboard-content {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Table Styling */
+.insuranceTable {
+  max-width: 100%;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  border: 2px solid white;
 }
 
 th, td {
-  border: 1px solid #ddd;
-  padding: 10px;
+  border: 2px solid white;
+  padding: 12px 16px;
   text-align: center;
-  font-size: small;
-}
-.error {
-  color: red;
-  justify-content: right;
-  font-size: 12px;
-  margin-top: 5px;
+  font-size: 14px;
+  white-space: nowrap; /* Prevents text wrapping */
 }
 
+/* Table Header */
+th {
+  background-color: black;
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
 
+/* Table Rows */
+td {
+  color: white;
+  font-weight: 500;
+}
+
+/* Hover effect on rows */
+table tr:hover td {
+  background-color: #d0a7f1;
+  color: black;
+  transition: 0.2s ease-in-out;
+}
+
+/* Delete Button */
+.deleteButton button {
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  border: 2px solid black;
+  background-color: white;
+  color: black;
+  border-radius: 5px;
+  transition: 0.3s ease-in-out;
+}
+
+.deleteButton button:hover {
+  background-color: red;
+  color: white;
+  border-color: red;
+}
+
+/* Modal Styling */
 .modal {
   position: fixed;
   top: 0;
@@ -40,24 +81,76 @@ th, td {
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  border-radius: 2px;
-  border-color: black;
 }
 
 .modalContent {
   background-color: white;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
   text-align: center;
+  width: 350px;
+  border: 2px solid black;
+}
+
+.modalContent p {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
 }
 
 .modalContent button {
   margin: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 2px solid black;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: 0.2s ease-in-out;
 }
-table tr:hover td:nth-child(8) { 
 
+.PopupAccept {
   background-color: white;
- color: black;
+  color: black;
+  border: 2px solid black;
+}
 
+.PopupAccept:hover {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.PopupCancel {
+  background-color: white;
+  color: black;
+  border: 2px solid black;
+}
+
+.PopupCancel:hover {
+  background-color: #D32F2F;
+  color: white;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  table {
+    font-size: 12px;
+  }
+
+  th, td {
+    padding: 8px;
+  }
+
+  .modalContent {
+    width: 280px;
+    padding: 15px;
+  }
+
+  .PopupAccept, .PopupCancel {
+    width: 100px;
+    font-size: 12px;
+    padding: 8px 12px;
+  }
 }

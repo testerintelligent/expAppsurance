@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
@@ -117,7 +116,18 @@ const Sidebar = () => {
                 Profile Management
               </NavLink>
             </li>
-         
+            <li>
+              <NavLink
+                to="/contact"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center py-3 px-4 bg-cyan-100 rounded-lg text-cyan-900 font-semibold"
+                    : "flex items-center py-3 px-4 hover:bg-cyan-50 rounded-lg hover:text-cyan-900 text-white font-semibold"
+                }
+              >
+                Contact
+              </NavLink>
+            </li>
             <li>
               <NavLink
                 to="/support"
@@ -167,14 +177,12 @@ const Sidebar = () => {
               </NavLink>
             </li>
             <li>
-            <div className="px-4 py-3 hover:bg-cyan-50 flex items-center hover:text-cyan-900 text-white font-semibold rounded-lg mb-5">
-          <button className="w-64 text-left h-6" onClick={handleLogout}>Logout</button>
-        </div>
+              <div className="px-4 py-3 hover:bg-cyan-50 flex items-center hover:text-cyan-900 text-white font-semibold rounded-lg mb-5">
+                <button className="w-64 text-left h-6" onClick={handleLogout}>Logout</button>
+              </div>
             </li>
           </ul>
         </div>
-
-       
       </div>
     </div>
   );
