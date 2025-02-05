@@ -31,7 +31,7 @@ const LoginPage = () => {
       });
       console.log('Response:', response);
 
-      if (response.status === 200) {
+      if (response&&response.status === 200) {
         const sessionKey = uuid;
         console.log(uuid);
         sessionStorage.setItem('sessionKey', sessionKey);
