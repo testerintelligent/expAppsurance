@@ -30,7 +30,7 @@ const Sidebar = () => {
                 Dashboard
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink
                 to="/validateUser"
                 className={({ isActive }) =>
@@ -41,9 +41,9 @@ const Sidebar = () => {
               >
                 Policy Initiation
               </NavLink>
-            </li>
+            </li> */}
 
-            <li>
+            {/* <li>
               <NavLink
                 to="/quateGeneration"
                 className={({ isActive }) =>
@@ -54,7 +54,7 @@ const Sidebar = () => {
               >
                 Quate Generation
               </NavLink>
-            </li>
+            </li> */}
 
             <li>
               <NavLink
@@ -68,7 +68,7 @@ const Sidebar = () => {
                 New Insurance
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink
                 to="/claimsManagement"
                 className={({ isActive }) =>
@@ -79,8 +79,8 @@ const Sidebar = () => {
               >
                 Claims Management
               </NavLink>
-            </li>
-            <li>
+            </li> */}
+            {/* <li>
               <NavLink
                 to="/paymentPage"
                 className={({ isActive }) =>
@@ -91,8 +91,8 @@ const Sidebar = () => {
               >
                 Payment Page
               </NavLink>
-            </li>
-            <li>
+            </li> */}
+            {/* <li> 
               <NavLink
                 to="/policyManagement"
                 className={({ isActive }) =>
@@ -103,8 +103,8 @@ const Sidebar = () => {
               >
                 Policy Management
               </NavLink>
-            </li>
-            <li>
+            </li> */}
+            {/* <li>
               <NavLink
                 to="/profileManagement"
                 className={({ isActive }) =>
@@ -115,7 +115,7 @@ const Sidebar = () => {
               >
                 Profile Management
               </NavLink>
-            </li>
+            </li> */}
             <li>
               <NavLink
                 to="/contact"
@@ -128,7 +128,7 @@ const Sidebar = () => {
                 Contact
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink
                 to="/support"
                 className={({ isActive }) =>
@@ -139,8 +139,8 @@ const Sidebar = () => {
               >
                 Support
               </NavLink>
-            </li>
-            <li>
+            </li> */}
+            {/* <li>
               <NavLink
                 to="/legalAndcompliance"
                 className={({ isActive }) =>
@@ -151,7 +151,7 @@ const Sidebar = () => {
               >
                 LegalAndCompliance
               </NavLink>
-            </li>
+            </li> */}
             <li>
               <NavLink
                 to="/adminPanel"
@@ -164,7 +164,7 @@ const Sidebar = () => {
                 Admin Panel
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink
                 to="/about"
                 className={({ isActive }) =>
@@ -175,7 +175,7 @@ const Sidebar = () => {
               >
                 About
               </NavLink>
-            </li>
+            </li> */}
             <li>
               <div className="px-4 py-3 hover:bg-cyan-50 flex items-center hover:text-cyan-900 text-white font-semibold rounded-lg mb-5">
                 <button className="w-64 text-left h-6" onClick={handleLogout}>Logout</button>
