@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
+const userRouter=require('./Routes/User')
 
 // Import models
 require('./Models/DB');
@@ -12,7 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
-
+app.use(userRouter);
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/insuranceDB', {
   useNewUrlParser: true,
