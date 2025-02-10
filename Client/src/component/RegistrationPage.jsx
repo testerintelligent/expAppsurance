@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
-// Register New User page
 const RegistrationPage = () => {
-  //navigate Variables
   const navigate = useNavigate();
-  //Usestae variables
   const [message, setMessage] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     confirmPassword: '',
   });
+  const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,12 +26,34 @@ const RegistrationPage = () => {
     navigate('/');
   };
 
+  const validateForm = () => {
+    let errors = {};
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required';
+    }
+    if (!formData.password.trim()) {
+      errors.password = 'Password is required';
+    }
+    if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = 'Passwords do not match';
+    }
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (!validateForm()) return;
+    
     axios.post('http://192.168.99.141:5000/register', formData)
       .then(response => {
         setMessage(response.data.message);
         setSubmitted(true);
+        setShowPopup(true);
+        setTimeout(() => {
+          setShowPopup(false);
+          navigateLoginPage();
+        }, 2000);
         setFormData({
           email: '',
           password: '',
@@ -45,74 +66,53 @@ const RegistrationPage = () => {
   };
 
   return (
-    <div className='p-32 flex' style={{ backgroundColor: '#6946C6' }}>
-      <div className=" lg:pl-14">
-        <h2 className=" text-white uppercase font-semibold hover:text-black sm:text-4xl size-96 ">[Expleosurance]</h2>
-        </div>
-      <div className='flex justify-center h-100vh w-100vh'>
-        <div className="rounded-lg uppercase w-96 border-2 border-black bg-white">
-          <div className='font-semibold bg-[#6946C6] h-16 pt-5 mb-4 text-white rounded-t-md'>
-            <h3>Create an Account</h3>
+    <div className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+      <div className="border-2 shadow-xl bg-white rounded-xl p-10 max-w-md w-full text-center">
+        <h1 className="text-3xl font-bold text-gray-700 mb-6">Create an Account</h1>
+        {submitted && showPopup && (
+          <div className="bg-green-500 text-white p-4 rounded-lg mb-4">
+            Registration successful! Redirecting...
           </div>
-
-          {submitted ? (
-            <div className="success-message">
-              <h2>Registration successful!</h2>
-              <button className='navLogin' onClick={navigateLoginPage}>
-                Navigate to login Page
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4 mr-5">
-              <div className="flex items-center">
-                <label className="w-1/3 text-right pr-4" htmlFor="email">Email:</label>
-                <input
-                  className="w-2/3 border-2 border-black rounded-md p-2"
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="flex items-center">
-                <label className="w-1/3 text-right pr-4 pt-2" htmlFor="password">Password:</label>
-                <input
-                  className="w-2/3 border-2 border-black rounded-md pt-2 p-2"
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="flex items-center">
-                <label className="w-1/3 text-right pr-4" htmlFor="confirmPassword">Confirm Password:</label>
-                <input
-                  className="w-2/3 border-2 border-black rounded-md p-2"
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="flex justify-center">
-                <button
-                  type="submit"
-                  className="mb-3 border-2 border-black p-2 rounded-md bg-violet-600 text-white hover:bg-white hover:text-black"
-                >
-                  Register
-                </button>
-              </div>
-            </form>
-          )}
-
-          <p>{message}</p>
-        </div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-700"
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Email Address"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+          <input
+            className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-700"
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+          <input
+            className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-700"
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+          />
+          {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
+          <button
+            type="submit"
+            className="w-full py-3 bg-purple-700 text-white rounded-lg hover:bg-purple-800 transition-all"
+          >
+            Register
+          </button>
+        </form>
+        <p className="mt-4 text-red-500">{message}</p>
       </div>
     </div>
   );

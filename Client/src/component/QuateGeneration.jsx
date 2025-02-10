@@ -14,12 +14,13 @@ const QuoteGeneration = () => {
     setQuoteData({ ...quoteData, [e.target.name]: e.target.value });
   };
 
-  // Function to add a dependent
   const addDependent = () => {
-    setQuoteData({ ...quoteData, dependents: [...quoteData.dependents, { name: '', age: '' }] });
+    setQuoteData({ 
+      ...quoteData, 
+      dependents: [...quoteData.dependents, { name: '', age: '' }] 
+    });
   };
 
-  // Function to handle changes for each dependent
   const handleDependentChange = (index, field, value) => {
     const updatedDependents = [...quoteData.dependents];
     updatedDependents[index] = { ...updatedDependents[index], [field]: value };
@@ -29,127 +30,90 @@ const QuoteGeneration = () => {
   const generateQuote = (e) => {
     e.preventDefault();
     
-    // Basic quote calculation logic (you can replace this with your actual quote calculation)
-    let baseQuote = Math.random() * 1000; // Example base quote
+    let baseQuote = Math.random() * 1000; 
     const annualIncome = parseFloat(quoteData.annualIncome) || 0;
     const existingDebts = parseFloat(quoteData.existingDebts) || 0;
     const futureExpenses = parseFloat(quoteData.futureExpenses) || 0;
     const finalExpenses = parseFloat(quoteData.finalExpenses) || 0;
 
-    // Calculate based on gathered data
     const adjustedQuote = baseQuote + (annualIncome / 1000) + (existingDebts / 500) + (futureExpenses / 500) + (finalExpenses / 500);
     setQuoteData({ ...quoteData, generatedQuote: adjustedQuote.toFixed(2) });
   };
 
   return (
-    <div style={{ backgroundColor: '#6946C6' }}>
-      <div className="min-h-screen w-full bg-customPurple flex flex-col items-center p-6">
-        <h2 className="text-white text-2xl font-bold mb-6">Quote Generation</h2>
-        <div className="bg-white p-4 border-2 border-black rounded-md">
-          <form onSubmit={generateQuote} className="w-full max-w-md">
-            {/* Annual Income */}
-            <div className="mb-4 flex">
-              <label className="block text-black w-1/3">Annual Income</label>
+    <div className="flex justify-center items-center min-h-screen px-4">
+      <div className="bg-gray-900 bg-opacity-90 shadow-lg rounded-xl p-10 max-w-lg w-full text-white">
+        <h2 className="text-3xl font-bold text-center mb-6">Quote Generation</h2>
+        <form onSubmit={generateQuote} className="space-y-6">
+          {[
+            { label: "Annual Income", name: "annualIncome" },
+            { label: "Existing Debts", name: "existingDebts" },
+            { label: "Future Expenses", name: "futureExpenses" },
+            { label: "Final Expenses", name: "finalExpenses" },
+          ].map((field, index) => (
+            <div key={index} className="flex items-center">
+              <label className="text-lg font-medium w-1/3 text-right pr-6">{field.label}:</label>
               <input
                 type="number"
-                name="annualIncome"
-                value={quoteData.annualIncome}
+                name={field.name}
+                value={quoteData[field.name]}
                 onChange={handleChange}
-                className="w-2/3 p-2 mt-2 border border-black rounded"
+                className="w-2/3 p-3 rounded-md border border-gray-400 text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                required
               />
             </div>
+          ))}
 
-            {/* Existing Debts */}
-            <div className="mb-4 flex">
-              <label className="block text-black w-1/3">Existing Debts (e.g., mortgage, loans)</label>
-              <input
-                type="number"
-                name="existingDebts"
-                value={quoteData.existingDebts}
-                onChange={handleChange}
-                className="w-2/3 p-2 mt-2 border border-black rounded"
-              />
-            </div>
+          <div className="flex justify-center mt-4">
+            <button
+              type="button"
+              onClick={addDependent}
+              className="bg-purple-600 text-white border-2 border-white px-4 py-2 rounded-md hover:bg-white hover:text-black font-bold transition"
+            >
+              Add Dependent
+            </button>
+          </div>
 
-            {/* Future Expenses */}
-            <div className="mb-4 flex">
-              <label className="block text-black w-1/3">Future Expenses (e.g., children's education)</label>
-              <input
-                type="number"
-                name="futureExpenses"
-                value={quoteData.futureExpenses}
-                onChange={handleChange}
-                className="w-2/3 p-2 mt-2 border border-black rounded"
-              />
-            </div>
-
-            {/* Final Expenses */}
-            <div className="mb-4 flex">
-              <label className="block text-black w-1/3">Final Expenses (e.g., funeral expenses)</label>
-              <input
-                type="number"
-                name="finalExpenses"
-                value={quoteData.finalExpenses}
-                onChange={handleChange}
-                className="w-2/3 p-2 mt-2 border border-black rounded"
-              />
-            </div>
-
-            {/* Dependents */}
-            <div className="mb-4">
-              <button
-                type="button"
-                onClick={addDependent}
-                className="bg-[#6946C6] text-white border-2 border-black px-4 py-2 rounded hover:bg-white hover:text-black"
-              >
-                Add Dependent
-              </button>
-            </div>
-
-            {/* Render Dependent Fields */}
-            {quoteData.dependents.map((dependent, index) => (
-              <div key={index} className="mb-4">
-                <div className="flex">
-                  <label className="block text-black w-1/3">Dependent {index + 1} - Name</label>
-                  <input
-                    type="text"
-                    name={`dependentName-${index}`}
-                    value={dependent.name}
-                    onChange={(e) => handleDependentChange(index, 'name', e.target.value)}
-                    className="w-2/3 p-2 mt-2 border border-black rounded"
-                  />
-                </div>
-                <div className="flex mt-2">
-                  <label className="block text-black w-1/3">Dependent {index + 1} - Age</label>
-                  <input
-                    type="number"
-                    name={`dependentAge-${index}`}
-                    value={dependent.age}
-                    onChange={(e) => handleDependentChange(index, 'age', e.target.value)}
-                    className="w-2/3 p-2 mt-2 border border-black rounded"
-                  />
-                </div>
+          {quoteData.dependents.map((dependent, index) => (
+            <div key={index} className="space-y-4">
+              <div className="flex items-center">
+                <label className="text-lg font-medium w-1/3 text-right pr-6">Dependent {index + 1} - Name:</label>
+                <input
+                  type="text"
+                  value={dependent.name}
+                  onChange={(e) => handleDependentChange(index, 'name', e.target.value)}
+                  className="w-2/3 p-3 rounded-md border border-gray-400 text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  required
+                />
               </div>
-            ))}
-
-            {/* Submit Button */}
-            <div className="flex justify-center mt-6">
-              <button
-                type="submit"
-                className="bg-[#6946C6] text-white border-2 border-black px-4 py-2 rounded hover:bg-white hover:text-black"
-              >
-                Generate Quote
-              </button>
+              <div className="flex items-center">
+                <label className="text-lg font-medium w-1/3 text-right pr-6">Dependent {index + 1} - Age:</label>
+                <input
+                  type="number"
+                  value={dependent.age}
+                  onChange={(e) => handleDependentChange(index, 'age', e.target.value)}
+                  className="w-2/3 p-3 rounded-md border border-gray-400 text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  required
+                />
+              </div>
             </div>
-          </form>
+          ))}
 
-          {/* Displaying the Generated Quote */}
-          {quoteData.generatedQuote && (
-            <div className="mt-6 text-black">
-              <h3 className="text-xl">Generated Quote: ${quoteData.generatedQuote}</h3>
-            </div>
-          )}
-        </div>
+          <div className="flex justify-center mt-6">
+            <button
+              type="submit"
+              className="bg-purple-600 text-white border-2 border-white px-4 py-2 rounded-md hover:bg-white hover:text-black font-bold transition"
+            >
+              Generate Quote
+            </button>
+          </div>
+        </form>
+
+        {quoteData.generatedQuote && (
+          <div className="mt-6 text-white text-center">
+            <h3 className="text-xl font-bold">Generated Quote: ${quoteData.generatedQuote}</h3>
+          </div>
+        )}
       </div>
     </div>
   );

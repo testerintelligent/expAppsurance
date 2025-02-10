@@ -2,39 +2,26 @@ import React from 'react';
 
 const LegalAndCompliance = () => {
   return (
-    <div className="p-7 "style={{ backgroundColor: '#6946C6' }}>
-      <div className="bg-white ml-60 rounded-lg border-2 border-black p-6">
-      <h2 className="text-black text-3xl font-bold ">Legal and Compliance</h2>
-      <div className="w-full max-w-4xl bg-white p-6 rounded shadow ">
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">Terms and Conditions</h3>
-        <p className="text-gray-600 mb-4">
-          These are the terms and conditions of our service. Please read them carefully before proceeding.
-        </p>
-        <p className="text-gray-600 mb-4">
-          1. Users must agree to the terms to proceed with any services provided by us.
-        </p>
-        <p className="text-gray-600 mb-4">
-          2. All policies are subject to updates and users will be notified of changes accordingly.
-        </p>
-        <p className="text-gray-600 mb-4">
-          3. Our company complies with all relevant legal standards, including data protection regulations.
-        </p>
+    <div className="flex justify-center items-center min-h-screen px-4">
+      <div className="bg-gray-900 bg-opacity-90 shadow-lg rounded-xl p-10 max-w-3xl w-full text-white">
+        <h2 className="text-3xl font-bold text-center mb-6">Legal and Compliance</h2>
 
-        <h3 className="text-xl font-semibold text-gray-800 mt-8 mb-4">Privacy Policy</h3>
-        <p className="text-gray-600 mb-4">
-          We are committed to protecting your privacy. All personal data will be securely stored and processed.
-        </p>
-        <p className="text-gray-600 mb-4">
-          You can request to delete or update your information at any time. Please read the full privacy policy for more details.
-        </p>
+        <h3 className="text-xl font-semibold mt-6 mb-2">Terms and Conditions</h3>
+        <p>These are the terms and conditions of our service. Please read them carefully before proceeding.</p>
+        <ul className="list-disc pl-6 mt-4">
+          <li>Users must agree to the terms to proceed with any services provided by us.</li>
+          <li>All policies are subject to updates, and users will be notified of changes accordingly.</li>
+          <li>We comply with all legal standards, including data protection regulations.</li>
+        </ul>
 
-        <h3 className="text-xl font-semibold text-gray-800 mt-8 mb-4">Compliance Information</h3>
-        <p className="text-gray-600">
-          We adhere to all applicable compliance standards and regulatory requirements. Our policies and procedures are regularly reviewed to ensure compliance.
-        </p>
+        <h3 className="text-xl font-semibold mt-6 mb-2">Privacy Policy</h3>
+        <p>We are committed to protecting your privacy. All personal data is securely stored and processed.</p>
+        <p className="mt-2">You can request to delete or update your information at any time.</p>
+
+        <h3 className="text-xl font-semibold mt-6 mb-2">Compliance Information</h3>
+        <p>We adhere to all compliance standards and regulatory requirements. Our policies are reviewed regularly to ensure compliance.</p>
       </div>
     </div>
- </div>
   );
 };
 

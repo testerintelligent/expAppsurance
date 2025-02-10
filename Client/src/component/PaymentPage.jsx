@@ -2,38 +2,49 @@ import React, { useState } from 'react';
 
 const PaymentPage = () => {
   const [premium, setPremium] = useState(0);
-  const [policyAmount, setPolicyAmount] = useState(0);
+  const [policyAmount, setPolicyAmount] = useState('');
 
   const calculatePremium = () => {
-    setPremium(Number(policyAmount) * 0.05); // Convert to number for calculation
+    setPremium(Number(policyAmount) * 0.05);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle payment logic here
     alert("Payment processing...");
   };
 
   return (
-    <div className='pb-80 pt-11 pl-72 pr-64 items-center'style={{ backgroundColor: '#6946C6' }}>
-       <h2 className='text-white text-2xl font-bold mb-6' >Payment Calculation</h2>
-      <div className='bg-white p-4 border-2 border-black rounded-md '>
-    <form onSubmit={handleSubmit}>
-      <label>Enter your Policy Amount : </label>
-      <input
-        type="number"
-        placeholder="Policy Amount"
-        className='border-2 border-black p-2'
-        value={policyAmount}
-        onChange={(e) => setPolicyAmount(e.target.value)}
-      />
-      <button type="button" onClick={calculatePremium} className='text-white p-2 border-2 border-black m-2 rounded-md bg-[#6946C6] hover:text-black hover:bg-white'>
-        Calculate Premium
-      </button>
-      <p>Premium: {premium}</p>
-      <button type="submit" className='p-2 border-2 border-black m-2 rounded-md text-white bg-[#6946C6] hover:text-black hover:bg-white'>Proceed to Pay</button>
-    </form>
-    </div>
+    <div className="flex justify-center items-center min-h-screen px-4">
+      <div className="bg-gray-900 bg-opacity-90 shadow-lg rounded-xl p-10 max-w-lg w-full text-white">
+        <h2 className="text-3xl font-bold text-center mb-6">Payment Calculation</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-lg font-medium mb-2">Enter your Policy Amount:</label>
+            <input
+              type="number"
+              placeholder="Policy Amount"
+              className="w-full p-3 rounded-md border border-gray-400 text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+              value={policyAmount}
+              onChange={(e) => setPolicyAmount(e.target.value)}
+              required
+            />
+          </div>
+          <button 
+            type="button" 
+            onClick={calculatePremium} 
+            className="w-full p-3 border-2 border-white rounded-md text-white bg-purple-600 hover:bg-white hover:text-black font-bold transition"
+          >
+            Calculate Premium
+          </button>
+          <p className="text-lg font-semibold text-center">Premium: ₹{premium}</p>
+          <button 
+            type="submit" 
+            className="w-full p-3 border-2 border-white rounded-md text-white bg-green-500 hover:bg-white hover:text-black font-bold transition"
+          >
+            Proceed to Pay
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

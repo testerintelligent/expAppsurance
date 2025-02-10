@@ -13,59 +13,59 @@ const ProfileManagement = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle profile update logic
     console.log('Profile updated:', formData);
   };
 
   return (
-    <div style={{ backgroundColor: '#6946C6' }}>
-      <div className="min-h-screen w-full bg-customPurple flex flex-col items-center p-6">
-        <h2 className="text-white text-2xl font-bold mb-6">Profile Management</h2>
-        <div className="bg-white p-4 border-2 border-black rounded-md">
-          <form onSubmit={handleSubmit} className="w-full max-w-md">
-            <div className="mb-4 flex items-center">
-              <label className="block text-black w-1/3">Name</label>
-              <input
-                type="text"
-                name="name"
-                placeholder='Enter you name'
-                value={formData.name}
-                onChange={handleChange}
-                className="w-2/3 p-2 mt-2 border border-black rounded"
-              />
-            </div>
-            <div className="mb-4 flex items-center">
-              <label className="block text-black w-1/3">Email</label>
-              <input
-                type="email"
-                name="email"
-                placeholder='Enter your email'
-                value={formData.email}
-                onChange={handleChange}
-                className="w-2/3 p-2 mt-2 border border-black rounded"
-              />
-            </div>
-            <div className="mb-4 flex items-center">
-              <label className="block text-black w-1/3">Phone</label>
-              <input
-                type="tel"
-                name="phone"
-                placeholder='Enter mobile number'
-                value={formData.phone}
-                onChange={handleChange}
-                className="w-2/3 p-2 mt-2 border border-black rounded"
-              />
-            </div>
-            <div className="flex justify-center">
-              <button
-                type="submit"
-                className="bg-[#6946C6] text-white border-2 border-black px-4 py-2 rounded hover:bg-white hover:text-black"
-              >
-                Update Profile
-              </button>
-            </div>
-          </form>
-        </div>
+    <div className="flex justify-center items-center min-h-screen px-4">
+      <div className="bg-gray-900 bg-opacity-90 shadow-lg rounded-xl p-10 max-w-lg w-full text-white">
+        <h2 className="text-3xl font-bold text-center mb-6">Profile Management</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-lg font-medium mb-2">Name</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="Enter your name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full p-3 rounded-md border border-gray-400 text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-lg font-medium mb-2">Email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-3 rounded-md border border-gray-400 text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-lg font-medium mb-2">Phone</label>
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Enter mobile number"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full p-3 rounded-md border border-gray-400 text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required
+            />
+          </div>
+          <div className="flex justify-center">
+            <button 
+              type="submit" 
+              className="w-full p-3 border-2 border-white rounded-md text-white bg-purple-600 hover:bg-white hover:text-black font-bold transition"
+            >
+              Update Profile
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
