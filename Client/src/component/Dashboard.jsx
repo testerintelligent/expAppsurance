@@ -17,7 +17,7 @@ const Dashboard = () => {
   }, [navigate]);
 
   useEffect(() => { 
-    axios.get('http://192.168.99.141:5000/Dashboard') 
+    axios.get('http://10.192.190.148:5000/Dashboard') 
       .then(response => {
         console.log('Response:', response.data);
         setInsuranceData(response.data);
@@ -34,7 +34,7 @@ const Dashboard = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://192.168.99.141:5000/Dashboard/${policyToDelete}`);
+      await axios.delete(`http://10.192.190.148:5000/Dashboard/${policyToDelete}`);
       setInsuranceData(insuranceData.filter(insurance => insurance._id !== policyToDelete));
     } catch (error) {
       console.error('Error deleting policy:', error);
