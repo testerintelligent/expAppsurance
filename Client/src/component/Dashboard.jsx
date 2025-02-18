@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import "../style/Dashboard.css";
 import { useNavigate } from 'react-router-dom';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import "../style/Dashboard.css";
 
 const Dashboard = () => {
   const [insuranceData, setInsuranceData] = useState([]);
@@ -17,7 +18,7 @@ const Dashboard = () => {
   }, [navigate]);
 
   useEffect(() => { 
-    axios.get('http://192.168.99.141:5000/Dashboard') 
+    axios.get('http://10.192.190.148:5000/Dashboard') 
       .then(response => {
         console.log('Response:', response.data);
         setInsuranceData(response.data);
@@ -34,7 +35,7 @@ const Dashboard = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://192.168.99.141:5000/Dashboard/${policyToDelete}`);
+      await axios.delete(`http://10.192.190.148:5000/Dashboard/${policyToDelete}`);
       setInsuranceData(insuranceData.filter(insurance => insurance._id !== policyToDelete));
     } catch (error) {
       console.error('Error deleting policy:', error);
@@ -62,57 +63,68 @@ const Dashboard = () => {
     <div className='dashboard-container'>
       <div className='dashboard-content'>
         {insuranceData.length > 0 ? (
-          <div className='insuranceTable'>
-            <table>
-              <thead>
-                <tr>
-                  <th>Policy Create Date</th>
-                  <th>Policy Number</th>
-                  <th>Full Name</th>
-                  <th>Email ID</th>
-                  <th>Address</th>
-                  <th>Date of Birth</th>
-                  <th>Gender</th>
-                  <th>Policy Type</th>
-                  <th>Sum Insured</th>
-                  <th>Premium</th>
-                  <th>Delete Record</th>
-                </tr>
-              </thead>
-              <tbody>
+          <TableContainer component={Paper}>
+            <Table>
+            <TableHead>
+  <TableRow>
+    <TableCell sx={{ color: 'white' }}>Policy Create Date</TableCell>
+    <TableCell sx={{ color: 'white' }}>Policy Number</TableCell>
+    <TableCell sx={{ color: 'white' }}>Full Name</TableCell>
+    <TableCell sx={{ color: 'white' }}>Email ID</TableCell>
+    <TableCell sx={{ color: 'white' }}>Address</TableCell>
+    <TableCell sx={{ color: 'white' }}>Date of Birth</TableCell>
+    <TableCell sx={{ color: 'white' }}>Gender</TableCell>
+    <TableCell sx={{ color: 'white' }}>Policy Type</TableCell>
+    <TableCell sx={{ color: 'white' }}>Sum Insured</TableCell>
+    <TableCell sx={{ color: 'white' }}>Premium</TableCell>
+    <TableCell sx={{ color: 'white' }}>Delete Record</TableCell>
+  </TableRow>
+</TableHead>
+
+              <TableBody>
                 {insuranceData.map((insurance, index) => (
-                  <tr key={index}>
-                    <td>{formatDate(insurance.CurrentDate)}</td>
-                    <td>{insurance.policyNumber || generateRandomNumber()}</td>
-                    <td>{insurance.Name}</td>
-                    <td>{insurance.email}</td>
-                    <td>{insurance.Address}</td>
-                    <td>{formatDate(insurance.DateOfBirth)}</td>
-                    <td>{insurance.Gender}</td>
-                    <td>{insurance.PolicyType.join(', ')}</td>
-                    <td>{insurance.SumInsured}</td>
-                    <td>{insurance.Premium}</td>
-                    <td className='deleteButton'>
-                      <button onClick={() => openModal(insurance._id)}>Delete Policy</button>
-                    </td>
-                  </tr>
+                  <TableRow key={index}>
+                    <TableCell>{formatDate(insurance.CurrentDate)}</TableCell>
+                    <TableCell>{insurance.policyNumber || generateRandomNumber()}</TableCell>
+                    <TableCell>{insurance.Name}</TableCell>
+                    <TableCell>{insurance.email}</TableCell>
+                    <TableCell>{insurance.Address}</TableCell>
+                    <TableCell>{formatDate(insurance.DateOfBirth)}</TableCell>
+                    <TableCell>{insurance.Gender}</TableCell>
+                    <TableCell>{insurance.PolicyType.join(', ')}</TableCell>
+                    <TableCell>{insurance.SumInsured}</TableCell>
+                    <TableCell>{insurance.Premium}</TableCell>
+                    <TableCell>
+                      <Button 
+                        variant="contained" 
+                        color="error" 
+                        onClick={() => openModal(insurance._id)}
+                      >
+                        Delete Policy
+                      </Button>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </TableBody>
+            </Table>
+          </TableContainer>
         ) : (
           <p>No insurance data available</p>
         )}
 
-        {showModal && (
-          <div className="modal">
-            <div className="modalContent">
-              <p>Are you sure you want to delete this insurance policy?</p>
-              <button className='PopupAccept' onClick={handleDelete}>Yes</button>
-              <button className='PopupCancel' onClick={() => setShowModal(false)}>Cancel</button>
-            </div>
-          </div>
-        )}
+        <Dialog
+          open={showModal}
+          onClose={() => setShowModal(false)}
+        >
+          <DialogTitle>Delete Policy</DialogTitle>
+          <DialogContent>
+            <p>Are you sure you want to delete this insurance policy?</p>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDelete} color="primary">Yes</Button>
+            <Button onClick={() => setShowModal(false)} color="secondary">Cancel</Button>
+          </DialogActions>
+        </Dialog>
       </div>
     </div>
   );

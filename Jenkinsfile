@@ -15,7 +15,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                     sudo docker-compose down || true
+                     echo "P@ssw0rd" | sudo -S docker-compose down
                      sudo docker-compose up --build -d
                     """
                 }
@@ -25,7 +25,7 @@ pipeline {
         stage('Display URL') {
             steps {
                 script {
-                    def url = "192.168.99.141:3000"
+                    def url = "10.192.190.148:3000"
                     echo "Application is running at ${url}"
                 }
             }

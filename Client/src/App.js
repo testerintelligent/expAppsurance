@@ -18,8 +18,7 @@ import QuateGeneration from './component/QuateGeneration';
 import Support from './component/Support';
 import PolicyInitiation from './component/PolicyInitiation';
 import LifeInsurance from './component/LifeInsurance';
-import Contact from './component/Contact';
-import BillingPage from './component/BillingPage';
+import Contact from './component/ContactDetailPage/Contact';
 import "./style/tailwind.css";
 
 function App() {

@@ -101,7 +101,7 @@ const InsurancePage = () => {
   const handleInsurance = (event) => {
     event.preventDefault();
     if (validateFields()) {
-      axios.post('http://192.168.99.141:5000/Dashboard', insuranceData)
+      axios.post('http://10.192.190.148:5000/Dashboard', insuranceData)
         .then(response => {
           setMessage(response.data.message || 'Policy created successfully.');
           setInsuranceData({

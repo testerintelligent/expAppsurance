@@ -137,9 +137,9 @@ app.post('/forgot-password', async (req, res) => {
   })
   
   
-const IPaddress="192.168.99.141";
+const IPaddress="10.192.190.148";
 app.listen(PORT,() => {
-    console.log(`Server is running on http://192.168.99.141:${PORT}`);
+    console.log(`Server is running on http://10.192.190.148:${PORT}`);
 });
 
 

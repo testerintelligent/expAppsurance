@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import '../style/Contact.css';
+ import '../../style/Contact.css';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -50,7 +50,7 @@ const Contact = () => {
     event.preventDefault();
     if (validateFields()) {
       try {
-        const response = await axios.post('http://192.168.99.141:5000/Dashboard', formData);
+        const response = await axios.post('http://10.192.190.148:5000/Dashboard', formData);
         setMessage(response.data.message || 'Policy created successfully.');
         alert('Policy created successfully.');
         handleCancel();
