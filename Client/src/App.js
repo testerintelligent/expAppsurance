@@ -1,4 +1,3 @@
-
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import RegistrationPage from './component/RegistrationPage';
@@ -20,42 +19,44 @@ import Support from './component/Support';
 import PolicyInitiation from './component/PolicyInitiation';
 import LifeInsurance from './component/LifeInsurance';
 import Contact from './component/Contact';
+import BillingPage from './component/BillingPage';
 import "./style/tailwind.css";
-
 
 function App() {
   return (
     <div className="App">
-   
       <Router>
-      <div>
-        <Routes>
-            <Route path="/" element={<LoginPage/>} />
-            <Route path="/register" element={<RegistrationPage/>} />
-            <Route path='/forgotPassword' element={<ForgotPasswordPage/>}/>
-            <Route element={<Layout />}> 
-            <Route path='/validateUser' element={<PolicyInitiation/>}/>
-            <Route path='/about' element={<About/>}/>
-            <Route path='/adminPanel' element={<AdminPanel/>}/>
-            <Route path='/claimsManagement' element={<ClaimsManagement/>}/>
-            <Route path='/legalAndcompliance' element={<LegalAndCompliance/>}/>
-            <Route path='/paymentPage' element={<PaymentPage/>}/>
-            <Route path='/policyManagement' element={<PolicyManagement/>}/>
-            <Route path='/profileManagement' element={<ProfileManagement/>}/>
-            <Route path='/quateGeneration' element={<QuateGeneration/>}/>
-            <Route path='/support' element={<Support/>}/>
-            <Route path='/home' element={<HomePage/>}/>
-            <Route path='/insurance' element={<InsurancePage/>}/>
-            <Route path='/Dashboard' element={<Dashboard/>}/>
-            <Route path='/LifeInsurance' element={<LifeInsurance/>}/>
-            <Route path='/contact' element={<Contact />} />
-
+        <div>
+          <Routes>
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/register" element={<RegistrationPage />} />
+            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
             
-          </Route>
-        </Routes>
-      </div>
-    </Router>
-      
+            {/* Protected Routes inside Layout */}
+            <Route element={<Layout />}> 
+              <Route path="/validateUser" element={<PolicyInitiation />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/adminPanel" element={<AdminPanel />} />
+              <Route path="/claimsManagement" element={<ClaimsManagement />} />
+              <Route path="/legalAndCompliance" element={<LegalAndCompliance />} />
+              <Route path="/paymentPage" element={<PaymentPage />} />
+              <Route path="/policyManagement" element={<PolicyManagement />} />
+              <Route path="/profileManagement" element={<ProfileManagement />} />
+              <Route path="/quateGeneration" element={<QuateGeneration />} />
+              <Route path="/support" element={<Support />} />
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/insurance" element={<InsurancePage />} />
+              <Route path="/Dashboard" element={<Dashboard />} />
+              <Route path="/LifeInsurance" element={<LifeInsurance />} />
+              <Route path="/contact" element={<Contact />} />
+              
+              {/* ✅ Added Billing Page Route */}
+              <Route path="/billing" element={<BillingPage />} />
+              
+            </Route>
+          </Routes>
+        </div>
+      </Router>
     </div>
   );
 }
