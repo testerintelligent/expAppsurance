@@ -19,6 +19,7 @@ import Support from './component/Support';
 import PolicyInitiation from './component/PolicyInitiation';
 import LifeInsurance from './component/LifeInsurance';
 import Contact from './component/ContactDetailPage/Contact';
+import BillingPage from './component/BillingPage'
 import "./style/tailwind.css";
 
 function App() {
