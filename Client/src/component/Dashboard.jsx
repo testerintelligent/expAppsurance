@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogActions, DialogContent, DialogTitle, TablePagination } from '@mui/material';
 import "../style/Dashboard.css";
 
 const Dashboard = () => {
   const [insuranceData, setInsuranceData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [policyToDelete, setPolicyToDelete] = useState(null);
+  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
+  const [sortedColumn, setSortedColumn] = useState('CurrentDate'); // The column to sort by initially
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,14 +22,15 @@ const Dashboard = () => {
     }
   }, [navigate]);
 
-  useEffect(() => { 
+  useEffect(() => {
     axios.get('http://10.192.190.148:5000/Dashboard') 
       .then(response => {
         console.log('Response:', response.data);
         setInsuranceData(response.data);
+        setFilteredData(response.data);
       })
       .catch(error => {
-        console.error('Error fetching data:', error); 
+        console.error('Error fetching data:', error);
       });
   }, []);
 
@@ -37,6 +43,7 @@ const Dashboard = () => {
     try {
       await axios.delete(`http://10.192.190.148:5000/Dashboard/${policyToDelete}`);
       setInsuranceData(insuranceData.filter(insurance => insurance._id !== policyToDelete));
+      setFilteredData(filteredData.filter(insurance => insurance._id !== policyToDelete));
     } catch (error) {
       console.error('Error deleting policy:', error);
       alert('Failed to delete the policy. Please try again.');
@@ -59,30 +66,77 @@ const Dashboard = () => {
     return Math.floor(100000 + Math.random() * 900000);
   }
 
+  // Sorting function
+  const sortData = (column) => {
+    const order = sortOrder === 'asc' ? 1 : -1;
+    const sorted = [...filteredData].sort((a, b) => {
+      if (typeof a[column] === 'string') {
+        return a[column].toLowerCase().localeCompare(b[column].toLowerCase()) * order;
+      } else if (typeof a[column] === 'number') {
+        return (a[column] - b[column]) * order;
+      } else if (a[column] instanceof Date) {
+        return (new Date(a[column]) - new Date(b[column])) * order;
+      }
+      return 0;
+    });
+    setFilteredData(sorted);
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle order after sorting
+    setSortedColumn(column); // Update the column that is being sorted
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <div className='dashboard-container'>
       <div className='dashboard-content'>
-        {insuranceData.length > 0 ? (
+        {filteredData.length > 0 ? (
           <TableContainer component={Paper}>
             <Table>
-            <TableHead>
-  <TableRow>
-    <TableCell sx={{ color: 'white' }}>Policy Create Date</TableCell>
-    <TableCell sx={{ color: 'white' }}>Policy Number</TableCell>
-    <TableCell sx={{ color: 'white' }}>Full Name</TableCell>
-    <TableCell sx={{ color: 'white' }}>Email ID</TableCell>
-    <TableCell sx={{ color: 'white' }}>Address</TableCell>
-    <TableCell sx={{ color: 'white' }}>Date of Birth</TableCell>
-    <TableCell sx={{ color: 'white' }}>Gender</TableCell>
-    <TableCell sx={{ color: 'white' }}>Policy Type</TableCell>
-    <TableCell sx={{ color: 'white' }}>Sum Insured</TableCell>
-    <TableCell sx={{ color: 'white' }}>Premium</TableCell>
-    <TableCell sx={{ color: 'white' }}>Delete Record</TableCell>
-  </TableRow>
-</TableHead>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('CurrentDate')}>
+                    Policy Create Date {sortedColumn === 'CurrentDate' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </TableCell>
+                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('policyNumber')}>
+                    Policy Number {sortedColumn === 'policyNumber' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </TableCell>
+                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('Name')}>
+                    Full Name {sortedColumn === 'Name' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </TableCell>
+                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('email')}>
+                    Email ID {sortedColumn === 'email' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </TableCell>
+                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('Address')}>
+                    Address {sortedColumn === 'Address' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </TableCell>
+                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('DateOfBirth')}>
+                    Date of Birth {sortedColumn === 'DateOfBirth' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </TableCell>
+                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('Gender')}>
+                    Gender {sortedColumn === 'Gender' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </TableCell>
+                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('PolicyType')}>
+                    Policy Type {sortedColumn === 'PolicyType' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </TableCell>
+                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('SumInsured')}>
+                    Sum Insured {sortedColumn === 'SumInsured' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </TableCell>
+                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('Premium')}>
+                    Premium {sortedColumn === 'Premium' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </TableCell>
+                  <TableCell sx={{ color: 'white' }}>Delete Record</TableCell>
+                </TableRow>
+              </TableHead>
 
               <TableBody>
-                {insuranceData.map((insurance, index) => (
+                {filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((insurance, index) => (
                   <TableRow key={index}>
                     <TableCell>{formatDate(insurance.CurrentDate)}</TableCell>
                     <TableCell>{insurance.policyNumber || generateRandomNumber()}</TableCell>
@@ -107,6 +161,15 @@ const Dashboard = () => {
                 ))}
               </TableBody>
             </Table>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={filteredData.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
           </TableContainer>
         ) : (
           <p>No insurance data available</p>
