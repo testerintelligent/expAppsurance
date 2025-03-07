@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogActions, DialogContent, DialogTitle, TablePagination } from '@mui/material';
-import "../style/Dashboard.css";
+// import "../style/Dashboard.css";
 
 const Dashboard = () => {
   const [insuranceData, setInsuranceData] = useState([]);
@@ -94,102 +94,165 @@ const Dashboard = () => {
   };
 
   return (
-    <div className='dashboard-container'>
-      <div className='dashboard-content'>
-        {filteredData.length > 0 ? (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('CurrentDate')}>
-                    Policy Create Date {sortedColumn === 'CurrentDate' && (sortOrder === 'asc' ? '↑' : '↓')}
-                  </TableCell>
-                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('policyNumber')}>
-                    Policy Number {sortedColumn === 'policyNumber' && (sortOrder === 'asc' ? '↑' : '↓')}
-                  </TableCell>
-                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('Name')}>
-                    Full Name {sortedColumn === 'Name' && (sortOrder === 'asc' ? '↑' : '↓')}
-                  </TableCell>
-                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('email')}>
-                    Email ID {sortedColumn === 'email' && (sortOrder === 'asc' ? '↑' : '↓')}
-                  </TableCell>
-                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('Address')}>
-                    Address {sortedColumn === 'Address' && (sortOrder === 'asc' ? '↑' : '↓')}
-                  </TableCell>
-                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('DateOfBirth')}>
-                    Date of Birth {sortedColumn === 'DateOfBirth' && (sortOrder === 'asc' ? '↑' : '↓')}
-                  </TableCell>
-                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('Gender')}>
-                    Gender {sortedColumn === 'Gender' && (sortOrder === 'asc' ? '↑' : '↓')}
-                  </TableCell>
-                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('PolicyType')}>
-                    Policy Type {sortedColumn === 'PolicyType' && (sortOrder === 'asc' ? '↑' : '↓')}
-                  </TableCell>
-                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('SumInsured')}>
-                    Sum Insured {sortedColumn === 'SumInsured' && (sortOrder === 'asc' ? '↑' : '↓')}
-                  </TableCell>
-                  <TableCell sx={{ color: 'white' }} onClick={() => sortData('Premium')}>
-                    Premium {sortedColumn === 'Premium' && (sortOrder === 'asc' ? '↑' : '↓')}
-                  </TableCell>
-                  <TableCell sx={{ color: 'white' }}>Delete Record</TableCell>
-                </TableRow>
-              </TableHead>
+   
+    <div className='dashboard-content' style={{ padding: '20px' }}>
+    {filteredData.length > 0 ? (
+      <TableContainer component={Paper} elevation={3} style={{ borderRadius: '8px' }}>
+        <Table aria-label="insurance-table">
+          <TableHead style={{ backgroundColor: '#2c3e50' }}>
+            <TableRow style={{borderColor:'black'}}>
+              <TableCell 
+                sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }} 
+                onClick={() => sortData('CurrentDate')}
+                style={{ padding: '12px', textAlign: 'center' }}
+              >
+                Policy Create Date {sortedColumn === 'CurrentDate' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </TableCell>
+              <TableCell 
+                sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }} 
+                onClick={() => sortData('policyNumber')}
+                style={{ padding: '12px', textAlign: 'center' }}
+              >
+                Policy Number {sortedColumn === 'policyNumber' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </TableCell>
+              <TableCell 
+                sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }} 
+                onClick={() => sortData('Name')}
+                style={{ padding: '12px', textAlign: 'center' }}
+              >
+                Full Name {sortedColumn === 'Name' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </TableCell>
+              <TableCell 
+                sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }} 
+                onClick={() => sortData('email')}
+                style={{ padding: '12px', textAlign: 'center' }}
+              >
+                Email ID {sortedColumn === 'email' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </TableCell>
+              <TableCell 
+                sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }} 
+                onClick={() => sortData('Address')}
+                style={{ padding: '12px', textAlign: 'center' }}
+              >
+                Address {sortedColumn === 'Address' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </TableCell>
+              <TableCell 
+                sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }} 
+                onClick={() => sortData('DateOfBirth')}
+                style={{ padding: '12px', textAlign: 'center' }}
+              >
+                Date of Birth {sortedColumn === 'DateOfBirth' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </TableCell>
+              <TableCell 
+                sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }} 
+                onClick={() => sortData('Gender')}
+                style={{ padding: '12px', textAlign: 'center' }}
+              >
+                Gender {sortedColumn === 'Gender' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </TableCell>
+              <TableCell 
+                sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }} 
+                onClick={() => sortData('PolicyType')}
+                style={{ padding: '12px', textAlign: 'center' }}
+              >
+                Policy Type {sortedColumn === 'PolicyType' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </TableCell>
+              <TableCell 
+                sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }} 
+                onClick={() => sortData('SumInsured')}
+                style={{ padding: '12px', textAlign: 'center' }}
+              >
+                Sum Insured {sortedColumn === 'SumInsured' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </TableCell>
+              <TableCell 
+                sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }} 
+                onClick={() => sortData('Premium')}
+                style={{ padding: '12px', textAlign: 'center' }}
+              >
+                Premium {sortedColumn === 'Premium' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </TableCell>
+              <TableCell 
+                sx={{ color: 'white', fontWeight: 'bold' }} 
+                style={{ padding: '12px', textAlign: 'center' }}
+              >
+                Delete Record
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((insurance, index) => (
+              <TableRow key={index} style={{ backgroundColor: index % 2 === 0 ? '#ecf0f1' : '#ffffff' }}>
+                <TableCell style={{ padding: '12px', textAlign: 'center' }}>{formatDate(insurance.CurrentDate)}</TableCell>
+                <TableCell style={{ padding: '12px', textAlign: 'center' }}>{insurance.policyNumber || generateRandomNumber()}</TableCell>
+                <TableCell style={{ padding: '12px', textAlign: 'center' }}>{insurance.Name}</TableCell>
+                <TableCell style={{ padding: '12px', textAlign: 'center' }}>{insurance.email}</TableCell>
+                <TableCell style={{ padding: '12px', textAlign: 'center' }}>{insurance.Address}</TableCell>
+                <TableCell style={{ padding: '12px', textAlign: 'center' }}>{formatDate(insurance.DateOfBirth)}</TableCell>
+                <TableCell style={{ padding: '12px', textAlign: 'center' }}>{insurance.Gender}</TableCell>
+                <TableCell style={{ padding: '12px', textAlign: 'center' }}>{insurance.PolicyType.join(', ')}</TableCell>
+                <TableCell style={{ padding: '12px', textAlign: 'center' }}>{insurance.SumInsured}</TableCell>
+                <TableCell style={{ padding: '12px', textAlign: 'center' }}>{insurance.Premium}</TableCell>
+                <TableCell style={{ padding: '12px', textAlign: 'center' }}>
+                  <Button 
+                    variant="contained" 
+                    color="error" 
+                    onClick={() => openModal(insurance._id)} 
+                    style={{ textTransform: 'none', borderRadius: '5px' }}
+                  >
+                    Delete Policy
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <div className='float-end'>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredData.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          style={{ borderTop: '1px solid #ddd' }}
+        />
+         </div>
+      </TableContainer>
+    ) : (
+      <p style={{ textAlign: 'center', color: '#7f8c8d', fontSize: '18px' }}>No insurance data available</p>
+    )}
 
-              <TableBody>
-                {filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((insurance, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{formatDate(insurance.CurrentDate)}</TableCell>
-                    <TableCell>{insurance.policyNumber || generateRandomNumber()}</TableCell>
-                    <TableCell>{insurance.Name}</TableCell>
-                    <TableCell>{insurance.email}</TableCell>
-                    <TableCell>{insurance.Address}</TableCell>
-                    <TableCell>{formatDate(insurance.DateOfBirth)}</TableCell>
-                    <TableCell>{insurance.Gender}</TableCell>
-                    <TableCell>{insurance.PolicyType.join(', ')}</TableCell>
-                    <TableCell>{insurance.SumInsured}</TableCell>
-                    <TableCell>{insurance.Premium}</TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="contained" 
-                        color="error" 
-                        onClick={() => openModal(insurance._id)}
-                      >
-                        Delete Policy
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={filteredData.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </TableContainer>
-        ) : (
-          <p>No insurance data available</p>
-        )}
-
-        <Dialog
-          open={showModal}
-          onClose={() => setShowModal(false)}
+    <Dialog
+      open={showModal}
+      onClose={() => setShowModal(false)}
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle style={{ backgroundColor: '#2c3e50', color: 'white' }}>Delete Policy</DialogTitle>
+      <DialogContent>
+        <p>Are you sure you want to delete this insurance policy?</p>
+      </DialogContent>
+      <DialogActions>
+        <Button 
+          onClick={handleDelete} 
+          color="primary" 
+          variant="contained"
+          style={{ backgroundColor: '#e74c3c' }}
         >
-          <DialogTitle>Delete Policy</DialogTitle>
-          <DialogContent>
-            <p>Are you sure you want to delete this insurance policy?</p>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleDelete} color="primary">Yes</Button>
-            <Button onClick={() => setShowModal(false)} color="secondary">Cancel</Button>
-          </DialogActions>
-        </Dialog>
-      </div>
-    </div>
+          Yes
+        </Button>
+        <Button 
+          onClick={() => setShowModal(false)} 
+          color="secondary" 
+          variant="outlined"
+          style={{ borderColor: '#95a5a6', color: '#95a5a6' }}
+        >
+          Cancel
+        </Button>
+      </DialogActions>
+    </Dialog>
+  </div>
   );
 };
 
