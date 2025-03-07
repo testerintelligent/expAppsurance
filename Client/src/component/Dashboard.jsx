@@ -195,7 +195,7 @@ const Dashboard = () => {
                 <TableCell style={{ padding: '12px', textAlign: 'center' }}>
                   <Button 
                     variant="contained" 
-                    color="error" 
+                    color="primary" 
                     onClick={() => openModal(insurance._id)} 
                     style={{ textTransform: 'none', borderRadius: '5px' }}
                   >
