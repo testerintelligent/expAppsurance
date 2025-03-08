@@ -1,5 +1,5 @@
-#MERN Stack Insurance Application
-This is a MERN stack application inspired by the Guidewire application designed for the insurance domain. 
+**#MERN Stack Insurance Application
+**This is a MERN stack application inspired by the Guidewire application designed for the insurance domain. 
 ##The project uses the following technologies and tools:
 
 1.MongoDB (Database)
