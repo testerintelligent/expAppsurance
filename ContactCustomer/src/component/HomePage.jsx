@@ -14,7 +14,7 @@ const HomePage = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/home")
+      .get("http://10.192.190.148:5000/home")
       .then((response) => {
         setUsers(response.data);
         setMessage(response.data.message);
@@ -39,7 +39,7 @@ const HomePage = () => {
 
   const handleDelete = async () => {
     await axios
-      .delete(`http://localhost:5000/${UserToDelete}`)
+      .delete(`http://10.192.190.148:5000/${UserToDelete}`)
       .then((response) => {
         console.log("User deleted:", response.data);
         setUsers(users.filter((user) => user.email !== UserToDelete));
