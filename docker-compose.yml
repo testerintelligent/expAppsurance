@@ -33,7 +33,7 @@ services:
 
   billingcentre:
     build:
-      context: ./Billing
+      context: ./billing
       dockerfile: Dockerfile.billing
     container_name: billingcentre
     ports:
