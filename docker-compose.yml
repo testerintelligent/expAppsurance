@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  contactCustomer:
+  contactcentre:
     build:
       context: ./ContactCustomer
       dockerfile: Dockerfile.contact
@@ -11,7 +11,7 @@ services:
     depends_on:
       - server
 
-  Policies:
+  policiescentre:
     build:
       context: ./Policies
       dockerfile: Dockerfile.policy
@@ -21,7 +21,7 @@ services:
     depends_on:
       - server
 
-  Claims:
+  claimscentre:
     build:
       context: ./Claims
       dockerfile: Dockerfile.claim
@@ -31,7 +31,7 @@ services:
     depends_on:
       - server
 
-  Billing:
+  billingcentre:
     build:
       context: ./Billing
       dockerfile: Dockerfile.billing
