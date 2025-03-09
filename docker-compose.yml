@@ -5,7 +5,7 @@ services:
     build:
       context: ./ContactCustomer
       dockerfile: Dockerfile.contact
-    container_name: ContactCentre
+    container_name: contactcentre
     ports:
       - "3000:3000"
     depends_on:
@@ -15,7 +15,7 @@ services:
     build:
       context: ./Policies
       dockerfile: Dockerfile.policy
-    container_name: PolicyCentre
+    container_name: policycentre
     ports:
       - "3001:3001"
     depends_on:
@@ -25,7 +25,7 @@ services:
     build:
       context: ./Claims
       dockerfile: Dockerfile.claim
-    container_name: ClaimsCentre
+    container_name: claimscentre
     ports:
       - "3002:3002"
     depends_on:
@@ -35,7 +35,7 @@ services:
     build:
       context: ./Billing
       dockerfile: Dockerfile.billing
-    container_name: BillingCentre
+    container_name: billingcentre
     ports:
       - "3003:3003"
     depends_on:
