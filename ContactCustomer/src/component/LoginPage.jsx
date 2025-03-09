@@ -3,7 +3,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 
+
 const LoginPage = () => {
+ 
   const uuid = uuidv4();
   const navigate = useNavigate();
 
@@ -17,7 +19,7 @@ const LoginPage = () => {
       return;
     }
     try {
-      const response = await axios.post(`http://10.192.190.148:5000/home`, {
+      const response = await axios.post(`http://localhost:5000/home`, {
         username,
         password,
       });

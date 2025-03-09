@@ -1,19 +1,22 @@
-
-// const route =require( './routes/userRoutes');
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
-const bcrypt = require('bcrypt'); 
 
+const cors = require('cors');
 require('dotenv').config();
 require('./Models/DB');
-const userRouter=require('./Routes/User')
-const User=require('./Models/UserSchema')
+
+const userRouter=require('./Routes/ValidUserRoutes')
+const ContactRouter=require('./Routes/ContactRoutes')
+const User=require('./Models/ValidUserDetails')
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
+
+console.log("Routers are called...");
 app.use(userRouter);
+app.use(ContactRouter);
+
 
 
   const InsuranceSchema = new mongoose.Schema({
@@ -50,6 +53,7 @@ app.use(userRouter);
       });
   
       const savedInsurance = await newInsurance.save();
+      console.log(savedInsurance);
       res.status(201).json({ message: 'Insurance policy created successfully.' });
     } catch (error) {
       console.error('Error saving policy to MongoDB:', error);
@@ -97,49 +101,14 @@ app.post('/forgot-password', async (req, res) => {
       res.status(500).json({ message: 'Server error' });
     }
 });
- app.get('/home', async (req, res) => { 
-  try {
-    const users = await User.find({}); 
-    res.status(200).json(users); 
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    res.status(500).json({ error: 'Failed to fetch users' });
-  }
-});
-  app.post('/register', async (req, res) => {
-    try {
-      const newUser = new User({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        password: req.body.password,
-        confirmPassword: req.body.confirmPassword,
-        startDate: req.body.startDate,
-        endDate: req.body.endDate,
-        address: req.body.address,
-        phoneNumber: req.body.phoneNumber,
-      });
-      const savedUser=await newUser.save();
-    res.status(201).json({user: savedUser });
-  } catch (error) {
-    console.error('Error saving user to MongoDB:', error);
-    res.status(500).json({ message: 'Error registered user', error });
-  }
-  });
-  app.get('/register',async(req,res)=>{
-    try {
-      const users = await User.find({}); 
-      res.status(200).json(users); 
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      res.status(500).json({ error: 'Failed to fetch users' }); 
-    }
-  })
+
+
+
   
   
-const IPaddress="10.192.190.148";
-app.listen(PORT,() => {
-    console.log(`Server is running on http://10.192.190.148:${PORT}`);
+const IPaddress=process.env.IPaddress;
+app.listen(PORT,IPaddress,() => {
+    console.log(`Server is running on ${IPaddress}:${PORT}`);
 });
 
 

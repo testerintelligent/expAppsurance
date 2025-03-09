@@ -50,8 +50,8 @@ const Contact = () => {
     event.preventDefault();
     if (validateFields()) {
       try {
-        const response = await axios.post('http://10.192.190.148:5000/Dashboard', formData);
-        setMessage(response.data.message || 'Policy created successfully.');
+        const response = await axios.post('http://10.192.190.148:5000/putContact', formData);
+        setMessage(response.data.message || 'Contact Deatails Saved successfully.');
         alert('Policy created successfully.');
         handleCancel();
       } catch (error) {

@@ -1,21 +1,19 @@
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
 
 const contactSchema = new mongoose.Schema({
-   fullName:String,
-   PolicyNumber:String,
-   Address:String,
-   City:String,
-   State:String,
-   Pincode:String,
-   PhoneNumber:String,
-   EmailId:{ type: String, unique: true },
-   DriverName:String,
-   DriverGender:String,
-   DriverAge:String,
-   Date:String,
-   DriverRelation:String,
-   DriverOccupation:String
-  });
+    customerId: { type: String, unique: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: { type: String, unique: true, required: true },
+    phone: { type: String, required: true },
+    address: {
+        street: { type: String },
+        city: { type: String },
+        state: { type: String },
+        zipCode: { type: String }
+    },
+    dateOfBirth: { type: Date, required: true },
+    createdAt: { type: Date, default: Date.now }
+});
 
-
-module.exports= mongoose.model('contact', contactSchema);
+module.exports = mongoose.model('ContactDetails', contactSchema);

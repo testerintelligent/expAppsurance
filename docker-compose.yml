@@ -1,13 +1,43 @@
 version: '3.8'
 
 services:
-  client:
+  contactCustomer:
     build:
-      context: ./Client
-      dockerfile: Dockerfile.client
-    container_name: reactclient
+      context: ./ContactCustomer
+      dockerfile: Dockerfile.contact
+    container_name: ContactCentre
     ports:
       - "3000:3000"
+    depends_on:
+      - server
+
+  Policies:
+    build:
+      context: ./Policies
+      dockerfile: Dockerfile.policy
+    container_name: PolicyCentre
+    ports:
+      - "3001:3001"
+    depends_on:
+      - server
+
+  Claims:
+    build:
+      context: ./Claims
+      dockerfile: Dockerfile.claim
+    container_name: ClaimsCentre
+    ports:
+      - "3002:3002"
+    depends_on:
+      - server
+
+  Billing:
+    build:
+      context: ./Billing
+      dockerfile: Dockerfile.billing
+    container_name: BillingCentre
+    ports:
+      - "3003:3003"
     depends_on:
       - server
 
@@ -15,7 +45,7 @@ services:
     build:
       context: ./Server
       dockerfile: Dockerfile.server
-    container_name: expressserver
+    container_name: server
     ports:
       - "5000:5000"
     environment:
