@@ -9,18 +9,18 @@ const LoginPage = () => {
   const uuid = uuidv4();
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState('');
+  const [email, setemail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
-    if (username === '' || password === '') {
-      setError('Username and password are required');
+    if (email === '' || password === '') {
+      setError('email and password are required');
       return;
     }
     try {
       const response = await axios.post(`http://10.192.190.148:5000/home`, {
-        username,
+        email,
         password,
       });
       console.log('Response:', response);
@@ -32,9 +32,11 @@ const LoginPage = () => {
         navigate('/Dashboard');
       }
     } catch (error) {
-      setError('Invalid username or password');
+      setError('Invalid email or password');
+      setemail('');
+      setPassword('');
     }
-    setUsername('');
+    setemail('');
     setPassword('');
   };
 
@@ -46,11 +48,11 @@ const LoginPage = () => {
           <input
             type="text"
             className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            id="username"
-            name="username"
+            id="email"
+            name="email"
             placeholder="Email Address"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setemail(e.target.value)}
           />
           <input
             type="password"

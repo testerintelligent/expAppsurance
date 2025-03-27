@@ -14,15 +14,9 @@ exports.GetRegisterUser=async(req,res)=>{
 exports.RegisterNewUser=async(req,res)=>{
   try {
        const newUser = new User({
-         firstName: req.body.firstName,
-         lastName: req.body.lastName,
          email: req.body.email,
          password: req.body.password,
          confirmPassword: req.body.confirmPassword,
-         startDate: req.body.startDate,
-         endDate: req.body.endDate,
-         address: req.body.address,
-         phoneNumber: req.body.phoneNumber,
        });
        const savedUser=await newUser.save();
      res.status(201).json({user: savedUser });
@@ -36,11 +30,14 @@ exports.RegisterNewUser=async(req,res)=>{
 
 //login page API for login
 exports.EnterUsernameAndPassword=async (req,res) =>{
-    const{username,password}=req.body;
-    const ValidUser=await User.findOne({ email:username, password:password })
+    const{email,password}=req.body;
+    const mail=email;
+    console.log(req.body);
+    console.log(mail);
+    const ValidUser=await User.findOne({ email:mail, password:password })
     console.log(ValidUser);
     if (!ValidUser) {
-      return res.status(401).json({ message: `Enter a valid email and password : ${username} & ${password}` });
+      return res.status(401).json({ message: `Enter a valid email and password : ${mail} & ${password}` });
     }
     else{
       return res.status(200).json({ message: 'valid email or password' });
