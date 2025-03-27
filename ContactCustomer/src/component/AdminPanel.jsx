@@ -1,8 +1,11 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, } from 'react-router-dom';
+
+
 
 const AdminPanel = () => {
   const navigate = useNavigate();
+
 
   return (
     <div className="flex justify-center items-center min-h-screen">
@@ -20,15 +23,34 @@ const AdminPanel = () => {
               View Users
             </button>
           </div>
-
+          <div className="flex items-center justify-between bg-gray-800 p-4 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold">View Policies</h3>
+            <button
+              onClick={() =>window.location.href = 'http://10.192.190.148:3001'}
+              className="bg-purple-700 text-white px-4 py-2 rounded-lg hover:bg-purple-800 border border-white transition-all"
+            >
+              View Policies
+            </button>
+          </div>
           {/* Manage Policies */}
           <div className="flex items-center justify-between bg-gray-800 p-4 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold">Manage Policies</h3>
+            <h3 className="text-lg font-semibold">Manage Customers</h3>
             <button
               onClick={() => navigate('/Dashboard')}
               className="bg-purple-700 text-white px-4 py-2 rounded-lg hover:bg-purple-800 border border-white transition-all"
             >
-              View Policies
+              View Customers
+            </button>
+          </div>
+
+
+          <div className="flex items-center justify-between bg-gray-800 p-4 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold">Manage Claims</h3>
+            <button
+              onClick={() => window.location.href = 'http://10.192.190.148:3002'}
+              className="bg-purple-700 text-white px-4 py-2 rounded-lg hover:bg-purple-800 border border-white transition-all"
+            >
+              View claims
             </button>
           </div>
 
