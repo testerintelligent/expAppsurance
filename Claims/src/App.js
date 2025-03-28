@@ -135,8 +135,6 @@ function App() {
 
   return (
     <div className="App">
-      <h2>Claims Page
-      </h2>
      <Dashboard claims={claims}/>
     </div>
   );
