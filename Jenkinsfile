@@ -1,13 +1,13 @@
 pipeline {
     agent  { label 'Linux-agent' }
     environment {
-        GIT_REPO_URL = 'https://github.com/testerintelligent/appInsurance.git/'
+        GIT_REPO_URL = 'https://github.com/testerintelligent/expAppsurance.git'
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'master', url: "${env.GIT_REPO_URL}"
+                git branch: 'main', url: "${env.GIT_REPO_URL}"
             }
         }
 
