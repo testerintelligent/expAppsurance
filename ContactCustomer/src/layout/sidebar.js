@@ -1,12 +1,12 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { HomeIcon, ShieldCheckIcon, PhoneIcon, ServerIcon,CalendarIcon } from '@heroicons/react/24/solid'; // Import Heroicons
+import { HomeIcon, ShieldCheckIcon, PhoneIcon, ServerIcon, CalendarIcon } from '@heroicons/react/24/solid'; // Import Heroicons
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const handleLogout = () => {
     sessionStorage.removeItem('sessionKey');
-    navigate('/'); 
+    navigate('/');
   };
 
   return (
@@ -18,33 +18,73 @@ const Sidebar = () => {
       </div>
       <ul className="flex-1 overflow-y-auto mt-4 space-y-2">
         <li>
-          <NavLink to="/Dashboard" className={({ isActive }) => isActive ? "block py-3 px-4 bg-purple-600 text-white rounded-lg" : "block py-3 px-4 hover:bg-purple-500 rounded-lg text-white"}>
-            <HomeIcon className="w-5 h-5 inline mr-3" /> Dashboard
+          <NavLink
+            to="/Dashboard"
+            className={({ isActive }) =>
+              isActive
+                ? "block py-3 px-4 bg-purple-600 text-white rounded-lg"
+                : "block py-3 px-4 hover:bg-purple-500 rounded-lg text-white"
+            }
+          >
+            <div className="flex items-center">
+              <HomeIcon className="w-5 h-5 mr-3" />
+              <span>Dashboard</span>
+            </div>
           </NavLink>
         </li>
         <li>
-          <NavLink to="/insurance" className={({ isActive }) => isActive ? "block py-3 px-4 bg-purple-600 text-white rounded-lg" : "block py-3 px-4 hover:bg-purple-500 rounded-lg text-white"}>
-            <ShieldCheckIcon className="w-5 h-5 inline mr-3" /> New Insurance
+          <NavLink
+            to="/insurance"
+            className={({ isActive }) =>
+              isActive
+                ? "block py-3 px-4 bg-purple-600 text-white rounded-lg"
+                : "block py-3 px-4 hover:bg-purple-500 rounded-lg text-white"
+            }
+          >
+            <div className="flex items-center">
+              <ShieldCheckIcon className="w-5 h-5 mr-3" />
+              <span>New Insurance</span>
+            </div>
           </NavLink>
         </li>
         <li>
-          <NavLink to="/contact" className={({ isActive }) => isActive ? "block py-3 px-4 bg-purple-600 text-white rounded-lg" : "block py-3 px-4 hover:bg-purple-500 rounded-lg text-white"}>
-            <PhoneIcon className="w-5 h-5 inline mr-3" /> Contact
+          <NavLink
+            to="/contact"
+            className={({ isActive }) =>
+              isActive
+                ? "block py-3 px-4 bg-purple-600 text-white rounded-lg"
+                : "block py-3 px-4 hover:bg-purple-500 rounded-lg text-white"
+            }
+          >
+            <div className="flex items-center">
+              <PhoneIcon className="w-5 h-5 mr-3" />
+              <span>Contact</span>
+            </div>
           </NavLink>
         </li>
         <li>
-          <NavLink to="/billing" className={({ isActive }) => isActive ? "block py-3 px-4 bg-purple-600 text-white rounded-lg" : "block py-3 px-4 hover:bg-purple-500 rounded-lg text-white"}>
-            <CalendarIcon className="w-5 h-5 inline mr-3" /> Billing Page
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/adminPanel" className={({ isActive }) => isActive ? "block py-3 px-4 bg-purple-600 text-white rounded-lg" : "block py-3 px-4 hover:bg-purple-500 rounded-lg text-white"}>
-            <ServerIcon className="w-5 h-5 inline mr-3" /> Admin Panel
+          <NavLink
+            to="/adminPanel"
+            className={({ isActive }) =>
+              isActive
+                ? "block py-3 px-4 bg-purple-600 text-white rounded-lg"
+                : "block py-3 px-4 hover:bg-purple-500 rounded-lg text-white"
+            }
+          >
+            <div className="flex items-center">
+              <ServerIcon className="w-5 h-5 mr-3" />
+              <span>Admin Panel</span>
+            </div>
           </NavLink>
         </li>
       </ul>
       <div className="px-4 py-3 border-t border-gray-700">
-        <button className="w-full py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg" onClick={handleLogout}>Logout</button>
+        <button
+          className="w-full py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
       </div>
     </div>
   );
