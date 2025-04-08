@@ -9,7 +9,6 @@ import ClaimsManagement from './component/ClaimsManagement';
 import Dashboard from './component/Dashboard';
 import ForgotPasswordPage from './component/ForgotPassword';
 import HomePage from './component/HomePage';
-import InsurancePage from './component/InsurancePage';
 import LegalAndCompliance from './component/LegalAndCompliance';
 import PaymentPage from './component/PaymentPage';
 import PolicyManagement from './component/PolicyManagement';
@@ -45,7 +44,6 @@ function App() {
               <Route path="/quateGeneration" element={<QuateGeneration />} />
               <Route path="/support" element={<Support />} />
               <Route path="/home" element={<HomePage />} />
-              <Route path="/insurance" element={<InsurancePage />} />
               <Route path="/Dashboard" element={<Dashboard />} />
               <Route path="/LifeInsurance" element={<LifeInsurance />} />
               <Route path="/contact" element={<Contact />} />

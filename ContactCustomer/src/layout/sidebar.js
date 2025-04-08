@@ -34,21 +34,6 @@ const Sidebar = () => {
         </li>
         <li>
           <NavLink
-            to="/insurance"
-            className={({ isActive }) =>
-              isActive
-                ? "block py-3 px-4 bg-purple-600 text-white rounded-lg"
-                : "block py-3 px-4 hover:bg-purple-500 rounded-lg text-white"
-            }
-          >
-            <div className="flex items-center">
-              <ShieldCheckIcon className="w-5 h-5 mr-3" />
-              <span>New Insurance</span>
-            </div>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
             to="/contact"
             className={({ isActive }) =>
               isActive
