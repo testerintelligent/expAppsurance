@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, Alert } from '@mui/material';
 
 const PolicyDashboard = ({ policies }) => {
   const [page, setPage] = useState(0);
@@ -14,6 +14,9 @@ const PolicyDashboard = ({ policies }) => {
     setPage(0);
   };
 
+  const updatePolicy = (event)=>{
+    alert(event.target.value)
+  };
   return (
     <div className='flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500'>
     <div style={{ padding: '20px' }}>
@@ -31,6 +34,7 @@ const PolicyDashboard = ({ policies }) => {
                 <TableCell sx={{ color: 'white',backgroundColor:'black', fontWeight: 'bold', textAlign: 'center' }}>Start Date</TableCell>
                 <TableCell sx={{ color: 'white',backgroundColor:'black', fontWeight: 'bold', textAlign: 'center' }}>End Date</TableCell>
                 <TableCell sx={{ color: 'white',backgroundColor:'black', fontWeight: 'bold', textAlign: 'center' }}>Status</TableCell>
+                <TableCell sx={{ color: 'white',backgroundColor:'black', fontWeight: 'bold', textAlign: 'center' }}>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -48,6 +52,7 @@ const PolicyDashboard = ({ policies }) => {
                     {new Date(policy.endDate).toLocaleDateString()}
                   </TableCell>
                   <TableCell style={{ textAlign: 'center' }}>{policy.status}</TableCell>
+                  <TableCell style={{ textAlign: 'center' }}><button onClick={updatePolicy} value={policy.policyId}>Update Policy</button></TableCell>
                 </TableRow>
               ))}
             </TableBody>
