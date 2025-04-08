@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import PolicyDashboard from './component/PolicyDashboard';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import "./App.css";
+import Layout from "./layout/layout";
+import PolicyDashboard from "./component/PolicyDashboard";
+import InsurancePage from "./component/insurance/InsurancePage";
 
 function App() {
   const [policies, setPolicies] = useState([]);
@@ -115,10 +118,18 @@ function App() {
 
   return (
     <div className="App">
-      <PolicyDashboard policies={policies} />
+      <Router>
+        <div>
+          <Routes>
+            <Route element={<Layout />}>
+              < Route path="/" element={<PolicyDashboard  policies={policies} />}></Route>
+              < Route path="/insurance" element={<InsurancePage />}></Route>
+            </Route>
+          </Routes>
+        </div>
+      </Router>
     </div>
   );
 }
 
 export default App;
-
