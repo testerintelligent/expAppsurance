@@ -27,7 +27,7 @@ services:
       dockerfile: Dockerfile.claim
     container_name: claimscentre
     ports:
-      - "3002:3002"
+      - "3003:3003"
     depends_on:
       - server
 
@@ -37,7 +37,7 @@ services:
       dockerfile: Dockerfile.billing
     container_name: billingcentre
     ports:
-      - "3003:3003"
+      - "3002:3002"
     depends_on:
       - server
 
