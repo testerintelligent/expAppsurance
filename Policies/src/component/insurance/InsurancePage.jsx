@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from 'react-router-dom';
 import axios from "axios";
 // import { useNavigate } from 'react-router-dom';
 
@@ -9,6 +10,8 @@ const InsurancePage = () => {
   const [selectedPolicy, setSelectedPolicy] = useState("");
   const [coverageOptions, setCoverageOptions] = useState([]);
   const [selectedCoverageOption, setSelectedCoverageOption] = useState("");
+  const location = useLocation();
+  const initialData = location.state?.formData || {};
 
   const [insuranceData, setInsuranceData] = useState({
     CurrentDate: new Date().toISOString().split("T")[0],
@@ -20,7 +23,8 @@ const InsurancePage = () => {
     SumInsured: "",
     Premium: "",
     Gender: "",
-    hasExistingPolicy: false, // ✅ Added this field
+    hasExistingPolicy: false,
+    ...initialData, // this overrides defaults with values from initialData
   });
 
   const coverageMapping = {
@@ -39,6 +43,10 @@ const InsurancePage = () => {
       "Personal Vehicle Damage",
     ],
   };
+
+  useEffect(() => {
+    console.log("initialData", initialData)
+  },[])
 
   //   useEffect(() => {
   //     const sessionKey = sessionStorage.getItem('sessionKey');
@@ -112,8 +120,13 @@ const InsurancePage = () => {
   const handleInsurance = (event) => {
     event.preventDefault();
     if (validateFields()) {
-      axios
-        .post("http://10.192.190.148:5000/Dashboard", insuranceData)
+      const method = insuranceData.id ? "put" : "post"; // <-- Use PUT if there's an ID
+    const url = insuranceData.id
+      ? `http://10.192.190.148:5000/Dashboard/update/${insuranceData.id}` // PUT needs ID in URL
+      : "http://10.192.190.148:5000/Dashboard";
+      console.log("method", method);
+      console.log("url", url);
+      axios[method](url, insuranceData)
         .then((response) => {
           setMessage(response.data.message || "Policy created successfully.");
           setInsuranceData({

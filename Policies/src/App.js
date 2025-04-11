@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Layout from "./layout/layout";
-import PolicyDashboard from "./component/PolicyDashboard";
+import PolicyDashboard from "./component/policy/PolicyDashboard";
 import InsurancePage from "./component/insurance/InsurancePage";
 
 function App() {
