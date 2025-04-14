@@ -71,6 +71,20 @@ app.use(ContactRouter);
       res.status(500).json({ error: 'Failed to fetch insurances' });
     }
   });
+  app.put('/Dashboard/update/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const result = await Insurance.findById(id);
+      if (!result) {
+        return res.status(404).json({ message: 'Policy not found' });
+      }
+      await Insurance.findByIdAndUpdate(id, req.body);
+      res.status(200).json({ message: "Insurance Update successfully" });
+    } catch (error) {
+      console.error('Error deleting Insurance:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
   app.delete('/Dashboard/:id', async (req, res) => {
     try {
       const { id } = req.params;
