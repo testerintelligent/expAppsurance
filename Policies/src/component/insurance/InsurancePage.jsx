@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from 'react-router-dom';
 import axios from "axios";
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const InsurancePage = () => {
   const [Message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
-  //   const navigate = useNavigate();
+  const navigate = useNavigate();
   const [selectedPolicy, setSelectedPolicy] = useState("");
   const [coverageOptions, setCoverageOptions] = useState([]);
   const [selectedCoverageOption, setSelectedCoverageOption] = useState("");
@@ -120,9 +120,9 @@ const InsurancePage = () => {
   const handleInsurance = (event) => {
     event.preventDefault();
     if (validateFields()) {
-      const method = insuranceData.id ? "put" : "post"; // <-- Use PUT if there's an ID
-    const url = insuranceData.id
-      ? `http://10.192.190.148:5000/Dashboard/update/${insuranceData.id}` // PUT needs ID in URL
+      const method = Object.keys(initialData).length !== 0 ? "put" : "post"; // <-- Use PUT if there's an ID
+    const url = Object.keys(initialData).length !== 0
+      ? `http://10.192.190.148:5000/Dashboard/update/${initialData._id}` // PUT needs ID in URL
       : "http://10.192.190.148:5000/Dashboard";
       console.log("method", method);
       console.log("url", url);
@@ -141,7 +141,7 @@ const InsurancePage = () => {
             Gender: "",
             hasExistingPolicy: false, // Reset after submission
           });
-          //   navigate('/Dashboard');
+          navigate('/');
         })
         .catch((error) => {
           setMessage(
@@ -301,9 +301,15 @@ const InsurancePage = () => {
                 width: "100%",
               }}
             >
+              {Object.keys(initialData).length === 0 ? (
               <button type="submit" className="btn-primary">
                 Submit
               </button>
+              ): (
+              <button type="submit" className="btn-primary">
+              Update
+            </button>
+              )}
               <button type="button" className="btn-secondary">
                 Cancel
               </button>
