@@ -12,8 +12,16 @@ const contactSchema = new mongoose.Schema({
         state: { type: String },
         zipCode: { type: String }
     },
-    dateOfBirth: { type: Date, required: true },
+    dateOfBirth: { type: Date },
     createdAt: { type: Date, default: Date.now }
+});
+
+contactSchema.pre('save', async function (next) {
+    if (this.isNew && !this.customerId) {
+        const randomSuffix = Date.now().toString().slice(-6); // e.g., "123456"
+        this.customerId = `CUS${randomSuffix}`;
+    }
+    next();
 });
 
 module.exports = mongoose.model('ContactDetails', contactSchema);

@@ -1,9 +1,10 @@
 const express=require('express');
 
 const router=express.Router();
-const {EnterContactDetails}=require('../Controller/ContactMethod')
+const {enterContactDetails,getContactDetails,filterContactDetails}=require('../Controller/ContactMethod')
 
   //API for login credentials validation
-  router.post('/putContact',EnterContactDetails);
-  
+  router.post('/postContact',enterContactDetails);
+  router.get('/getContact',getContactDetails);
+  router.post('/filterContact',filterContactDetails);
   module.exports=router;

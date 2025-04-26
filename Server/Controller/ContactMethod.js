@@ -1,38 +1,93 @@
-const Contact=require('../Models/ContactDetails');
+// const Contact=require('../Models/ContactDetails');
 
-exports.EnterContactDetails = async (req, res) => {
-  try {
-    const { 
-      firstName, 
-      lastName, 
-      email, 
-      phone, 
-      address, 
-      dateOfBirth 
-    } = req.body;
+// exports.EnterContactDetails = async (req, res) => {
+//   try {
+//     const { 
+//       firstName, 
+//       lastName, 
+//       email, 
+//       phone, 
+//       address, 
+//       dateOfBirth 
+//     } = req.body;
 
-    const ContactDetails = await Contact.findOne({
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      phone: phone,
-      'address.street': address.street,  
-      'address.city': address.city,     
-      'address.state': address.state,   
-      'address.zipCode': address.zipCode, 
-      dateOfBirth: dateOfBirth          
-    });
+//     const ContactDetails = await Contact.findOne({
+//       firstName: firstName,
+//       lastName: lastName,
+//       email: email,
+//       phone: phone,
+//       'address.street': address.street,  
+//       'address.city': address.city,     
+//       'address.state': address.state,   
+//       'address.zipCode': address.zipCode, 
+//       dateOfBirth: dateOfBirth          
+//     });
 
-    // If no contact found
-    if (!ContactDetails) {
-      return res.status(401).json({ message: 'Contact details are not completed' });
-    } else {
-      // If contact found
-      return res.status(200).json({ message: 'Contact Details Saved Successfully' });
+//     // If no contact found
+//     if (!ContactDetails) {
+//       return res.status(401).json({ message: 'Contact details are not completed' });
+//     } else {
+//       // If contact found
+//       return res.status(200).json({ message: 'Contact Details Saved Successfully' });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: 'Server error' });
+//   }
+// };
+
+const Contact = require('../Models/ContactDetails'); // adjust path as needed
+
+// POST /postContact
+const enterContactDetails = async (req, res) => {
+    try {
+        const contactData = req.body;
+
+        const newContact = new Contact(contactData);
+        await newContact.save();
+
+        res.status(201).json({ message: 'Contact saved successfully', contact: newContact });
+    } catch (error) {
+        if (error.code === 11000) {
+            // Duplicate key error (unique fields)
+            res.status(400).json({ error: 'Duplicate field: Email or Customer ID already exists' });
+        } else {
+            res.status(500).json({ error: 'Internal Server Error', details: error.message });
+        }
     }
+};
+
+//POST /getContact
+const filterContactDetails= async (req, res) => {
+    try {
+        const { email, customerId } = req.body;
+
+        const query = {};
+        if (email) query.email = email;
+        if (customerId) query.customerId = customerId;
+
+        const contact = await Contact.findOne(query);
+
+        if (!contact) {
+            return res.status(404).json({ message: 'Contact not found' });
+        }
+
+        res.status(200).json({ contact });
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    }
+};
+
+const getContactDetails = async (req, res) => {
+  try {
+      const contacts = await Contact.find(); // No query passed, so it returns all documents
+
+      res.status(200).json({ contacts });
   } catch (error) {
-    // Catch any unexpected errors
-    console.error(error);
-    return res.status(500).json({ message: 'Server error' });
+      res.status(500).json({ error: 'Internal Server Error', details: error.message });
   }
 };
+
+
+module.exports = { enterContactDetails, getContactDetails,filterContactDetails };
+

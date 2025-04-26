@@ -10,16 +10,7 @@
 }
 
 /* Input field styling */
-.input-field {
-  width: 100%;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid #d1d5db;
-  background-color: rgba(255, 255, 255, 0.2);
-  font-size: 1rem;
-  color: white;
-  transition: border-color 0.3s ease-in-out;
-}
+
 
 .input-field::placeholder {
   color: rgba(255, 255, 255, 0.7);
@@ -71,11 +62,11 @@ h2 {
   margin-bottom: 1.5rem;
 }
 
-h3 {
+/* h3 {
   color: #d8b4fe;
   font-size: 1.25rem;
   margin-top: 1rem;
-}
+} */
 
 /* Layout styling */
 .grid {
