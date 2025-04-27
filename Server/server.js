@@ -7,6 +7,7 @@ require('./Models/DB');
 
 const userRouter=require('./Routes/ValidUserRoutes')
 const ContactRouter=require('./Routes/ContactRoutes')
+const PolicyRouter=require('./Routes/PolicyRoutes')
 const User=require('./Models/ValidUserDetails')
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,6 +17,7 @@ app.use(express.json());
 console.log("Routers are called...");
 app.use(userRouter);
 app.use(ContactRouter);
+app.use(PolicyRouter);
 
 
 

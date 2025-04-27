@@ -11,4 +11,12 @@ const policySchema = new mongoose.Schema({
     status: { type: String, enum: ['Active', 'Expired', 'Canceled'], default: 'Active' }
 });
 
+
+policySchema.pre('save', function (next) {
+    if (!this.policyId) {
+      this.policyId = `POL${Date.now()}${Math.floor(Math.random() * 1000)}`;
+    }
+    next();
+  });
+
 module.exports = mongoose.model('PolicyDetails', policySchema);

@@ -159,6 +159,17 @@ const InsurancePage = () => {
           Insurance Policy Details
         </h2>
         <form onSubmit={handleInsurance} className="space-y-4">
+        <div className='flex flex-col space-y-2'>
+              <label className='flex'>Enter your Customer Id :</label>
+              <input
+                type="text"
+                name="customerID"
+                onChange={handleChange}
+                placeholder="customer ID"
+                className="input-style"
+              />
+              {errors.zipCode && <span className="text-red-500">{errors.zipCode}</span>}
+            </div>
           <input
             type="text"
             name="Name"
