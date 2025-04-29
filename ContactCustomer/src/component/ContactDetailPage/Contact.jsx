@@ -1,253 +1,359 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { FaSearch } from 'react-icons/fa';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    street: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    dateOfBirth: '',
-    gender: '',
+    firstName: '', lastName: '', email: '', phone: '',
+    street: '', city: '', state: '', zipCode: '',
+    dateOfBirth: '', gender: '', addressType: '',
+    organization: '', producerCode: ''
   });
 
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState({ org: false, prod: false });
+  const [showModal, setShowModal] = useState(false);
+  const [currentField, setCurrentField] = useState('');
 
-  const validateFields = () => {
-    const errors = {};
-    if (!formData.firstName.trim()) errors.firstName = '*First name is required';
-    if (!formData.lastName.trim()) errors.lastName = '*Last name is required';
-    if (!formData.email.trim()) errors.email = '*Email is required';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) errors.email = '*Email is invalid';
-    if (!formData.phone.trim()) errors.phone = '*Phone number is required';
-    if (!formData.street.trim()) errors.street = '*Street is required';
-    if (!formData.city.trim()) errors.city = '*City is required';
-    if (!formData.state.trim()) errors.state = '*State is required';
-    if (!formData.zipCode.trim()) errors.zipCode = '*Zip code is required';
-    if (!formData.dateOfBirth.trim()) errors.dateOfBirth = '*Date of birth is required';
-    if (!formData.gender.trim()) errors.gender = '*Gender is required';
-
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
+  const allOrgOptions = ['Acme Corp', 'Globex Corporation', 'Initech', 'Umbrella Corp', 'Stark Industries', 'Wayne Enterprises'];
+  const allProdOptions = ['PROD-1001', 'PROD-2002', 'PROD-3003', 'PROD-4004', 'PROD-5005'];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(fd => ({ ...fd, [name]: value }));
+
+    if (name === 'organization') {
+      setShowSuggestions(prev => ({ ...prev, org: true }));
+    } else if (name === 'producerCode') {
+      setShowSuggestions(prev => ({ ...prev, prod: true }));
+    }
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (validateFields()) {
-      const payload = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone,
-        address: {
-          street: formData.street,
-          city: formData.city,
-          state: formData.state,
-          zipCode: formData.zipCode,
-        },
-        dateOfBirth: formData.dateOfBirth,
-        gender: formData.gender,
-      };
+  const selectSuggestion = (field, value) => {
+    setFormData(fd => ({ ...fd, [field]: value }));
+    setShowSuggestions(prev => ({ ...prev, [field === 'organization' ? 'org' : 'prod']: false }));
+    setShowModal(false);  // Close modal after selection
+  };
 
-      try {
-        const response = await axios.post('http://10.192.190.148:5000/postContact', payload);
-        setMessage(response.data.message || 'Contact details saved successfully.');
-        alert('Contact created successfully.');
-        handleCancel();
-      } catch (error) {
-        console.error('Error creating contact:', error.response?.data || error.message);
-        alert('Error creating contact. Please try again.');
-      }
+  const validate = () => {
+    const errs = {};
+    if (!formData.firstName) errs.firstName = 'Required';
+    if (!formData.lastName) errs.lastName = 'Required';
+    if (!formData.email) errs.email = 'Required';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) errs.email = 'Invalid email';
+    if (!formData.phone) errs.phone = 'Required';
+    if (!formData.street) errs.street = 'Required';
+    if (!formData.city) errs.city = 'Required';
+    if (!formData.state) errs.state = 'Required';
+    if (!formData.zipCode) errs.zipCode = 'Required';
+    if (!formData.dateOfBirth) errs.dateOfBirth = 'Required';
+    if (!formData.gender) errs.gender = 'Required';
+    if (!formData.addressType) errs.addressType = 'Required';
+    if (!formData.organization) errs.organization = 'Required';
+    if (!formData.producerCode) errs.producerCode = 'Required';
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validate()) {
+      console.log('Form submitted:', formData);
+      setMessage('Form submitted successfully!');
+      setFormData({
+        firstName: '', lastName: '', email: '', phone: '',
+        street: '', city: '', state: '', zipCode: '',
+        dateOfBirth: '', gender: '', addressType: '',
+        organization: '', producerCode: ''
+      });
+      setErrors({});
+    } else {
+      setMessage('');
     }
   };
 
   const handleCancel = () => {
     setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      street: '',
-      city: '',
-      state: '',
-      zipCode: '',
-      dateOfBirth: '',
-      gender: '',
+      firstName: '', lastName: '', email: '', phone: '',
+      street: '', city: '', state: '', zipCode: '',
+      dateOfBirth: '', gender: '', addressType: '',
+      organization: '', producerCode: ''
     });
     setErrors({});
     setMessage('');
+    setShowSuggestions({ org: false, prod: false });
   };
 
+  const handleSearch = (field) => {
+    setCurrentField(field);
+    setShowModal(true);
+  };
+
+  const filteredOrgSuggestions = allOrgOptions.filter(option =>
+    option.toLowerCase().includes(formData.organization.toLowerCase()) &&
+    option.toLowerCase() !== formData.organization.toLowerCase()
+  );
+
+  const filteredProdSuggestions = allProdOptions.filter(option =>
+    option.toLowerCase().includes(formData.producerCode.toLowerCase()) &&
+    option.toLowerCase() !== formData.producerCode.toLowerCase()
+  );
+
   return (
-    <div className='flex justify-center items-center min-h-screen'>
-      <div className='bg-gray-900 bg-opacity-90 shadow-lg rounded-xl p-10 max-w-2xl w-full text-white'>
-        <h2 className='text-3xl font-bold text-center mb-6'>Contact Details</h2>
-        <form onSubmit={handleSubmit} className='space-y-4'>
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-            {/* First Name */}
-            <div className='flex flex-col space-y-2'>
-              <label className='flex'>Enter your first name:</label>
+    <div className="flex justify-center items-start py-10 bg-white-900 min-h-screen overflow-y-auto">
+      <div className="bg-gray-800 bg-opacity-90 shadow-2xl rounded-xl p-8 w-full max-w-3xl text-white">
+        <h2 className="text-3xl font-bold mb-6 text-center">Contact Details</h2>
+
+        {/* Personal Information */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-2 text-left">Personal Information</h3>
+          <div className="h-1 w-20 bg-blue-500 mb-4"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-left mb-1">First Name</label>
               <input
                 type="text"
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
-                placeholder="First Name"
-                className="input-style"
+                placeholder="John"
+                className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              {errors.firstName && <span className="text-red-500">{errors.firstName}</span>}
+              {errors.firstName && <span className="text-red-400 text-sm">{errors.firstName}</span>}
             </div>
-
-            {/* Last Name */}
-            <div className='flex flex-col space-y-2'>
-              <label className='flex'>Enter your last name:</label>
+            <div>
+              <label className="block text-left mb-1">Last Name</label>
               <input
                 type="text"
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
-                placeholder="Last Name"
-                className="input-style"
+                placeholder="Doe"
+                className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              {errors.lastName && <span className="text-red-500">{errors.lastName}</span>}
+              {errors.lastName && <span className="text-red-400 text-sm">{errors.lastName}</span>}
             </div>
-
-            {/* Email */}
-            <div className='flex flex-col space-y-2'>
-              <label className='flex'>Enter your email address:</label>
+            <div>
+              <label className="block text-left mb-1">Email</label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Email"
-                className="input-style"
+                placeholder="john.doe@example.com"
+                className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              {errors.email && <span className="text-red-500">{errors.email}</span>}
+              {errors.email && <span className="text-red-400 text-sm">{errors.email}</span>}
             </div>
-
-            {/* Phone */}
-            <div className='flex flex-col space-y-2'>
-              <label className='flex'>Enter your phone number:</label>
+            <div>
+              <label className="block text-left mb-1">Phone</label>
               <input
-                type="text"
+                type="tel"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="Phone Number"
-                className="input-style"
+                placeholder="+1 234 567 890"
+                className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              {errors.phone && <span className="text-red-500">{errors.phone}</span>}
+              {errors.phone && <span className="text-red-400 text-sm">{errors.phone}</span>}
             </div>
+            <div>
+              <label className="block text-left mb-1">Date of Birth</label>
+              <input
+                type="date"
+                name="dateOfBirth"
+                value={formData.dateOfBirth}
+                onChange={handleChange}
+                className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {errors.dateOfBirth && <span className="text-red-400 text-sm">{errors.dateOfBirth}</span>}
+            </div>
+            <div>
+              <label className="block text-left mb-1">Gender</label>
+              <div className="flex flex-col">
+                {['Male', 'Female'].map((g) => (
+                  <label key={g} className="flex items-center space-x-2 mb-1">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value={g}
+                      checked={formData.gender === g}
+                      onChange={handleChange}
+                      className="form-radio h-4 w-4 text-blue-600"
+                    />
+                    <span>{g}</span>
+                  </label>
+                ))}
+              </div>
+              {errors.gender && <span className="text-red-400 text-sm">{errors.gender}</span>}
+            </div>
+          </div>
+        </div>
 
-
-            {/* Address section title */}
-            <h5 className='text-white text-2xl  col-span-2'>Enter your address details:</h5>
-
-            {/* Street */}
-            <div className='flex flex-col space-y-2'>
-              <label className='flex'>Enter your street:</label>
+        {/* Address Details */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-2 text-left">Address Details</h3>
+          <div className="h-1 w-20 bg-blue-500 mb-4"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-left mb-1">Address Type</label>
+              <select
+                name="addressType"
+                value={formData.addressType}
+                onChange={handleChange}
+                className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select Type</option>
+                <option value="Home">Home</option>
+                <option value="Work">Work</option>
+                <option value="Other">Other</option>
+              </select>
+              {errors.addressType && <span className="text-red-400 text-sm">{errors.addressType}</span>}
+            </div>
+            <div>
+              <label className="block text-left mb-1">Street</label>
               <input
                 type="text"
                 name="street"
                 value={formData.street}
                 onChange={handleChange}
-                placeholder="Street"
-                className="input-style"
+                placeholder="123 Main St"
+                className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              {errors.street && <span className="text-red-500">{errors.street}</span>}
+              {errors.street && <span className="text-red-400 text-sm">{errors.street}</span>}
             </div>
-
-            {/* City */}
-            <div className='flex flex-col space-y-2'>
-              <label className='flex'>Enter your city:</label>
+            <div>
+              <label className="block text-left mb-1">City</label>
               <input
                 type="text"
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
-                placeholder="City"
-                className="input-style"
+                placeholder="City Name"
+                className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              {errors.city && <span className="text-red-500">{errors.city}</span>}
+              {errors.city && <span className="text-red-400 text-sm">{errors.city}</span>}
             </div>
-
-            {/* State */}
-            <div className='flex flex-col space-y-2'>
-              <label className='flex'>Enter your state:</label>
+            <div>
+              <label className="block text-left mb-1">State</label>
               <input
                 type="text"
                 name="state"
                 value={formData.state}
                 onChange={handleChange}
                 placeholder="State"
-                className="input-style"
+                className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              {errors.state && <span className="text-red-500">{errors.state}</span>}
+              {errors.state && <span className="text-red-400 text-sm">{errors.state}</span>}
             </div>
-
-            {/* Zip Code */}
-            <div className='flex flex-col space-y-2'>
-              <label className='flex'>Enter your postal code:</label>
+            <div>
+              <label className="block text-left mb-1">Zip Code</label>
               <input
                 type="text"
                 name="zipCode"
                 value={formData.zipCode}
                 onChange={handleChange}
-                placeholder="Postal Code"
-                className="input-style"
+                placeholder="ZIP"
+                className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              {errors.zipCode && <span className="text-red-500">{errors.zipCode}</span>}
+              {errors.zipCode && <span className="text-red-400 text-sm">{errors.zipCode}</span>}
             </div>
+          </div>
+        </div>
 
-            {/* Gender */}
-            <div className='flex flex-col space-y-2'>
-              <label className='flex'>Select your gender:</label>
-              <select
-                name="gender"
-                value={formData.gender}
-                onChange={handleChange}
-                className="input-style text-black"
+        {/* Organization & Producer Code */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-2 text-left">Organization & Producer Code</h3>
+          <div className="h-1 w-20 bg-blue-500 mb-4"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-left mb-1">Organization</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  name="organization"
+                  value={formData.organization}
+                  onChange={handleChange}
+                  placeholder="Search Organization"
+                  className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleSearch('organization')}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-2 rounded"
+                >
+                  <FaSearch />
+                </button>
+                {errors.organization && <span className="text-red-400 text-sm">{errors.organization}</span>}
+              </div>
+            </div>
+            <div>
+              <label className="block text-left mb-1">Producer Code</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  name="producerCode"
+                  value={formData.producerCode}
+                  onChange={handleChange}
+                  placeholder="Search Producer Code"
+                  className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleSearch('producerCode')}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-2 rounded"
+                >
+                  <FaSearch />
+                </button>
+                {errors.producerCode && <span className="text-red-400 text-sm">{errors.producerCode}</span>}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Modal for Suggestions */}
+        {showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white text-black p-6 rounded-md max-w-md w-full">
+              <h4 className="text-xl mb-4">Select {currentField === 'organization' ? 'Organization' : 'Producer Code'}</h4>
+              <div className="max-h-48 overflow-y-auto">
+                {(currentField === 'organization' ? filteredOrgSuggestions : filteredProdSuggestions).map((option) => (
+                  <div
+                    key={option}
+                    onClick={() => selectSuggestion(currentField, option)}
+                    className="cursor-pointer px-4 py-2 hover:bg-blue-500"
+                  >
+                    {option}
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={() => setShowModal(false)}
+                className="mt-4 w-full bg-red-500 text-white p-2 rounded"
               >
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-              {errors.gender && <span className="text-red-500">{errors.gender}</span>}
-            </div>
-
-            {/* Date of Birth */}
-            <div className='flex flex-col space-y-2'>
-              <label className='flex'>Enter your date of birth:</label>
-              <input
-                type="date"
-                name="dateOfBirth"
-                value={formData.dateOfBirth}
-                onChange={handleChange}
-                className="input-style"
-              />
-              {errors.dateOfBirth && <span className="text-red-500">{errors.dateOfBirth}</span>}
+                Close
+              </button>
             </div>
           </div>
+        )}
 
-          <div className="flex justify-between mt-6">
-            <button type="submit" className="bg-white text-black rounded-md p-2">Submit</button>
-            <button type="button" onClick={handleCancel} className="bg-white text-black rounded-md p-2">Cancel</button>
-          </div>
+        {/* Submit and Cancel */}
+        <div className="flex justify-between mt-8">
+          <button
+            onClick={handleSubmit}
+            className="bg-blue-500 py-2 px-4 rounded-md text-white hover:bg-blue-700"
+          >
+            Submit
+          </button>
+          <button
+            onClick={handleCancel}
+            className="bg-gray-500 py-2 px-4 rounded-md text-white hover:bg-red-600"
+          >
+            Cancel
+          </button>
+        </div>
 
-          {message && <p className="text-green-400 text-center mt-4">{message}</p>}
-        </form>
+        {message && <div className="mt-4 text-center text-green-500">{message}</div>}
       </div>
     </div>
   );
