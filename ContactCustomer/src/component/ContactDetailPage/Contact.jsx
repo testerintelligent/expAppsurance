@@ -55,22 +55,41 @@ const Contact = () => {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      console.log('Form submitted:', formData);
-      setMessage('Form submitted successfully!');
-      setFormData({
-        firstName: '', lastName: '', email: '', phone: '',
-        street: '', city: '', state: '', zipCode: '',
-        dateOfBirth: '', gender: '', addressType: '',
-        organization: '', producerCode: ''
-      });
-      setErrors({});
+      try {
+        const response = await fetch('http://10.192.190.148:5000/postContact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+  
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
+  
+        const result = await response.json();
+        console.log('Server Response:', result);
+        setMessage('Form submitted successfully!');
+        setFormData({
+          firstName: '', lastName: '', email: '', phone: '',
+          street: '', city: '', state: '', zipCode: '',
+          dateOfBirth: '', gender: '', addressType: '',
+          organization: '', producerCode: ''
+        });
+        setErrors({});
+      } catch (error) {
+        console.error('Submission error:', error);
+        setMessage('Failed to submit the form. Please try again.');
+      }
     } else {
       setMessage('');
     }
   };
+  
 
   const handleCancel = () => {
     setFormData({
