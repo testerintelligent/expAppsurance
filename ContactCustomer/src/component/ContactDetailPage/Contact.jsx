@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
+import axios from 'axios';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    firstName: '', lastName: '', email: '', phone: '',
-    street: '', city: '', state: '', zipCode: '',
-    dateOfBirth: '', gender: '', addressType: '',
-    organization: '', producerCode: ''
+  firstName: '',
+    lastName:'',
+    email:"",
+    phone:"" ,
+    dateOfBirth:"",
+    gender:"" ,
+    address:"",
+    street:"",
+    city:"",
+    state:"",
+     zipCode:"",
+     organization:"",
+     producerCode:""
   });
 
   const [errors, setErrors] = useState({});
@@ -48,7 +58,7 @@ const Contact = () => {
     if (!formData.zipCode) errs.zipCode = 'Required';
     if (!formData.dateOfBirth) errs.dateOfBirth = 'Required';
     if (!formData.gender) errs.gender = 'Required';
-    if (!formData.addressType) errs.addressType = 'Required';
+    if (!formData.address) errs.addressType = 'Required';
     if (!formData.organization) errs.organization = 'Required';
     if (!formData.producerCode) errs.producerCode = 'Required';
     setErrors(errs);
@@ -58,27 +68,40 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      try {
-        const response = await fetch('http://10.192.190.148:5000/postContact', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(formData)
-        });
-  
-        if (!response.ok) {
-          throw new Error(`Server error: ${response.status}`);
-        }
-  
-        const result = await response.json();
-        console.log('Server Response:', result);
-        setMessage('Form submitted successfully!');
+      const payload={
+        firstName:formData.firstName,
+    lastName:formData.lastName,
+    email:formData.email,
+    phone:formData.phone ,
+    dateOfBirth:formData.dateOfBirth,
+    gender:formData.gender ,
+    address:formData.address,
+    street:formData.street,
+    city:formData.city,
+    state:formData.state,
+     zipCode:formData.zipCode,
+     organization:formData.organization,
+     producerCode:formData.producerCode
+      }
+      try{
+        const response=await axios.post("http://10.192.190.148:5000/postContact",payload);
+        //console.log('Server Response:', formData);
+        setMessage(response.data.message||'Form submitted successfully!');
+        alert("Contact created successfully");
         setFormData({
-          firstName: '', lastName: '', email: '', phone: '',
-          street: '', city: '', state: '', zipCode: '',
-          dateOfBirth: '', gender: '', addressType: '',
-          organization: '', producerCode: ''
+          firstName: '',
+          lastName:'',
+          email:"",
+          phone:"" ,
+          dateOfBirth:"",
+          gender:"" ,
+          address:"",
+          street:"",
+          city:"",
+          state:"",
+           zipCode:"",
+           organization:"",
+           producerCode:""
         });
         setErrors({});
       } catch (error) {
@@ -93,10 +116,19 @@ const Contact = () => {
 
   const handleCancel = () => {
     setFormData({
-      firstName: '', lastName: '', email: '', phone: '',
-      street: '', city: '', state: '', zipCode: '',
-      dateOfBirth: '', gender: '', addressType: '',
-      organization: '', producerCode: ''
+      firstName: '',
+    lastName:'',
+    email:"",
+    phone:"" ,
+    dateOfBirth:"",
+    gender:"" ,
+    address:"",
+    street:"",
+    city:"",
+    state:"",
+     zipCode:"",
+     organization:"",
+     producerCode:""
     });
     setErrors({});
     setMessage('');
@@ -217,8 +249,8 @@ const Contact = () => {
             <div>
               <label className="block text-left mb-1">Address Type</label>
               <select
-                name="addressType"
-                value={formData.addressType}
+                name="address"
+                value={formData.address}
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >

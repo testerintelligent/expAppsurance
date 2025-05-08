@@ -60,9 +60,14 @@ const Dashboard = () => {
                 <TableCell sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>Last Name</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>Email</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>Phone</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>DateOfBirth</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>Gender</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>Address</TableCell>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>Date of Birth</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>Organization</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>ProducerCode</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>Created At</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>Update Customer</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>Delete Customer</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -73,11 +78,16 @@ const Dashboard = () => {
                   <TableCell>{contact.lastName}</TableCell>
                   <TableCell>{contact.email}</TableCell>
                   <TableCell>{contact.phone}</TableCell>
-                  <TableCell>
-                    {`${contact.address?.street || ''}, ${contact.address?.city || ''}, ${contact.address?.state || ''} ${contact.address?.zipCode || ''}`}
-                  </TableCell>
                   <TableCell>{formatDate(contact.dateOfBirth)}</TableCell>
+                  <TableCell>{contact.gender}</TableCell>
+                  <TableCell>
+                    {`${contact.address || ''},  ${contact.street || ''},${contact.city || ''}, ${contact.state || ''} ${contact.zipCode || ''}`}
+                  </TableCell>
+                  <TableCell>{contact.organization}</TableCell>
+                  <TableCell>{contact.producerCode}</TableCell>
                   <TableCell>{formatDate(contact.createdAt)}</TableCell>
+                  <TableCell><button className='bg-cyan-400 hover:bg-black text-white p-3 rounded-lg w-24'>Delete</button></TableCell>
+                  <TableCell><button className='bg-cyan-400 hover:bg-black text-white p-3 rounded-lg w-24'>Update</button></TableCell>
                 </TableRow>
               ))}
             </TableBody>

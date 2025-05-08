@@ -6,13 +6,15 @@ const contactSchema = new mongoose.Schema({
     lastName: { type: String, required: true },
     email: { type: String, unique: true, required: true },
     phone: { type: String, required: true },
-    address: {
-        street: { type: String },
-        city: { type: String },
-        state: { type: String },
-        zipCode: { type: String }
-    },
     dateOfBirth: { type: Date },
+    gender: {type: String, required:true},
+    address: {type:String,required:true},
+    street: { type: String},
+    city: { type: String },
+    state: { type: String },
+     zipCode: { type: String,required:true},
+     organization: {type:String,required:true},
+     producerCode:{type:String,required:true},
     createdAt: { type: Date, default: Date.now }
 });
 
