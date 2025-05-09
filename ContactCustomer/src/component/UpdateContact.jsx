@@ -10,7 +10,7 @@ const UpdateContact = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    axios.get(`http://http://10.192.190.148:5000/view/${id}`)
+    axios.get(`http://10.192.190.148:5000/view/${id}`)
       .then((res) => {
         setContact(res.data.contact);
         setLoading(false);
