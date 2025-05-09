@@ -19,6 +19,8 @@ import PolicyInitiation from './component/PolicyInitiation';
 import LifeInsurance from './component/LifeInsurance';
 import Contact from './component/ContactDetailPage/Contact';
 import BillingPage from './component/BillingPage'
+import ViewContact from './component/ViewContact';
+import UpdateContact from './component/UpdateContact';
 import "./style/tailwind.css";
 
 function App() {
@@ -46,8 +48,10 @@ function App() {
               <Route path="/home" element={<HomePage />} />
               <Route path="/Dashboard" element={<Dashboard />} />
               <Route path="/LifeInsurance" element={<LifeInsurance />} />
-              <Route path="/contact" element={<Contact />} />
-              
+            <Route path="/contact" element={<Contact />} />
+              <Route path='/view/:id' element={<ViewContact/>}/>
+              <Route path="/update/:id" element={<UpdateContact />} />
+
               {/* ✅ Added Billing Page Route */}
               <Route path="/billing" element={<BillingPage />} />
               
