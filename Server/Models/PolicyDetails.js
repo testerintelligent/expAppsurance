@@ -5,6 +5,7 @@ const policySchema = new mongoose.Schema({
     customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Contacts', required: true },
     policyType: { type: String, required: true },
     coverageDetails: { type: String, required: true },
+    sumInsured:{type:String,required:true},
     premium: { type: Number, required: true },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
