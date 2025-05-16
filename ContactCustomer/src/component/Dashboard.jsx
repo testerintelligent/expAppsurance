@@ -85,7 +85,6 @@ const Dashboard = () => {
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>First Name</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Last Name</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Phone</TableCell>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>DateOfBirth</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Gender</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Organization</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>ProducerCode</TableCell>
@@ -102,7 +101,6 @@ const Dashboard = () => {
                   <TableCell>{contact.firstName}</TableCell>
                   <TableCell>{contact.lastName}</TableCell>
                   <TableCell>{contact.phone}</TableCell>
-                  <TableCell>{formatDate(contact.dateOfBirth)}</TableCell>
                   <TableCell>{contact.gender}</TableCell>
                   <TableCell>{contact.organization}</TableCell>
                   <TableCell>{contact.producerCode}</TableCell>

@@ -108,16 +108,16 @@ const deleteContact= async (req, res) => {
 
   const updateContact=async(req,res)=>{
     try{
-            const {id}=req.param;
+            const {id}=req.params;
             const updatedData=req.body;
             const updatedcontact=await Contact.findByIdAndUpdate(id,updatedData,{
                 new:true,
                 runValidators:true
             });
-            if(!updatedcontact){
-                return res.staus(404).json({message: 'Contact Not Found'});
-            }
-            res.status(200).json({ message: 'Contact updated successfully', contact: updatedContact });
+            // if(!updatedcontact){
+            //     return res.status(404).json({message: 'Contact Not Found'});
+            // }
+            res.status(200).json({ message: 'Contact updated successfully', contact: updatedcontact });
     }
     catch(error){
         res.status(500).json({error:'Internal Server Error',details:error.message})

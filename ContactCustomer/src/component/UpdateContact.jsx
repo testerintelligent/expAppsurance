@@ -26,10 +26,6 @@ const UpdateContact = () => {
     setContact(prev => ({
       ...prev,
       [name]: value,
-      address: {
-        ...prev.address,
-        [name]: value,
-      }
     }));
   };
 
@@ -72,7 +68,7 @@ const UpdateContact = () => {
           <h3 className="text-lg font-semibold mb-2 text-left">Address Details</h3>
           <div className="h-1 w-20 bg-blue-500 mb-4"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input label="AddressType" name="AddressType" value={contact.address || ''} onChange={handleChange} />
+          <Input label="AddressType" name="address" value={contact.address || ''} onChange={handleChange} />
             <Input label="Street" name="street" value={contact.street || ''} onChange={handleChange} />
             <Input label="City" name="city" value={contact.city || ''} onChange={handleChange} />
             <Input label="State" name="state" value={contact.state || ''} onChange={handleChange} />
