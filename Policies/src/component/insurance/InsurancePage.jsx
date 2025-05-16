@@ -1,30 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { FaSearch } from "react-icons/fa";
 
 const InsurancePage = () => {
-  const [Message, setMessage] = useState("");
-  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  const [selectedPolicy, setSelectedPolicy] = useState("");
-  const [coverageOptions, setCoverageOptions] = useState([]);
-  const [selectedCoverageOption, setSelectedCoverageOption] = useState("");
   const location = useLocation();
   const initialData = location.state?.formData || {};
+  const apiMethod = location.state?.apiMethod || "";
+
+  const [contactData, setContactData] = useState([]);
+  const [filteredContact, setFilteredContact] = useState([]);
+  const [coverageOptions, setCoverageOptions] = useState([]);
+  const [search, setSearch] = useState("");
+  const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState({});
 
   const [insuranceData, setInsuranceData] = useState({
-    CurrentDate: new Date().toISOString().split("T")[0],
-    Name: "",
-    email: "",
-    Address: "",
-    DateOfBirth: "",
-    PolicyType: [],
-    SumInsured: "",
-    Premium: "",
-    Gender: "",
-    hasExistingPolicy: false,
-    ...initialData, // this overrides defaults with values from initialData
+    customerId: "",
+    policyType: "",
+    coverageDetails: "",
+    sumInsured: "",
+    premium: "",
+    startDate: "2024-01-01",
+    endDate: "2025-01-01",
+    status: "Active",
+    ...initialData,
   });
 
   const coverageMapping = {
@@ -45,288 +46,245 @@ const InsurancePage = () => {
   };
 
   useEffect(() => {
-    console.log("initialData", initialData)
-  },[])
+    axios
+      .get("http://10.192.190.148:5000/getContact")
+      .then((response) => {
+        const contacts = response.data?.contacts || [];
+        console.log("initialData", contacts);
+        setContactData(contacts);
+      })
+      .catch((error) => console.error("Error fetching contact data:", error));
+  }, []);
 
-  //   useEffect(() => {
-  //     const sessionKey = sessionStorage.getItem('sessionKey');
-  //     if (!sessionKey) {
-  //       navigate('/');
-  //     }
-  //   }, [navigate]);
+  useEffect(() => {
+    if (apiMethod === "update" || apiMethod === "view") {
+      console.log("contactData", contactData);
+      console.log("initialData", initialData);
+      const matched = contactData.find((c) => c._id === initialData.customerId);
+      if (matched) setFilteredContact([matched]);
 
-  const handlePolicySelectChange = (event) => {
-    const value = event.target.value;
-    setSelectedPolicy(value);
+      if (initialData.policyType) {
+        setCoverageOptions(coverageMapping[initialData.policyType] || []);
+      }
+    }
+  }, [contactData, initialData, apiMethod]);
 
-    const updatedPolicyTypes = insuranceData.PolicyType.includes(value)
-      ? insuranceData.PolicyType.filter((policy) => policy !== value)
-      : [...insuranceData.PolicyType, value];
-
-    setInsuranceData({ ...insuranceData, PolicyType: updatedPolicyTypes });
-    setCoverageOptions(coverageMapping[value] || []);
+  const handleSelectCustomer = (customerId, id) => {
+    setSearch("");
+    setInsuranceData((prev) => ({ ...prev, customerId: id }));
+    const contact = contactData.find((c) => c.customerId === customerId);
+    setFilteredContact(contact ? [contact] : []);
+    //setFilteredContact([]); // ❗ Hide the dropdown after selection
   };
 
-  const handleCoverageChange = (event) => {
-    setSelectedCoverageOption(event.target.value);
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+    const matches = contactData.filter((c) => c.customerId.includes(value));
+    setFilteredContact(matches);
+  };
+
+  const handlePolicySelectChange = (e) => {
+    const type = e.target.value;
+    setInsuranceData((prev) => ({
+      ...prev,
+      policyType: type,
+      coverageDetails: "",
+    }));
+    setCoverageOptions(coverageMapping[type] || []);
+  };
+
+  const handleCoverageChange = (e) => {
+    setInsuranceData((prev) => ({ ...prev, coverageDetails: e.target.value }));
   };
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    if (type === "checkbox") {
-      if (name === "hasExistingPolicy") {
-        setInsuranceData({ ...insuranceData, hasExistingPolicy: checked }); // ✅ Fix for checkbox
-      } else {
-        const updatedPolicyTypes = checked
-          ? [...insuranceData.PolicyType, value]
-          : insuranceData.PolicyType.filter((policy) => policy !== value);
-        setInsuranceData({ ...insuranceData, PolicyType: updatedPolicyTypes });
-      }
-    } else {
-      setInsuranceData({ ...insuranceData, [name]: value });
-    }
+    const { name, value } = e.target;
+    setInsuranceData((prev) => ({ ...prev, [name]: value }));
   };
 
   const validateFields = () => {
-    let errors = {};
-    if (!insuranceData.Name.trim()) errors.Name = "*Name is required";
-    if (!insuranceData.email.trim()) {
-      errors.email = "*Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(insuranceData.email)) {
-      errors.email = "*Email is invalid";
-    }
-    if (!insuranceData.Address.trim()) errors.Address = "*Address is required";
-    if (!insuranceData.DateOfBirth)
-      errors.DateOfBirth = "*Date of Birth is required";
-    if (insuranceData.PolicyType.length === 0)
-      errors.PolicyType = "*Please select at least one Policy Type";
-    if (!insuranceData.SumInsured)
-      errors.SumInsured = "*Please enter Sum Insured";
-    if (!insuranceData.Premium.trim()) {
-      errors.Premium = "*Premium is required";
-    } else if (
-      isNaN(insuranceData.Premium) ||
-      parseFloat(insuranceData.Premium) <= 0
+    const errs = {};
+    if (!insuranceData.customerId) errs.customerId = "Customer ID is required.";
+    if (!insuranceData.policyType) errs.policyType = "Policy Type is required.";
+    if (!insuranceData.coverageDetails)
+      errs.coverageDetails = "Coverage Details are required.";
+    if (!insuranceData.sumInsured) errs.sumInsured = "Sum Insured is required.";
+    if (
+      !insuranceData.premium ||
+      isNaN(insuranceData.premium) ||
+      parseFloat(insuranceData.premium) <= 0
     ) {
-      errors.Premium = "*Premium must be a positive number";
+      errs.premium = "Premium must be a positive number.";
     }
-    if (!insuranceData.Gender) errors.Gender = "*Gender is required";
-
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
   };
 
-  const handleInsurance = (event) => {
-    event.preventDefault();
-    if (validateFields()) {
-      const method = Object.keys(initialData).length !== 0 ? "put" : "post"; // <-- Use PUT if there's an ID
-    const url = Object.keys(initialData).length !== 0
-      ? `http://10.192.190.148:5000/Dashboard/update/${initialData._id}` // PUT needs ID in URL
-      : "http://10.192.190.148:5000/Dashboard";
-      console.log("method", method);
-      console.log("url", url);
-      axios[method](url, insuranceData)
-        .then((response) => {
-          setMessage(response.data.message || "Policy created successfully.");
-          setInsuranceData({
-            CurrentDate: new Date().toISOString().split("T")[0],
-            Name: "",
-            email: "",
-            Address: "",
-            DateOfBirth: "",
-            PolicyType: [],
-            SumInsured: "",
-            Premium: "",
-            Gender: "",
-            hasExistingPolicy: false, // Reset after submission
-          });
-          navigate('/');
-        })
-        .catch((error) => {
-          setMessage(
-            error.response?.data?.message ||
-              "An error occurred. Please try again."
-          );
-        });
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!validateFields()) return;
+
+    const method = apiMethod === "update" ? "put" : "post";
+    const url =
+      apiMethod === "update"
+        ? `http://10.192.190.148:5000/updatePolicy/${initialData._id}`
+        : `http://10.192.190.148:5000/postPolicy`;
+
+    axios[method](url, insuranceData)
+      .then((res) => {
+        setMessage(res.data.message || "Success!");
+        navigate("/");
+      })
+      .catch((err) => {
+        setMessage(err.response?.data?.message || "Failed to process request.");
+      });
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen">
-      <div className="bg-gray-900 bg-opacity-90 shadow-lg rounded-xl p-10 max-w-2xl w-full text-white">
+      <div className="bg-gray-900 bg-opacity-90 shadow-lg p-10 rounded-xl w-full max-w-2xl text-white">
         <h2 className="text-3xl font-bold text-center mb-6">
           Insurance Policy Details
         </h2>
-        <form onSubmit={handleInsurance} className="space-y-4">
-        <div className='flex flex-col space-y-2'>
-              <label className='flex'>Enter your Customer Id :</label>
-              <input
-                type="text"
-                name="customerID"
-                onChange={handleChange}
-                placeholder="customer ID"
-                className="input-style"
-              />
-              {errors.zipCode && <span className="text-red-500">{errors.zipCode}</span>}
-            </div>
-          <input
-            type="text"
-            name="Name"
-            value={insuranceData.Name}
-            onChange={handleChange}
-            placeholder="Name"
-            className="input-field"
-          />
-          {errors.Name && <p className="error">{errors.Name}</p>}
-
-          <input
-            type="email"
-            name="email"
-            value={insuranceData.email}
-            onChange={handleChange}
-            placeholder="Email ID"
-            className="input-field"
-          />
-          {errors.email && <p className="error">{errors.email}</p>}
-
-          <input
-            type="text"
-            name="Address"
-            value={insuranceData.Address}
-            onChange={handleChange}
-            placeholder="Address"
-            className="input-field"
-          />
-          {errors.Address && <p className="error">{errors.Address}</p>}
-
-          <input
-            type="date"
-            name="DateOfBirth"
-            value={insuranceData.DateOfBirth}
-            onChange={handleChange}
-            className="input-field"
-          />
-          {errors.DateOfBirth && <p className="error">{errors.DateOfBirth}</p>}
-
-          <div className="flex items-center space-x-4">
-            <span className="font-medium">Gender:</span>
-            <label className="flex items-center space-x-1">
-              <input
-                type="radio"
-                name="Gender"
-                value="Male"
-                onChange={handleChange}
-                checked={insuranceData.Gender === "Male"}
-              />
-              <span>Male</span>
-            </label>
-            <label className="flex items-center space-x-1">
-              <input
-                type="radio"
-                name="Gender"
-                value="Female"
-                onChange={handleChange}
-                checked={insuranceData.Gender === "Female"}
-              />
-              <span>Female</span>
-            </label>
-          </div>
-          {errors.Gender && <p className="error">{errors.Gender}</p>}
-
-          <select
-            onChange={handlePolicySelectChange}
-            name="PolicyType"
-            value={selectedPolicy}
-            className="w-full p-3 rounded-lg bg-gray-700 border border-gray-500 text-white"
-          >
-            <option value="">-- Select Policy Type --</option>
-            {Object.keys(coverageMapping).map((type) => (
-              <option key={type} value={type}>
-                {type} Insurance
-              </option>
-            ))}
-          </select>
-          {errors.PolicyType && <p className="error">{errors.PolicyType}</p>}
-
-          <select
-            onChange={(e) => setSelectedCoverageOption(e.target.value)}
-            name="Coverage"
-            value={selectedCoverageOption}
-            className="w-full p-3 rounded-lg bg-gray-700 border border-gray-500 text-white"
-            disabled={!coverageOptions.length}
-          >
-            <option value="">-- Select Coverage --</option>
-            {coverageOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-
-          <input
-            type="number"
-            name="SumInsured"
-            value={insuranceData.SumInsured}
-            onChange={handleChange}
-            placeholder="Sum Insured"
-            className="input-field"
-          />
-          {errors.SumInsured && <p className="error">{errors.SumInsured}</p>}
-
-          <input
-            type="number"
-            name="Premium"
-            value={insuranceData.Premium}
-            onChange={handleChange}
-            placeholder="Premium"
-            className="input-field"
-          />
-          {errors.Premium && <p className="error">{errors.Premium}</p>}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-              width: "100%",
-            }}
-          >
-            {/* Message above the buttons */}
-            <label
-              style={{ display: "flex", alignItems: "center", gap: "5px" }}
-            >
-              <input
-                type="checkbox"
-                name="hasExistingPolicy"
-                checked={insuranceData.hasExistingPolicy}
-                onChange={handleChange}
-              />
-              Do you have an existing policy?
-            </label>
-
-            {/* Buttons aligned: Submit on left, Cancel on right */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "100%",
-              }}
-            >
-              {Object.keys(initialData).length === 0 ? (
-              <button type="submit" className="btn-primary">
-                Submit
-              </button>
-              ): (
-              <button type="submit" className="btn-primary">
-              Update
-            </button>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex flex-col space-y-2">
+            <label className="flex">Enter your Customer Id :</label>
+            <input
+              type="text"
+              value={insuranceData.customerId}
+              onChange={handleInputChange}
+              placeholder="Enter Customer ID"
+              className="input-style"
+            />
+            {filteredContact.length > 0 &&
+              apiMethod !== "update" &&
+              apiMethod !== "view" &&
+              search && (
+                <ul className="bg-white text-black p-2 rounded">
+                  {filteredContact.map((c) => (
+                    <li
+                      key={c._id}
+                      onClick={() => handleSelectCustomer(c.customerId, c._id)}
+                      className="cursor-pointer hover:bg-gray-300 p-1"
+                    >
+                      {c.customerId}
+                    </li>
+                  ))}
+                </ul>
               )}
-              <button type="button" className="btn-secondary">
+            {errors.customerId && (
+              <p className="text-red-500">{errors.customerId}</p>
+            )}
+            {filteredContact.length > 0 && (
+              <>
+                <input
+                  type="text"
+                  disabled
+                  value={`${filteredContact[0].firstName} ${filteredContact[0].lastName}`}
+                  className="input-style"
+                />
+                <input
+                  type="email"
+                  disabled
+                  value={filteredContact[0].email}
+                  className="input-style"
+                />
+                <input
+                  type="text"
+                  disabled
+                  value={filteredContact[0].address}
+                  className="input-style"
+                />
+                <input
+                  type="text"
+                  disabled
+                  value={filteredContact[0].dateOfBirth}
+                  className="input-style"
+                />
+              </>
+            )}
+
+            <select
+              value={insuranceData.policyType}
+              onChange={handlePolicySelectChange}
+              className="w-full p-3 rounded-lg bg-gray-700 border border-gray-500 text-white"
+            >
+              <option value="">-- Select Policy Type --</option>
+              {Object.keys(coverageMapping).map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+            {errors.policyType && (
+              <p className="text-red-500">{errors.policyType}</p>
+            )}
+
+            <select
+              value={insuranceData.coverageDetails}
+              onChange={handleCoverageChange}
+              disabled={!coverageOptions.length}
+              className="w-full p-3 rounded-lg bg-gray-700 border border-gray-500 text-white"
+            >
+              <option value="">-- Select Coverage --</option>
+              {coverageOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+            {errors.coverageDetails && (
+              <p className="text-red-500">{errors.coverageDetails}</p>
+            )}
+
+            <input
+              type="number"
+              name="sumInsured"
+              value={insuranceData.sumInsured}
+              onChange={handleChange}
+              placeholder="Sum Insured"
+              className="input-style"
+            />
+            {errors.sumInsured && (
+              <p className="text-red-500">{errors.sumInsured}</p>
+            )}
+
+            <input
+              type="number"
+              name="premium"
+              value={insuranceData.premium}
+              onChange={handleChange}
+              placeholder="Premium"
+              className="input-style"
+            />
+            {errors.premium && <p className="text-red-500">{errors.premium}</p>}
+
+            <div className="flex justify-between">
+              {apiMethod === "update" && (
+                <button type="submit" className="btn-primary">
+                  Update
+                </button>
+              )}
+
+              {apiMethod !== "update" && apiMethod !== "view" && (
+                <button type="submit" className="btn-primary">
+                  Submit
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => navigate("/")}
+                className="btn-secondary"
+              >
                 Cancel
               </button>
             </div>
           </div>
         </form>
+        {message && (
+          <p className="mt-4 text-center text-green-500">{message}</p>
+        )}
       </div>
     </div>
   );

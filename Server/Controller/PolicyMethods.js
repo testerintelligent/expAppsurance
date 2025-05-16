@@ -1,7 +1,7 @@
 const Policy = require('../Models/PolicyDetails');
 
 // POST /postPolicy — Add a new policy
- const enterPolicyDetails=async (req, res) => {
+ const enterPolicyDetails = async (req, res) => {
   try {
     const policy = new Policy(req.body);
     await policy.save();
@@ -23,6 +23,39 @@ const getPolicyDetails=async (req, res) => {
   }
 };
 
+//Delete - the selected policy
+const deletePolicyInfo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("Trying to delete policy with ID:", id);
+    const result = await Policy.findById(id);
+    if (!result) {
+      console.log("Policy not found");
+      return res.status(404).json({ message: 'Policy not found' });
+    }
+    await Policy.findByIdAndDelete(id);
+    console.log("Policy deleted");
+    res.status(200).json({ message: "Policy deleted successfully" });
+  } catch (error) {
+    console.error('Error deleting Policy:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const updatePolicyInfo = async(req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await Policy.findById(id);
+    if (!result) {
+      return res.status(404).json({ message: 'Policy not found' });
+    }
+    await Policy.findByIdAndUpdate(id, req.body);
+    res.status(200).json({ message: "Policy Update successfully" });
+  } catch (error) {
+    console.error('Error deleting Policy:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
 // GET /filterPolicy/:id — Get single policy by ID
 // router.get('/filterPolicy/:id', async (req, res) => {
 //   try {
@@ -37,4 +70,4 @@ const getPolicyDetails=async (req, res) => {
 //   }
 // });
 
-module.exports = {enterPolicyDetails,getPolicyDetails};
+module.exports = {enterPolicyDetails,getPolicyDetails,deletePolicyInfo,updatePolicyInfo};
