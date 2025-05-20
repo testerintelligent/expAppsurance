@@ -15,6 +15,9 @@ const InsurancePage = () => {
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [currentField, setCurrentField] = useState("");
+  const [customerId, setCustomerId] = useState("");
 
   const [insuranceData, setInsuranceData] = useState({
     customerId: "",
@@ -22,9 +25,9 @@ const InsurancePage = () => {
     coverageDetails: "",
     sumInsured: "",
     premium: "",
-    startDate: "2024-01-01",
-    endDate: "2025-01-01",
-    status: "Active",
+    startDate: "",
+    endDate: "",
+    status: "",
     ...initialData,
   });
 
@@ -44,13 +47,11 @@ const InsurancePage = () => {
       "Personal Vehicle Damage",
     ],
   };
-
   useEffect(() => {
     axios
       .get("http://10.192.190.148:5000/getContact")
       .then((response) => {
         const contacts = response.data?.contacts || [];
-        console.log("initialData", contacts);
         setContactData(contacts);
       })
       .catch((error) => console.error("Error fetching contact data:", error));
@@ -58,31 +59,17 @@ const InsurancePage = () => {
 
   useEffect(() => {
     if (apiMethod === "update" || apiMethod === "view") {
-      console.log("contactData", contactData);
-      console.log("initialData", initialData);
       const matched = contactData.find((c) => c._id === initialData.customerId);
-      if (matched) setFilteredContact([matched]);
+      if (matched) {
+        setFilteredContact([matched]);
+        setCustomerId(matched.customerId); // ✅ Set the displayable customer ID
+      }
 
       if (initialData.policyType) {
         setCoverageOptions(coverageMapping[initialData.policyType] || []);
       }
     }
   }, [contactData, initialData, apiMethod]);
-
-  const handleSelectCustomer = (customerId, id) => {
-    setSearch("");
-    setInsuranceData((prev) => ({ ...prev, customerId: id }));
-    const contact = contactData.find((c) => c.customerId === customerId);
-    setFilteredContact(contact ? [contact] : []);
-    //setFilteredContact([]); // ❗ Hide the dropdown after selection
-  };
-
-  const handleInputChange = (e) => {
-    const value = e.target.value;
-    setSearch(value);
-    const matches = contactData.filter((c) => c.customerId.includes(value));
-    setFilteredContact(matches);
-  };
 
   const handlePolicySelectChange = (e) => {
     const type = e.target.value;
@@ -98,14 +85,40 @@ const InsurancePage = () => {
     setInsuranceData((prev) => ({ ...prev, coverageDetails: e.target.value }));
   };
 
+  const handleCustomerChange = (e) => {
+    contactData.filter((contact) => {
+      if (contact.customerId === e.target.value) {
+        setInsuranceData((prev) => ({ ...prev, customerId: contact._id }));
+      }
+    });
+  };
+
+  const handleSearch = () => {
+    setShowModal(true);
+  };
+
+  const filteredOrgSuggestions = contactData.map(
+    (option) => option.firstName + " " + option.lastName
+  );
+  const selectSuggestion = (field, value) => {
+    contactData.filter((contact) => {
+      const name = contact.firstName + " " + contact.lastName;
+      if (name === value) {
+        setCustomerId(contact.customerId);
+        setFilteredContact([contact]);
+        setInsuranceData((prev) => ({ ...prev, customerId: contact._id }));
+      }
+    });
+    setShowModal(false);
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setInsuranceData((prev) => ({ ...prev, [name]: value }));
   };
 
   const validateFields = () => {
     const errs = {};
-    if (!insuranceData.customerId) errs.customerId = "Customer ID is required.";
     if (!insuranceData.policyType) errs.policyType = "Policy Type is required.";
     if (!insuranceData.coverageDetails)
       errs.coverageDetails = "Coverage Details are required.";
@@ -124,7 +137,6 @@ const InsurancePage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateFields()) return;
-
     const method = apiMethod === "update" ? "put" : "post";
     const url =
       apiMethod === "update"
@@ -149,30 +161,23 @@ const InsurancePage = () => {
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col space-y-2">
-            <label className="flex">Enter your Customer Id :</label>
-            <input
-              type="text"
-              value={insuranceData.customerId}
-              onChange={handleInputChange}
-              placeholder="Enter Customer ID"
-              className="input-style"
-            />
-            {filteredContact.length > 0 &&
-              apiMethod !== "update" &&
-              apiMethod !== "view" &&
-              search && (
-                <ul className="bg-white text-black p-2 rounded">
-                  {filteredContact.map((c) => (
-                    <li
-                      key={c._id}
-                      onClick={() => handleSelectCustomer(c.customerId, c._id)}
-                      className="cursor-pointer hover:bg-gray-300 p-1"
-                    >
-                      {c.customerId}
-                    </li>
-                  ))}
-                </ul>
-              )}
+            <div className="relative">
+              <input
+                type="text"
+                name="customerId"
+                value={customerId}
+                onChange={handleCustomerChange}
+                placeholder="Search Customer"
+                className="input-style"
+              />
+              <button
+                type="button"
+                onClick={handleSearch}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-2 rounded"
+              >
+                <FaSearch />
+              </button>
+            </div>
             {errors.customerId && (
               <p className="text-red-500">{errors.customerId}</p>
             )}
@@ -237,7 +242,22 @@ const InsurancePage = () => {
             {errors.coverageDetails && (
               <p className="text-red-500">{errors.coverageDetails}</p>
             )}
-
+            <input
+              type="date"
+              name="startDate"
+              value={insuranceData.startDate?.split("T")[0]}
+              onChange={handleChange}
+              placeholder="Start Date"
+              className="input-style"
+            />
+            <input
+              type="date"
+              name="endDate"
+              value={insuranceData.endDate?.split("T")[0]}
+              onChange={handleChange}
+              placeholder="End Date"
+              className="input-style"
+            />
             <input
               type="number"
               name="sumInsured"
@@ -259,6 +279,17 @@ const InsurancePage = () => {
               className="input-style"
             />
             {errors.premium && <p className="text-red-500">{errors.premium}</p>}
+            <select
+              name="status"
+              value={insuranceData.status}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-gray-700 border border-gray-500 text-white"
+            >
+              <option value="">-- Select Status --</option>
+              <option value="Active">Active</option>
+              <option value="Expired">Expired</option>
+              <option value="Canceled">Canceled</option>
+            </select>
 
             <div className="flex justify-between">
               {apiMethod === "update" && (
@@ -280,6 +311,31 @@ const InsurancePage = () => {
                 Cancel
               </button>
             </div>
+            {/* Modal for Suggestions */}
+            {showModal && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                <div className="bg-white text-black p-6 rounded-md max-w-md w-full">
+                  <h4 className="text-xl mb-4">Select Customer Name</h4>
+                  <div className="max-h-48 overflow-y-auto">
+                    {filteredOrgSuggestions.map((option) => (
+                      <div
+                        key={option}
+                        onClick={() => selectSuggestion(currentField, option)}
+                        className="cursor-pointer px-4 py-2 hover:bg-blue-500"
+                      >
+                        {option}
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="mt-4 w-full bg-red-500 text-white p-2 rounded"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </form>
         {message && (
