@@ -393,7 +393,7 @@ const PolicyDashboard = ({ policies }) => {
                           onClick={() => updatePolicy(insurance, "update")}
                           style={{ textTransform: "none" }}
                         >
-                          <FaEdit />
+                          <FaEdit size="25px" />
                         </button>
                       </TableCell>
                       <TableCell
@@ -405,7 +405,7 @@ const PolicyDashboard = ({ policies }) => {
                           onClick={() => updatePolicy(insurance, "view")}
                           style={{ textTransform: "none", borderRadius: "5px" }}
                         >
-                          <FaEye />
+                          <FaEye size="25px" />
                         </button>
                       </TableCell>
                     </TableRow>

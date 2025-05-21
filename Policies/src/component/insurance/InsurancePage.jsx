@@ -161,6 +161,7 @@ const InsurancePage = () => {
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col space-y-2">
+          <label className="block text-left mb-1">Customer ID</label>
             <div className="relative">
               <input
                 type="text"
@@ -183,24 +184,28 @@ const InsurancePage = () => {
             )}
             {filteredContact.length > 0 && (
               <>
+                <label className="block text-left mb-1">Customer Name</label>
                 <input
                   type="text"
                   disabled
                   value={`${filteredContact[0].firstName} ${filteredContact[0].lastName}`}
                   className="input-style"
                 />
+                <label className="block text-left mb-1">Email</label>
                 <input
                   type="email"
                   disabled
                   value={filteredContact[0].email}
                   className="input-style"
                 />
+                <label className="block text-left mb-1">Address</label>
                 <input
                   type="text"
                   disabled
                   value={filteredContact[0].address}
                   className="input-style"
                 />
+                <label className="block text-left mb-1">Date of Birth</label>
                 <input
                   type="text"
                   disabled
@@ -209,7 +214,7 @@ const InsurancePage = () => {
                 />
               </>
             )}
-
+            <label className="block text-left mb-1">Policy Type</label>
             <select
               value={insuranceData.policyType}
               onChange={handlePolicySelectChange}
@@ -225,7 +230,7 @@ const InsurancePage = () => {
             {errors.policyType && (
               <p className="text-red-500">{errors.policyType}</p>
             )}
-
+            <label className="block text-left mb-1">Coverage</label>
             <select
               value={insuranceData.coverageDetails}
               onChange={handleCoverageChange}
@@ -242,6 +247,7 @@ const InsurancePage = () => {
             {errors.coverageDetails && (
               <p className="text-red-500">{errors.coverageDetails}</p>
             )}
+            <label className="block text-left mb-1">Start Date</label>
             <input
               type="date"
               name="startDate"
@@ -250,6 +256,7 @@ const InsurancePage = () => {
               placeholder="Start Date"
               className="input-style"
             />
+            <label className="block text-left mb-1">End Date</label>
             <input
               type="date"
               name="endDate"
@@ -258,6 +265,7 @@ const InsurancePage = () => {
               placeholder="End Date"
               className="input-style"
             />
+            <label className="block text-left mb-1">Sum Insured</label>
             <input
               type="number"
               name="sumInsured"
@@ -269,7 +277,7 @@ const InsurancePage = () => {
             {errors.sumInsured && (
               <p className="text-red-500">{errors.sumInsured}</p>
             )}
-
+            <label className="block text-left mb-1">Premium</label>
             <input
               type="number"
               name="premium"
@@ -279,6 +287,7 @@ const InsurancePage = () => {
               className="input-style"
             />
             {errors.premium && <p className="text-red-500">{errors.premium}</p>}
+            <label className="block text-left mb-1">Status</label>
             <select
               name="status"
               value={insuranceData.status}
@@ -286,9 +295,14 @@ const InsurancePage = () => {
               className="w-full p-3 rounded-lg bg-gray-700 border border-gray-500 text-white"
             >
               <option value="">-- Select Status --</option>
-              <option value="Active">Active</option>
+              <option value="In Force">In Force</option>
+              <option value="Lapsed">Lapsed</option>
+              <option value="Grace Period">Grace Period</option>
+              <option value="Cancelled">Cancelled</option>
+              <option value="Under Review">Under Review</option>
               <option value="Expired">Expired</option>
-              <option value="Canceled">Canceled</option>
+              <option value="Suspended">Suspended</option>
+              <option value="Matured">Matured</option>
             </select>
 
             <div className="flex justify-between">
