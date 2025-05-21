@@ -9,7 +9,7 @@ const policySchema = new mongoose.Schema({
     premium: { type: Number, required: true },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
-    status: { type: String, enum: ['Active', 'Expired', 'Canceled'], default: 'Active' }
+    status: { type: String, enum: ['In Force', 'Lapsed', 'Grace Period','Cancelled','Under Review','Expired','Suspended','Matured'], default: 'Under Review' }
 });
 
 

@@ -5,6 +5,7 @@ import {
   TableRow, Paper, TablePagination
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { FaDashcube, FaEdit, FaEye, FaTrash } from "react-icons/fa"; 
 
 const Dashboard = () => {
   const [filteredData, setFilteredData] = useState([]);
@@ -106,13 +107,13 @@ const Dashboard = () => {
                   <TableCell>{contact.producerCode}</TableCell>
                   <TableCell>{formatDate(contact.createdAt)}</TableCell>
                   <TableCell>
-                    <button className='bg-red-500 hover:bg-red-700 text-white p-2 rounded' onClick={() => handleDelete(contact._id)}>Delete</button>
+                    <button style={{ textTransform: "none", borderRadius: "5px" }} onClick={() => handleDelete(contact._id)}><FaTrash size="20px"/></button>
                   </TableCell>
                   <TableCell>
-                    <button className='bg-yellow-500 hover:bg-yellow-700 text-white p-2 rounded' onClick={() => handleUpdate(contact)}>Update</button>
+                    <button style={{ textTransform: "none", borderRadius: "5px" }} onClick={() => handleUpdate(contact)}><FaEdit size="20px"/></button>
                   </TableCell>
                   <TableCell>
-                    <button className='bg-blue-500 hover:bg-blue-700 text-white p-2 rounded' onClick={() => handleView(contact)}>View</button>
+                    <button style={{ padding:"10px" ,textTransform: "none", borderRadius: "5px" }} onClick={() => handleView(contact)}> <FaEye size="20px" /></button>
                   </TableCell>
                 </TableRow>
               ))}
