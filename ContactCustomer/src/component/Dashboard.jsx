@@ -107,13 +107,13 @@ const Dashboard = () => {
                   <TableCell>{contact.producerCode}</TableCell>
                   <TableCell>{formatDate(contact.createdAt)}</TableCell>
                   <TableCell>
-                    <button style={{ textTransform: "none", borderRadius: "5px" }} onClick={() => handleDelete(contact._id)}><FaTrash size="20px"/></button>
+                    <button style={{textAlign: "center", textTransform: "none", borderRadius: "5px" }} onClick={() => handleDelete(contact._id)}><FaTrash size="20px"/></button>
                   </TableCell>
                   <TableCell>
-                    <button style={{ textTransform: "none", borderRadius: "5px" }} onClick={() => handleUpdate(contact)}><FaEdit size="20px"/></button>
+                    <button style={{textAlign: "center", textTransform: "none", borderRadius: "5px" }} onClick={() => handleUpdate(contact)}><FaEdit size="20px"/></button>
                   </TableCell>
                   <TableCell>
-                    <button style={{ padding:"10px" ,textTransform: "none", borderRadius: "5px" }} onClick={() => handleView(contact)}> <FaEye size="20px" /></button>
+                    <button style={{textAlign: "center", padding:"10px" ,textTransform: "none", borderRadius: "5px" }} onClick={() => handleView(contact)}> <FaEye size="20px" /></button>
                   </TableCell>
                 </TableRow>
               ))}

@@ -1,7 +1,13 @@
-import Dashboard from "./components/Dashboard";
-import React, { useState, useEffect } from 'react';
-import './App.css'
-function App() {
+import HamburgerMenu from "./components/HamburgerMenu";
+import {BrowserRouter as Router,Routes,Route} from "react-router-dom"
+import Login from "./pages/LoginPage";
+import React from 'react';
+import { useState,useEffect } from "react";
+
+
+
+
+const App=()=> {
 
   const [claims, setClaims] = useState([]);
 
@@ -130,13 +136,19 @@ function App() {
         },
       ];      
 
-    setClaims(staticClaimsData); // Set static data to state
+     setClaims(staticClaimsData); // Set static data to state
   }, []);
 
   return (
-    <div className="App">
-     <Dashboard claims={claims}/>
-    </div>
+    <>
+    <Router>
+    <Routes>
+      <Route path="/" element={<Login/>}></Route>
+      <Route path="/Claim" element={<HamburgerMenu claim={claims}/>}></Route>
+    </Routes>
+    </Router>
+
+    </>
   );
 }
 
