@@ -1,4 +1,10 @@
-const InputField=({labelName,placeholderName})=>{
+import React from "react";
+
+interface InputFieldProp{
+  labelName:String,
+  placeholderName:String
+}
+const InputField:React.FC<InputFieldProp>=({labelName,placeholderName})=>{
     return(
         <div className="text-left">
   <label className="block mb-1 text-sm font-medium">{labelName}</label>

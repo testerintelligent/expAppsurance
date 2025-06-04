@@ -1,19 +1,8 @@
-import HamburgerMenu from "./components/HamburgerMenu";
-import {BrowserRouter as Router,Routes,Route} from "react-router-dom"
-import Login from "./pages/LoginPage";
-import React from 'react';
-import { useState,useEffect } from "react";
+import React, { useState } from "react";
+import { Table, TableContainer, TableHead,TableBody, TableRow,TableCell, TablePagination } from "@mui/material";
 
 
-
-
-const App=()=> {
-
-  const [claims, setClaims] = useState([]);
-
-  useEffect(() => {
-    // Static claim data for now
-    const staticClaimsData = [
+   const ClaimsData = [
         {
           claimId: 'CLM001',
           customerId: 'CUS001',
@@ -135,21 +124,72 @@ const App=()=> {
           documents: ['flood_photos.jpg', 'insurance_claim_form.pdf'],
         },
       ];      
+const DashboardLayout=()=>{
 
-     setClaims(staticClaimsData); // Set static data to state
-  }, []);
+  const[page,setPage]=useState(0);
+  const[rowsPerPage,setrowsPerPage]=useState(5);
 
-  return (
-    <>
-    <Router>
-    <Routes>
-      <Route path="/" element={<Login/>}></Route>
-      <Route path="/Claim" element={<HamburgerMenu claim={claims}/>}></Route>
-    </Routes>
-    </Router>
-
-    </>
-  );
+const handleChangePage=(event:unknown,newpage:number)=>{
+  setPage(newpage)
 }
+const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  setrowsPerPage(parseInt(event.target.value, 10));
+  setPage(0);
+};
 
-export default App;
+    return(
+        <TableContainer>
+            <Table>
+                <TableHead>
+                    <TableRow className="bg-gray-950">
+                                        <TableCell><span  className="text-white ">Claim ID</span></TableCell>
+                                        <TableCell ><span className="text-white " >Customer ID</span></TableCell>
+                                        <TableCell><span  className="text-white ">Policy ID</span></TableCell>
+                                        <TableCell><span  className="text-white ">Claim Type</span></TableCell>
+                                        <TableCell ><span className="text-white " >Claim Amount</span></TableCell>
+                                        <TableCell ><span className="text-white " >Claim Date</span></TableCell>
+                                        <TableCell ><span className="text-white ">Resolution Date</span></TableCell>
+                                        <TableCell ><span className="text-white " >Status</span></TableCell>
+                                     
+                    </TableRow>
+                </TableHead>
+
+                <TableBody>
+                    {ClaimsData.length>0 && ClaimsData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((claim,index)=>(
+                        
+                            <TableRow key={index} className=" odd:bg-gray-800 even:bg-gray-900 p-0">
+                        
+                            <TableCell><span  className="text-white ">{claim.claimId}</span></TableCell>
+                            <TableCell ><span className="text-white " >{claim.customerId}</span></TableCell>
+                            <TableCell><span  className="text-white ">{claim.policyId}</span></TableCell>
+                            <TableCell><span  className="text-white ">{claim.claimType}</span></TableCell>
+                            <TableCell ><span className="text-white " >{claim.claimAmount}</span></TableCell>
+                            <TableCell ><span className="text-white " >{claim.claimDate}</span></TableCell>
+                            <TableCell ><span className="text-white ">{claim.resolutionDate}</span></TableCell>
+                            <TableCell ><span className="text-white " >{claim.claimStatus}</span></TableCell>
+                         
+        </TableRow>
+                        
+                    ))
+                
+}
+                </TableBody>
+                <TablePagination
+                      className="text-white w-80"
+                      rowsPerPageOptions={[5,10,15]}
+                      component="div"
+                      count={ClaimsData.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                       style={{ color:"black", backgroundColor:"white",width:"100%" }} 
+                    
+               />
+
+            </Table>
+
+        </TableContainer>
+    )
+}
+export default DashboardLayout;

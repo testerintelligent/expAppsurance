@@ -4,7 +4,7 @@ import SignUpFunction from "../layout/SignUpFunction";
 import SignInFunction from "../layout/SignInFunction";
 // import {useNavigate} from 'react-router-dom'
 
-const Login=()=> {
+const Login:React.FC=()=> {
     const[SignIn,setSignIn]=useState(true);
   return (
     <div className="bg-gray-400 m-4 p-4 rounded-md border-2 border-black shadow-2xl w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl text-center mx-auto">
