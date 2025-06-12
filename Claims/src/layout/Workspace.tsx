@@ -13,7 +13,7 @@ interface workspaceProp{
 
 const Workspace:React.FC<workspaceProp>=({children,title})=>{
     return(
-        <div className=" relative  rounded-lg ml-52 bg-gray-800 mx-4  ">
+        <div className="p-2 ml-56 relative  rounded-lg  bg-gray-800 mx-4 border-2 border-gray-400 ">
             <p className="p-2 font-serif  ">{title}</p>
             <hr></hr>
                     {children}
