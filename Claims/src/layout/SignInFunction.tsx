@@ -1,6 +1,6 @@
 
-import InputField from "../components/InputField";
-import ButtonField from "../components/ButtonField";
+import InputField from "../components/InputField.tsx";
+import ButtonField from "../components/ButtonField.tsx";
 import React from "react";
 
 const SignInFunction:React.FC=()=>{

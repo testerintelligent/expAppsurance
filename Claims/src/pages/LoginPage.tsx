@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
-import SignUpFunction from "../layout/SignUpFunction";
-import SignInFunction from "../layout/SignInFunction";
+import SignUpFunction from "../layout/SignUpFunction.tsx";
+import SignInFunction from "../layout/SignInFunction.tsx";
 // import {useNavigate} from 'react-router-dom'
 
 const Login:React.FC=()=> {

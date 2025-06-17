@@ -1,8 +1,8 @@
 import React from "react";
-import MenuList from "../layout/MenuList";
-import NavBar from "../layout/NavBar";
-import Workspace from "../layout/Workspace";
-import DashboardLayout from "../layout/DashboardLayout";
+import MenuList from "../layout/MenuList.tsx";
+import NavBar from "../layout/NavBar.tsx";
+import Workspace from "../layout/Workspace.tsx";
+import DashboardLayout from "../layout/DashboardLayout.tsx";
 
 const Dashboard=()=>{
     return(
