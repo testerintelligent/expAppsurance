@@ -8,6 +8,7 @@ const DashboardLayout=()=>{
 
   const[page,setPage]=useState(0);
   const[rowsPerPage,setrowsPerPage]=useState(5);
+  const[modelOpen,setModelOpen]= useState(false);
 
 const handleChangePage=(event:unknown,newpage:number)=>{
   setPage(newpage)
@@ -41,7 +42,7 @@ const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => 
                             <TableCell ><span className="text-white " >{claim.claimDate}</span></TableCell>
                             <TableCell ><span className="text-white ">{claim.resolutionDate}</span></TableCell>
                             <TableCell ><span className="text-white " >{claim.claimStatus}</span></TableCell>
-                             <TableCell ><span className="text-white " ><button><FaEllipsisV/></button></span></TableCell>
+                             <TableCell ><span className="text-white " ><button onClick={()=>}><FaEllipsisV/></button></span></TableCell>
                          
         </TableRow>
                         

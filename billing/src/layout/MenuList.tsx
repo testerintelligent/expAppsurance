@@ -1,9 +1,8 @@
 import React from "react";
 import {
     FaTachometerAlt,
-    FaPlusCircle,
-    FaClipboardCheck,
-    FaHistory
+    FaPlusCircle
+
   } from 'react-icons/fa';
   import { NavLink} from "react-router-dom" 
 
@@ -32,17 +31,8 @@ export default function MenuList(){
 
                   <NavLink to={"/newClaim"} className={({isActive})=>`pl-8 p-2 text-white  hover:bg-gray-700 rounded-md flex items-center gap-2 ${isActive?'bg-gray-700':''}`}
                     >
-                    <FaPlusCircle /> New Claim
+                    <FaPlusCircle /> New Billing
                   </NavLink>
-
-                <NavLink to={"/claimStatus"} className={({isActive})=>`pl-8 p-2 text-white  hover:bg-gray-700 rounded-md flex items-center gap-2 ${isActive?'bg-gray-700':''}`}
-                        >
-                          <FaClipboardCheck /> Claim Status
-                        </NavLink>
-                      
-                <NavLink to={"/claimHistory"} className={({isActive})=>`pl-8 p-2 text-white  hover:bg-gray-700 rounded-md flex items-center gap-2 ${isActive?'bg-gray-700':''}`}>
-                          <FaHistory /> Claim History
-                        </NavLink>
   </div>
 </ul>
         </div>

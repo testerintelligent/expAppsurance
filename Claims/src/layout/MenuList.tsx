@@ -12,7 +12,7 @@ export default function MenuList(){
   const expLogo=require('../assets/expleo.webp');
    const claims="claims"
     return(
-        <div className="absolute  flex flex-row   bg-gray-800  w-52 shadow-lg h-screen  ">
+        <div className="absolute  flex flex-row  bg-gray-800  w-52 shadow-lg h-screen  ">
          
         <ul className="  flex flex-col flex-1 space-y-2">
 
