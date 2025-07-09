@@ -25,7 +25,7 @@ pipeline {
         stage('Display URL') {
             steps {
                 script {
-                    def url = "10.192.190.148:3000"
+                    def url = "10.192.190.158:3000"
                     echo "Application is running at ${url}"
                 }
             }
