@@ -22,5 +22,4 @@ EXPOSE 5000
 # Run the server
 CMD ["node", "server.js"]
 
-RUN npm ci && npm run build
-RUN npm run build || tail -n 100 /root/.npm/_logs/*-debug-0.log
+RUN npm run build
