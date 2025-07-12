@@ -1,5 +1,6 @@
 # Use a Node.js image
-FROM node:18
+# FROM node:18
+FROM node:20.17.0
 
 # Set working directory
 WORKDIR /app
@@ -8,9 +9,6 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-# Using Node Version Manager (nvm)
-RUN nvm install 20.17.0
-RUN nvm use 20.17.0
 
 RUN npm install -g npm@11.4.2
 RUN npm install --force
