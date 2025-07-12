@@ -8,6 +8,10 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
+# Using Node Version Manager (nvm)
+RUN nvm install 20.17.0
+RUN nvm use 20.17.0
+
 RUN npm install -g npm@11.4.2
 RUN npm install --force
 
