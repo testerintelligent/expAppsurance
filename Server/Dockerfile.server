@@ -8,6 +8,8 @@ WORKDIR /app
 # Copy package.json and package-lock.json first
 COPY package*.json ./
 
+RUN npm install --save-dev @types/react @types/react-dom
+
 # Install dependencies
 RUN npm install --force
 
