@@ -26,7 +26,7 @@ const AdminPanel = () => {
           <div className="flex items-center justify-between bg-gray-800 p-4 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold">View Policies</h3>
             <button
-              onClick={() =>window.location.href = 'http://10.192.190.148:3001'}
+              onClick={() =>window.location.href = 'http://10.192.190.158:3001'}
               className="bg-purple-700 text-white px-4 py-2 rounded-lg hover:bg-purple-800 border border-white transition-all"
             >
               View Policies
@@ -47,7 +47,7 @@ const AdminPanel = () => {
           <div className="flex items-center justify-between bg-gray-800 p-4 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold">Manage Claims</h3>
             <button
-              onClick={() => window.location.href = 'http://10.192.190.148:3002'}
+              onClick={() => window.location.href = 'http://10.192.190.158:3002'}
               className="bg-purple-700 text-white px-4 py-2 rounded-lg hover:bg-purple-800 border border-white transition-all"
             >
               View claims

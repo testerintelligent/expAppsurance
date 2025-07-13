@@ -84,7 +84,7 @@ const Contact = () => {
      producerCode:formData.producerCode
       }
       try{
-        const response=await axios.post("http://10.192.190.148:5000/postContact",payload);
+        const response=await axios.post("http://10.192.190.158:5000/postContact",payload);
         //console.log('Server Response:', formData);
         setMessage(response.data.message||'Form submitted successfully!');
         alert("Contact created successfully");

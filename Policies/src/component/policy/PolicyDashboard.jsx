@@ -39,14 +39,14 @@ const PolicyDashboard = ({ policies }) => {
   // }, [navigate]);
 
   useEffect(() => {
-    axios.get("http://10.192.190.148:5000/getPolicy").then((response) => {
+    axios.get("http://10.192.190.158:5000/getPolicy").then((response) => {
       console.log("Response:", response.data);
       setInsuranceData(response.data);
       setFilteredData(response.data);
       console.log("response.data", response.data);
     });
     axios
-      .get("http://10.192.190.148:5000/getContact")
+      .get("http://10.192.190.158:5000/getContact")
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data)) {
@@ -99,7 +99,7 @@ const PolicyDashboard = ({ policies }) => {
 
   const handleDelete = async () => {
     try {
-      //await axios.delete(`http://10.192.190.148:5000/deletePolicy/${policyToDelete}`);
+      //await axios.delete(`http://10.192.190.158:5000/deletePolicy/${policyToDelete}`);
       setInsuranceData(
         insuranceData.filter((insurance) => insurance._id !== policyToDelete)
       );

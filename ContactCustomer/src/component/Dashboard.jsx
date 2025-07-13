@@ -18,7 +18,7 @@ const Dashboard = () => {
   }, []);
 
   const fetchContacts = () => {
-    axios.get('http://10.192.190.148:5000/getContact')
+    axios.get('http://10.192.190.158:5000/getContact')
       .then(response => {
         const data = response.data;
         if (Array.isArray(data)) {
@@ -38,7 +38,7 @@ const Dashboard = () => {
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this contact?")) {
-      axios.delete(`http://10.192.190.148:5000/deleteContact/${id}`)
+      axios.delete(`http://10.192.190.158:5000/deleteContact/${id}`)
         .then(() => {
           alert("Contact deleted successfully.");
           fetchContacts();

@@ -49,7 +49,7 @@ const InsurancePage = () => {
   };
   useEffect(() => {
     axios
-      .get("http://10.192.190.148:5000/getContact")
+      .get("http://10.192.190.158:5000/getContact")
       .then((response) => {
         const contacts = response.data?.contacts || [];
         setContactData(contacts);
@@ -140,8 +140,8 @@ const InsurancePage = () => {
     const method = apiMethod === "update" ? "put" : "post";
     const url =
       apiMethod === "update"
-        ? `http://10.192.190.148:5000/updatePolicy/${initialData._id}`
-        : `http://10.192.190.148:5000/postPolicy`;
+        ? `http://10.192.190.158:5000/updatePolicy/${initialData._id}`
+        : `http://10.192.190.158:5000/postPolicy`;
 
     axios[method](url, insuranceData)
       .then((res) => {

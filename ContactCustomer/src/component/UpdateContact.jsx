@@ -32,7 +32,7 @@ const UpdateContact = () => {
 
   useEffect(() => {
     axios
-      .get(`http://10.192.190.148:5000/view/${id}`)
+      .get(`http://10.192.190.158:5000/view/${id}`)
       .then((res) => {
         setContact(res.data.contact);
         setLoading(false);
@@ -64,7 +64,7 @@ const UpdateContact = () => {
 
   const handleUpdate = () => {
     axios
-      .put(`http://10.192.190.148:5000/updateContact/${id}`, contact)
+      .put(`http://10.192.190.158:5000/updateContact/${id}`, contact)
       .then(() => {
         alert("Contact updated successfully");
         navigate("/Dashboard");
