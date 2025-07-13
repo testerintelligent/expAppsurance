@@ -19,5 +19,6 @@ COPY . .
 EXPOSE 3000
 
 # Run the React app
-CMD ["npm", "run","build" && "npx", "serve","-s","build"]
+CMD npm run build && npx serve -s build
+
 
