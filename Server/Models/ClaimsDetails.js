@@ -10,7 +10,7 @@ const claimSchema = new mongoose.Schema({
     claimDate: { type: Date, required: true },
     resolutionDate: { type: Date },
     details: { type: String },
-    documents: [{ type: String }] // Array of file references
+    documents: [{ type: String }] 
 });
 
 module.exports = mongoose.model('ClaimDetails', claimSchema);

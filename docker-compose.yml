@@ -49,7 +49,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      MONGO_URI: mongodb://10.192.190.148:27017/registeredUser
+      MONGO_URI: mongodb://10.192.190.158:27017/registeredUser
     depends_on:
       - mongo
 
