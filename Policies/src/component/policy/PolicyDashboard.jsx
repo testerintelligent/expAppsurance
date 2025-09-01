@@ -17,7 +17,6 @@ import {
   TablePagination,
 } from "@mui/material";
 import { FaEdit, FaEye } from "react-icons/fa";
-// import "../style/Dashboard.css";
 
 const PolicyDashboard = ({ policies }) => {
   const [insuranceData, setInsuranceData] = useState([]);
@@ -25,26 +24,28 @@ const PolicyDashboard = ({ policies }) => {
   const [contactData, setContactData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [policyToDelete, setPolicyToDelete] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc"); // 'asc' or 'desc'
-  const [sortedColumn, setSortedColumn] = useState("CurrentDate"); // The column to sort by initially
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortedColumn, setSortedColumn] = useState("CurrentDate");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [summary, setSummary] = useState(null);
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   const sessionKey = sessionStorage.getItem('sessionKey');
-  //   if (!sessionKey) {
-  //     navigate('/insurance');
-  //   }
-  // }, [navigate]);
 
   useEffect(() => {
     axios.get("http://10.192.190.158:5000/getPolicy").then((response) => {
-      console.log("Response:", response.data);
       setInsuranceData(response.data);
       setFilteredData(response.data);
-      console.log("response.data", response.data);
     });
+
+    axios
+      .get("http://10.192.190.158:5000/getPolicySummary")
+      .then((response) => {
+        setSummary(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching policy summary:", error);
+      });
+
     axios
       .get("http://10.192.190.158:5000/getContact")
       .then((response) => {
@@ -52,12 +53,10 @@ const PolicyDashboard = ({ policies }) => {
         if (Array.isArray(data)) {
           setContactData(data);
         } else if (data && Array.isArray(data.contacts)) {
-          setContactData(response.data.contacts);
+          setContactData(data.contacts);
         } else {
-          console.error("Unexpected response structure:", data);
           setContactData([]);
         }
-        console.log("contactData", response.data.contacts);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -91,6 +90,7 @@ const PolicyDashboard = ({ policies }) => {
     setPolicyToDelete(id);
     setShowModal(true);
   };
+
   const updatePolicy = (insurance, method) => {
     navigate("/insurance", {
       state: { formData: insurance, apiMethod: method },
@@ -99,7 +99,6 @@ const PolicyDashboard = ({ policies }) => {
 
   const handleDelete = async () => {
     try {
-      //await axios.delete(`http://10.192.190.158:5000/deletePolicy/${policyToDelete}`);
       setInsuranceData(
         insuranceData.filter((insurance) => insurance._id !== policyToDelete)
       );
@@ -128,7 +127,6 @@ const PolicyDashboard = ({ policies }) => {
     return Math.floor(100000 + Math.random() * 900000);
   }
 
-  // Sorting function
   const sortData = (column) => {
     const order = sortOrder === "asc" ? 1 : -1;
     const sorted = [...filteredData].sort((a, b) => {
@@ -144,8 +142,8 @@ const PolicyDashboard = ({ policies }) => {
       return 0;
     });
     setFilteredData(sorted);
-    setSortOrder(sortOrder === "asc" ? "desc" : "asc"); 
-    setSortedColumn(column); 
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    setSortedColumn(column);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -159,262 +157,246 @@ const PolicyDashboard = ({ policies }) => {
 
   return (
     <div className="dashboard-content" style={{ padding: "20px" }}>
-      {filteredData.length > 0 ? (
-        <TableContainer
-          component={Paper}
-          elevation={3}
-          style={{ borderRadius: "8px" }}
+      {/* Summary Cards */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: "24px",
+          marginBottom: "32px",
+        }}
+      >
+        <Paper
+          elevation={4}
+          style={{
+            padding: "28px 20px",
+            borderRadius: "18px",
+            background:
+              "linear-gradient(135deg, #34495e 60%, #2c3e50 100%)",
+            color: "white",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            boxShadow: "0 4px 24px rgba(44,62,80,0.12)",
+          }}
         >
+          <span style={{ fontSize: "2.2rem", marginBottom: "8px" }}>📄</span>
+          <div style={{ fontWeight: "bold", fontSize: "1.1rem", marginBottom: "6px" }}>
+            Total Policies
+          </div>
+          <div style={{ fontSize: "2.1rem", fontWeight: "bold" }}>
+            {summary?.totalPolicies || 0}
+          </div>
+        </Paper>
+
+        <Paper
+          elevation={4}
+          style={{
+            padding: "28px 20px",
+            borderRadius: "18px",
+            background:
+              "linear-gradient(135deg, #27ae60 60%, #219150 100%)",
+            color: "white",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            boxShadow: "0 4px 24px rgba(39,174,96,0.12)",
+          }}
+        >
+          <span style={{ fontSize: "2.2rem", marginBottom: "8px" }}>✅</span>
+          <div style={{ fontWeight: "bold", fontSize: "1.1rem", marginBottom: "6px" }}>
+            In Force
+          </div>
+          <div style={{ fontSize: "2.1rem", fontWeight: "bold" }}>
+            {summary?.["In Force"] || 0}
+          </div>
+        </Paper>
+
+        <Paper
+          elevation={4}
+          style={{
+            padding: "28px 20px",
+            borderRadius: "18px",
+            background:
+              "linear-gradient(135deg, #f39c12 60%, #e67e22 100%)",
+            color: "white",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            boxShadow: "0 4px 24px rgba(243,156,18,0.12)",
+          }}
+        >
+          <span style={{ fontSize: "2.2rem", marginBottom: "8px" }}>🕵️‍♂️</span>
+          <div style={{ fontWeight: "bold", fontSize: "1.1rem", marginBottom: "6px" }}>
+            Under Review
+          </div>
+          <div style={{ fontSize: "2.1rem", fontWeight: "bold" }}>
+            {summary?.underReview || 0}
+          </div>
+        </Paper>
+
+        <Paper
+          elevation={4}
+          style={{
+            padding: "28px 20px",
+            borderRadius: "18px",
+            background:
+              "linear-gradient(135deg, #e74c3c 60%, #c0392b 100%)",
+            color: "white",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            boxShadow: "0 4px 24px rgba(231,76,60,0.12)",
+          }}
+        >
+          <span style={{ fontSize: "2.2rem", marginBottom: "8px" }}>❌</span>
+          <div style={{ fontWeight: "bold", fontSize: "1.1rem", marginBottom: "6px" }}>
+            Cancelled
+          </div>
+          <div style={{ fontSize: "2.1rem", fontWeight: "bold" }}>
+            {summary?.cancelled || 0}
+          </div>
+        </Paper>
+      </div>
+
+      {/* ✅ Fixed Conditional Rendering */}
+      {filteredData && contactData.length > 0 ? (
+        <TableContainer component={Paper} elevation={3} style={{ borderRadius: "8px" }}>
           <Table aria-label="insurance-table">
             <TableHead style={{ backgroundColor: "black" }}>
               <TableRow style={{ borderColor: "black" }}>
+                {/* Columns */}
                 <TableCell
-                  sx={{
-                    color: "white",
-                    backgroundColor: "black",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
+                  sx={{ color: "white", backgroundColor: "black", fontWeight: "bold", cursor: "pointer" }}
                   onClick={() => sortData("Name")}
                   style={{ padding: "12px", textAlign: "center" }}
                 >
-                  CUSTOMER ID{" "}
-                  {sortedColumn === "Name" && (sortOrder === "asc" ? "↑" : "↓")}
+                  CUSTOMER ID {sortedColumn === "Name" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableCell>
                 <TableCell
-                  sx={{
-                    color: "white",
-                    backgroundColor: "black",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
+                  sx={{ color: "white", backgroundColor: "black", fontWeight: "bold", cursor: "pointer" }}
                   onClick={() => sortData("CurrentDate")}
                   style={{ padding: "12px", textAlign: "center" }}
                 >
-                  START DATE{" "}
-                  {sortedColumn === "CurrentDate" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
+                  START DATE {sortedColumn === "CurrentDate" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableCell>
                 <TableCell
-                  sx={{
-                    color: "white",
-                    backgroundColor: "black",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
+                  sx={{ color: "white", backgroundColor: "black", fontWeight: "bold", cursor: "pointer" }}
                   onClick={() => sortData("CurrentDate")}
                   style={{ padding: "12px", textAlign: "center" }}
                 >
-                  END DATE{" "}
-                  {sortedColumn === "CurrentDate" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
+                  END DATE {sortedColumn === "CurrentDate" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableCell>
                 <TableCell
-                  sx={{
-                    color: "white",
-                    backgroundColor: "black",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
+                  sx={{ color: "white", backgroundColor: "black", fontWeight: "bold", cursor: "pointer" }}
                   onClick={() => sortData("policyNumber")}
                   style={{ padding: "12px", textAlign: "center" }}
                 >
-                  POLICY NUMBER{" "}
-                  {sortedColumn === "policyNumber" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
+                  POLICY NUMBER {sortedColumn === "policyNumber" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableCell>
                 <TableCell
-                  sx={{
-                    color: "white",
-                    backgroundColor: "black",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
+                  sx={{ color: "white", backgroundColor: "black", fontWeight: "bold", cursor: "pointer" }}
                   onClick={() => sortData("PolicyType")}
                   style={{ padding: "12px", textAlign: "center" }}
                 >
-                  POLICY TYPE{" "}
-                  {sortedColumn === "PolicyType" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
+                  POLICY TYPE {sortedColumn === "PolicyType" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableCell>
                 <TableCell
-                  sx={{
-                    color: "white",
-                    backgroundColor: "black",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
+                  sx={{ color: "white", backgroundColor: "black", fontWeight: "bold", cursor: "pointer" }}
                   onClick={() => sortData("PolicyType")}
                   style={{ padding: "12px", textAlign: "center" }}
                 >
-                  COVERAGE{" "}
-                  {sortedColumn === "Coverage" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
+                  COVERAGE {sortedColumn === "Coverage" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableCell>
                 <TableCell
-                  sx={{
-                    color: "white",
-                    backgroundColor: "black",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
+                  sx={{ color: "white", backgroundColor: "black", fontWeight: "bold", cursor: "pointer" }}
                   onClick={() => sortData("SumInsured")}
                   style={{ padding: "12px", textAlign: "center" }}
                 >
-                  SUM INSURED{" "}
-                  {sortedColumn === "SumInsured" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
+                  SUM INSURED {sortedColumn === "SumInsured" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableCell>
                 <TableCell
-                  sx={{
-                    color: "white",
-                    backgroundColor: "black",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
+                  sx={{ color: "white", backgroundColor: "black", fontWeight: "bold", cursor: "pointer" }}
                   onClick={() => sortData("Premium")}
                   style={{ padding: "12px", textAlign: "center" }}
                 >
-                  PREMIUM{" "}
-                  {sortedColumn === "Premium" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
+                  PREMIUM {sortedColumn === "Premium" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableCell>
                 <TableCell
-                  sx={{
-                    color: "white",
-                    backgroundColor: "black",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => sortData("Premium")}
+                  sx={{ color: "white", backgroundColor: "black", fontWeight: "bold" }}
                   style={{ padding: "12px", textAlign: "center" }}
                 >
-                  STATUS{" "}
-                  {sortedColumn === "Premium" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
+                  STATUS
                 </TableCell>
-                {/* <TableCell 
-                sx={{ color: 'white',backgroundColor:'black', fontWeight: 'bold' }} 
-                style={{ padding: '12px', textAlign: 'center' }}
-              >
-                DELETE
-              </TableCell> */}
                 <TableCell
-                  sx={{
-                    color: "white",
-                    backgroundColor: "black",
-                    fontWeight: "bold",
-                  }}
+                  sx={{ color: "white", backgroundColor: "black", fontWeight: "bold" }}
                   style={{ padding: "12px", textAlign: "center" }}
                 >
                   UPDATE
                 </TableCell>
                 <TableCell
-                  sx={{
-                    color: "white",
-                    backgroundColor: "black",
-                    fontWeight: "bold",
-                  }}
+                  sx={{ color: "white", backgroundColor: "black", fontWeight: "bold" }}
                   style={{ padding: "12px", textAlign: "center" }}
                 >
                   VIEW
                 </TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
-              {filteredData && contactData ? (
-                filteredData
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((insurance, index) => (
-                    <TableRow
-                      key={index}
-                      style={{
-                        backgroundColor:
-                          index % 2 === 0 ? "#ecf0f1" : "#ffffff",
-                      }}
-                    >
-                      <CustomerIdCell
-                        insurance={insurance}
-                        contactData={contactData}
-                      />
-                      <TableCell
-                        style={{ padding: "12px", textAlign: "center" }}
-                      >
-                        {formatDate(insurance.startDate)}
-                      </TableCell>
-                      <TableCell
-                        style={{ padding: "12px", textAlign: "center" }}
-                      >
-                        {formatDate(insurance.endDate)}
-                      </TableCell>
-                      <TableCell
-                        style={{ padding: "12px", textAlign: "center" }}
-                      >
-                        {insurance.policyNumber || generateRandomNumber()}
-                      </TableCell>
-                      <TableCell
-                        style={{ padding: "12px", textAlign: "center" }}
-                      >
-                        {insurance.policyType}
-                      </TableCell>
-                      <TableCell
-                        style={{ padding: "12px", textAlign: "center" }}
-                      >
-                        {insurance.coverageDetails}
-                      </TableCell>
-                      <TableCell
-                        style={{ padding: "12px", textAlign: "center" }}
-                      >
-                        {insurance.sumInsured}
-                      </TableCell>
-                      <TableCell
-                        style={{ padding: "12px", textAlign: "center" }}
-                      >
-                        {insurance.premium}
-                      </TableCell>
-                      <TableCell
-                        style={{ padding: "12px", textAlign: "center" }}
-                      >
-                        {insurance.status}
-                      </TableCell>
-                      {/* <TableCell style={{ padding: '12px', textAlign: 'center' }}>
-                  <Button 
-                    variant="contained" 
-                    color="error"
-                    onClick={() => openModal(insurance.customerId)} 
-                    style={{ textTransform: 'none', borderRadius: '5px' }}
+              {filteredData
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((insurance, index) => (
+                  <TableRow
+                    key={index}
+                    style={{ backgroundColor: index % 2 === 0 ? "#ecf0f1" : "#ffffff" }}
                   >
-                    Delete
-                  </Button>
-                </TableCell> */}
-                      <TableCell style={{ textAlign: "center" }}>
-                        <button
-                          variant="contained"
-                          onClick={() => updatePolicy(insurance, "update")}
-                          style={{ textTransform: "none" }}
-                        >
-                          <FaEdit size="25px" />
-                        </button>
-                      </TableCell>
-                      <TableCell
-                        style={{ padding: "12px", textAlign: "center" }}
+                    <CustomerIdCell insurance={insurance} contactData={contactData} />
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {formatDate(insurance.startDate)}
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {formatDate(insurance.endDate)}
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {insurance.policyNumber || generateRandomNumber()}
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {insurance.policyType}
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {insurance.coverageDetails}
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {insurance.sumInsured}
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {insurance.premium}
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {insurance.status}
+                    </TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      <button
+                        onClick={() => updatePolicy(insurance, "update")}
+                        style={{ textTransform: "none" }}
                       >
-                        <button
-                          variant="contained"
-                          color="success"
-                          onClick={() => updatePolicy(insurance, "view")}
-                          style={{ textTransform: "none", borderRadius: "5px" }}
-                        >
-                          <FaEye size="25px" />
-                        </button>
-                      </TableCell>
-                    </TableRow>
-                  ))
-              ) : (
-                <div>Loading...</div>
-              )}
+                        <FaEdit size="25px" />
+                      </button>
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      <button
+                        onClick={() => updatePolicy(insurance, "view")}
+                        style={{ textTransform: "none", borderRadius: "5px" }}
+                      >
+                        <FaEye size="25px" />
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
+
           <div className="float-end">
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
@@ -434,6 +416,7 @@ const PolicyDashboard = ({ policies }) => {
         </p>
       )}
 
+      {/* Delete Confirmation Modal */}
       <Dialog
         open={showModal}
         onClose={() => setShowModal(false)}

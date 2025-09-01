@@ -5,3 +5,27 @@ const mongoURI = `mongodb://10.192.190.158:27017/${DB_name}?directConnection=tru
 mongoose.connect(mongoURI)
   .then(() => console.log('MongoDB connected successfully'))
   .catch((err) => console.error('MongoDB connection error:', err));
+
+
+/*const mongoose = require('mongoose');
+
+const connectDB = async () => {
+  try {
+    const DB_name = process.env.DatabaseName;
+    const mongoURI = `mongodb://127.0.0.1:27017/${DB_name}`;
+
+    await mongoose.connect(mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+
+    console.log('✅ MongoDB connected successfully');
+  } catch (err) {
+    console.error('❌ MongoDB connection error:', err);
+    process.exit(1);
+  }
+};
+
+module.exports = connectDB;   // ✅ export function
+
+*/
