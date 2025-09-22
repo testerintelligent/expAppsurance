@@ -136,9 +136,34 @@ const getContactById = async (req, res) => {
       res.status(500).json({ error: 'Internal Server Error', details: error.message });
     }
   };
+
+  // Search Contact
+const searchContact = async (req, res) => {
+  try {
+    const { firstName, lastName, dateOfBirth } = req.query;
+
+    if (!firstName || !lastName || !dateOfBirth) {
+      return res.status(400).json({ error: "First Name, Last Name, and Date of Birth are required." });
+    }
+
+    const contact = await Contact.findOne({
+      firstName: { $regex: new RegExp(firstName, "i") }, // case-insensitive
+      lastName: { $regex: new RegExp(lastName, "i") },
+      dateOfBirth: new Date(dateOfBirth),
+    });
+
+    if (!contact) {
+      return res.status(404).json({ message: "Contact not found" });
+    }
+
+    res.json(contact);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
   
   
 
 
-module.exports = { enterContactDetails, getContactDetails,filterContactDetails,deleteContact,updateContact,getContactById };
+module.exports = { enterContactDetails, getContactDetails,filterContactDetails,deleteContact,updateContact,getContactById,searchContact };
 

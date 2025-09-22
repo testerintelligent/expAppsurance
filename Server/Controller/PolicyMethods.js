@@ -23,28 +23,6 @@ const getPolicyDetails=async (req, res) => {
   }
 };
 
-//Policy Summary with counts by status
-const getPolicySummary = async (req, res) => {
-  try {
-    const totalPolicies = await Policy.countDocuments();
-
-    const statusCounts = await Policy.aggregate([
-      { $group: { _id: "$status", count: { $sum: 1 } } }
-    ]);
-
-    // Flatten into one object
-    const summary = { totalPolicies };
-    statusCounts.forEach(item => {
-      summary[item._id] = item.count;
-    });
-
-    res.status(200).json(summary);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Failed to fetch policy summary', error: err.message });
-  }
-};
-
 //Delete - the selected policy
 const deletePolicyInfo = async (req, res) => {
   try {
@@ -91,5 +69,28 @@ const updatePolicyInfo = async(req, res) => {
 //     res.status(500).json({ message: 'Failed to fetch policy', error: err.message });
 //   }
 // });
+
+
+//Policy Summary with counts by status
+const getPolicySummary = async (req, res) => {
+  try {
+    const totalPolicies = await Policy.countDocuments();
+
+    const statusCounts = await Policy.aggregate([
+      { $group: { _id: "$status", count: { $sum: 1 } } }
+    ]);
+
+    // Flatten into one object
+    const summary = { totalPolicies };
+    statusCounts.forEach(item => {
+      summary[item._id] = item.count;
+    });
+
+    res.status(200).json(summary);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch policy summary', error: err.message });
+  }
+};
 
 module.exports = {enterPolicyDetails,getPolicyDetails,deletePolicyInfo,updatePolicyInfo,getPolicySummary};

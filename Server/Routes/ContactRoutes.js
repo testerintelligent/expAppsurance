@@ -1,7 +1,7 @@
 const express=require('express');
 
 const router=express.Router();
-const {enterContactDetails,getContactDetails,filterContactDetails, deleteContact,updateContact,getContactById}=require('../Controller/ContactMethod')
+const {enterContactDetails,getContactDetails,filterContactDetails, deleteContact,updateContact,getContactById, searchContact}=require('../Controller/ContactMethod')
 
   //API for login credentials validation
 
@@ -45,4 +45,5 @@ const {enterContactDetails,getContactDetails,filterContactDetails, deleteContact
   router.delete('/deleteContact/:id',deleteContact);
   router.put('/updateContact/:id',updateContact);
   router.get('/view/:id',getContactById);
+  router.get('/contacts/search',searchContact);
   module.exports=router;
