@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -10,14 +11,14 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 
-const NavDropdown = ({ label = "Menu", menuId, items = [] }) => {
+const NavDropdown = ({ label = "Menu", menuId, items = [], onClick }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   return (
     <div>
       <Button
         size="small"
-        onClick={(e) => setAnchorEl(e.currentTarget)}
+        onClick={onClick ? onClick : (e) => setAnchorEl(e.currentTarget)}
         endIcon={
           <ArrowDropDownIcon
             className="border-l-2 border-slate-300"
@@ -35,34 +36,37 @@ const NavDropdown = ({ label = "Menu", menuId, items = [] }) => {
         {label}
       </Button>
 
-      <Menu
-        id={menuId}
-        anchorEl={anchorEl}
-        open={open}
-        onClose={() => setAnchorEl(null)}
-        MenuListProps={{ dense: true }}
-        transformOrigin={{ horizontal: "left", vertical: "top" }}
-        anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
-      >
-        {items.length ? (
-          items.map((it, i) => (
-            <MenuItem key={i} onClick={() => setAnchorEl(null)}>
-              {it}
-            </MenuItem>
-          ))
-        ) : (
-          <>
-            <MenuItem onClick={() => setAnchorEl(null)}>Option 1</MenuItem>
-            <MenuItem onClick={() => setAnchorEl(null)}>Option 2</MenuItem>
-            <MenuItem onClick={() => setAnchorEl(null)}>Option 3</MenuItem>
-          </>
-        )}
-      </Menu>
+      {!onClick && (
+        <Menu
+          id={menuId}
+          anchorEl={anchorEl}
+          open={open}
+          onClose={() => setAnchorEl(null)}
+          MenuListProps={{ dense: true }}
+          transformOrigin={{ horizontal: "left", vertical: "top" }}
+          anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+        >
+          {items.length ? (
+            items.map((it, i) => (
+              <MenuItem key={i} onClick={() => setAnchorEl(null)}>
+                {it}
+              </MenuItem>
+            ))
+          ) : (
+            <>
+              <MenuItem onClick={() => setAnchorEl(null)}>Option 1</MenuItem>
+              <MenuItem onClick={() => setAnchorEl(null)}>Option 2</MenuItem>
+              <MenuItem onClick={() => setAnchorEl(null)}>Option 3</MenuItem>
+            </>
+          )}
+        </Menu>
+      )}
     </div>
   );
 };
 
 export default function Navbar() {
+  const navigate = useNavigate();
   return (
     <header className="border-b-4 border-slate-600 bg-gray-100">
       <div className="max-w-full mx-auto">
@@ -74,9 +78,9 @@ export default function Navbar() {
           </div>
           <nav className="flex items-center gap-2 flex-1 text-sm overflow-x-auto ml-8 text-slate-800">
             <NavDropdown label="Desktop" />
-            <NavDropdown label="Account" />
+            <NavDropdown label="Account" onClick={() => navigate("/account")} />
             <NavDropdown label="Policy" />
-            <NavDropdown label="Contact" />
+            <NavDropdown label="Contact" onClick={() => navigate("/contact")}/>
             <NavDropdown label="Search" />
             <NavDropdown label="Team" />
             <NavDropdown label="Administration" />

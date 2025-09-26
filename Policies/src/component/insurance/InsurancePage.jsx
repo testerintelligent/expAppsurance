@@ -12,7 +12,7 @@ const InsurancePage = () => {
   const [contactData, setContactData] = useState([]);
   const [filteredContact, setFilteredContact] = useState([]);
   const [coverageOptions, setCoverageOptions] = useState([]);
-  const [search, setSearch] = useState("");
+  //const [search, setSearch] = useState("");
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
@@ -49,7 +49,7 @@ const InsurancePage = () => {
   };
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:5000/api/getContact")
+      .get("http://10.192.190.158:5000/api/getContact")
       .then((response) => {
         const contacts = response.data?.contacts || [];
         setContactData(contacts);
@@ -140,8 +140,8 @@ const InsurancePage = () => {
     const method = apiMethod === "update" ? "put" : "post";
     const url =
       apiMethod === "update"
-        ? `http://127.0.0.1:5000/api/updatePolicy/${initialData._id}`
-        : `http://127.0.0.1:5000/api/postPolicy`;
+        ? `http://10.192.190.158:5000/api/updatePolicy/${initialData._id}`
+        : `http://10.192.190.158:5000/api/postPolicy`;
 
     axios[method](url, insuranceData)
       .then((res) => {

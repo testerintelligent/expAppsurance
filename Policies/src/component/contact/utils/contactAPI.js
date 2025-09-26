@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/contacts"; // 👈 add `/api` if you prefixed in server.js
+const API_URL = "http://10.192.190.158:5000/contacts"; // 👈 add `/api` if you prefixed in server.js
 
 // 🔍 Search Contact
 export const searchContact = async (firstName, lastName, dateOfBirth) => {
@@ -12,7 +12,7 @@ export const searchContact = async (firstName, lastName, dateOfBirth) => {
 
 // ➕ Create Contact
 export const createContact = async (contactData) => {
-  const res = await axios.post(`http://localhost:5000/postContact`, contactData);
+  const res = await axios.post(`http://10.192.190.158:5000/postContact`, contactData);
   return res.data;
 };
 

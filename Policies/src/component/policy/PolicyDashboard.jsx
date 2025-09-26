@@ -37,9 +37,9 @@ const PolicyDashboard = () => {
     const fetchData = async () => {
       try {
         const [policyRes, summaryRes, contactRes] = await Promise.all([
-          axios.get("http://127.0.0.1:5000/getPolicy"),
-          axios.get("http://127.0.0.1:5000/getPolicySummary"),
-          axios.get("http://127.0.0.1:5000/getContact"),
+          axios.get("http://10.192.190.158:5000/getPolicy"),
+          axios.get("http://10.192.190.158:5000/getPolicySummary"),
+          axios.get("http://10.192.190.158:5000/getContact"),
         ]);
 
         setInsuranceData(policyRes.data);

@@ -7,6 +7,7 @@ import Contact from "./component/contact/Contact";
 import Account from "./component/account/Account";
 import Sidebar from "./layout/sidebar";
 import Navbar from "./component/navbar/navbar";
+import NewSubmission from "./component/submission/NewSubmission";
 
 function App() {
   const [policies] = useState([]);
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/insurance" element={<InsurancePage />}></Route>
                 <Route path="/contact" element={<Contact />}></Route>
                 <Route path="/account" element={<Account />}></Route>
+                <Route path="/new-submission" element={<NewSubmission />} />
               </Routes>
             </main>
           </div>

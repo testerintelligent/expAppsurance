@@ -1,11 +1,11 @@
 
 import axios from "axios";
-const API_URL = "http://localhost:5000/accounts";
+const API_URL = "http://10.192.190.158:5000/accounts";
 
 // Create account for a contact
 export const createAccountForContact = async (contact, accountType = 'Individual') => {
   // The backend expects customerId and accountType
-  const res = await axios.post('http://localhost:5000/createAccount', {
+  const res = await axios.post('http://10.192.190.158:5000/createAccount', {
     customerId: contact._id,
     accountType
   });

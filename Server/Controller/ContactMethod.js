@@ -142,27 +142,43 @@ const searchContact = async (req, res) => {
   try {
     const { firstName, lastName, dateOfBirth } = req.query;
 
-    if (!firstName || !lastName || !dateOfBirth) {
-      return res.status(400).json({ error: "First Name, Last Name, and Date of Birth are required." });
+    // If nothing provided
+    if (!firstName && !lastName && !dateOfBirth) {
+      return res.status(400).json({ error: "Please provide at least one search parameter." });
     }
 
-    const contact = await Contact.findOne({
-      firstName: { $regex: new RegExp(firstName, "i") }, // case-insensitive
-      lastName: { $regex: new RegExp(lastName, "i") },
-      dateOfBirth: new Date(dateOfBirth),
-    });
+    // Build dynamic filter
+    const filter = {};
 
-    if (!contact) {
-      return res.status(404).json({ message: "Contact not found" });
+    if (firstName) {
+      filter.firstName = { $regex: new RegExp(firstName, "i") }; // case-insensitive
     }
 
-    res.json(contact);
+    if (lastName) {
+      filter.lastName = { $regex: new RegExp(lastName, "i") };
+    }
+
+    if (dateOfBirth) {
+      const start = new Date(dateOfBirth);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(dateOfBirth);
+      end.setHours(23, 59, 59, 999);
+
+      filter.dateOfBirth = { $gte: start, $lte: end };
+    }
+
+    // Search in DB
+    const contacts = await Contact.find(filter);
+
+    if (!contacts || contacts.length === 0) {
+      return res.status(404).json({ message: "No contacts found" });
+    }
+
+    res.json(contacts);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-  
-  
 
 
 module.exports = { enterContactDetails, getContactDetails,filterContactDetails,deleteContact,updateContact,getContactById,searchContact };

@@ -12,11 +12,12 @@ import {
   TableCell,
   TableBody
 } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { searchAccountByContact, searchAccount } from "./accountAPI";
 
 export default function Account() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [accountData, setAccountData] = useState(null);
   const [searchData, setSearchData] = useState({
     accountNo: "",
@@ -156,7 +157,7 @@ export default function Account() {
               </Box>
             </Grid>
             {/* Account Info and Policies on the right */}
-            <Grid item xs={12} md={8}>
+            <Grid item xs={12} md={8} sx={{ position: 'relative' }}>
               <Grid container spacing={2} sx={{ mb: 2 }}>
                 <Grid item xs={12} sm={6} md={6}><Box sx={{ bgcolor: '#e3f2fd', p: 2, borderRadius: 2 }}><Typography variant="subtitle2">Account ID</Typography><Typography fontWeight={600}>{accountData.accountId}</Typography></Box></Grid>
                 <Grid item xs={12} sm={6} md={6}><Box sx={{ bgcolor: '#e8f5e9', p: 2, borderRadius: 2 }}><Typography variant="subtitle2">Status</Typography><Typography fontWeight={600}>{accountData.status}</Typography></Box></Grid>
@@ -190,6 +191,22 @@ export default function Account() {
                   )}
                 </TableBody>
               </Table>
+              {/* Create New Submission Button at right bottom */}
+              <Box sx={{ position: 'absolute', right: 0, bottom: 0, m: 2 }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{ fontWeight: 600, borderRadius: 2, minWidth: 220 }}
+                  onClick={() => navigate('/new-submission', {
+                    state: {
+                      account: accountData,
+                      contact: accountData.customerId
+                    }
+                  })}
+                >
+                  Create New Submission
+                </Button>
+              </Box>
             </Grid>
           </Grid>
         </Paper>
