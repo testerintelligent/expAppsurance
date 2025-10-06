@@ -54,41 +54,6 @@ export default function Navbar() {
               Administration
             </NavLink>
           </nav>
-
-          <div className="flex items-center gap-2">
-            <Box
-              component="div"
-              className="flex items-center rounded border border-gray-300 bg-white"
-              sx={{ px: 1, py: 0.5, minWidth: 220 }}
-            >
-              <SearchIcon fontSize="small" color="inherit" />
-              <InputBase
-                placeholder="Go to (Alt+/)"
-                inputProps={{ "aria-label": "go to" }}
-                sx={{
-                  ml: 1,
-                  fontSize: 13,
-                }}
-                fullWidth
-              />
-            </Box>
-
-            <IconButton
-              size="small"
-              className="border border-gray-200 bg-white"
-              aria-label="save"
-            >
-              <SaveIcon fontSize="small" />
-            </IconButton>
-
-            <IconButton
-              size="small"
-              className="border border-gray-200 bg-white"
-              aria-label="settings"
-            >
-              <SettingsIcon fontSize="small" />
-            </IconButton>
-          </div>
         </div>
       </div>
     </header>
