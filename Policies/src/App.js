@@ -8,6 +8,9 @@ import Account from "./component/account/Account";
 import Sidebar from "./layout/sidebar";
 import Navbar from "./component/navbar/navbar";
 import NewSubmission from "./component/submission/NewSubmission";
+import Driver from "./component/driver/Driver";
+import Vehicle from "./component/vehicle/Vehicle";
+import Quote from "./component/quote/Quote";
 
 function App() {
   const [policies] = useState([]);
@@ -29,6 +32,9 @@ function App() {
                 <Route path="/contact" element={<Contact />}></Route>
                 <Route path="/account" element={<Account />}></Route>
                 <Route path="/new-submission" element={<NewSubmission />} />
+                <Route path="/driver" element={<Driver />} />
+                <Route path="/vehicle" element={<Vehicle />} />
+                <Route path="/quote" element={<Quote />} />
               </Routes>
             </main>
           </div>

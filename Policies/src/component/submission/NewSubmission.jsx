@@ -39,8 +39,23 @@ export default function NewSubmission() {
   const [form, setForm] = useState({
     organization: defaultOrganization,
     producerCode: defaultProducerCode,
+    termType: "6 months",
     effectiveDate: new Date().toISOString().slice(0, 10),
+    expirationDate: "",
+    writtenDate: new Date().toISOString().slice(0, 10),
   });
+
+  // Auto-calculate expiration date when effectiveDate or termType changes
+  React.useEffect(() => {
+    if (form.effectiveDate) {
+      const effDate = new Date(form.effectiveDate);
+      let months = form.termType === "12 months" ? 12 : 6;
+      effDate.setMonth(effDate.getMonth() + months);
+      // Format as yyyy-MM-dd for input type="date"
+      const expDate = effDate.toISOString().slice(0, 10);
+      setForm((prev) => ({ ...prev, expirationDate: expDate }));
+    }
+  }, [form.effectiveDate, form.termType]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -53,41 +68,84 @@ export default function NewSubmission() {
       </Typography>
       <Paper sx={{ p: 4, borderRadius: 4 }}>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={4}>
-            <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1 }}>
-              Select Producer
-            </Typography>
-            <TextField
-              label="Organization"
-              name="organization"
-              value={form.organization}
-              fullWidth
-              sx={{ mb: 2 }}
-              InputProps={{ readOnly: true }}
-            />
-            <TextField
-              label="Producer Code"
-              name="producerCode"
-              value={form.producerCode}
-              fullWidth
-              sx={{ mb: 2 }}
-              InputProps={{ readOnly: true }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={8}>
-            <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1 }}>
-              Product Offers
-            </Typography>
-            <TextField
-              type="date"
-              label="Default Effective Date"
-              name="effectiveDate"
-              value={form.effectiveDate}
-              onChange={handleChange}
-              fullWidth
-              sx={{ mb: 2 }}
-              InputLabelProps={{ shrink: true }}
-            />
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={3}>
+                <TextField
+                  label="Organization"
+                  name="organization"
+                  value={form.organization}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <TextField
+                  label="Producer Code"
+                  name="producerCode"
+                  value={form.producerCode}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={2}>
+                <TextField
+                  select
+                  label="Term Type"
+                  name="termType"
+                  value={form.termType}
+                  onChange={handleChange}
+                  fullWidth
+                  SelectProps={{ native: true }}
+                  sx={{ mb: 2 }}
+                  required
+                >
+                  <option value="6 months">6 months</option>
+                  <option value="12 months">12 months</option>
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6} md={2}>
+                <TextField
+                  label="Effective Date"
+                  name="effectiveDate"
+                  type="date"
+                  value={form.effectiveDate}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                  InputLabelProps={{ shrink: true }}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={2}>
+                <TextField
+                  label="Expiration Date"
+                  name="expirationDate"
+                  type="date"
+                  value={form.expirationDate}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                  InputLabelProps={{ shrink: true }}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={2}>
+                <TextField
+                  label="Written Date"
+                  name="writtenDate"
+                  type="date"
+                  value={form.writtenDate}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                  InputLabelProps={{ shrink: true }}
+                  required
+                />
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
         <Box sx={{ mt: 4 }}>
@@ -108,7 +166,25 @@ export default function NewSubmission() {
                     variant="contained"
                     color="info"
                     size="small"
-                    onClick={() => navigate(`/submission-details/${product.name}`)}
+                    onClick={() => {
+                      if (product.name === "Personal Auto") {
+                        // Pass account and policy info if available
+                        const accountNumber = state?.account?.accountId || "";
+                        const policy = state?.account?.policies?.[0] || {};
+                        const policyNumber = policy.policyId || "";
+                        const expiryDate = policy.expiryDate ? new Date(policy.expiryDate).toLocaleDateString() : "";
+                        navigate("/driver", {
+                          state: {
+                            contact,
+                            accountNumber,
+                            policyNumber,
+                            expiryDate
+                          }
+                        });
+                      } else {
+                        navigate(`/submission-details/${product.name}`, { state: { ...form, product: product.name } });
+                      }
+                    }}
                   >
                     Select
                   </Button>
