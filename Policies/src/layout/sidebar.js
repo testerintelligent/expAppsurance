@@ -1,9 +1,8 @@
-//import React, { useState } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import SouthEastIcon from "@mui/icons-material/SouthEast";
 
 const navItems = [
   { label: "My Activities", path: "/activities" },
@@ -16,15 +15,15 @@ const navItems = [
 
 const Sidebar = () => {
   return (
-    <aside className="w-60 bg-white border-r-8 h-full flex flex-col overflow-auto color-600">
+    <aside className="w-60 bg-white border-r-8 h-full flex flex-col overflow-auto color-">
       <div className="overflow-auto">
-        <div className="flex items-center justify-between m-4 border-2">
+        {/* <div className="flex items-center justify-between m-4 border-2">
           <button className="flex items-center justify-between w-full p-2 text-lg text-center hover:bg-gray-100 hover:border-sky-600 hover:border-2 text-sky-500">
             Actions
             <SouthEastIcon />
           </button>
-        </div>
-        <List disablePadding className="text-sm">
+        </div> */}
+        <List disablePadding className="text-sm 600">
           {navItems.map((item, index) => (
             <NavLink
               key={index}
@@ -32,8 +31,8 @@ const Sidebar = () => {
               className={({ isActive }) =>
                 `block ${
                   isActive
-                    ? "bg-sky-600 text-white font-medium"
-                    : "text-gray-700"
+                    ? "bg-blue-500 text-white font-medium  mt-2"
+                    : "text-gray-700  mt-4"
                 }`
               }
             >
