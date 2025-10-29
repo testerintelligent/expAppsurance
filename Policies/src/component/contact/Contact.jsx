@@ -6,9 +6,6 @@ import {
   Typography,
   TextField,
   Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   Grid,
   Paper,
   Table,
@@ -24,7 +21,7 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
 import { searchContact, createContact } from "./utils/contactAPI";
-import { createAccountForContact } from "../account/accountAPI";
+import { createAccountForContact, searchAccountByContact } from "../account/accountAPI";
 import "./contact.css";
 
 function TabPanel(props) {
@@ -59,8 +56,7 @@ export default function Contact() {
     producerCode: "",
   });
   const [searchResult, setSearchResult] = useState([]);
-  const [showDialog, setShowDialog] = useState(false);
-  const navigate = useNavigate();
+
 
   const [page, setPage] = useState(0); // current page
   const [rowsPerPage, setRowsPerPage] = useState(5); // rows per page
@@ -68,6 +64,7 @@ export default function Contact() {
   const [showContact, setShowContact] = useState(false);
   const [selectedContact, setSelectedContact] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
+  const navigate = useNavigate();
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -120,8 +117,9 @@ export default function Contact() {
   const handleCreate = async () => {
     try {
       const newContact = await createContact(formData);
+      const account = await createAccountForContact(newContact);
       setSearchResult(newContact);
-      setShowDialog(true);
+      
 
       // Reset form after creation
       setFormData({
@@ -139,25 +137,15 @@ export default function Contact() {
         organization: "",
         producerCode: "",
       });
+      navigate("/account", { state: { account } });
     } catch (err) {
       alert(err.response?.data?.error || "Failed to create contact");
     }
   };
 
-  const handleView = (contact) => {
-    console.log("contact", contact);
-    setSelectedContact(contact);
-    setShowContact(true);
-  };
-
-  const handleClose = () => {
-    setShowContact(false);
-    setSelectedContact(null);
-  };
-
-  const handleEditToggle = () => {
-    setIsEditMode((prev) => !prev);
-  };
+  const handleView = (contact) => { setSelectedContact(contact); setShowContact(true); };
+  const handleClose = () => { setShowContact(false); setSelectedContact(null); };
+  const handleEditToggle = () => setIsEditMode((prev) => !prev);
 
   const handleContactChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -273,21 +261,35 @@ export default function Contact() {
                             variant="contained"
                             size="small"
                             onClick={async () => {
-                              try {
-                                const account = await createAccountForContact(
-                                  contact
-                                );
-                                navigate("/account", { state: { account } });
-                              } catch (err) {
-                                alert(
-                                  err.response?.data?.message ||
-                                    "Failed to create account"
-                                );
-                              }
-                            }}
-                          >
-                            Select
-                          </Button>
+                            try {
+                              let account;
+                              // 1️⃣ First check if this contact already has an account
+                              const existingAccount = await searchAccountByContact(contact._id);
+
+                              if (existingAccount && existingAccount.accountId) {
+                              // ✅ Account exists
+                              account = existingAccount;
+                              console.log("Existing account found:", account);
+                              } else {
+                              // ❌ No existing account — create one
+                              account = await createAccountForContact(contact);
+                              console.log("New account created:", account);
+                          }
+
+                          // 2️⃣ Navigate to Account screen
+                          navigate("/account", { state: { account } });
+                          } catch (err) {
+                            console.error(err);
+                            alert(
+                            err.response?.data?.message ||
+                            "Failed to fetch or create account"
+                        );
+                        }
+                        }}
+                        >
+                          Select
+                        </Button>
+
                         </TableCell>
                         <TableCell>{contact.firstName}</TableCell>
                         <TableCell>{contact.lastName}</TableCell>
@@ -716,102 +718,6 @@ export default function Contact() {
           </Box>
         </TabPanel>
 
-        {/* -------------------- Dialog for New Contact -------------------- */}
-        <Dialog
-          fullWidth={true}
-          maxWidth={"sm"}
-          open={showDialog}
-          onClose={() => setShowDialog(false)}
-          // className="w-full"
-          sx={{ boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}
-        >
-          <DialogTitle
-            sx={{ fontWeight: 700, color: "#1976d2" }}
-            className="mt-4 p-5 text-center"
-          >
-            Contact Created Successfully
-          </DialogTitle>
-          <DialogContent>
-            {searchResult && searchResult.contact ? (
-              <Box sx={{ p: 2 }}>
-                <Typography className="p-2">
-                  <b>Name:</b>{" "}
-                  <span className="ml-2">
-                    {searchResult.contact.firstName}{" "}
-                    {searchResult.contact.lastName}
-                  </span>
-                </Typography>
-                <Typography className="p-2">
-                  <b>Email:</b>{" "}
-                  <span className="ml-2">{searchResult.contact.email}</span>
-                </Typography>
-                <Typography className="p-2">
-                  <b>Phone:</b>{" "}
-                  <span className="ml-2">{searchResult.contact.phone}</span>
-                </Typography>
-                <Typography className="p-2">
-                  <b>DOB:</b>{" "}
-                  <span className="ml-2">
-                    {searchResult.contact.dateOfBirth?.slice(0, 10)}
-                  </span>
-                </Typography>
-                <Typography className="p-2">
-                  <b>Organization:</b>{" "}
-                  <span className="ml-2">
-                    {searchResult.contact.organization}
-                  </span>
-                </Typography>
-                <Typography className="p-2">
-                  <b>Producer Code:</b>{" "}
-                  <span className="ml-2">
-                    {searchResult.contact.producerCode}
-                  </span>
-                </Typography>
-
-                {/* Action buttons */}
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    mt: 4,
-                    gap: 16,
-                  }}
-                  className="text-center"
-                >
-                  <Button
-                    onClick={() => setShowDialog(false)}
-                    variant="outlined"
-                    color="secondary"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={async () => {
-                      try {
-                        const account = await createAccountForContact(
-                          searchResult.contact
-                        );
-                        setShowDialog(false); // close popup
-                        navigate("/account", { state: { account } });
-                      } catch (err) {
-                        alert(
-                          err.response?.data?.message ||
-                            "Failed to create account"
-                        );
-                      }
-                    }}
-                  >
-                    Create Account
-                  </Button>
-                </Box>
-              </Box>
-            ) : (
-              <Typography>No details found</Typography>
-            )}
-          </DialogContent>
-        </Dialog>
       </Paper>
     </Box>
   );

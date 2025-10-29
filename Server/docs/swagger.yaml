@@ -1,0 +1,277 @@
+openapi: 3.0.0
+info:
+  title: Insurance Management API Documentation
+  version: "1.0.0"
+  description: >
+    Comprehensive API documentation for Contacts, Accounts, Submissions, and Policies.
+
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Main API Server
+
+tags:
+  - name: Users
+    description: User authentication and management
+  - name: Contacts
+    description: Customer contact management
+  - name: Accounts
+    description: Financial account management
+  - name: Submissions
+    description: Policy submission management
+  - name: Policies
+    description: Insurance policy management
+
+components:
+  schemas:
+
+    # 1. ContactDetails Schema
+    ContactDetails:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - dateOfBirth
+      properties:
+        _id:
+          type: string
+          description: The auto-generated MongoDB ID.
+          readOnly: true
+        customerId:
+          type: string
+          description: Auto-generated customer ID (e.g., CUS123456).
+          readOnly: true
+        firstName:
+          type: string
+          description: Customer's first name. Minimum length 2.
+        lastName:
+          type: string
+          description: Customer's last name. Minimum length 2.
+        email:
+          type: string
+          format: email
+          description: Customer's email address. Must be unique if provided.
+        phone:
+          type: string
+          description: Customer's phone number (basic E.164 format).
+        dateOfBirth:
+          type: string
+          format: date
+          description: Customer's date of birth. Must be a date in the past.
+        gender:
+          type: string
+          enum: [Male, Female, Other]
+          default: Other
+        address:
+          type: string
+          description: Customer's primary address.
+        street:
+          type: string
+          description: Customer's street name.
+        city:
+          type: string
+          description: Customer's city.
+        state:
+          type: string
+          description: Customer's state.
+        zipCode:
+          type: string
+          description: Customer's zip code.
+        organization:
+          type: string
+          description: Customer's organization.
+        producerCode:
+          type: string
+          description: Customer's producer code.
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the contact was created.
+          readOnly: true
+
+    # 2. AccountDetails Schema
+    AccountDetails:
+      type: object
+      required:
+        - customerId
+        - accountType
+        - accountHolderName
+      properties:
+        _id:
+          type: string
+          description: The auto-generated MongoDB ID.
+          readOnly: true
+        accountId:
+          type: string
+          description: Auto-generated account ID.
+          readOnly: true
+        customerId:
+          type: string
+          description: Reference to ContactDetails.
+        accountType:
+          type: string
+          enum: [Individual, Corporate]
+        accountHolderName:
+          type: string
+          description: Full name of the account holder.
+        status:
+          type: string
+          enum: [Active, Inactive, Closed]
+          default: Active
+        policies:
+          type: array
+          items:
+            type: string
+          description: Array of PolicyDetails references.
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp created.
+          readOnly: true
+        lastUpdated:
+          type: string
+          format: date-time
+          description: Timestamp last updated.
+          readOnly: true
+
+    AccountWithContact:
+      allOf:
+        - $ref: '#/components/schemas/AccountDetails'
+        - type: object
+          properties:
+            customerId:
+              $ref: '#/components/schemas/ContactDetails'
+
+    # 3. SubmissionDetails Schema
+    SubmissionDetails:
+      type: object
+      required:
+        - accountId
+      properties:
+        _id:
+          type: string
+          description: The auto-generated MongoDB ID.
+          readOnly: true
+        submissionId:
+          type: string
+          description: Auto-generated submission ID.
+          readOnly: true
+        accountId:
+          type: string
+          description: Reference to AccountDetails.
+        submissionStatus:
+          type: string
+          enum: [Pending, Approved, Rejected]
+          default: Pending
+          description: Current status of the submission.
+        notes:
+          type: string
+          description: Any additional notes.
+        driverIds:
+          type: array
+          items:
+            type: string
+          description: Linked Driver details.
+        vehicleIds:
+          type: array
+          items:
+            type: string
+          description: Linked Vehicle details.
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp created.
+          readOnly: true
+
+    SubmissionPopulated:
+      allOf:
+        - $ref: '#/components/schemas/SubmissionDetails'
+        - type: object
+          properties:
+            accountId:
+              $ref: '#/components/schemas/AccountDetails'
+            driverIds:
+              type: array
+              items:
+                type: object
+              description: Populated Driver details.
+            vehicleIds:
+              type: array
+              items:
+                type: object
+              description: Populated Vehicle details.
+
+    # 4. PolicyDetails Schema
+    PolicyDetails:
+      type: object
+      required:
+        - customerId
+        - accountId
+        - policyType
+        - coverageDetails
+        - sumInsured
+        - premium
+        - startDate
+        - endDate
+      properties:
+        _id:
+          type: string
+          description: The auto-generated MongoDB ID.
+          readOnly: true
+        policyId:
+          type: string
+          description: Auto-generated policy ID.
+          readOnly: true
+        customerId:
+          type: string
+          description: Reference to ContactDetails.
+        accountId:
+          type: string
+          description: Reference to AccountDetails.
+        quoteId:
+          type: string
+          description: Reference to QuoteDetails (Hypothetical).
+        policyType:
+          type: string
+          description: Type of the policy.
+        coverageDetails:
+          type: string
+          description: Summary of coverage.
+        sumInsured:
+          type: string
+          description: The maximum amount the insurer will pay.
+        premium:
+          type: number
+          format: float
+          description: The amount paid for the policy.
+        startDate:
+          type: string
+          format: date
+          description: Policy start date.
+        endDate:
+          type: string
+          format: date
+          description: Policy end date.
+        status:
+          type: string
+          enum:
+            - In Force
+            - Lapsed
+            - Grace Period
+            - Cancelled
+            - Under Review
+            - Expired
+            - Suspended
+            - Matured
+          default: Under Review
+          description: Current status of the policy.
+
+    PolicyPopulated:
+      allOf:
+        - $ref: '#/components/schemas/PolicyDetails'
+        - type: object
+          properties:
+            accountId:
+              $ref: '#/components/schemas/AccountDetails'
+            quoteId:
+              type: object
+              description: Populated Quote details.

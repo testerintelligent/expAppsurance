@@ -1,30 +1,26 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const policySchema = new mongoose.Schema({
-  policyId: { type: String, unique: true },
-  customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'ContactDetails', required: true },
-  accountId: { type: mongoose.Schema.Types.ObjectId, ref: 'AccountDetails', required: true }, // ✅ Add this
-  policyType: { type: String, required: true },
-  coverageDetails: { type: String, required: true },
-  sumInsured: { type: String, required: true },
-  premium: { type: Number, required: true },
-  startDate: { type: Date, required: true },
-  endDate: { type: Date, required: true },
-  status: {
-    type: String,
-    enum: [
-      'In Force', 'Lapsed', 'Grace Period', 'Cancelled',
-      'Under Review', 'Expired', 'Suspended', 'Matured'
-    ],
-    default: 'Under Review'
-  }
+  policyId: { type: String, unique: true, required: true, default: () => `PID-${Date.now()}` },
+  submissionId: { type: String, ref: "SubmissionDetails", required: true },
+  quoteId: { type: mongoose.Schema.Types.ObjectId, ref: "QuoteDetails", required: true },
+  accountId: { type: mongoose.Schema.Types.ObjectId, ref: "AccountDetails", required: true },
+  contactId: { type: mongoose.Schema.Types.ObjectId, ref: "ContactDetails", required: true },
+  policyNumber: { type: String, required: true, unique: true },
+  productType: { type: String, required: true },
+  effectiveDate: { type: Date, required: true },
+  expiryDate: { type: Date, required: true },
+  totalPremium: { type: Number, required: true },
+  taxes: { type: Number, required: true },
+  totalCost: { type: Number, required: true },
+  billingMethod: { type: String, required: true },
+  paymentSchedule: { type: String, required: true },
+  paymentRef: { type: String, required: true },
+  coverages: [{ type: String }],
+  status: { type: String, enum: ["Active", "Pending", "Cancelled"], default: "Pending" },
+  issuedAt: { type: Date, default: Date.now },
+  driverId: { type: mongoose.Schema.Types.ObjectId, ref: 'DriverDetails' },
+  vehicleId: { type: mongoose.Schema.Types.ObjectId, ref: 'VehicleDetails' },
 });
 
-policySchema.pre('save', function (next) {
-  if (!this.policyId) {
-    this.policyId = `POL${Date.now()}${Math.floor(Math.random() * 1000)}`;
-  }
-  next();
-});
-
-module.exports = mongoose.model('PolicyDetails', policySchema);
+module.exports = mongoose.model("PolicyDetails", policySchema);

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import InfoBar from "../InfoBar";
 import { useLocation, useNavigate } from "react-router-dom";
+import { createDriverForSubmission } from "./driverAPI";
 import {
   Box,
   Typography,
@@ -63,34 +64,40 @@ export default function Driver() {
         return false;
       }
     }
-
     return true;
   };
-
   // ✅ Handle Next button click
-  const handleNext = () => {
-    if (!validateForm()) {
-      setErrorOpen(true);
-      return;
-    }
-
-    navigate("/vehicle", {
-      state: {
-        ...state,
-        contact: formData,
-        accountNumber: state?.accountNumber,
-        policyNumber: state?.policyNumber,
-        expiryDate: state?.expiryDate
-      }
-    });
-  };
+  const handleNext = async () => {
+  if (!validateForm()) {
+    setErrorOpen(true);
+    return;
+  }
+  try {
+    const driver = await createDriverForSubmission(state.submissionId, formData);
+    // Navigate to Vehicle screen with driver info
+   navigate("/vehicle", {
+    state: {
+      ...state,
+      driverId: driver?._id || "",
+      contact: formData,
+    },
+  });
+  } catch (err) {
+    console.error(err);
+    setErrorMsg(err.response?.data?.message || "Failed to save driver");
+    setErrorOpen(true);
+  }
+};
 
   return (
     <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
       <InfoBar
-        accountNumber={state?.accountNumber || "6431739974"}
-        policyNumber={state?.policyNumber || "0923090878"}
-        expiryDate={state?.expiryDate || "04/06/2026"}
+        accountNumber={state?.accountNumber || "-"}
+        product={state?.productName || "-"}
+        contactName={`${formData.firstName || ""} ${formData.lastName || ""}`.trim()}
+        submissionId={state?.submissionId || "-"}
+        effectiveDate={state?.effectiveDate || "-"}
+        expiryDate={state?.expiryDate || "-"}
       />
 
       <Typography variant="h4" fontWeight={700} sx={{ mb: 3 }}>

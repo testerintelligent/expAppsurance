@@ -13,6 +13,7 @@ import Vehicle from "./component/vehicle/Vehicle";
 import Quote from "./component/quote/Quote";
 import Payment from "./component/payment/Payment";
 import PolicyIssuance from "./component/policy/PolicyIssuance";
+import PolicySearch from "./component/policy/PolicySearch";
 
 function App() {
   const [policies] = useState([]);
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/quote" element={<Quote />} />
                 <Route path="/payment" element={<Payment />} />
                 <Route path="/policy-issuance" element={<PolicyIssuance />} />
+                <Route path="/policy" element={<PolicySearch />} />
               </Routes>
             </main>
           </div>

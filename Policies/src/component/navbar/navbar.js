@@ -1,10 +1,4 @@
 import React from "react";
-import IconButton from "@mui/material/IconButton";
-import Box from "@mui/material/Box";
-import SaveIcon from "@mui/icons-material/Save";
-import SettingsIcon from "@mui/icons-material/Settings";
-import SearchIcon from "@mui/icons-material/Search";
-import InputBase from "@mui/material/InputBase";
 import { NavLink } from "react-router-dom";
 import './navbar.css';
 

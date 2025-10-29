@@ -32,29 +32,18 @@ const PolicyDashboard = () => {
 
   const navigate = useNavigate();
 
-  // ✅ Fetch data once
+  // Fetch policies data from the API
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchPolicies = async () => {
       try {
-        const [policyRes, summaryRes, contactRes] = await Promise.all([
-          axios.get("http://10.192.190.158:5000/getPolicy"),
-          axios.get("http://10.192.190.158:5000/getPolicySummary"),
-          axios.get("http://10.192.190.158:5000/getContact"),
-        ]);
-
-        setInsuranceData(policyRes.data);
-        setFilteredData(policyRes.data);
-        setSummary(summaryRes.data);
-
-        const contacts = Array.isArray(contactRes.data)
-          ? contactRes.data
-          : contactRes.data?.contacts || [];
-        setContactData(contacts);
+        const response = await axios.get("http://10.192.190.158:5000/api/Policies/getPoliciesForDashboard");
+        setInsuranceData(response.data);
+        setFilteredData(response.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching policies:", error);
       }
     };
-    fetchData();
+    fetchPolicies();
   }, []);
 
   // Utility Functions
@@ -102,18 +91,16 @@ const PolicyDashboard = () => {
     setShowModal(false);
   };
 
-  //Table Column Config
+  // Table Column Config
   const columns = useMemo(
     () => [
-      { key: "customerId", label: "CUSTOMER ID" },
-      { key: "startDate", label: "START DATE" },
-      { key: "endDate", label: "END DATE" },
-      { key: "policyNumber", label: "POLICY NUMBER" },
-      { key: "policyType", label: "POLICY TYPE" },
-      { key: "coverageDetails", label: "COVERAGE" },
-      { key: "sumInsured", label: "SUM INSURED" },
-      { key: "premium", label: "PREMIUM" },
-      { key: "status", label: "STATUS" },
+      { key: "accountNumber", label: "Account Number" },
+      { key: "accountHolderName", label: "Account Holder Name" },
+      { key: "policyNumber", label: "Policy Number" },
+      { key: "policyType", label: "Policy Type" },
+      { key: "startDate", label: "Start Date" },
+      { key: "endDate", label: "End Date" },
+      { key: "status", label: "Status" },
     ],
     []
   );
@@ -129,7 +116,7 @@ const PolicyDashboard = () => {
           marginBottom: "32px",
         }}
       >
-        {[
+        {[ 
           {
             label: "Total Policies",
             value: summary?.totalPolicies || 0,
@@ -175,132 +162,122 @@ const PolicyDashboard = () => {
       </div>
 
       {/* ✅ Data Table */}
-      {filteredData.length > 0 && contactData.length > 0 ? (
+      {filteredData.length > 0 ? (
         <TableContainer component={Paper} elevation={3} style={{ borderRadius: "8px" }}>
-  <Table>
-    <TableHead>
-      <TableRow style={{ backgroundColor: "black" }}>
-        {columns.map((col) => (
-          <TableCell
-            key={col.key}
-            style={{
-              color: "white",
-              backgroundColor: "black",
-              fontWeight: "bold",
-              cursor: "pointer",
-              padding: "12px",
-              textAlign: "center",
+          <Table>
+            <TableHead>
+              <TableRow style={{ backgroundColor: "black" }}>
+                {columns.map((col) => (
+                  <TableCell
+                    key={col.key}
+                    style={{
+                      color: "white",
+                      backgroundColor: "black",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      padding: "12px",
+                      textAlign: "center",
+                    }}
+                    onClick={() => sortData(col.key)}
+                  >
+                    {col.label}{" "}
+                    {sortedColumn === col.key && (sortOrder === "asc" ? "↑" : "↓")}
+                  </TableCell>
+                ))}
+                <TableCell
+                  style={{
+                    color: "white",
+                    backgroundColor: "black",
+                    fontWeight: "bold",
+                    padding: "12px",
+                    textAlign: "center",
+                  }}
+                >
+                  UPDATE
+                </TableCell>
+                <TableCell
+                  style={{
+                    color: "white",
+                    backgroundColor: "black",
+                    fontWeight: "bold",
+                    padding: "12px",
+                    textAlign: "center",
+                  }}
+                >
+                  VIEW
+                </TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {filteredData
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((insurance, index) => {
+                  const customer = contactData.find((c) => c._id === insurance.customerId);
+                  return (
+                    <TableRow
+                      key={insurance._id || index}
+                      style={{
+                        backgroundColor: index % 2 === 0 ? "#ecf0f1" : "#ffffff",
+                      }}
+                    >
+                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                        {insurance.accountNumber || "N/A"}
+                      </TableCell>
+                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                        {insurance?.accountHolderName || "N/A"}
+                      </TableCell>
+                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                        {insurance.policyNumber || generateRandomNumber()}
+                      </TableCell>
+                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                        {insurance.policyType}
+                      </TableCell>
+                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                        {formatDate(insurance.startDate)}
+                      </TableCell>
+                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                        {formatDate(insurance.endDate)}
+                      </TableCell>
+                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                        {insurance.status}
+                      </TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
+                        <button
+                          onClick={() => updatePolicy(insurance, "update")}
+                          style={{ textTransform: "none" }}
+                        >
+                          <FaEdit size="25px" />
+                        </button>
+                      </TableCell>
+                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                        <button
+                          onClick={() => updatePolicy(insurance, "view")}
+                          style={{ textTransform: "none", borderRadius: "5px" }}
+                        >
+                          <FaEye size="25px" />
+                        </button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={filteredData.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={(_, newPage) => setPage(newPage)}
+            onRowsPerPageChange={(e) => {
+              setRowsPerPage(parseInt(e.target.value, 10));
+              setPage(0);
             }}
-            onClick={() => sortData(col.key)}
-          >
-            {col.label}{" "}
-            {sortedColumn === col.key &&
-              (sortOrder === "asc" ? "↑" : "↓")}
-          </TableCell>
-        ))}
-        <TableCell
-          style={{
-            color: "white",
-            backgroundColor: "black",
-            fontWeight: "bold",
-            padding: "12px",
-            textAlign: "center",
-          }}
-        >
-          UPDATE
-        </TableCell>
-        <TableCell
-          style={{
-            color: "white",
-            backgroundColor: "black",
-            fontWeight: "bold",
-            padding: "12px",
-            textAlign: "center",
-          }}
-        >
-          VIEW
-        </TableCell>
-      </TableRow>
-    </TableHead>
-
-    <TableBody>
-      {filteredData
-        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-        .map((insurance, index) => {
-          const customer = contactData.find(
-            (c) => c._id === insurance.customerId
-          );
-          return (
-            <TableRow
-              key={insurance._id || index}
-              style={{
-                backgroundColor: index % 2 === 0 ? "#ecf0f1" : "#ffffff",
-              }}
-            >
-              <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                {customer?.customerId || "N/A"}
-              </TableCell>
-              <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                {formatDate(insurance.startDate)}
-              </TableCell>
-              <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                {formatDate(insurance.endDate)}
-              </TableCell>
-              <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                {insurance.policyNumber || generateRandomNumber()}
-              </TableCell>
-              <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                {insurance.policyType}
-              </TableCell>
-              <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                {insurance.coverageDetails}
-              </TableCell>
-              <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                {insurance.sumInsured}
-              </TableCell>
-              <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                {insurance.premium}
-              </TableCell>
-              <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                {insurance.status}
-              </TableCell>
-              <TableCell style={{ textAlign: "center" }}>
-                <button
-                  onClick={() => updatePolicy(insurance, "update")}
-                  style={{ textTransform: "none" }}
-                >
-                  <FaEdit size="25px" />
-                </button>
-              </TableCell>
-              <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                <button
-                  onClick={() => updatePolicy(insurance, "view")}
-                  style={{ textTransform: "none", borderRadius: "5px" }}
-                >
-                  <FaEye size="25px" />
-                </button>
-              </TableCell>
-            </TableRow>
-          );
-        })}
-    </TableBody>
-  </Table>
-
-  <TablePagination
-    rowsPerPageOptions={[5, 10, 25]}
-    component="div"
-    count={filteredData.length}
-    rowsPerPage={rowsPerPage}
-    page={page}
-    onPageChange={(_, newPage) => setPage(newPage)}
-    onRowsPerPageChange={(e) => {
-      setRowsPerPage(parseInt(e.target.value, 10));
-      setPage(0);
-    }}
-    style={{ borderTop: "1px solid #ddd" }}
-  />
-</TableContainer>
-
+            style={{ borderTop: "1px solid #ddd" }}
+          />
+        </TableContainer>
       ) : (
         <p style={{ textAlign: "center", color: "#7f8c8d", fontSize: "18px" }}>
           No insurance data available

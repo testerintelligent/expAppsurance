@@ -13,10 +13,12 @@ import {
   Snackbar,
   Alert
 } from "@mui/material";
+import { createVehicleForSubmission } from "./vehicleAPI";
 
 export default function Vehicle() {
   const { state } = useLocation();
   const navigate = useNavigate();
+  const contact = state?.contact || {}; 
   const [tab, setTab] = useState(0);
   const [errorOpen, setErrorOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -60,47 +62,79 @@ export default function Vehicle() {
     );
   };
 
-  // ✅ Validate mandatory fields before Next
-  const handleNext = () => {
-    // Validate Vehicle Info
-    const requiredVehicleFields = [
-      { key: "make", label: "Make" },
-      { key: "model", label: "Model" },
-      { key: "year", label: "Year" },
-      { key: "vin", label: "VIN" },
-      { key: "licensePlate", label: "License Plate" },
-      { key: "stateRegistered", label: "State Registered" }
+  const validateForm = () => {
+    const requiredFields = [
+        { key: "make", label: "Make" },
+        { key: "model", label: "Model" },
+        { key: "year", label: "Year" },
+        { key: "vin", label: "VIN" },
+        { key: "licensePlate", label: "License Plate" },
+        { key: "stateRegistered", label: "State Registered" }
     ];
 
-    for (let field of requiredVehicleFields) {
-      if (!vehicleData[field.key] || String(vehicleData[field.key]).trim() === "") {
-        setErrorMsg(`${field.label} is required`);
-        setErrorOpen(true);
-        setTab(0); // switch to Vehicle Info tab
-        return;
-      }
+    for (let field of requiredFields) {
+        if (!vehicleData[field.key] || String(vehicleData[field.key]).trim() === "") {
+            setErrorMsg(`${field.label} is required in the Vehicle Information tab.`);
+            return false;
+        }
     }
+    if (coverages.length === 0) {
+        setErrorMsg("At least one coverage (Third-Party Liability) must be selected.");
+        return false;
+    }
+    return true;
+  };
 
-    // Validate Coverages
-    if (!coverages.includes("Third-Party Liability")) {
-      setErrorMsg("Third-Party Liability coverage is mandatory");
+  // ✅ Validate mandatory fields before Next
+  const handleNext = async () => {
+  try {
+    if (!validateForm()) {
+        setErrorOpen(true);
+        return;
+    }
+    // Validate fields (keep your validation logic)
+
+    const submissionId = state?.submissionId;
+    if (!submissionId) {
+      setErrorMsg("Missing submission ID");
       setErrorOpen(true);
-      setTab(1); // switch to Coverages tab
       return;
     }
 
-    // Navigate to next page with vehicle data and coverages
-    navigate("/quote", {
-      state: { ...(state || {}), vehicleData, coverages }
-    });
-  };
+    // Prepare data
+    const payload = {
+      ...vehicleData,
+      coverages,
+    };
+
+    // ✅ Create Vehicle in backend
+    await createVehicleForSubmission(submissionId, payload);
+
+    // Navigate to Quote
+   navigate("/quote", {
+  state: {
+    ...state,
+    vehicleData,
+    coverages,
+  },
+});
+
+  } catch (err) {
+    console.error("Error creating vehicle:", err);
+    setErrorMsg("Failed to create vehicle. Please try again.");
+    setErrorOpen(true);
+  }
+};
 
   return (
     <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
       <InfoBar
-        accountNumber={state?.accountNumber || "6431739974"}
-        policyNumber={state?.policyNumber || "0923090878"}
-        expiryDate={state?.expiryDate || "04/06/2026"}
+        accountNumber={state?.accountNumber || "-"}
+        product={state?.productName || "-"}
+        contactName={`${contact.firstName || ""} ${contact.lastName || ""}`.trim()}
+        submissionId={state?.submissionId || "-"}
+        effectiveDate={state?.effectiveDate || "-"}
+        expiryDate={state?.expiryDate || "-"}
       />
 
       <Typography variant="h4" fontWeight={700} sx={{ mb: 3 }}>

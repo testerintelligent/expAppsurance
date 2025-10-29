@@ -20,7 +20,7 @@ export default function Account() {
   const navigate = useNavigate();
   const [accountData, setAccountData] = useState(null);
   const [searchData, setSearchData] = useState({
-    accountNo: "",
+    accountId: "", // renamed from accountNo to match API
     firstName: "",
     lastName: "",
     dateOfBirth: ""
@@ -31,8 +31,9 @@ export default function Account() {
     if (location.state?.account) {
       setAccountData(location.state.account);
     } else if (location.state?.contact) {
-      // fallback: fetch account by contact if only contact is passed
-      searchAccountByContact(location.state.contact._id).then(setAccountData);
+      searchAccountByContact(location.state.contact._id)
+        .then(setAccountData)
+        .catch(() => alert("Account not found for this contact"));
     }
   }, [location.state]);
 
@@ -44,16 +45,22 @@ export default function Account() {
   // Case 2: Search via Dashboard
   const handleSearch = async () => {
     try {
-      const result = await searchAccount(searchData);
+      const result = await searchAccount(searchData); // now accountId is used
+      if (!result || (Array.isArray(result) && result.length === 0)) {
+        alert("Account not found");
+        setAccountData(null);
+        return;
+      }
       setAccountData(result);
     } catch (err) {
-      alert("Account not found");
+      console.error(err);
+      alert("Error searching account");
     }
   };
 
   return (
     <Box sx={{ p: 3 }}>
-      {/* If user didn’t come from contact, show search form */}
+      {/* Search Form only if not navigated from Contact */}
       {!location.state?.contact && (
         <Paper sx={{ p: 3, mb: 3 }}>
           <Typography variant="h6">Search Account</Typography>
@@ -61,9 +68,9 @@ export default function Account() {
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Account No"
-                name="accountNo"
-                value={searchData.accountNo}
+                label="Account ID"
+                name="accountId"
+                value={searchData.accountId}
                 onChange={handleChange}
               />
             </Grid>
@@ -111,9 +118,11 @@ export default function Account() {
       {/* Account Details */}
       {accountData && (
         <Paper sx={{ p: 4, borderRadius: 4, background: 'linear-gradient(135deg, #f8fafc 60%, #e0e7ef 100%)', boxShadow: 6 }}>
-          <Typography variant="h4" fontWeight={700} color="#1976d2" gutterBottom>Account Information</Typography>
+          <Typography variant="h4" fontWeight={700} color="#1976d2" gutterBottom>
+            Account Information
+          </Typography>
           <Grid container spacing={3}>
-            {/* Contact Information on the left */}
+            {/* Contact Info */}
             <Grid item xs={12} md={4}>
               <Box sx={{
                 p: 3,
@@ -127,36 +136,23 @@ export default function Account() {
                 gap: 1.5
               }}>
                 <Typography variant="h5" fontWeight={700} color="#1565c0" gutterBottom sx={{ mb: 2 }}>Contact Information</Typography>
-                {location.state?.account?.customerId ? (
+                {accountData.customerId ? (
                   <>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                      <Typography><b>Name:</b> {location.state.account.customerId.firstName} {location.state.account.customerId.lastName}</Typography>
-                      <Typography><b>Email:</b> {location.state.account.customerId.email}</Typography>
-                      <Typography><b>Phone:</b> {location.state.account.customerId.phone}</Typography>
-                      <Typography><b>DOB:</b> {location.state.account.customerId.dateOfBirth?.slice(0,10)}</Typography>
-                      <Typography><b>City:</b> {location.state.account.customerId.city}</Typography>
-                      <Typography><b>Zip Code:</b> {location.state.account.customerId.zipCode}</Typography>
-                      <Typography><b>Address:</b> {location.state.account.customerId.address}</Typography>
-                    </Box>
-                  </>
-                ) : accountData.customerId ? (
-                  <>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                      <Typography><b>Name:</b> {accountData.customerId.firstName} {accountData.customerId.lastName}</Typography>
-                      <Typography><b>Email:</b> {accountData.customerId.email}</Typography>
-                      <Typography><b>Phone:</b> {accountData.customerId.phone}</Typography>
-                      <Typography><b>DOB:</b> {accountData.customerId.dateOfBirth?.slice(0,10)}</Typography>
-                      <Typography><b>City:</b> {accountData.customerId.city}</Typography>
-                      <Typography><b>Zip Code:</b> {accountData.customerId.zipCode}</Typography>
-                      <Typography><b>Address:</b> {accountData.customerId.address}</Typography>
-                    </Box>
+                    <Typography><b>Name:</b> {accountData.customerId.firstName} {accountData.customerId.lastName}</Typography>
+                    <Typography><b>Email:</b> {accountData.customerId.email}</Typography>
+                    <Typography><b>Phone:</b> {accountData.customerId.phone}</Typography>
+                    <Typography><b>DOB:</b> {accountData.customerId.dateOfBirth?.slice(0,10)}</Typography>
+                    <Typography><b>City:</b> {accountData.customerId.city}</Typography>
+                    <Typography><b>Zip Code:</b> {accountData.customerId.zipCode}</Typography>
+                    <Typography><b>Address:</b> {accountData.customerId.address}</Typography>
                   </>
                 ) : (
                   <Typography>No contact information available.</Typography>
                 )}
               </Box>
             </Grid>
-            {/* Account Info and Policies on the right */}
+
+            {/* Account Info and Policies */}
             <Grid item xs={12} md={8} sx={{ position: 'relative' }}>
               <Grid container spacing={2} sx={{ mb: 2 }}>
                 <Grid item xs={12} sm={6} md={6}><Box sx={{ bgcolor: '#e3f2fd', p: 2, borderRadius: 2 }}><Typography variant="subtitle2">Account ID</Typography><Typography fontWeight={600}>{accountData.accountId}</Typography></Box></Grid>
@@ -164,6 +160,7 @@ export default function Account() {
                 <Grid item xs={12} sm={6} md={6}><Box sx={{ bgcolor: '#fff3e0', p: 2, borderRadius: 2 }}><Typography variant="subtitle2">Account Type</Typography><Typography fontWeight={600}>{accountData.accountType}</Typography></Box></Grid>
                 <Grid item xs={12} sm={6} md={6}><Box sx={{ bgcolor: '#f3e5f5', p: 2, borderRadius: 2 }}><Typography variant="subtitle2">Created At</Typography><Typography fontWeight={600}>{new Date(accountData.createdAt).toLocaleString()}</Typography></Box></Grid>
               </Grid>
+
               <Typography variant="h5" fontWeight={600} color="#2c3e50" sx={{ mt: 2, mb: 2 }}>Policies</Typography>
               <Table>
                 <TableHead>
@@ -191,7 +188,8 @@ export default function Account() {
                   )}
                 </TableBody>
               </Table>
-              {/* Create New Submission Button at right bottom */}
+
+              {/* Create New Submission Button */}
               <Box sx={{ position: 'absolute', right: 0, bottom: 0, m: 2 }}>
                 <Button
                   variant="contained"
