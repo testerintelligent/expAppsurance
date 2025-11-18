@@ -45,7 +45,7 @@ exports.createPolicy = async (req, res) => {
       coverages,
       policyNumber,
       paymentRef,
-      status: "Active",
+      status: "In Force",
     });
 
     // Save the new policy

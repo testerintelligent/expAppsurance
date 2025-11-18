@@ -46,6 +46,29 @@ const PolicyDashboard = () => {
     fetchPolicies();
   }, []);
 
+  // Compute summary counts when policies are fetched/updated
+  useEffect(() => {
+    if (!insuranceData || insuranceData.length === 0) {
+      setSummary(null);
+      return;
+    }
+
+    const totals = { totalPolicies: insuranceData.length };
+
+    // normalize status keys and compute counts
+    const byStatus = insuranceData.reduce((acc, p) => {
+      const s = (p.status || "").toString();
+      acc[s] = (acc[s] || 0) + 1;
+      return acc;
+    }, {});
+
+    totals["In Force"] = byStatus["In Force"] || byStatus["InForce"] || 0;
+    totals.underReview = byStatus["Under Review"] || byStatus["UnderReview"] || byStatus["underReview"] || 0;
+    totals.cancelled = byStatus["Cancelled"] || byStatus["cancelled"] || 0;
+
+    setSummary(totals);
+  }, [insuranceData]);
+
   // Utility Functions
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";

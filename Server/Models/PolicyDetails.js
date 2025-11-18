@@ -17,7 +17,7 @@ const policySchema = new mongoose.Schema({
   paymentSchedule: { type: String, required: true },
   paymentRef: { type: String, required: true },
   coverages: [{ type: String }],
-  status: { type: String, enum: ["Active", "Pending", "Cancelled"], default: "Pending" },
+  status: { type: String, enum: ["In Force", "Pending", "Cancelled"], default: "In Force" },
   issuedAt: { type: Date, default: Date.now },
   driverId: { type: mongoose.Schema.Types.ObjectId, ref: 'DriverDetails' },
   vehicleId: { type: mongoose.Schema.Types.ObjectId, ref: 'VehicleDetails' },
