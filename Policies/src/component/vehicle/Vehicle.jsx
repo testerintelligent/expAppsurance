@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import InfoBar from "../InfoBar";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -42,15 +42,8 @@ export default function Vehicle() {
     stateRegistered: ""
   });
 
-  // Selected coverages
-  const [coverages, setCoverages] = useState([]);
-
-  // ✅ Preselect Third-Party Liability
-  useEffect(() => {
-    if (!coverages.includes("Third-Party Liability")) {
-      setCoverages(["Third-Party Liability"]);
-    }
-  }, []);
+  // Selected coverages (preselect mandatory Third-Party Liability)
+  const [coverages, setCoverages] = useState(["Third-Party Liability"]);
 
   // Handle coverage selection
   const handleCoverageChange = (coverage) => {
@@ -127,7 +120,7 @@ export default function Vehicle() {
 };
 
   return (
-    <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
+    <Box sx={{ maxWidth: 1200, mx: "auto", mt: 4 }}>
       <InfoBar
         accountNumber={state?.accountNumber || "-"}
         product={state?.productName || "-"}

@@ -156,7 +156,8 @@ export default function Contact() {
   };
 
   return (
-    <Box sx={{ width: "100%", maxWidth: 1000, mx: "auto", mt: 2 }}>
+    
+    <Box sx={{ width: "100%", maxWidth: 1200, mx: "auto", mt: 2 }}>
       <Paper
         elevation={4}
         sx={{
@@ -183,7 +184,7 @@ export default function Contact() {
 
         {/* -------------------- Search Contact Tab -------------------- */}
         <TabPanel value={tabValue} index={0}>
-          <Paper sx={{ p: 2, maxWidth: 800, mx: "auto" }} elevation={3}>
+          <Paper sx={{ p: 2, maxWidth: 1000, mx: "auto" }} elevation={3}>
             <Typography variant="h6" gutterBottom>
               Search Contact
             </Typography>
@@ -329,7 +330,7 @@ export default function Contact() {
             <Box
               sx={{
                 width: "100%",
-                maxWidth: 900,
+                maxWidth: 1100,
                 mx: "auto",
                 p: 4,
                 backgroundColor: "#fff",
@@ -528,7 +529,7 @@ export default function Contact() {
           <Box
             sx={{
               width: "100%",
-              maxWidth: 1000,
+              maxWidth: 1200,
               mx: "auto",
               p: 4,
               backgroundColor: "#fff",

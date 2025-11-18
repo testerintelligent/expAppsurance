@@ -1,7 +1,21 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Box, Typography, InputBase, IconButton, CircularProgress, Card, CardContent, Grid, Button } from "@mui/material";
-import { Search as SearchIcon } from "@mui/icons-material";
+import {
+  Box,
+  Typography,
+  InputBase,
+  IconButton,
+  CircularProgress,
+  Card,
+  CardContent,
+  Grid,
+  Button,
+  Chip,
+  Fade,
+  Tooltip
+} from "@mui/material";
+import { Search as SearchIcon, Description, Payment, Shield } from "@mui/icons-material";
+import "./policy.css";
 
 const PolicySearch = () => {
   const [policyNumber, setPolicyNumber] = useState("");
@@ -9,12 +23,10 @@ const PolicySearch = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Handle Policy Number input change
   const handleInputChange = (e) => {
     setPolicyNumber(e.target.value);
   };
 
-  // Fetch policy details by Policy Number
   const handleSearch = async () => {
     if (!policyNumber) {
       alert("Please enter a Policy Number");
@@ -25,8 +37,10 @@ const PolicySearch = () => {
     setError(null);
 
     try {
-      const response = await axios.get(`http://10.192.190.158:5000/api/Policies/getPolicyByNumber/${policyNumber}`);
-      setPolicyData(response.data);  // Update policy data on the same screen
+      const response = await axios.get(
+        `http://10.192.190.158:5000/api/Policies/getPolicyByNumber/${policyNumber}`
+      );
+      setPolicyData(response.data);
       setLoading(false);
     } catch (err) {
       setError("Failed to fetch policy details");
@@ -35,123 +49,249 @@ const PolicySearch = () => {
   };
 
   return (
-    <Box sx={{ padding: "30px", maxWidth: "900px", margin: "0 auto" }}>
-      <Typography variant="h4" fontWeight="bold" sx={{ marginBottom: "20px", textAlign: "center" }}>
-        Policy Search
+    <Box className="policy-search-wrapper">
+
+      {/* HEADER */}
+      <Typography className="policy-search-header" variant="h4" fontWeight="800">
+        🔍 Find Your Policy
       </Typography>
 
-      {/* Search Input */}
-      <Box sx={{ display: "flex", alignItems: "center", marginBottom: "30px", borderRadius: "50px", backgroundColor: "#f0f0f0", padding: "10px" }}>
+      {/* HERO SEARCH BAR */}
+      <Box className="search-input-box">
         <InputBase
-          placeholder="Enter Policy Number"
+          placeholder="Enter Policy Number..."
           value={policyNumber}
           onChange={handleInputChange}
-          sx={{
-            flex: 1,
-            paddingLeft: "15px",
-            fontSize: "16px",
-            border: "none",
-            borderRadius: "50px",
-            backgroundColor: "#fff",
-          }}
+          className="search-input-field"
         />
-        <IconButton onClick={handleSearch} sx={{ padding: "10px", borderRadius: "50%" }}>
-          <SearchIcon color="primary" />
-        </IconButton>
+        <Tooltip title="Search Policy">
+          <IconButton onClick={handleSearch} className="search-button">
+            <SearchIcon sx={{ color: "#fff" }} />
+          </IconButton>
+        </Tooltip>
       </Box>
 
-      {/* Loading Indicator */}
+      {/* LOADER */}
       {loading && (
-        <Box sx={{ textAlign: "center", marginBottom: "20px" }}>
-          <CircularProgress />
+        <Box sx={{ textAlign: "center", marginTop: "20px" }}>
+          <CircularProgress thickness={4} />
         </Box>
       )}
 
-      {/* Error Message */}
+      {/* ERROR */}
       {error && (
         <Typography color="error" sx={{ marginTop: "20px", textAlign: "center" }}>
           {error}
         </Typography>
       )}
 
-      {/* Displaying fetched policy data */}
+      {/* RESULT SECTION */}
       {policyData && (
-        <Box sx={{ marginTop: "40px" }}>
-          {/* Policy Information */}
-          <Card sx={{ marginBottom: "20px", boxShadow: 3 }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold" sx={{ marginBottom: "10px" }}>
-                Policy Information
-              </Typography>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="body1"><strong>Policy Number:</strong> {policyData.policy.policyNumber}</Typography>
-                  <Typography variant="body1"><strong>Policy Type:</strong> {policyData.policy.productType}</Typography>
-                  <Typography variant="body1"><strong>Effective Date:</strong> {new Date(policyData.policy.effectiveDate).toLocaleDateString()}</Typography>
-                  <Typography variant="body1"><strong>Expiry Date:</strong> {new Date(policyData.policy.expiryDate).toLocaleDateString()}</Typography>
-                  <Typography variant="body1"><strong>Status:</strong> {policyData.policy.status}</Typography>
-                </Grid>
+        <Fade in={true} timeout={600}>
+          <Box sx={{ marginTop: 4 }}>
 
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="h6" fontWeight="bold" sx={{ marginBottom: "10px" }}>
-                    Account Details:
-                  </Typography>
-                  <Typography variant="body1"><strong>Account Number:</strong> {policyData.account.accountId}</Typography>
-                  <Typography variant="body1"><strong>Account Holder:</strong> {policyData.account.accountHolderName}</Typography>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+            {/* POLICY INFORMATION */}
+<Card className="policy-card">
 
-          {/* Billing & Payment Details */}
-          <Card sx={{ marginBottom: "20px", boxShadow: 3 }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold" sx={{ marginBottom: "10px" }}>
-                Billing & Payment Details
-              </Typography>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="body1"><strong>Total Premium:</strong> ₹{policyData.policy.totalPremium}</Typography>
-                  <Typography variant="body1"><strong>Taxes:</strong> ₹{policyData.policy.taxes}</Typography>
-                  <Typography variant="body1"><strong>Total Cost:</strong> ₹{policyData.policy.totalCost}</Typography>
-                </Grid>
+  {/* Header */}
+  <div className="card-header policy-info-header">
+    <Description sx={{ color: "white" }} />
+    <Typography variant="h6" className="card-header-title">
+      Policy Information
+    </Typography>
+  </div>
 
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="body1"><strong>Payment Schedule:</strong> {policyData.policy.paymentSchedule}</Typography>
-                  <Typography variant="body1"><strong>Billing Method:</strong> {policyData.policy.billingMethod}</Typography>
-                  <Typography variant="body1"><strong>Payment Ref No:</strong> {policyData.policy.paymentRef}</Typography>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+  <CardContent>
 
-          {/* Coverages */}
-          <Card sx={{ marginBottom: "20px", boxShadow: 3 }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold" sx={{ marginBottom: "10px" }}>
-                Coverages
-              </Typography>
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  {policyData.policy.coverages && policyData.policy.coverages.length > 0 ? (
-                    policyData.policy.coverages.map((coverage, index) => (
-                      <Typography variant="body1" key={index}><strong>{coverage}</strong></Typography>
+    {/* Two-column layout with more spacing */}
+    <Grid 
+      container 
+      spacing={4} 
+      alignItems="flex-start"
+    >
+
+      {/* LEFT COLUMN */}
+      <Grid item xs={12} md={6}>
+        <div className="policy-row">
+          <span className="policy-key">Policy Number</span>
+          <span className="policy-value highlight">
+            {policyData.policy.policyNumber}
+          </span>
+        </div>
+
+        <div className="policy-row">
+          <span className="policy-key">Policy Type</span>
+          <span className="policy-value">{policyData.policy.productType}</span>
+        </div>
+
+        <div className="policy-row">
+          <span className="policy-key">Effective Date</span>
+          <span className="policy-value">
+            {new Date(policyData.policy.effectiveDate).toLocaleDateString()}
+          </span>
+        </div>
+
+        <div className="policy-row">
+          <span className="policy-key">Expiry Date</span>
+          <span className="policy-value">
+            {new Date(policyData.policy.expiryDate).toLocaleDateString()}
+          </span>
+        </div>
+      </Grid>
+
+      {/* RIGHT COLUMN — aligned to the extreme right */}
+      <Grid 
+        item 
+        xs={12} 
+        md={6}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",   // keeps rows left-aligned
+          paddingLeft: { md: "40px" } // pushes away from column 1
+        }}
+      >
+
+        <div className="policy-row">
+          <span className="policy-key">Status</span>
+          <Chip
+            label={policyData.policy.status}
+            color={policyData.policy.status === "Active" ? "success" : "warning"}
+            className="status-chip"
+          />
+        </div>
+
+        <div className="policy-row">
+          <span className="policy-key">Account Number</span>
+          <span className="policy-value">{policyData.account.accountId}</span>
+        </div>
+
+        <div className="policy-row">
+          <span className="policy-key">Account Holder</span>
+          <span className="policy-value">{policyData.account.accountHolderName}</span>
+        </div>
+
+      </Grid>
+
+    </Grid>
+  </CardContent>
+</Card>
+
+
+            {/* BILLING & PAYMENT */}
+<Card className="policy-card">
+
+  {/* Header */}
+  <div className="card-header payment-header">
+    <Payment sx={{ color: "white" }} />
+    <Typography variant="h6" className="card-header-title">
+      Billing & Payment Details
+    </Typography>
+  </div>
+
+  <CardContent>
+
+    {/* Two-column layout with added spacing */}
+    <Grid 
+      container 
+      spacing={4}
+      alignItems="flex-start"
+    >
+
+      {/* LEFT COLUMN */}
+      <Grid item xs={12} md={6}>
+        <div className="policy-row">
+          <span className="policy-key">Total Premium</span>
+          <span className="policy-value highlight-2">
+            ₹{policyData.policy.totalPremium}
+          </span>
+        </div>
+
+        <div className="policy-row">
+          <span className="policy-key">Taxes</span>
+          <span className="policy-value">
+            ₹{policyData.policy.taxes}
+          </span>
+        </div>
+
+        <div className="policy-row">
+          <span className="policy-key">Total Cost</span>
+          <span className="policy-value highlight-3">
+            ₹{policyData.policy.totalCost}
+          </span>
+        </div>
+      </Grid>
+
+      {/* RIGHT COLUMN — spaced right */}
+      <Grid 
+        item 
+        xs={12} 
+        md={6}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          paddingLeft: { md: "40px" } 
+        }}
+      >
+
+        <div className="policy-row">
+          <span className="policy-key">Payment Schedule</span>
+          <Chip label={policyData.policy.paymentSchedule} color="info" />
+        </div>
+
+        <div className="policy-row">
+          <span className="policy-key">Billing Method</span>
+          <span className="policy-value">
+            {policyData.policy.billingMethod}
+          </span>
+        </div>
+
+        <div className="policy-row">
+          <span className="policy-key">Payment Ref No</span>
+          <span className="policy-value">
+            {policyData.policy.paymentRef}
+          </span>
+        </div>
+
+      </Grid>
+
+    </Grid>
+  </CardContent>
+</Card>
+
+
+            {/* COVERAGES */}
+            <Card className="policy-card">
+              <div className="card-header coverage-header">
+                <Shield sx={{ color: "white" }} />
+                <Typography variant="h6" className="card-header-title">
+                  Coverages
+                </Typography>
+              </div>
+
+              <CardContent>
+                <Box className="coverage-chip-container">
+                  {policyData.policy.coverages?.length > 0 ? (
+                    policyData.policy.coverages.map((c, i) => (
+                      <Chip key={i} label={c} variant="outlined" color="primary" />
                     ))
                   ) : (
-                    <Typography variant="body1">No coverages available</Typography>
+                    <Typography>No coverages available</Typography>
                   )}
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+                </Box>
+              </CardContent>
+            </Card>
 
-          {/* Optional: Button to search for another policy */}
-          <Box sx={{ textAlign: "center", marginTop: "30px" }}>
-            <Button variant="contained" onClick={() => window.location.reload()} color="primary">
-              Search Another Policy
-            </Button>
+            {/* SEARCH AGAIN */}
+            <Box className="search-action">
+              <Button variant="contained" onClick={() => window.location.reload()}>
+                Search Another Policy
+              </Button>
+            </Box>
+
           </Box>
-        </Box>
+        </Fade>
       )}
     </Box>
   );

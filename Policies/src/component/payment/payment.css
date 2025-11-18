@@ -1,0 +1,16 @@
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-size: 15px;
+  border-bottom: 1px dashed #dcdcdc;
+}
+
+.summary-row span {
+  color: #555;
+}
+
+.summary-row strong {
+  color: #111;
+  font-weight: 600;
+}

@@ -90,7 +90,7 @@ export default function Driver() {
 };
 
   return (
-    <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
+    <Box sx={{ maxWidth: 1200, mx: "auto", mt: 4 }}>
       <InfoBar
         accountNumber={state?.accountNumber || "-"}
         product={state?.productName || "-"}
@@ -320,7 +320,7 @@ export default function Driver() {
                   <MenuItem value="5 or more">5 or more</MenuItem>
                 </TextField>
               </Grid>
-                  <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6}>
                     <Typography sx={{ mt: 1 }}>Driving violations</Typography>
                     <RadioGroup row defaultValue="no">
                       <FormControlLabel value="yes" control={<Radio />} label="Yes" />

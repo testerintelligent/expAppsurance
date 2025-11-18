@@ -1,0 +1,148 @@
+/* WRAPPER */
+.policy-search-wrapper {
+  padding: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: "Inter", sans-serif;
+}
+
+/* HEADER */
+.policy-search-header {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #1e293b;
+  background: linear-gradient(90deg, #6366f1, #ec4899);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* SEARCH BAR */
+.search-input-box {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 14px;
+  border-radius: 50px;
+  box-shadow: 0 5px 20px rgba(100, 116, 139, 0.2);
+}
+
+.search-input-field {
+  flex: 1;
+  padding: 10px 16px;
+  background: #f1f5f9;
+  border-radius: 40px;
+}
+
+.search-button {
+  background: linear-gradient(90deg, #6366f1, #ec4899);
+  padding: 12px;
+  border-radius: 50px;
+}
+
+/* CARDS */
+.policy-card {
+  margin-top: 25px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* CARD HEADER */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 20px;
+  color: #fff;
+}
+
+.policy-info-header {
+  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+}
+
+.payment-header {
+  background: linear-gradient(90deg, #8b5cf6, #d946ef);
+}
+
+.coverage-header {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.card-header-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+/* ROWS */
+.policy-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  gap: 16px; 
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.policy-row span {
+  margin-right: 10px;
+}
+
+
+.policy-row:last-child {
+  border-bottom: none;
+}
+
+.policy-key {
+  color: #64748b;
+  font-size: 0.95rem;
+  min-width: 140px;
+  display: inline-block;
+}
+
+.policy-value {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* HIGHLIGHTS */
+.highlight {
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.highlight-2 {
+  color: #8b5cf6;
+  font-weight: 700;
+}
+
+.highlight-3 {
+  color: #059669;
+  font-weight: 700;
+}
+
+/* COVERAGES */
+.coverage-chip-container {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ACTION BUTTONS */
+.policy-action-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  justify-content: flex-end;
+}
+
+/* SEARCH AGAIN */
+.search-action {
+  text-align: center;
+  margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+  .policy-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

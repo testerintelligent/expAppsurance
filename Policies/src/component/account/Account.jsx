@@ -59,11 +59,12 @@ export default function Account() {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ width: "100%", maxWidth: 1200, mx: "auto", mt: 2 }}>
       {/* Search Form only if not navigated from Contact */}
       {!location.state?.contact && (
         <Paper sx={{ p: 3, mb: 3 }}>
-          <Typography variant="h6">Search Account</Typography>
+          <Typography variant="h6"
+           sx={{ fontWeight: "bold", fontSize: 16 }}>Search Account</Typography>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
