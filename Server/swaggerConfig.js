@@ -16,7 +16,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:5000/api',
+        url: 'http://10.192.190.158/:5000/api',
         description: 'Local server',
       },
     ],
