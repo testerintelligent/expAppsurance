@@ -1,13 +1,13 @@
 services:
-  contactcentre:
-    build:
-      context: ./ContactCustomer
-      dockerfile: Dockerfile.contact
-    container_name: contactcentre
-    ports:
-      - "3000:3000"
-    depends_on:
-      - server
+  #contactcentre:
+  #  build:
+  #    context: ./ContactCustomer
+  #    dockerfile: Dockerfile.contact
+  #  container_name: contactcentre
+  #  ports:
+  #    - "3000:3000"
+  #  depends_on:
+  #    - server
 
   policiescentre:
     build:
@@ -19,15 +19,15 @@ services:
     depends_on:
       - server
 
-  # claimscentre:
-  #   build:
-  #     context: ./Claims
-  #     dockerfile: Dockerfile.claim
-  #   container_name: claimscentre
-  #   ports:
-  #     - "3003:3003"
-  #   depends_on:
-  #     - server
+  claimscentre:
+    build:
+      context: ./Claims
+      dockerfile: Dockerfile.claim
+    container_name: claimscentre
+    ports:
+      - "3003:3003"
+    depends_on:
+      - server
 
   # billingcentre:
   #   build:
