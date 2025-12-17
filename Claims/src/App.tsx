@@ -1,41 +1,100 @@
-import {BrowserRouter as Router,Routes,Route} from "react-router-dom"
-import Login from "./pages/LoginPage.tsx";
-import React from 'react';
-import NewClaim from "./pages/NewClaimPage.tsx";
-import Dashboard from "./pages/DashboardPage.tsx";
-import ClaimStatus from "./pages/ClaimStatusPage.tsx";
-import ClaimHistory from "./pages/ClaimHistoryPage.tsx";
-// import { useState,useEffect } from "react";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
+import Sidebar from "./layout/sidebar";
+import Navbar from "./components/navbar/navbar";
+import "./App.css";
 
+import PolicySearchforClaim from "./pages/PolicySearch";
+import CreateClaim from "./pages/CreateClaim";
+import ClaimBasicInfo from "./pages/ClaimBasicInfo";
+import AddClaimInformation from "./pages/AddClaimInformation";
+import Services from "./pages/Services";
+import ClaimSummary from "./pages/ClaimSummary";
+import ClaimsList from "./pages/ClaimsList";
+import ReviewClaim from "./pages/ReviewClaim";
+import ClaimSuccess from "./pages/ClaimSuccess";
 
-
-const App=()=> {
-
-  // const [claims, setClaims] = useState([]);
-
-  // useEffect(() => {
-  //   // Static claim data for now
- 
-
-  //    setClaims(staticClaimsData); // Set static data to state
-  // }, []);
-
+const App = () => {
   return (
-    <>
-    <Router>
-    <Routes>
-      <Route path="/" element={<Login/>}></Route>
-      <Route path="/newClaim" element={<NewClaim/>}></Route>
-      <Route path="/dashboard" element={<Dashboard/>}></Route>
-      <Route path="/claimStatus" element={<ClaimStatus/>}></Route>
-      <Route path="/claimHistory" element={<ClaimHistory/>}></Route>
-   {/* <Route path="/Claim" element={<HamburgerMenu claim={claims}/>}></Route> */}
-    </Routes>
-    </Router>
+    <div className="App">
+      <Router>
+        <div className="flex flex-col h-full">
+          <Navbar />
 
-    </>
+          <div className="flex flex-1">
+            <Sidebar />
+
+            <main className="flex-1 bg-gray-50 p-2">
+              <Routes>
+                {/* ===============================
+                    FNOL FLOW
+                   =============================== */}
+
+                {/* 1️⃣ Policy Search */}
+                <Route
+                  path="/Claim"
+                  element={<PolicySearchforClaim />}
+                />
+
+                {/* 2️⃣ Create Claim (Loss Date + Claim Type) */}
+                <Route
+                  path="/Claim/CreateClaim"
+                  element={<CreateClaim />}
+                />
+
+                {/* 3️⃣ Basic Information */}
+                <Route
+                  path="/Claim/basicinfo"
+                  element={<ClaimBasicInfo />}
+                />
+
+                {/* 4️⃣ Loss & Claim Details */}
+                <Route
+                  path="/Claim/addClaimInfo"
+                  element={<AddClaimInformation />}
+                />
+
+                {/* 5️⃣ Review Claim */}
+                <Route
+                  path="/Claim/review"
+                  element={<ReviewClaim />}
+                />
+
+                 {/* 5️⃣ ClaimSuccess */}
+                <Route
+                  path="/Claim/success"
+                  element={<ClaimSuccess />}
+                />
+
+                {/* 6️⃣ Claim Summary */}
+                <Route
+                  path="/Claim/summary/:id"
+                  element={<ClaimSummary />}
+                />
+
+                {/* ===============================
+                    CLAIM LIST
+                   =============================== */}
+                <Route
+                  path="/claims"
+                  element={<ClaimsList />}
+                />
+
+                {/* ===============================
+                    FALLBACK / LEGACY
+                   =============================== */}
+                <Route
+                  path="/claims/create"
+                  element={<CreateClaim />}
+                />
+              </Routes>
+            </main>
+          </div>
+        </div>
+      </Router>
+    </div>
   );
-}
+};
 
 export default App;
