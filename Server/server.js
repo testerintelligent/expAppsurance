@@ -12,6 +12,7 @@ const driverRoutes = require("./Routes/DriverRoute");
 const vehicleRoutes = require("./Routes/VehicleRoute");
 const quoteRoutes = require("./Routes/QuoteRoute");
 const policyRoutes = require("./Routes/PolicyRoute");
+const claimRoutes = require("./Routes/ClaimRoute");
 
 // Load environment variables from .env
 dotenv.config();
@@ -33,6 +34,7 @@ app.use("/api/drivers", driverRoutes);
 app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/quotes", quoteRoutes);
 app.use("/api/policies", policyRoutes);
+app.use("/api/claims", claimRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {

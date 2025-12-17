@@ -130,30 +130,65 @@ exports.getPoliciesForDashboard = async (req, res) => {
 };
 
 exports.getPolicyByNumber = async (req, res) => {
-  const { policyNumber } = req.params; 
+  const { policyNumber } = req.params;
+
+  const policy = await Policy.findOne({ policyNumber })
+    .populate('accountId')
+    .populate('contactId');
+
+  if (!policy) {
+    return res.status(404).json({ message: 'Policy not found' });
+  }
+
+  const vehicles = await Vehicle.find({
+    submissionId: policy.submissionId,
+  });
+
+  const drivers = await Driver.find({
+    submissionId: policy.submissionId,
+  });
+
+  res.json({
+    policy,
+    contact: policy.contactId,
+    account: policy.accountId,
+    vehicle: vehicles,
+    driver: drivers,
+  });
+};
+
+
+///API's for Claim Module
+ 
+exports.getAllPoliciesWithContactAndAddress = async (req, res) => {
   try {
-
-    const policy = await Policy.findOne({ policyNumber })
+    const policies = await Policy.find()
       .populate("accountId")
-      .populate("contactId") 
-      .populate("driverId")   
-      .populate("vehicleId"); 
+      .populate("contactId")
+      .populate("driverId")
+      .populate("vehicleId")
+      .exec();
 
-    if (!policy) {
-      return res.status(404).json({ message: "Policy not found" });
-    }
+    const payload = policies.map((p) => ({
+      _id: p._id,
+      policyNumber: p.policyNumber,
+      policyId: p.policyId,
+      productType: p.productType,
+      effectiveDate: p.effectiveDate,
+      expiryDate: p.expiryDate,
+      totalPremium: p.totalPremium,
+      totalCost: p.totalCost,
+      status: p.status,
+      account: p.accountId || null,
+      contact: p.contactId || null,
+      driver: p.driverId || null,
+      vehicle: p.vehicleId || null,
+    }));
 
-    console.log("Fetched Policy:", policy);
-     
-    res.json({
-      policy,
-      contact: policy.contactId,
-      account: policy.accountId,
-      driver: policy.driverId,
-      vehicle: policy.vehicleId,
-    });
+    res.status(200).json({ message: "Policies fetched for claim search", data: payload });
   } catch (err) {
-    console.error("Error fetching policy details:", err);
-    res.status(500).json({ message: "Server error while fetching policy details" });
+    console.error("Error fetching policies for claim search:", err);
+    res.status(500).json({ message: "Server error fetching policies", error: err.message });
   }
 };
+
