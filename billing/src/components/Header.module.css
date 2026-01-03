@@ -1,0 +1,16 @@
+.title {
+  margin-right: 20px !important;
+  color: black;
+}
+
+.navButton {
+  text-transform: none;
+  color: black !important;
+  padding: 6px 16px;
+  background: transparent;
+}
+
+.navButton:hover {
+  background-color: rgba(19, 31, 211, 0.781);
+  color: white !important;
+}

@@ -32,7 +32,8 @@ app.use("/api/submissions", submissionRoutes);
 app.use("/api/drivers", driverRoutes);
 app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/quotes", quoteRoutes);
-app.use("/api/policies", policyRoutes);
+app.use("/api/policies", policyRoutes); 
+
 
 // Root endpoint
 app.get('/', (req, res) => {
