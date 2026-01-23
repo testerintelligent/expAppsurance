@@ -1,9 +1,13 @@
 console.log('ClaimRoute loaded');
 const express = require('express');
 const router = express.Router();
-const createClaim  = require('../Controller/ClaimController');
-
-// The POST method maps to the creation function
-router.post('/create', createClaim.createClaim);
-
+const claimController = require('../Controller/ClaimController');
+ 
+router.post('/create', claimController.createClaim);
+ 
+router.get('/list', claimController.getClaimsList);
+ 
+// GET /api/claims/search/:claimNumber
+router.get('/search/:claimNumber', claimController.getClaimByNumber);
+ 
 module.exports = router;
