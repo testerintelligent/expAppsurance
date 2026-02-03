@@ -14,10 +14,10 @@ pipeline {
         stage('Build and Run Containers') {
             steps {
                 script {
-                    sh """
-                     echo "P@ssw0rd" | sudo -S docker-compose down
-                     sudo docker-compose up --build -d
-                    """
+                    sh '''
+                        echo "P@ssw0rd" | sudo -S docker-compose down
+                        docker-compose up --build -d
+                    '''
                 }
             }
         }
