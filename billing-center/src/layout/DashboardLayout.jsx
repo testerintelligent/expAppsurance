@@ -38,7 +38,7 @@ const DashboardLayout = () => {
       <Navbar />
 
       <div className="flex flex-1 flex-col md:flex-row overflow-hidden">
-        <aside className="w-full md:w-64 bg-slate-500 text-white">
+        <aside className="w-full md:w-64 bg-slate-100 border-r-grey-200">
           <Sidebar />
         </aside>
 

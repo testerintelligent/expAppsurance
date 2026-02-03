@@ -3,11 +3,11 @@ import { NavLink } from "react-router-dom";
 const Sidebar = () => {
   const linkClass = ({ isActive }) =>
     `px-3 py-2 rounded transition ${
-      isActive ? "bg-slate-600" : "hover:bg-slate-700"
+      isActive ? "bg-blue-500 text-white font-medium" : "text-gray-700"
     }`;
 
   return (
-    <div className="p-4 flex flex-row md:flex-col gap-2">
+    <div className="flex flex-row md:flex-col gap-2 w-60 bg-white border-r-8 h-full  overflow-auto pb-2 pt-2">
       <NavLink to="/" end className={linkClass}>
         Dashboard
       </NavLink>
