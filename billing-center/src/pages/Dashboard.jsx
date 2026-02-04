@@ -14,6 +14,7 @@ import {
   InputLabel,
   Grid,
   Divider,
+  Table,
   TableHead,
   TableRow,
   TableCell,
@@ -25,31 +26,28 @@ import { RestartAltOutlined } from "@mui/icons-material";
 const Dashboard = () => {
   const [policyNumber, setPolicyNumber] = useState("");
   const [policyData, setPolicyData] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleSearch = async ({ policyNumber }) => {
-    // if (!policyNumber) {
-    //   alert("Please enter a Policy Number");
-    //   return;
-    // }
+  const handleSearch = async () => {
+    if (!policyNumber) {
+      alert("Please enter a Policy Number");
+      return;
+    }
 
-    // setLoading(true);
-    // setError(null);
+    setError(null);
 
     try {
       const result = await searchPolicy(policyNumber);
-      console.log("reusltPolicy", result.data); // now accountId is used
-      setPolicyData(result.data);
-      setLoading(false);
+      console.log("reusltPolicy", result); // now accountId is used
+      setPolicyData(result);
     } catch (err) {
       setError("Failed to fetch policy details");
-      setLoading(false);
     }
   };
 
   const handleChange = (e) => {
-    setPolicyNumber(e.target.value);
+    const { value } = e.target;
+    setPolicyNumber(value.trim());
   };
 
   return (
@@ -84,35 +82,50 @@ const Dashboard = () => {
         </Grid>
       </Paper>
 
-      {loading && (
-        <Box sx={{ textAlign: "center", marginTop: "20px" }}>
-          <CircularProgress thickness={4} />
-        </Box>
-      )}
-
-      {error && (
-        <Typography
-          color="error"
-          sx={{ marginTop: "20px", textAlign: "center" }}
-        >
-          {error}
-        </Typography>
-      )}
-      {policyData && (
-        <Paper sx={{ width: "100%", maxWidth: 1200, mx: "auto", mt: 2 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </Paper>
+      {policyData?.account && policyData?.policy && (
+        <div>
+          <Typography variant="h6" sx={{ fontWeight: "bold", fontSize: 16 }}>
+            Policy Details
+          </Typography>
+          <Paper sx={{ width: "100%", maxWidth: 1200, mx: "auto", mt: 2 }}>
+            <Table>
+              <TableHead>
+                <TableRow
+                  sx={{
+                    "& th": {
+                      fontWeight: "bold",
+                    },
+                  }}
+                >
+                  <TableCell>Customer Name</TableCell>
+                  <TableCell>Policy Id</TableCell>
+                  <TableCell>Policy Number</TableCell>
+                  <TableCell>Product Type</TableCell>
+                  <TableCell>Total Premium</TableCell>
+                  <TableCell>Account Status</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell>
+                    {policyData?.account?.accountHolderName ?? "-"}
+                  </TableCell>
+                  <TableCell>{policyData?.policy?.policyId ?? "-"}</TableCell>
+                  <TableCell>
+                    {policyData?.policy?.policyNumber ?? "-"}
+                  </TableCell>
+                  <TableCell>
+                    {policyData?.policy?.productType ?? "-"}
+                  </TableCell>
+                  <TableCell>
+                    {policyData?.policy?.totalPremium ?? "-"}
+                  </TableCell>
+                  <TableCell>{policyData?.account?.status ?? "-"}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </Paper>
+        </div>
       )}
     </Box>
   );
