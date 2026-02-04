@@ -90,7 +90,13 @@ const Dashboard = () => {
           <Paper sx={{ width: "100%", maxWidth: 1200, mx: "auto", mt: 2 }}>
             <Table>
               <TableHead>
-                <TableRow>
+                <TableRow
+                  sx={{
+                    "& th": {
+                      fontWeight: "bold",
+                    },
+                  }}
+                >
                   <TableCell>Customer Name</TableCell>
                   <TableCell>Policy Id</TableCell>
                   <TableCell>Policy Number</TableCell>
