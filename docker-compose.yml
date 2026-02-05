@@ -18,6 +18,7 @@ services:
       - "3001:3001"
     depends_on:
       - server
+    restart: unless-stopped
 
   claimscentre:
     build:
@@ -28,16 +29,18 @@ services:
       - "3003:3003"
     depends_on:
       - server
+    restart: unless-stopped
 
-  # billingcentre:
-  #   build:
-  #     context: ./billing
-  #     dockerfile: Dockerfile.billing
-  #   container_name: billingcentre
-  #   ports:
-  #     - "3002:3002"
-  #   depends_on:
-  #     - server
+  billingcentre:
+    build:
+      context: ./billing-center
+      dockerfile: Dockerfile.billing
+    container_name: billingcentre
+    ports:
+      - "3002:80"
+    depends_on:
+      - server
+    restart: unless-stopped
 
   server:
     build:
@@ -47,9 +50,10 @@ services:
     ports:
       - "5000:5000"
     environment:
-      MONGO_URI: mongodb://10.192.190.158:27017/registeredUser
+      MONGO_URI: mongodb://mongo:27017/registeredUser
     depends_on:
       - mongo
+    restart: unless-stopped
 
   mongo:
     image: mongo:latest
@@ -58,6 +62,7 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    restart: unless-stopped
 
 volumes:
   mongo_data:
