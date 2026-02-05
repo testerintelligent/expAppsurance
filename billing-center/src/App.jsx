@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DashboardLayout from "./layout/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
+import PolicyDashboard from "./pages/policy";
 import Users from "./pages/Users";
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="/" element={<Dashboard />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/policy" element={<PolicyDashboard />} />
         </Route>
       </Routes>
     </BrowserRouter>

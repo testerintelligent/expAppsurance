@@ -11,6 +11,9 @@ const Sidebar = () => {
       <NavLink to="/" end className={linkClass}>
         Dashboard
       </NavLink>
+      <NavLink to="/policy" className={linkClass}>
+        Policy
+      </NavLink>
 
       <NavLink to="/users" className={linkClass}>
         Users
