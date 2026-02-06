@@ -5,6 +5,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 
 const navItems = [
+  // { label: "Dashboard", path: "/" },
   { label: "Activities", path: "/activities" },
   { label: "Claims", path: "/claims" },
   { label: "Create Claim", path: "/claims/create" },
