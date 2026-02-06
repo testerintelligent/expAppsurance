@@ -13,6 +13,8 @@ const navItems = [
 ];
 
 const Sidebar = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
   return (
     <aside className="w-60 bg-white border-r-8 h-full flex flex-col overflow-auto color-">
       <div className="overflow-auto mt-2">
@@ -24,17 +26,27 @@ const Sidebar = () => {
               className={({ isActive }) =>
                 `block ${
                   isActive
-                    ? "bg-blue-500 text-white font-medium"
+                    ? "bg-blue-500 text-white font-medium p-1 rounded"
                     : "text-gray-700"
                 }`
               }
             >
-              <ListItemButton dense>
+              <ListItemButton
+                dense
+                key={item.id}
+                selected={selectedIndex === index}
+                onClick={() => setSelectedIndex(index)}
+              >
                 <ListItemText
                   className="ml-6"
                   primary={item.label}
                   primaryTypographyProps={{
                     style: { fontSize: "0.85rem" },
+                  }}
+                  sx={{
+                    "& .MuiListItemText-primary": {
+                      fontWeight: selectedIndex === index ? "bold" : "normal",
+                    },
                   }}
                 />
               </ListItemButton>
