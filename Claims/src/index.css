@@ -4,8 +4,11 @@
 
 
 body {
-    @apply bg-gray-900 text-white font-serif;
+    @apply bg-gray-900 text-white;
   }
 
+  .pageFontSize{
+    font-size: 0.7rem;
+  }
 
 

@@ -5,3 +5,11 @@
 .pageFontSize{
   font-size: 0.7rem;
 }
+
+.active {
+  background-color: #e0e0e0; /* your desired color */
+  color: #000;
+  padding: 8px;
+  border-radius: 4px;
+  text-decoration: "none"
+}

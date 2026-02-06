@@ -5,12 +5,8 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 
 const navItems = [
-  // { label: "Dashboard", path: "/" },
-  { label: "Activities", path: "/activities" },
-  { label: "Claims", path: "/claims" },
-  { label: "Create Claim", path: "/claims/create" },
-  { label: "Exposures", path: "/exposures" },
-  { label: "Queues", path: "/queues" },
+  { label: "Dashboard", path: "/" },
+  { label: "Users", path: "/users" },
 ];
 
 const Sidebar = () => {
@@ -19,7 +15,7 @@ const Sidebar = () => {
   return (
     <aside className="w-60 bg-white border-r-8 h-full flex flex-col overflow-auto color-">
       <div className="overflow-auto mt-2">
-        <List disablePadding className="text-sm 600">
+        <List disablePadding className="text-sm 600 ">
           {navItems.map((item, index) => (
             <NavLink
               key={index}

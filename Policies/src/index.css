@@ -17,3 +17,8 @@ html, body, #root {
   line-height: 1rem;
   padding: 0.25rem 0.6rem;
 }
+
+
+.pageFontSize{
+  font-size: 0.7rem ;
+}
