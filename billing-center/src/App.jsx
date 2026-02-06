@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DashboardLayout from "./layout/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
-import PolicyDashboard from "./pages/policy";
+import PolicyDashboard from "./pages/Policy";
 import Users from "./pages/Users";
 
 function App() {

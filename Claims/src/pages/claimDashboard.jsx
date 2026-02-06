@@ -1,0 +1,288 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TablePagination,
+} from "@mui/material";
+import { FaEye } from "react-icons/fa";
+
+const ClaimDashboard = () => {
+
+  const navigate = useNavigate();
+
+  const [claimData, setClaimData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortedColumn, setSortedColumn] = useState("CurrentDate");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [summary, setSummary] = useState(null);
+
+    useEffect(() => {
+        const fetchClaims= async () => {
+          try {
+            const response = await axios.get("http://10.192.190.158:5000/api/claims/list");
+            console.log("response", response);
+            setClaimData(response.data.claims);
+            setFilteredData(response.data.claims);
+          } catch (error) {
+            console.error("Error fetching policies:", error);
+          }
+        };
+        fetchClaims();
+    }, [])
+
+    // Compute summary counts when policies are fetched/updated
+  useEffect(() => {
+    if (!claimData || claimData.length === 0) {
+      setSummary(null);
+      return;
+    }
+
+    const totals = { totalPolicies: claimData.length };
+
+    // normalize status keys and compute counts
+    const byStatus = claimData.reduce((acc, p) => {
+      const s = (p.status || "").toString();
+      acc[s] = (acc[s] || 0) + 1;
+      return acc;
+    }, {});
+
+    totals["In Force"] = byStatus["In Force"] || byStatus["InForce"] || 0;
+    totals.underReview = byStatus["Under Review"] || byStatus["UnderReview"] || byStatus["underReview"] || 0;
+    totals.cancelled = byStatus["Cancelled"] || byStatus["cancelled"] || 0;
+
+    setSummary(totals);
+  }, [claimData]);
+
+    const generateRandomNumber = () =>
+      Math.floor(100000 + Math.random() * 900000);
+  
+    const sortData = (column) => {
+      const order = sortOrder === "asc" ? 1 : -1;
+      const sorted = [...filteredData].sort((a, b) => {
+        const valA = a[column];
+        const valB = b[column];
+        if (typeof valA === "string" && typeof valB === "string") {
+          return valA.localeCompare(valB) * order;
+        } else if (typeof valA === "number" && typeof valB === "number") {
+          return (valA - valB) * order;
+        } else {
+          return (new Date(valA) - new Date(valB)) * order;
+        }
+      });
+      setFilteredData(sorted);
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+      setSortedColumn(column);
+    };
+
+
+    // Table Column Config
+  const columns = useMemo(
+    () => [
+      { key: "claimNumber", label: "Claim Number" },
+      { key: "claimType", label: "claim Type" },
+      { key: "name", label: "Name" }, 
+      { key: "address", label: "Address" },
+      { key: "lossDate", label: "Loss Date" },
+      { key: "dateOfNotice", label: "Date Of Notice" },
+      { key: "createdAt", label: "Created At" },
+      { key: "policyNumber", label: "Policy Number" },
+      { key: "status", label: "Status" },
+      
+    ],
+    []
+  );
+
+   // Utility Functions
+   const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return isNaN(date.getTime())
+      ? "Invalid Date"
+      : `${String(date.getDate()).padStart(2, "0")}/${String(
+          date.getMonth() + 1
+        ).padStart(2, "0")}/${date.getFullYear()}`;
+  };
+  
+  return (
+    <div>
+      {/* ✅ Summary Cards */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: "24px",
+          marginBottom: "32px",
+        }}
+      >
+        {[ 
+          {
+            label: "Total Policies",
+            value: summary?.totalPolicies || 0,
+            bg: "linear-gradient(135deg, #34495e 60%, #2c3e50 100%)",
+            icon: "📄",
+          },
+          {
+            label: "In Force",
+            value: summary?.["In Force"] || 0,
+            bg: "linear-gradient(135deg, #27ae60 60%, #219150 100%)",
+            icon: "✅",
+          },
+          {
+            label: "Under Review",
+            value: summary?.underReview || 0,
+            bg: "linear-gradient(135deg, #f39c12 60%, #e67e22 100%)",
+            icon: "🕵️‍♂️",
+          },
+          {
+            label: "Cancelled",
+            value: summary?.cancelled || 0,
+            bg: "linear-gradient(135deg, #e74c3c 60%, #c0392b 100%)",
+            icon: "❌",
+          },
+        ].map(({ label, value, bg, icon }, idx) => (
+          <Paper
+            key={idx}
+            elevation={4}
+            style={{
+              padding: "28px 20px",
+              borderRadius: "18px",
+              background: bg,
+              color: "white",
+              textAlign: "center",
+              boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
+            }}
+          >
+            <span style={{ fontSize: "2.2rem" }}>{icon}</span>
+            <div style={{ fontWeight: "bold", fontSize: "1.1rem" }}>{label}</div>
+            <div style={{ fontSize: "2.1rem", fontWeight: "bold" }}>{value}</div>
+          </Paper>
+        ))}
+      </div>
+    {/* ✅ Data Table */}
+    {filteredData.length > 0 ? (
+      <TableContainer component={Paper} elevation={3} style={{ borderRadius: "8px" }}>
+        <Table>
+          <TableHead>
+            <TableRow style={{ backgroundColor: "black" }}>
+              {columns.map((col) => (
+                <TableCell
+                  key={col.key}
+                  style={{
+                    color: "white",
+                    backgroundColor: "black",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    padding: "12px",
+                    textAlign: "center",
+                  }}
+                  onClick={() => sortData(col.key)}
+                >
+                  {col.label}{" "}
+                  {sortedColumn === col.key && (sortOrder === "asc" ? "↑" : "↓")}
+                </TableCell>
+              ))}
+              <TableCell
+                style={{
+                  color: "white",
+                  backgroundColor: "black",
+                  fontWeight: "bold",
+                  padding: "12px",
+                  textAlign: "center",
+                }}
+              >
+                VIEW
+              </TableCell>
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            {filteredData
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((claim, index) => {
+                // const customer = contactData.find((c) => c._id === claim.customerId);
+                return (
+                  <TableRow
+                    key={claim._id || index}
+                    style={{
+                      backgroundColor: index % 2 === 0 ? "#ecf0f1" : "#ffffff",
+                    }}
+                  >
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {claim.claimNumber || "N/A"}
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {claim?.claimType || "N/A"}
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {claim.insured.name}
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {claim.insured.address}
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {formatDate(claim.lossDate)}
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {formatDate(claim.dateOfNotice)}
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {formatDate(claim.createdAt)}
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {claim.policyNumber                      }
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      {claim.status}
+                    </TableCell>
+                    <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                      <button
+                        // onClick={() => updatePolicy(insurance, "view")}
+                        style={{ textTransform: "none", borderRadius: "5px" }}
+                      >
+                        <FaEye size="25px" />
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+          </TableBody>
+        </Table>
+
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredData.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={(_, newPage) => setPage(newPage)}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10));
+            setPage(0);
+          }}
+          style={{ borderTop: "1px solid #ddd" }}
+        />
+      </TableContainer>
+    ) : (
+      <p style={{ textAlign: "center", color: "#7f8c8d", fontSize: "18px" }}>
+        No insurance data available
+      </p>
+    )}
+    </div>
+  )
+}
+
+export default ClaimDashboard

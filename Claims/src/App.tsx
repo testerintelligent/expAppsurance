@@ -9,11 +9,12 @@ import PolicySearchforClaim from "./pages/PolicySearch";
 import CreateClaim from "./pages/CreateClaim";
 import ClaimBasicInfo from "./pages/ClaimBasicInfo";
 import AddClaimInformation from "./pages/AddClaimInformation";
-import Services from "./pages/Services";
+// import Services from "./pages/Services";
 import ClaimSummary from "./pages/ClaimSummary";
 import ClaimsList from "./pages/ClaimsList";
 import ReviewClaim from "./pages/ReviewClaim";
 import ClaimSuccess from "./pages/ClaimSuccess";
+import ClaimDashboard from "./pages/claimDashboard";
 
 const App = () => {
   return (
@@ -25,12 +26,15 @@ const App = () => {
           <div className="flex flex-1">
             <Sidebar />
 
-            <main className="flex-1 bg-gray-50 p-2">
+            <main className="flex-1 bg-gray-50">
               <Routes>
                 {/* ===============================
                     FNOL FLOW
                    =============================== */}
-
+                  <Route
+                  path="/"
+                  element={<ClaimDashboard />}
+                />
                 {/* 1️⃣ Policy Search */}
                 <Route
                   path="/Claim"
