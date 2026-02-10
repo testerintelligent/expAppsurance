@@ -52,7 +52,8 @@ const createAccount = async (req, res) => {
     }
 
     // ✅ Step 2: Check if account already exists
-    let existingAccount = await Account.findOne({ customerId }).populate("customerId");
+    // populate customer and policies so frontend can immediately show policies
+    let existingAccount = await Account.findOne({ customerId }).populate("customerId").populate("policies");
     if (existingAccount) {
       return res.status(200).json(existingAccount); // return existing one instead of error
     }
@@ -67,7 +68,7 @@ const createAccount = async (req, res) => {
     const savedAccount = await newAccount.save();
 
     // ✅ Step 4: Populate contact details before sending
-    const populatedAccount = await Account.findById(savedAccount._id).populate("customerId");
+    const populatedAccount = await Account.findById(savedAccount._id).populate("customerId").populate("policies");
 
     res.status(201).json(populatedAccount);
   } catch (err) {
@@ -132,9 +133,10 @@ const getAccounts = async (req, res) => {
 
       const contacts = await Contact.find(contactFilter, "_id");
       const contactIds = contacts.map((c) => c._id);
-      accounts = await Account.find({ customerId: { $in: contactIds } }).populate("customerId");
+      // populate policies as well so UI can render policy rows
+      accounts = await Account.find({ customerId: { $in: contactIds } }).populate("customerId").populate("policies");
     } else {
-      accounts = await Account.find(filter).populate("customerId");
+      accounts = await Account.find(filter).populate("customerId").populate("policies");
     }
 
     if (!accounts || accounts.length === 0) {
@@ -177,7 +179,7 @@ const getAccountByContact = async (req, res) => {
     // ✅ Convert to ObjectId for accurate lookup
     const account = await Account.findOne({
       customerId: new mongoose.Types.ObjectId(contactId)
-    }).populate("customerId");
+    }).populate("customerId").populate("policies");
 
     if (!account) {
       return res.status(404).json({ message: "No account found for this contact" });
@@ -200,7 +202,9 @@ const updateAccount = async (req, res) => {
     ).populate("customerId");
 
     if (!updated) return res.status(404).json({ message: "Account not found" });
-    res.status(200).json(updated);
+    // ensure policies populated on update response
+    const populated = await Account.findById(updated._id).populate('customerId').populate('policies');
+    res.status(200).json(populated);
   } catch (err) {
     res.status(400).json({ message: "Error updating account", error: err.message });
   }
