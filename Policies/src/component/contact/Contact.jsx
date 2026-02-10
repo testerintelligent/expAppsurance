@@ -52,11 +52,66 @@ export default function Contact() {
     city: "",
     state: "",
     zipCode: "",
-    organization: "",
-    producerCode: "",
+    country: "", // new
+    organization: "Expleo",
+    producerCode: "EXP-INS-01",
   });
   const [searchResult, setSearchResult] = useState([]);
 
+
+  // --- Simple static location mapping for dependent dropdowns ---
+  const LOCATION_DATA = {
+    countries: [
+      { code: 'US', name: 'United States' },
+      { code: 'IN', name: 'India' },
+    ],
+    states: {
+      US: [ { code: 'CA', name: 'California' }, { code: 'NY', name: 'New York' } ],
+      IN: [ { code: 'TN', name: 'Tamil Nadu' }, { code: 'KR', name: 'Karnataka' } ],
+    },
+    cities: {
+      CA: [ 'Los Angeles', 'San Francisco' ],
+      NY: [ 'New York', 'Buffalo' ],
+      TN: [ 'Chennai', 'Coimbatore' ],
+      KR: [ 'Bengaluru', 'Mysuru' ],
+    },
+    zips: {
+      'Los Angeles': [ '90001', '90002' ],
+      'San Francisco': [ '94102', '94103' ],
+      'New York': [ '10001', '10002' ],
+      'Buffalo': [ '14201' ],
+      'Chennai': [ '600001', '600002' ],
+      'Coimbatore': [ '641001', '641002' ],
+      'Bengaluru': [ '560001', '560002' ],
+      'Mysuru': [ '570001', '570002' ],
+    }
+  };
+
+  const [countries] = useState(LOCATION_DATA.countries);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [zips, setZips] = useState([]);
+
+  const handleCountryChange = (e) => {
+    const country = e.target.value;
+    setFormData(prev => ({ ...prev, country, state: '', city: '', zipCode: '' }));
+    setStates(country ? (LOCATION_DATA.states[country] || []) : []);
+    setCities([]);
+    setZips([]);
+  };
+
+  const handleStateChange = (e) => {
+    const state = e.target.value;
+    setFormData(prev => ({ ...prev, state, city: '', zipCode: '' }));
+    setCities(state ? (LOCATION_DATA.cities[state] || []) : []);
+    setZips([]);
+  };
+
+  const handleCityChange = (e) => {
+    const city = e.target.value;
+    setFormData(prev => ({ ...prev, city, zipCode: '' }));
+    setZips(city ? (LOCATION_DATA.zips[city] || []) : []);
+  };
 
   const [page, setPage] = useState(0); // current page
   const [rowsPerPage, setRowsPerPage] = useState(5); // rows per page
@@ -134,8 +189,9 @@ export default function Contact() {
         city: "",
         state: "",
         zipCode: "",
-        organization: "",
-        producerCode: "",
+        country: "", 
+        organization: "Expleo",
+        producerCode: "EXP-INS-01",
       });
       navigate("/account", { state: { account } });
     } catch (err) {
@@ -635,7 +691,7 @@ export default function Contact() {
                 />
               </Grid>
 
-              {/* Row 5 */}
+              {/* Row 5: Street + Country */}
               <Grid size={6}>
                 <TextField
                   fullWidth
@@ -647,52 +703,103 @@ export default function Contact() {
               </Grid>
               <Grid size={6}>
                 <TextField
+                  select
+                  fullWidth
+                  label="Country"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleCountryChange}
+                >
+                  <MenuItem value="">Select Country</MenuItem>
+                  {countries.map((c) => (
+                    <MenuItem key={c.code} value={c.code}>
+                      {c.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+
+              {/* Row 6: City + State (dependent) */}
+              <Grid size={6}>
+                <TextField
+                  select
                   fullWidth
                   label="City"
                   name="city"
                   value={formData.city}
-                  onChange={handleChange}
-                />
+                  onChange={handleCityChange}
+                  disabled={!cities.length}
+                >
+                  <MenuItem value="">Select City</MenuItem>
+                  {cities.map((ct) => (
+                    <MenuItem key={ct} value={ct}>
+                      {ct}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
-
-              {/* Row 6 */}
               <Grid size={6}>
                 <TextField
+                  select
                   fullWidth
                   label="State"
                   name="state"
                   value={formData.state}
-                  onChange={handleChange}
-                />
+                  onChange={handleStateChange}
+                  disabled={!states.length}
+                >
+                  <MenuItem value="">Select State</MenuItem>
+                  {states.map((s) => (
+                    <MenuItem key={s.code} value={s.code}>
+                      {s.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
+
+              {/* Row 7: Zip Code + Organization */}
               <Grid size={6}>
                 <TextField
+                  select
                   fullWidth
                   label="Zip Code"
                   name="zipCode"
                   value={formData.zipCode}
                   onChange={handleChange}
-                />
+                  disabled={!zips.length}
+                >
+                  <MenuItem value="">Select Zip</MenuItem>
+                  {zips.map((z) => (
+                    <MenuItem key={z} value={z}>
+                      {z}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
-
-              {/* Row 7 */}
               <Grid size={6}>
                 <TextField
+                  select
                   fullWidth
                   label="Organization"
                   name="organization"
                   value={formData.organization}
                   onChange={handleChange}
-                />
+                >
+                  <MenuItem value="Expleo">Expleo</MenuItem>
+                  <MenuItem value="Other">Other</MenuItem>
+                </TextField>
               </Grid>
               <Grid size={6}>
                 <TextField
+                  select
                   fullWidth
                   label="Producer Code"
                   name="producerCode"
                   value={formData.producerCode}
                   onChange={handleChange}
-                />
+                >
+                  <MenuItem value="EXP-INS-01">EXP-INS-01</MenuItem>
+                </TextField>
               </Grid>
             </Grid>
 
