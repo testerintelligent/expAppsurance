@@ -14,6 +14,7 @@ import Quote from "./component/quote/Quote";
 import Payment from "./component/payment/Payment";
 import PolicyIssuance from "./component/policy/PolicyIssuance";
 import PolicySearch from "./component/policy/PolicySearch";
+import PolicySummary from "./component/policy/PolicySummary";
 
 function App() {
   const [policies] = useState([]);
@@ -41,6 +42,10 @@ function App() {
                 <Route path="/payment" element={<Payment />} />
                 <Route path="/policy-issuance" element={<PolicyIssuance />} />
                 <Route path="/policy" element={<PolicySearch />} />
+                <Route
+                  path="/policy-summary/:policyNumber"
+                  element={<PolicySummary />}
+                />
               </Routes>
             </main>
           </div>

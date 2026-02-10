@@ -9,21 +9,13 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   TablePagination,
 } from "@mui/material";
-import { FaEdit, FaEye } from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
 
 const PolicyDashboard = () => {
   const [insuranceData, setInsuranceData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [contactData, setContactData] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [policyToDelete, setPolicyToDelete] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
   const [sortedColumn, setSortedColumn] = useState("CurrentDate");
   const [page, setPage] = useState(0);
@@ -99,19 +91,6 @@ const PolicyDashboard = () => {
     setFilteredData(sorted);
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     setSortedColumn(column);
-  };
-
-  const updatePolicy = (insurance, method) =>
-    navigate("/insurance", { state: { formData: insurance, apiMethod: method } });
-
-  const handleDelete = () => {
-    setInsuranceData((prev) =>
-      prev.filter((insurance) => insurance._id !== policyToDelete)
-    );
-    setFilteredData((prev) =>
-      prev.filter((insurance) => insurance._id !== policyToDelete)
-    );
-    setShowModal(false);
   };
 
   // Table Column Config
@@ -207,17 +186,7 @@ const PolicyDashboard = () => {
                     {sortedColumn === col.key && (sortOrder === "asc" ? "↑" : "↓")}
                   </TableCell>
                 ))}
-                <TableCell
-                  style={{
-                    color: "white",
-                    backgroundColor: "black",
-                    fontWeight: "bold",
-                    padding: "12px",
-                    textAlign: "center",
-                  }}
-                >
-                  UPDATE
-                </TableCell>
+                
                 <TableCell
                   style={{
                     color: "white",
@@ -236,8 +205,8 @@ const PolicyDashboard = () => {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((insurance, index) => {
-                  const customer = contactData.find((c) => c._id === insurance.customerId);
-                  return (
+                  
+                   return (
                     <TableRow
                       key={insurance._id || index}
                       style={{
@@ -265,21 +234,19 @@ const PolicyDashboard = () => {
                       <TableCell style={{ padding: "12px", textAlign: "center" }}>
                         {insurance.status}
                       </TableCell>
-                      <TableCell style={{ textAlign: "center" }}>
-                        <button
-                          onClick={() => updatePolicy(insurance, "update")}
-                          style={{ textTransform: "none" }}
-                        >
-                          <FaEdit size="25px" />
-                        </button>
-                      </TableCell>
                       <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                        <button
-                          onClick={() => updatePolicy(insurance, "view")}
-                          style={{ textTransform: "none", borderRadius: "5px" }}
-                        >
-                          <FaEye size="25px" />
-                        </button>
+                        {insurance.policyNumber ? (
+                          <button
+                            onClick={() => navigate(`/policy-summary/${insurance.policyNumber}`, { state: { policy: insurance } })}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+                          >
+                            View <FaEye size={20} />
+                          </button>
+                        ) : (
+                          <button disabled title="Policy number not available" style={{ opacity: 0.6, cursor: 'not-allowed' }}>
+                            View <FaEye size={20} />
+                          </button>
+                        )}
                       </TableCell>
                     </TableRow>
                   );
@@ -306,32 +273,6 @@ const PolicyDashboard = () => {
           No insurance data available
         </p>
       )}
-
-      {/* ✅ Delete Confirmation Modal */}
-      <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="sm" fullWidth>
-        <DialogTitle style={{ backgroundColor: "#2c3e50", color: "white" }}>
-          Delete Policy
-        </DialogTitle>
-        <DialogContent>
-          <p>Are you sure you want to delete this insurance policy?</p>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleDelete}
-            variant="contained"
-            style={{ backgroundColor: "#e74c3c" }}
-          >
-            Yes
-          </Button>
-          <Button
-            onClick={() => setShowModal(false)}
-            variant="outlined"
-            style={{ borderColor: "#95a5a6", color: "#95a5a6" }}
-          >
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
     </div>
   );
 };
