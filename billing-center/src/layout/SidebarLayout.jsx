@@ -1,16 +1,21 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 
-const navItems = [
-  { label: "Dashboard", path: "/" },
-  { label: "Users", path: "/users" },
-];
-
 const Sidebar = () => {
+  const location = useLocation();
+  const isPolicyPage = location.pathname.startsWith("/policy-summary");
   const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  const navItems = [
+    { label: "Dashboard", path: "/" },
+    { label: "Users", path: "/users" },
+    ...(isPolicyPage
+      ? [{ label: "Policy Summary", path: location.pathname }]
+      : []),
+  ];
 
   return (
     <aside className="w-60 bg-white border-r-8 h-full flex flex-col overflow-auto color-">

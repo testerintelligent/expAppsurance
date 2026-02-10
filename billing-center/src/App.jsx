@@ -3,6 +3,7 @@ import DashboardLayout from "./layout/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import PolicyDashboard from "./pages/Policy";
 import Users from "./pages/Users";
+import PolicySummary from "./components/policySummary";
 
 function App() {
   return (
@@ -13,6 +14,10 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/users" element={<Users />} />
           <Route path="/policy" element={<PolicyDashboard />} />
+          <Route
+            path="/policy-summary/:policyNumber"
+            element={<PolicySummary />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>
