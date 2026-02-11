@@ -20,13 +20,12 @@ export default function Account() {
   const navigate = useNavigate();
   const [accountData, setAccountData] = useState(null);
   const [searchData, setSearchData] = useState({
-    accountId: "", // renamed from accountNo to match API
+    accountId: "", 
     firstName: "",
     lastName: "",
     dateOfBirth: "",
   });
 
-  // Case 1: Navigated from Contact screen
   useEffect(() => {
     if (location.state?.account) {
       setAccountData(location.state.account);
@@ -37,15 +36,13 @@ export default function Account() {
     }
   }, [location.state]);
 
-  // Input change
   const handleChange = (e) => {
     setSearchData({ ...searchData, [e.target.name]: e.target.value });
   };
 
-  // Case 2: Search via Dashboard
   const handleSearch = async () => {
     try {
-      const result = await searchAccount(searchData); // now accountId is used
+      const result = await searchAccount(searchData); 
       if (!result || (Array.isArray(result) && result.length === 0)) {
         alert("Account not found");
         setAccountData(null);
@@ -60,7 +57,7 @@ export default function Account() {
 
   return (
     <Box sx={{ width: "100%", maxWidth: 1200, mx: "auto", mt: 2 }}>
-      {/* Search Form only if not navigated from Contact */}
+      
       {!location.state?.contact && (
         <Paper sx={{ p: 3, mb: 3 }}>
           <Typography variant="h6" sx={{ fontWeight: "bold", fontSize: 16 }}>
@@ -189,6 +186,12 @@ export default function Account() {
                     <Typography>
                       <b>Address:</b> {accountData.customerId.address}
                     </Typography>
+                    <Typography>
+                      <b>Organization:</b> {accountData.customerId.organization || "-"}
+                    </Typography>
+                    <Typography>
+                      <b>Producer Code:</b> {accountData.customerId.producerCode || "-"}
+                    </Typography>
                   </>
                 ) : (
                   <Typography>No contact information available.</Typography>
@@ -244,20 +247,32 @@ export default function Account() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Policy ID</TableCell>
-                    <TableCell>Type</TableCell>
+                    <TableCell>Policy Number</TableCell>
+                    <TableCell>Submission</TableCell>
+                    <TableCell>Product Type</TableCell>
                     <TableCell>Status</TableCell>
-                    <TableCell>Premium</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {accountData.policies && accountData.policies.length > 0 ? (
                     accountData.policies.map((policy) => (
                       <TableRow key={policy._id}>
-                        <TableCell>{policy.policyId}</TableCell>
-                        <TableCell>{policy.policyType}</TableCell>
+                        <TableCell>
+                          <Button
+                            variant="text"
+                            onClick={() =>
+                              navigate(`/policy-summary/${policy.policyNumber}`, {
+                                state: { policy },
+                              })
+                            }
+                            disabled={!policy.policyNumber}
+                          >
+                            {policy.policyNumber || "-"}
+                          </Button>
+                        </TableCell>
+                        <TableCell>{policy.submissionId}</TableCell>
+                        <TableCell>{policy.productType}</TableCell>
                         <TableCell>{policy.status}</TableCell>
-                        <TableCell>{policy.premium}</TableCell>
                       </TableRow>
                     ))
                   ) : (
