@@ -21,7 +21,10 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
 import { searchContact, createContact } from "./utils/contactAPI";
-import { createAccountForContact, searchAccountByContact } from "../account/accountAPI";
+import {
+  createAccountForContact,
+  searchAccountByContact,
+} from "../account/accountAPI";
 import "./contact.css";
 
 function TabPanel(props) {
@@ -174,7 +177,6 @@ export default function Contact() {
       const newContact = await createContact(formData);
       const account = await createAccountForContact(newContact);
       setSearchResult(newContact);
-      
 
       // Reset form after creation
       setFormData({
@@ -199,8 +201,14 @@ export default function Contact() {
     }
   };
 
-  const handleView = (contact) => { setSelectedContact(contact); setShowContact(true); };
-  const handleClose = () => { setShowContact(false); setSelectedContact(null); };
+  const handleView = (contact) => {
+    setSelectedContact(contact);
+    setShowContact(true);
+  };
+  const handleClose = () => {
+    setShowContact(false);
+    setSelectedContact(null);
+  };
   const handleEditToggle = () => setIsEditMode((prev) => !prev);
 
   const handleContactChange = (e) => {
@@ -212,7 +220,6 @@ export default function Contact() {
   };
 
   return (
-    
     <Box sx={{ width: "100%", maxWidth: 1200, mx: "auto", mt: 2 }}>
       <Paper
         elevation={4}
@@ -282,17 +289,17 @@ export default function Contact() {
                   required
                 />
               </Grid>
+              <Grid className="flex items-start">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSearch}
+                  className="self-center"
+                >
+                  Search
+                </Button>
+              </Grid>
             </Grid>
-
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSearch}
-              sx={{ mt: 2 }}
-              fullWidth
-            >
-              Search
-            </Button>
 
             {/* Search Result Table */}
             {searchResult && searchResult?.length > 0 && (
@@ -318,35 +325,43 @@ export default function Contact() {
                             variant="contained"
                             size="small"
                             onClick={async () => {
-                            try {
-                              let account;
-                              // 1️⃣ First check if this contact already has an account
-                              const existingAccount = await searchAccountByContact(contact._id);
+                              try {
+                                let account;
+                                // 1️⃣ First check if this contact already has an account
+                                const existingAccount =
+                                  await searchAccountByContact(contact._id);
 
-                              if (existingAccount && existingAccount.accountId) {
-                              // ✅ Account exists
-                              account = existingAccount;
-                              console.log("Existing account found:", account);
-                              } else {
-                              // ❌ No existing account — create one
-                              account = await createAccountForContact(contact);
-                              console.log("New account created:", account);
-                          }
+                                if (
+                                  existingAccount &&
+                                  existingAccount.accountId
+                                ) {
+                                  // ✅ Account exists
+                                  account = existingAccount;
+                                  console.log(
+                                    "Existing account found:",
+                                    account
+                                  );
+                                } else {
+                                  // ❌ No existing account — create one
+                                  account = await createAccountForContact(
+                                    contact
+                                  );
+                                  console.log("New account created:", account);
+                                }
 
-                          // 2️⃣ Navigate to Account screen
-                          navigate("/account", { state: { account } });
-                          } catch (err) {
-                            console.error(err);
-                            alert(
-                            err.response?.data?.message ||
-                            "Failed to fetch or create account"
-                        );
-                        }
-                        }}
-                        >
-                          Select
-                        </Button>
-
+                                // 2️⃣ Navigate to Account screen
+                                navigate("/account", { state: { account } });
+                              } catch (err) {
+                                console.error(err);
+                                alert(
+                                  err.response?.data?.message ||
+                                    "Failed to fetch or create account"
+                                );
+                              }
+                            }}
+                          >
+                            Select
+                          </Button>
                         </TableCell>
                         <TableCell>{contact.firstName}</TableCell>
                         <TableCell>{contact.lastName}</TableCell>
@@ -825,7 +840,6 @@ export default function Contact() {
             </Box>
           </Box>
         </TabPanel>
-
       </Paper>
     </Box>
   );

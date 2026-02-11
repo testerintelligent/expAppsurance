@@ -102,15 +102,18 @@ export default function Account() {
                 onChange={handleChange}
               />
             </Grid>
+            <Grid className="flex items-start">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSearch}
+                className="self-center"
+                sx={{}}
+              >
+                Search
+              </Button>
+            </Grid>
           </Grid>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSearch}
-            sx={{ mt: 2 }}
-          >
-            Search
-          </Button>
         </Paper>
       )}
 

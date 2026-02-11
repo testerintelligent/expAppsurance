@@ -68,12 +68,12 @@ const PolicyDashboard = () => {
               onChange={handleChange}
             />
           </Grid>
-          <Grid>
+          <Grid className="flex items-start">
             <Button
               variant="contained"
               color="primary"
               onClick={handleSearch}
-              sx={{ mt: 2 }}
+              className="self-center"
             >
               Search
             </Button>
