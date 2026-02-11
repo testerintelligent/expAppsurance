@@ -1,10 +1,12 @@
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   return (
     <header className="h-12 w-full border-b-4 border-slate-600 bg-blue-500 flex items-center justify-between px-4 shadow z-10">
       <div className="flex">
-        <h1 className="font-semibold text-white">
+        <h1 className="font-semibold text-white" onClick={() => navigate("/")}>
           Expleosurance BillingCenter
         </h1>
       </div>

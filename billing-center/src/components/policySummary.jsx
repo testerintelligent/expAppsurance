@@ -102,14 +102,10 @@ const PolicySummary = () => {
   const [loading, setLoading] = useState(!policy);
   const [error, setError] = useState(null);
 
-  console.log("policy", policy);
-
   useEffect(() => {
-   
-    console.log("policy1", policy);
     const hasDetails =
       policy && (policy.totalPremium || policy.coverages || policy.accountId);
-    if (hasDetails) return; 
+    if (hasDetails) return;
     const fetchPolicy = async () => {
       setLoading(true);
       try {
