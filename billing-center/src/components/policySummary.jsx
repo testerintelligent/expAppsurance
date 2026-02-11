@@ -105,12 +105,11 @@ const PolicySummary = () => {
   console.log("policy", policy);
 
   useEffect(() => {
-    // If we received a policy from navigation state, it may be partial (dashboard row).
-    // Only skip fetching when the policy contains detailed fields we need (e.g. totalPremium or accountId).
+   
     console.log("policy1", policy);
     const hasDetails =
       policy && (policy.totalPremium || policy.coverages || policy.accountId);
-    if (hasDetails) return; // already have detailed data from navigation state
+    if (hasDetails) return; 
     const fetchPolicy = async () => {
       setLoading(true);
       try {
