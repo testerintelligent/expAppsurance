@@ -40,6 +40,46 @@ export default function Account() {
     setSearchData({ ...searchData, [e.target.name]: e.target.value });
   };
 
+  //Store the values to SearchData
+  useEffect(() => {
+    const state = location.state;
+
+    if (!state?.accountId) return;
+
+    setSearchData({
+      accountId: state.accountId,
+      firstName: state.firstName || "",
+      lastName: state.lastName || "",
+      dateOfBirth: "",
+    });
+  }, [location.state?.accountId]);
+
+  // Search the account details
+  useEffect(() => {
+    if (!searchData.accountId) return;
+
+    const fetchAccount = async () => {
+      try {
+        console.log("searchData", searchData);
+
+        const result = await searchAccount(searchData);
+
+        if (!result || (Array.isArray(result) && result.length === 0)) {
+          alert("Account not found");
+          setAccountData(null);
+          return;
+        }
+
+        setAccountData(result);
+      } catch (err) {
+        console.error(err);
+        alert("Error searching account");
+      }
+    };
+
+    fetchAccount();
+  }, [searchData.accountId]); 
+
   const handleSearch = async () => {
     try {
       const result = await searchAccount(searchData); 
