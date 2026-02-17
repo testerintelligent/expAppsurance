@@ -18,13 +18,37 @@ import { createSubmission } from "./submissionAPI"; // Adjust the path
 
 const products = [
   { name: "Personal Auto", description: "Personal Auto", status: "Available" },
-  { name: "Commercial Auto", description: "Commercial Auto", status: "Available" },
-  { name: "Commercial Package", description: "Commercial Package", status: "Available" },
-  { name: "Commercial Property", description: "Commercial Property", status: "Available" },
-  { name: "General Liability", description: "General Liability", status: "Available" },
-  { name: "Businessowners", description: "Business Owners", status: "Available" },
+  {
+    name: "Commercial Auto",
+    description: "Commercial Auto",
+    status: "Available",
+  },
+  {
+    name: "Commercial Package",
+    description: "Commercial Package",
+    status: "Available",
+  },
+  {
+    name: "Commercial Property",
+    description: "Commercial Property",
+    status: "Available",
+  },
+  {
+    name: "General Liability",
+    description: "General Liability",
+    status: "Available",
+  },
+  {
+    name: "Businessowners",
+    description: "Business Owners",
+    status: "Available",
+  },
   { name: "Inland Marine", description: "Inland Marine", status: "Available" },
-  { name: "Workers' Compensation", description: "Workers' Compensation", status: "Available" },
+  {
+    name: "Workers' Compensation",
+    description: "Workers' Compensation",
+    status: "Available",
+  },
 ];
 
 export default function NewSubmission() {
@@ -36,8 +60,10 @@ export default function NewSubmission() {
   const account = state?.account || {};
 
   // Default values
-  const defaultOrganization = contact.organization || account.organization || "";
-  const defaultProducerCode = contact.producerCode || account.producerCode || "";
+  const defaultOrganization =
+    contact.organization || account.organization || "";
+  const defaultProducerCode =
+    contact.producerCode || account.producerCode || "";
 
   const [form, setForm] = useState({
     organization: defaultOrganization,
@@ -54,7 +80,10 @@ export default function NewSubmission() {
       const effDate = new Date(form.effectiveDate);
       const months = form.termType === "12 months" ? 12 : 6;
       effDate.setMonth(effDate.getMonth() + months);
-      setForm(prev => ({ ...prev, expirationDate: effDate.toISOString().slice(0, 10) }));
+      setForm((prev) => ({
+        ...prev,
+        expirationDate: effDate.toISOString().slice(0, 10),
+      }));
     }
   }, [form.effectiveDate, form.termType]);
 
@@ -76,6 +105,7 @@ export default function NewSubmission() {
 
       // 2️⃣ Create submission
       const newSubmission = await createSubmission(submissionData);
+      console.log("neeSub", newSubmission);
 
       // 3️⃣ Navigate to next screen
       if (product.name === "Personal Auto") {
@@ -85,8 +115,8 @@ export default function NewSubmission() {
 
         navigate("/driver", {
           state: {
-            contact: contact || {},  
-            contactName: contact.name || account.name || 'N/A',
+            contact: contact || {},
+            contactName: contact.name || account.name || "N/A",
             accountId: account?._id || "",
             accountNumber: accountNumber || "",
             effectiveDate: currentEffectiveDate,
@@ -95,16 +125,20 @@ export default function NewSubmission() {
             productName: product.name,
           },
         });
-        } else {
-          navigate(`/submission-details/${product.name}`, {
-            state: { ...form, product: product.name, submissionId: newSubmission.submissionId },
-          });
-        }
-      } catch (err) {
-        console.error(err);
-        alert(err.response?.data?.message || "Failed to create submission");
+      } else {
+        navigate(`/submission-details/${product.name}`, {
+          state: {
+            ...form,
+            product: product.name,
+            submissionId: newSubmission.submissionId,
+          },
+        });
       }
-    };
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to create submission");
+    }
+  };
 
   return (
     <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>

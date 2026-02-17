@@ -5,10 +5,12 @@ const API_BASE_URL = "http://10.192.190.158:5000/api/drivers";
 // ➕ Create driver for a submission
 export const createDriverForSubmission = async (submissionId, driverData) => {
   // Backend expects submissionId and driver details
+
   const res = await axios.post(`${API_BASE_URL}/createDriver`, {
     submissionId,
-    ...driverData
+    ...driverData,
   });
+  console.log("response", res.data);
   return res.data.driver || res.data; // handle both {driver: ...} and direct object
 };
 
