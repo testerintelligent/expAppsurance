@@ -27,7 +27,7 @@ export default function CreateClaim() {
   const [policy, setPolicy] = useState(null);
 
   const [lossDate, setLossDate] = useState("");
-  const [claimType, setClaimType] = useState("");
+  const [claimType, setClaimType] = useState("Auto"); // Use default value - Auto
 
   /* =========================
      🔄 LOAD POLICY CONTEXT
@@ -139,6 +139,10 @@ export default function CreateClaim() {
           value={lossDate}
           onChange={(e) => setLossDate(e.target.value)}
           required
+         inputProps={{
+            min: policy.effectiveDate.split("T")[0],
+            max: policy.expiryDate.split("T")[0],
+          }}
           sx={{ width: 250, mb: 3 }}
           InputLabelProps={{ shrink: true }}
         />
