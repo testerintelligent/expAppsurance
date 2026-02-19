@@ -1,3 +1,4 @@
+// PolicySummary.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
@@ -8,55 +9,71 @@ const styles = {
     fontFamily: 'Inter, Arial, sans-serif',
     color: '#1f2937',
     maxWidth: 1400,
+    margin: '0 auto',
   },
 
   header: {
     display: 'flex',
     alignItems: 'center',
     gap: 16,
-    background: '#4b5563',
+    background: 'linear-gradient(90deg, #3b82f6, #2563eb)',
     color: '#fff',
-    padding: '12px 18px',
-    borderRadius: 6,
-    marginBottom: 24,
-    fontSize: 14,
+    padding: '16px 24px',
+    borderRadius: 8,
+    marginBottom: 32,
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
   },
 
-  headerStrong: { fontWeight: 700 },
+  headerText: { fontWeight: 700, fontSize: 20 },
+  headerSubText: { fontWeight: 400, color: 'rgba(255,255,255,0.8)', fontSize: 14 },
+  statusBadge: {
+    padding: '6px 14px',
+    borderRadius: 999,
+    color: '#fff',
+    fontWeight: 600,
+    fontSize: 12,
+  },
 
   summaryTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 700,
-    marginBottom: 12,
+    marginBottom: 20,
+    color: '#1e3a8a',
   },
 
   grid: {
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
+    gridTemplateColumns: '2fr 1fr',
     gap: 32,
   },
 
   section: {
-    marginBottom: 24,
+    marginBottom: 32,
+    background: '#ffffff',
+    borderRadius: 12,
+    padding: 20,
+    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
   },
 
   sectionTitle: {
     fontWeight: 700,
-    fontSize: 15,
-    borderBottom: '1px solid #d1d5db',
-    paddingBottom: 6,
-    marginBottom: 10,
+    fontSize: 16,
+    borderBottom: '2px solid #e5e7eb',
+    paddingBottom: 8,
+    marginBottom: 16,
+    color: '#1e3a8a',
   },
 
   row: {
     display: 'grid',
-    gridTemplateColumns: '200px 1fr',
-    padding: '4px 0',
+    gridTemplateColumns: '180px 1fr',
+    padding: '6px 0',
     fontSize: 14,
+    alignItems: 'center',
   },
 
-  label: { color: '#6b7280' },
-  value: { fontWeight: 500 },
+  label: { color: '#6b7280', fontSize: 14 },
+  value: { fontWeight: 600, fontSize: 14 },
 
   link: {
     color: '#2563eb',
@@ -67,13 +84,47 @@ const styles = {
   money: {
     textAlign: 'right',
     fontWeight: 600,
+    color: '#059669',
   },
 
   emphasizedMoney: {
     textAlign: 'right',
     fontWeight: 800,
-    fontSize: 15,
+    fontSize: 16,
+    color: '#047857',
   },
+
+  card: {
+    background: '#f9fafb',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 12,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+  },
+
+  aside: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 20,
+  },
+
+  asideCard: {
+    background: '#ffffff',
+    borderRadius: 12,
+    padding: 16,
+    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+  },
+
+  button: {
+    padding: '10px 16px',
+    borderRadius: 8,
+    fontWeight: 600,
+    cursor: 'pointer',
+    border: 'none',
+  },
+
+  primaryBtn: { background: '#2563eb', color: '#fff' },
+  secondaryBtn: { background: '#f3f4f6', color: '#6b7280' },
 };
 
 const formatCurrency = (v) => {
@@ -99,10 +150,8 @@ const PolicySummary = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // If we received a policy from navigation state, it may be partial (dashboard row).
-    // Only skip fetching when the policy contains detailed fields we need (e.g. totalPremium or accountId).
     const hasDetails = policy && (policy.totalPremium || policy.coverages || policy.accountId);
-    if (hasDetails) return; // already have detailed data from navigation state
+    if (hasDetails) return;
     const fetchPolicy = async () => {
       setLoading(true);
       try {
@@ -124,26 +173,33 @@ const PolicySummary = () => {
 
   return (
     <div style={styles.container}>
-      <div style={{ marginBottom: 12 }}>
-        <button onClick={() => navigate(-1)} style={{ marginRight: 12 }}>Back</button>
-        <button onClick={() => window.print()} style={{ marginRight: 8 }}>Print</button>
-        <button onClick={() => alert('Download PDF - implement server-side PDF generation')}>Download PDF</button>
-      </div>
-
+      {/* Header */}
       <div style={styles.header}>
         <div>
-          <div style={{ fontWeight: 700, fontSize: 18 }}>{policy.policyNumber || '—'} <span style={{ color: '#d1d5db', fontWeight: 400 }}>· {policy.productType || ''}</span></div>
-          <div style={{ color: '#d1d5db', marginTop: 6 }}>Issued: {formatDate(policy.issuedAt)}</div>
+          <div style={styles.headerText}>
+            {policy.policyNumber || '—'}{' '}
+            <span style={styles.headerSubText}>{policy.productType || ''}</span>
+          </div>
+          <div style={styles.headerSubText}>Issued: {formatDate(policy.issuedAt)}</div>
         </div>
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: 12, alignItems: 'center' }}>
-          <div style={{ padding: '6px 10px', borderRadius: 999, background: policy.status === 'In Force' ? '#10b981' : '#6b7280', color: '#fff' }}>{policy.status || 'Unknown'}</div>
+        <div style={{ marginLeft: 'auto' }}>
+          <span
+            style={{
+              ...styles.statusBadge,
+              background: policy.status === 'In Force' ? '#10b981' : '#6b7280',
+            }}
+          >
+            {policy.status || 'Unknown'}
+          </span>
         </div>
       </div>
 
       <div style={styles.summaryTitle}>Policy Summary</div>
 
       <div style={styles.grid}>
+        {/* Left column */}
         <div>
+          {/* Policy Dates & Term */}
           <div style={styles.section}>
             <div style={styles.sectionTitle}>Policy Dates & Term</div>
             <div style={styles.row}><div style={styles.label}>Effective</div><div style={styles.value}>{formatDate(policy.effectiveDate)}</div></div>
@@ -151,6 +207,7 @@ const PolicySummary = () => {
             <div style={styles.row}><div style={styles.label}>Payment Schedule</div><div style={styles.value}>{policy.paymentSchedule || '-'}</div></div>
           </div>
 
+          {/* Premium & Charges */}
           <div style={styles.section}>
             <div style={styles.sectionTitle}>Premium & Charges</div>
             <div style={styles.row}><div style={styles.label}>Total Premium</div><div style={styles.money}>{formatCurrency(policy.totalPremium)}</div></div>
@@ -159,60 +216,55 @@ const PolicySummary = () => {
             <div style={{ ...styles.row, fontSize: 16 }}><div style={styles.label}>Total</div><div style={{ ...styles.value, ...styles.emphasizedMoney }}>{formatCurrency(policy.totalCost)}</div></div>
           </div>
 
+          {/* Coverages */}
           <div style={styles.section}>
-            <div style={styles.sectionTitle}>Billing & Payment</div>
-            <div style={styles.row}><div style={styles.label}>Method</div><div style={styles.value}>{policy.billingMethod || '-'}</div></div>
-            <div style={styles.row}><div style={styles.label}>Payment Ref</div><div style={styles.value}>{policy.paymentRef || '-'}</div></div>
-            <div style={{ marginTop: 8 }}>
-              <div style={styles.sectionTitle}>Coverages</div>
-              <div>
-                {Array.isArray(policy.coverages) && policy.coverages.length > 0 ? (
-                  policy.coverages.map((c, i) => (
-                    <div key={i} style={{ padding: 8, background: '#f8fafc', borderRadius: 8, marginBottom: 8 }}>{c}</div>
-                  ))
-                ) : (
-                  <div style={{ color: '#6b7280' }}>No coverages listed</div>
-                )}
-              </div>
-            </div>
+            <div style={styles.sectionTitle}>Coverages Included</div>
+            {Array.isArray(policy.coverages) && policy.coverages.length > 0 ? (
+              policy.coverages.map((c, i) => (
+                <div key={i} style={styles.card}>{c}</div>
+              ))
+            ) : (
+              <div style={{ color: '#6b7280' }}>No coverages listed</div>
+            )}
           </div>
         </div>
 
-        <aside>
-          <div style={{ ...styles.section, padding: 12, background: '#fff', borderRadius: 8 }}>
-            <div style={{ fontWeight: 700, marginBottom: 6 }}>Customer</div>
-            <div style={{ color: '#6b7280', marginBottom: 4 }}>Name</div>
+        {/* Right column / aside */}
+        <aside style={styles.aside}>
+          {/* Customer Info */}
+          <div style={styles.asideCard}>
+            <div style={{ fontWeight: 700, marginBottom: 6 }}>Customer Info</div>
+            <div style={{ color: '#6b7280' }}>Name</div>
             <div style={{ fontWeight: 600 }}>{policy.accountId?.accountHolderName || policy.accountHolderName || 'N/A'}</div>
             <div style={{ color: '#6b7280', marginTop: 8 }}>Account</div>
             <div style={{ fontWeight: 600 }}>{policy.accountId?.accountId || policy.accountNumber || 'N/A'}</div>
-
             <div style={{ color: '#6b7280', marginTop: 8 }}>Contact</div>
             <div style={{ fontWeight: 600 }}>{policy.contactId?.email || policy.contactId?.phone || 'N/A'}</div>
           </div>
 
-          <div style={{ ...styles.section, padding: 12, background: '#fff', borderRadius: 8, marginTop: 12 }}>
-            <div style={{ fontWeight: 700, marginBottom: 6 }}>Vehicle(s)</div>
+          {/* Vehicles */}
+          <div style={styles.asideCard}>
+            <div style={{ fontWeight: 700, marginBottom: 8 }}>Vehicle(s)</div>
             {Array.isArray(policy.vehicle) && policy.vehicle.length > 0 ? (
               <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                 {policy.vehicle.map((v, i) => (
-                  <li key={i} style={{ padding: 8, borderRadius: 6, background: '#f8fafc', marginBottom: 8 }}>
+                  <li key={i} style={styles.card}>
                     <div style={{ fontWeight: 700 }}>{v.make} {v.model} <span style={{ color: '#6b7280', fontWeight: 500 }}>• {v.year}</span></div>
                     <div style={{ color: '#6b7280', fontSize: 13 }}>VIN: {v.vin}</div>
                     <div style={{ color: '#6b7280', fontSize: 13 }}>Reg: {v.licensePlate || 'N/A'}</div>
                   </li>
                 ))}
               </ul>
-            ) : (
-              <div style={{ color: '#6b7280' }}>No vehicles recorded</div>
-            )}
+            ) : <div style={{ color: '#6b7280' }}>No vehicles recorded</div>}
           </div>
 
-          <div style={{ ...styles.section, padding: 12, background: '#fff', borderRadius: 8, marginTop: 12 }}>
+          {/* Quick Actions */}
+          <div style={styles.asideCard}>
             <div style={{ fontWeight: 700, marginBottom: 8 }}>Quick Actions</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <button disabled style={{ padding: '8px 12px', borderRadius: 6, background: '#e5e7eb', color: '#9ca3af', border: 'none', cursor: 'not-allowed' }}>Make a Payment</button>
-              <button disabled style={{ padding: '8px 12px', borderRadius: 6, border: '1px solid #e5e7eb', background: 'transparent', color: '#9ca3af', cursor: 'not-allowed' }}>Email Policy</button>
-              <button disabled style={{ padding: '8px 12px', borderRadius: 6, border: '1px solid #e5e7eb', background: 'transparent', color: '#9ca3af', cursor: 'not-allowed' }}>Copy Policy Number</button>
+              <button style={{ ...styles.button, ...styles.secondaryBtn }} disabled>Make a Payment</button>
+              <button style={{ ...styles.button, ...styles.secondaryBtn }} disabled>Email Policy</button>
+              <button style={{ ...styles.button, ...styles.secondaryBtn }} disabled>Copy Policy Number</button>
             </div>
           </div>
         </aside>

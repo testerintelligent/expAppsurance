@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import InfoBar from "../InfoBar";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -11,26 +11,98 @@ import {
   TextField,
   Button,
   Snackbar,
-  Alert
+  Alert,
+  MenuItem,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Checkbox,
+  FormControlLabel,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
+
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { createVehicleForSubmission } from "./vehicleAPI";
 
 export default function Vehicle() {
   const { state } = useLocation();
   const navigate = useNavigate();
-  const contact = state?.contact || {}; 
+  const contact = state?.contact || {};
+
   const [tab, setTab] = useState(0);
   const [errorOpen, setErrorOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const coverageOptions = [
-    "Third-Party Liability",
-    "Own Damage",
-    "Comprehensive",
-    "Personal Accident Cover",
-    "Zero Depreciation",
-    "Vehicle theft"
+  // Dropdown Options
+  const makeOptions = ["Toyota", "Honda", "Ford", "BMW", "Hyundai"];
+
+  const modelOptions = {
+    Toyota: ["Corolla", "Camry", "RAV4"],
+    Honda: ["Civic", "Accord", "CR-V"],
+    Ford: ["F-150", "Escape", "Explorer"],
+    BMW: ["X3", "X5", "3 Series"],
+    Hyundai: ["Elantra", "Tucson", "Santa Fe"],
+  };
+
+  const yearOptions = Array.from({ length: 25 }, (_, i) => 2026 - i);
+
+  const stateOptions = [
+    "Tamil Nadu",
+    "Karnataka",
+    "Kerala",
+    "Andhra Pradesh",
+    "Maharashtra",
   ];
+
+ const coverageOptions = [
+  {
+    name: "Third-Party Liability",
+    description:
+      "Covers damages or injuries caused to a third party by your vehicle. Mandatory by law.",
+    premium: 120,
+  },
+  {
+    name: "Own Damage",
+    description:
+      "Covers repair or replacement costs for damage to your own vehicle.",
+    premium: 250,
+  },
+  {
+    name: "Comprehensive",
+    description:
+      "Provides combined protection including third-party liability and own damage.",
+    premium: 400,
+  },
+  {
+    name: "Personal Accident Cover",
+    description:
+      "Covers medical expenses or compensation in case of injury or death of the driver.",
+    premium: 80,
+  },
+  {
+    name: "Zero Depreciation",
+    description:
+      "Allows full claim without deducting depreciation on replaced parts.",
+    premium: 150,
+  },
+  {
+    name: "Vehicle theft",
+    description:
+      "Provides coverage if your vehicle is stolen or declared a total loss.",
+    premium: 110,
+  },
+];
+
+ const [coverages, setCoverages] = useState([
+  "Third-Party Liability",
+]);
+
+// 3️⃣ THEN calculate totalPremium
+const totalPremium = coverageOptions
+  .filter((c) => coverages.includes(c.name))
+  .reduce((sum, c) => sum + c.premium, 0);
 
   // Vehicle form data
   const [vehicleData, setVehicleData] = useState({
@@ -39,15 +111,12 @@ export default function Vehicle() {
     year: "",
     vin: "",
     licensePlate: "",
-    stateRegistered: ""
+    stateRegistered: "",
   });
 
-  // Selected coverages (preselect mandatory Third-Party Liability)
-  const [coverages, setCoverages] = useState(["Third-Party Liability"]);
-
-  // Handle coverage selection
   const handleCoverageChange = (coverage) => {
-    if (coverage === "Third-Party Liability") return; // prevent deselect
+    if (coverage === "Third-Party Liability") return;
+
     setCoverages((prev) =>
       prev.includes(coverage)
         ? prev.filter((c) => c !== coverage)
@@ -57,74 +126,77 @@ export default function Vehicle() {
 
   const validateForm = () => {
     const requiredFields = [
-        { key: "make", label: "Make" },
-        { key: "model", label: "Model" },
-        { key: "year", label: "Year" },
-        { key: "vin", label: "VIN" },
-        { key: "licensePlate", label: "License Plate" },
-        { key: "stateRegistered", label: "State Registered" }
+      { key: "make", label: "Make" },
+      { key: "model", label: "Model" },
+      { key: "year", label: "Year" },
+      { key: "vin", label: "VIN" },
+      { key: "licensePlate", label: "License Plate" },
+      { key: "stateRegistered", label: "State Registered" },
     ];
 
     for (let field of requiredFields) {
-        if (!vehicleData[field.key] || String(vehicleData[field.key]).trim() === "") {
-            setErrorMsg(`${field.label} is required in the Vehicle Information tab.`);
-            return false;
-        }
-    }
-    if (coverages.length === 0) {
-        setErrorMsg("At least one coverage (Third-Party Liability) must be selected.");
+      if (!vehicleData[field.key]?.toString().trim()) {
+        setErrorMsg(
+          `${field.label} is required in the Vehicle Information tab.`
+        );
         return false;
+      }
     }
+
+    if (coverages.length === 0) {
+      setErrorMsg(
+        "At least one coverage (Third-Party Liability) must be selected."
+      );
+      return false;
+    }
+
     return true;
   };
 
-  // ✅ Validate mandatory fields before Next
   const handleNext = async () => {
-  try {
-    if (!validateForm()) {
+    try {
+      if (!validateForm()) {
         setErrorOpen(true);
         return;
-    }
-    // Validate fields (keep your validation logic)
+      }
 
-    const submissionId = state?.submissionId;
-    if (!submissionId) {
-      setErrorMsg("Missing submission ID");
+      const submissionId = state?.submissionId;
+
+      if (!submissionId) {
+        setErrorMsg("Missing submission ID");
+        setErrorOpen(true);
+        return;
+      }
+
+      const payload = {
+        ...vehicleData,
+        coverages,
+      };
+
+      await createVehicleForSubmission(submissionId, payload);
+
+      navigate("/quote", {
+        state: {
+          ...state,
+          vehicleData,
+          coverages,
+        },
+      });
+    } catch (err) {
+      console.error("Error creating vehicle:", err);
+      setErrorMsg("Failed to create vehicle. Please try again.");
       setErrorOpen(true);
-      return;
     }
-
-    // Prepare data
-    const payload = {
-      ...vehicleData,
-      coverages,
-    };
-
-    // ✅ Create Vehicle in backend
-    await createVehicleForSubmission(submissionId, payload);
-
-    // Navigate to Quote
-   navigate("/quote", {
-  state: {
-    ...state,
-    vehicleData,
-    coverages,
-  },
-});
-
-  } catch (err) {
-    console.error("Error creating vehicle:", err);
-    setErrorMsg("Failed to create vehicle. Please try again.");
-    setErrorOpen(true);
-  }
-};
+  };
 
   return (
     <Box sx={{ maxWidth: 1200, mx: "auto", mt: 4 }}>
       <InfoBar
         accountNumber={state?.accountNumber || "-"}
         product={state?.productName || "-"}
-        contactName={`${contact.firstName || ""} ${contact.lastName || ""}`.trim()}
+        contactName={`${contact.firstName || ""} ${
+          contact.lastName || ""
+        }`.trim()}
         submissionId={state?.submissionId || "-"}
         effectiveDate={state?.effectiveDate || "-"}
         expiryDate={state?.expiryDate || "-"}
@@ -140,98 +212,277 @@ export default function Vehicle() {
           <Tab label="Coverages" />
         </Tabs>
 
-        {/* --- Vehicle Info Tab --- */}
-        {tab === 0 && (
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Make"
-                fullWidth
-                sx={{ mb: 2 }}
-                value={vehicleData.make}
-                onChange={(e) => setVehicleData({ ...vehicleData, make: e.target.value })}
-              />
-              <TextField
-                label="Model"
-                fullWidth
-                sx={{ mb: 2 }}
-                value={vehicleData.model}
-                onChange={(e) => setVehicleData({ ...vehicleData, model: e.target.value })}
-              />
-              <TextField
-                label="Year"
-                type="number"
-                fullWidth
-                sx={{ mb: 2 }}
-                value={vehicleData.year}
-                onChange={(e) => setVehicleData({ ...vehicleData, year: e.target.value })}
-              />
-              <TextField
-                label="VIN"
-                fullWidth
-                sx={{ mb: 2 }}
-                value={vehicleData.vin}
-                onChange={(e) => setVehicleData({ ...vehicleData, vin: e.target.value })}
-              />
-              <TextField
-                label="License Plate"
-                fullWidth
-                sx={{ mb: 2 }}
-                value={vehicleData.licensePlate}
-                onChange={(e) => setVehicleData({ ...vehicleData, licensePlate: e.target.value })}
-              />
-              <TextField
-                label="State Registered"
-                fullWidth
-                sx={{ mb: 2 }}
-                value={vehicleData.stateRegistered}
-                onChange={(e) => setVehicleData({ ...vehicleData, stateRegistered: e.target.value })}
-              />
-            </Grid>
-          </Grid>
-        )}
+        {/* Vehicle Information Tab */}
+        {/* ================= VEHICLE INFORMATION TAB ================= */}
+{tab === 0 && (
+  <Box>
+    <Grid container spacing={4}>
+      
+      {/* Vehicle Specifications */}
+      <Grid item xs={12} md={6}>
+        <Paper
+          elevation={2}
+          sx={{ p: 3, borderRadius: 3 }}
+        >
+          <Typography
+            variant="h6"
+            fontWeight={600}
+            sx={{ mb: 3 }}
+          >
+            Vehicle Specifications
+          </Typography>
 
-        {/* --- Coverages Tab --- */}
-        {tab === 1 && (
-          <Box>
-            <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
-              Select Coverages
-            </Typography>
-            <Grid container spacing={2}>
-              {coverageOptions.map((cov) => (
-                <Grid item xs={12} sm={6} md={4} key={cov}>
-                  <Button
-                    variant={coverages.includes(cov) ? "contained" : "outlined"}
-                    color={coverages.includes(cov) ? "primary" : "inherit"}
-                    fullWidth
-                    sx={{ mb: 2, textAlign: "left" }}
-                    onClick={() => handleCoverageChange(cov)}
-                    disabled={cov === "Third-Party Liability"} // mandatory coverage
-                  >
-                    {cov}
-                  </Button>
-                </Grid>
-              ))}
-            </Grid>
+          {/* Make */}
+          <TextField
+            select
+            label="Make"
+            fullWidth
+            sx={{ mb: 3 }}
+            value={vehicleData.make}
+            onChange={(e) =>
+              setVehicleData({
+                ...vehicleData,
+                make: e.target.value,
+                model: "",
+              })
+            }
+          >
+            {makeOptions.map((make) => (
+              <MenuItem key={make} value={make}>
+                {make}
+              </MenuItem>
+            ))}
+          </TextField>
 
-            <Box sx={{ mt: 3 }}>
-              {coverages.length > 0 ? (
-                <>
-                  <Typography>Selected Coverages:</Typography>
-                  <ul>
-                    {coverages.map((cov) => (
-                      <li key={cov}>{cov}</li>
-                    ))}
-                  </ul>
-                </>
-              ) : (
-                <Typography>No coverages selected yet.</Typography>
-              )}
+          {/* Model */}
+          <TextField
+            select
+            label="Model"
+            fullWidth
+            sx={{ mb: 3 }}
+            value={vehicleData.model}
+            onChange={(e) =>
+              setVehicleData({
+                ...vehicleData,
+                model: e.target.value,
+              })
+            }
+            disabled={!vehicleData.make}
+          >
+            {(modelOptions[vehicleData.make] || []).map(
+              (model) => (
+                <MenuItem key={model} value={model}>
+                  {model}
+                </MenuItem>
+              )
+            )}
+          </TextField>
+
+          {/* Year */}
+          <TextField
+            select
+            label="Year"
+            fullWidth
+            value={vehicleData.year}
+            onChange={(e) =>
+              setVehicleData({
+                ...vehicleData,
+                year: e.target.value,
+              })
+            }
+          >
+            {yearOptions.map((year) => (
+              <MenuItem key={year} value={year}>
+                {year}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Paper>
+      </Grid>
+
+      {/* Registration Details */}
+      <Grid item xs={12} md={6}>
+        <Paper
+          elevation={2}
+          sx={{ p: 3, borderRadius: 3 }}
+        >
+          <Typography
+            variant="h6"
+            fontWeight={600}
+            sx={{ mb: 3 }}
+          >
+            Registration Details
+          </Typography>
+
+          {/* VIN */}
+          <TextField
+            label="VIN"
+            fullWidth
+            sx={{ mb: 3 }}
+            value={vehicleData.vin}
+            onChange={(e) =>
+              setVehicleData({
+                ...vehicleData,
+                vin: e.target.value,
+              })
+            }
+          />
+
+          {/* License Plate */}
+          <TextField
+            label="License Plate"
+            fullWidth
+            sx={{ mb: 3 }}
+            value={vehicleData.licensePlate}
+            onChange={(e) =>
+              setVehicleData({
+                ...vehicleData,
+                licensePlate: e.target.value,
+              })
+            }
+          />
+
+          {/* State Registered */}
+          <TextField
+            select
+            label="State Registered"
+            fullWidth
+            value={vehicleData.stateRegistered}
+            onChange={(e) =>
+              setVehicleData({
+                ...vehicleData,
+                stateRegistered: e.target.value,
+              })
+            }
+          >
+            {stateOptions.map((state) => (
+              <MenuItem key={state} value={state}>
+                {state}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Paper>
+      </Grid>
+    </Grid>
+  </Box>
+)}
+
+        {/* Coverages Tab */}
+         {tab === 1 && (
+  <Box>
+    <Typography variant="h6" fontWeight={600} sx={{ mb: 3 }}>
+      Select Coverages
+    </Typography>
+
+    {coverageOptions.map((cov) => {
+      const isSelected = coverages.includes(cov.name);
+      const isMandatory = cov.name === "Third-Party Liability";
+
+      return (
+        <Accordion
+          key={cov.name}
+          defaultExpanded={isMandatory}
+          sx={{
+            mb: 2,
+            borderRadius: 2,
+            border: isSelected
+              ? "2px solid #1976d2"
+              : "1px solid #e0e0e0",
+            transition: "all 0.3s ease",
+            boxShadow: isSelected
+              ? "0 0 15px rgba(25, 118, 210, 0.4)"
+              : "none",
+            "&:before": { display: "none" },
+          }}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%",
+              }}
+            >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isSelected}
+                    onChange={() =>
+                      handleCoverageChange(cov.name)
+                    }
+                    disabled={isMandatory}
+                  />
+                }
+                label={
+                  <Box>
+                    <Typography fontWeight={600}>
+                      {cov.name}
+                      {isMandatory && (
+                        <Typography
+                          component="span"
+                          color="error"
+                          sx={{ ml: 1, fontSize: 12 }}
+                        >
+                          (Mandatory)
+                        </Typography>
+                      )}
+                    </Typography>
+
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                    >
+                      ₹{cov.premium} / year
+                    </Typography>
+                  </Box>
+                }
+              />
+
+              <Tooltip title={cov.description} arrow>
+                <IconButton size="small">
+                  <InfoOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
             </Box>
-          </Box>
-        )}
+          </AccordionSummary>
 
-        {/* --- Navigation Buttons --- */}
+          <AccordionDetails>
+            <Typography variant="body2" color="text.secondary">
+              {cov.description}
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
+      );
+    })}
+
+    {/* Premium Summary Card */}
+    <Paper
+      elevation={3}
+      sx={{
+        mt: 4,
+        p: 3,
+        borderRadius: 3,
+        background: "linear-gradient(135deg, #1976d2, #42a5f5)",
+        color: "white",
+        transition: "all 0.3s ease",
+      }}
+    >
+      <Typography variant="h6" fontWeight={600}>
+        Total Premium
+      </Typography>
+
+      <Typography variant="h4" fontWeight={700} sx={{ mt: 1 }}>
+        ₹{totalPremium.toLocaleString("en-IN")}
+      </Typography>
+
+      <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
+        Based on selected coverages
+      </Typography>
+    </Paper>
+  </Box>
+)}
+        {/* Navigation */}
         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
           <Button
             variant="outlined"
@@ -240,13 +491,14 @@ export default function Vehicle() {
           >
             Back
           </Button>
+
           <Button variant="contained" color="primary" onClick={handleNext}>
             Next
           </Button>
         </Box>
       </Paper>
 
-      {/* --- Snackbar for errors --- */}
+      {/* Snackbar */}
       <Snackbar
         open={errorOpen}
         autoHideDuration={4000}
