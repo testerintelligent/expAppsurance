@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   Typography,
@@ -10,7 +11,9 @@ import {
   TableHead,
   TableRow,
   TableCell,
+  TableContainer,
   TableBody,
+  TablePagination,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { searchAccountByContact, searchAccount } from "./accountAPI";
@@ -19,8 +22,13 @@ export default function Account() {
   const location = useLocation();
   const navigate = useNavigate();
   const [accountData, setAccountData] = useState(null);
+  const [accountDetails, setAccountDetails] = useState([]);
+
+  const [page, setPage] = useState(0); // current page
+  const [rowsPerPage, setRowsPerPage] = useState(5); // rows per page
+
   const [searchData, setSearchData] = useState({
-    accountId: "", 
+    accountNumber: "", 
     firstName: "",
     lastName: "",
     dateOfBirth: "",
@@ -37,57 +45,79 @@ export default function Account() {
   }, [location.state]);
 
   const handleChange = (e) => {
-    setSearchData({ ...searchData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+  
+    setSearchData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
   };
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // reset to first page when changing rows per page
+  };
+
+  const filteredData = accountDetails.filter((item) => {
+    return (
+      item.accountNumber
+        ?.toLowerCase()
+        .includes(searchData.accountNumber.toLowerCase()) &&
+      item.accountHolderName
+        ?.toLowerCase()
+        .includes(searchData.firstName.toLowerCase()) &&
+      item.accountHolderName
+        ?.toLowerCase()
+        .includes(searchData.lastName.toLowerCase())
+    );
+  });
+
+  // Fetch policies data from the API
+  useEffect(() => {
+    const fetchPolicies = async () => {
+      try {
+        const response = await axios.get("http://10.192.190.158:5000/api/Policies/getPoliciesForDashboard");
+        console.log("response", response.data)
+        setAccountDetails(response.data);
+      } catch (error) {
+        console.error("Error fetching policies:", error);
+      }
+    };
+    fetchPolicies();
+  }, []);
 
   //Store the values to SearchData
   useEffect(() => {
     const state = location.state;
 
-    if (!state?.accountId) return;
+    if (!state?.accountNumber) return;
 
     setSearchData({
-      accountId: state.accountId,
+      accountNumber: state.accountNumber,
       firstName: state.firstName || "",
       lastName: state.lastName || "",
       dateOfBirth: "",
     });
-  }, [location.state?.accountId]);
+  }, [location.state?.accountNumber]);
 
-  // Search the account details
-  useEffect(() => {
-    if (!searchData.accountId) return;
+  // Calculate paginated data safely
+  const paginatedData = Array.isArray(accountDetails)
+    ? accountDetails.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+    : [];
 
-    const fetchAccount = async () => {
-      try {
-        console.log("searchData", searchData);
-
-        const result = await searchAccount(searchData);
-
-        if (!result || (Array.isArray(result) && result.length === 0)) {
-          alert("Account not found");
-          setAccountData(null);
-          return;
-        }
-
-        setAccountData(result);
-      } catch (err) {
-        console.error(err);
-        alert("Error searching account");
-      }
-    };
-
-    fetchAccount();
-  }, [searchData.accountId]); 
-
-  const handleSearch = async () => {
+  const executeSearch = async (payload) => {
     try {
-      const result = await searchAccount(searchData); 
+      const result = await searchAccount(payload);
+  
       if (!result || (Array.isArray(result) && result.length === 0)) {
         alert("Account not found");
         setAccountData(null);
         return;
       }
+  
       setAccountData(result);
     } catch (err) {
       console.error(err);
@@ -95,6 +125,9 @@ export default function Account() {
     }
   };
 
+  const handleSearch = () => {
+    executeSearch(searchData);
+  };
   return (
     <Box sx={{ width: "100%", maxWidth: 1200, mx: "auto", mt: 2 }}>
       
@@ -108,8 +141,8 @@ export default function Account() {
               <TextField
                 fullWidth
                 label="Account ID"
-                name="accountId"
-                value={searchData.accountId}
+                name="accountNumber"
+                value={searchData.accountNumber}
                 onChange={handleChange}
               />
             </Grid>
@@ -154,6 +187,57 @@ export default function Account() {
               </Button>
             </Grid>
           </Grid>
+          {/* Search Result Table */}
+          {accountDetails && accountDetails?.length > 0 && (
+              <TableContainer component={Paper} sx={{ mt: 3 }}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Select</TableCell>
+                      <TableCell>Account ID</TableCell>
+                      <TableCell>Account Holder Name</TableCell>
+                      <TableCell>Policy Number</TableCell>
+                      <TableCell>Policy Type</TableCell>
+                      <TableCell>Status</TableCell>
+                      {/* <TableCell>Zipcode</TableCell>
+                      <TableCell>Address</TableCell> */}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {filteredData
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((account, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <Button
+                            variant="contained"
+                            size="small"
+                            onClick={() => executeSearch(account)}
+                          >
+                            Select
+                          </Button>
+                        </TableCell>
+                        <TableCell>{account.accountNumber}</TableCell>
+                        <TableCell>{account.accountHolderName}</TableCell>
+                        <TableCell>{account.policyNumber}</TableCell>
+                        <TableCell>{account.policyType}</TableCell>
+                        <TableCell>{account.status}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                {/* Pagination Controls */}
+                <TablePagination
+                  component="div"
+                  count={accountDetails?.length}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  rowsPerPage={rowsPerPage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  rowsPerPageOptions={[5, 10, 25]}
+                />
+              </TableContainer>
+            )}
         </Paper>
       )}
 
