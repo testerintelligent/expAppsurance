@@ -116,11 +116,11 @@ const createAccount = async (req, res) => {
 // --- 2️⃣ Search Accounts ---
 const getAccounts = async (req, res) => {
   try {
-    const { accountId, firstName, lastName, dateOfBirth } = req.query;
+    const { accountNumber, firstName, lastName, dateOfBirth } = req.query;
     let filter = {};
 
-    if (accountId) {
-      filter.accountId = accountId;
+    if (accountNumber) {
+      filter.accountId = accountNumber;
     }
 
     let accounts;
