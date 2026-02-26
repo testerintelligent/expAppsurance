@@ -21,11 +21,14 @@ export default function ClaimSummary() {
   const [claim, setClaim] = useState(null);
   const [error, setError] = useState(null);
 
+  
+const api = axios.create({ baseURL: process.env.REACT_APP_API_URL || 'http://10.192.190.158:5000/api' });
+
   useEffect(() => {
     let mounted = true;
     const fetchClaim = async () => {
       try {
-        const res = await axios.get(`/api/claims/${id}`);
+        const res = await api.get(`/claims/search/${id}`);
         const data = res.data?.claim || res.data;
         if (mounted) {
           setClaim(data);

@@ -14,7 +14,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
+  TableRow
 } from '@mui/material';
 
 import SearchIcon from '@mui/icons-material/Search';
@@ -106,20 +106,18 @@ export default function PolicySearchPage() {
   const contact = policyResponse?.contact;
 
   return (
-    <Box p={3}>
+    <Box p={4}>
       <Paper elevation={3} sx={{ p: 3, maxWidth: 920, margin: '0 auto' }}>
         <Typography variant="h5" gutterBottom>
           Find a Policy
         </Typography>
-
         <Typography variant="body2" color="text.secondary" gutterBottom>
           Enter a policy number to fetch policy and insured details.
         </Typography>
-
-        <Grid container spacing={2} alignItems="center" sx={{ mt: 1 }}>
-          <Grid item xs={12} sm={8}>
+        <Grid container spacing={2} alignItems="center" justifyContent="center" sx={{ mt: 1 }}>
+          <Grid item size={{ xs: 6, md: 8 }}>
             <TextField
-              label="Policy Number"
+              label="Search by policy number"
               value={policyNumber}
               onChange={(e) => setPolicyNumber(e.target.value)}
               fullWidth
@@ -127,16 +125,22 @@ export default function PolicySearchPage() {
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             />
           </Grid>
-
-          <Grid item xs={12} sm={4}>
+          <Grid item size={{ xs: 6, md: 3 }}>
             <Button
               variant="contained"
               startIcon={
-                loading ? <CircularProgress size={18} /> : <SearchIcon />
+                loading ? <CircularProgress size={18} color="inherit" /> : <SearchIcon />
               }
               onClick={handleSearch}
               disabled={loading}
-              fullWidth
+
+              sx={{
+                backgroundColor: '#004b50',
+                color: '#fff',
+                '&:hover': {
+                  backgroundColor: '#00363a',
+                },
+              }}
             >
               {loading ? 'Searching...' : 'Search Policy'}
             </Button>
@@ -177,8 +181,7 @@ export default function PolicySearchPage() {
 
                     <TableCell>
                       {contact
-                        ? `${contact.firstName || ''} ${
-                            contact.lastName || ''
+                        ? `${contact.firstName || ''} ${contact.lastName || ''
                           }`.trim()
                         : 'N/A'}
                     </TableCell>
@@ -197,16 +200,16 @@ export default function PolicySearchPage() {
                     <TableCell>
                       {policy.effectiveDate
                         ? new Date(
-                            policy.effectiveDate
-                          ).toLocaleDateString()
+                          policy.effectiveDate
+                        ).toLocaleDateString()
                         : 'N/A'}
                     </TableCell>
 
                     <TableCell>
                       {policy.expiryDate
                         ? new Date(
-                            policy.expiryDate
-                          ).toLocaleDateString()
+                          policy.expiryDate
+                        ).toLocaleDateString()
                         : 'N/A'}
                     </TableCell>
                   </TableRow>

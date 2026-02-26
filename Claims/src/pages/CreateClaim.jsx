@@ -27,7 +27,7 @@ export default function CreateClaim() {
   const [policy, setPolicy] = useState(null);
 
   const [lossDate, setLossDate] = useState("");
-  const [claimType, setClaimType] = useState("");
+  const [claimType, setClaimType] = useState("Auto"); // Use default value - Auto
 
   /* =========================
      🔄 LOAD POLICY CONTEXT
@@ -130,7 +130,7 @@ export default function CreateClaim() {
         <Divider sx={{ my: 3 }} />
 
         {/* ------------------- LOSS DATE ------------------- */}
-        <Typography variant="h6">
+        <Typography variant="h5">
           Loss Date<span style={{ color: "red" }}> *</span>
         </Typography>
 
@@ -139,21 +139,26 @@ export default function CreateClaim() {
           value={lossDate}
           onChange={(e) => setLossDate(e.target.value)}
           required
+         inputProps={{
+            min: policy.effectiveDate.split("T")[0],
+            max: policy.expiryDate.split("T")[0],
+          }}
           sx={{ width: 250, mb: 3 }}
           InputLabelProps={{ shrink: true }}
         />
 
         {/* ------------------- CLAIM TYPE ------------------- */}
-        <Typography variant="h6">
+        <Typography variant="h5">
           Type of Claim<span style={{ color: "red" }}> *</span>
         </Typography>
 
         <FormControl component="fieldset" sx={{ mb: 3 }}>
           <RadioGroup
             value={claimType}
+            defaultValue="Auto"
             onChange={(e) => setClaimType(e.target.value)}
           >
-            <FormControlLabel value="Auto" control={<Radio />} label="Auto" />
+            <FormControlLabel value="Auto"  control={<Radio />} label="Auto" />
             <FormControlLabel
               value="Auto - Auto First and Final"
               control={<Radio />}

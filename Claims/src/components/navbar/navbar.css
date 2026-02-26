@@ -1,7 +1,13 @@
-.active {
-  background-color: #e0e0e0; /* your desired color */
-  color: #000;
-  padding: 8px;
-  border-radius: 4px;
+.nav-active {
+  background-color: #32145a;
+  color: #fff;
+  font-weight: 500; 
+  padding: 20px;  
   text-decoration: "none"
+  
+}
+
+.bg-color {
+  background-color: #4f3597;
+  font-weight: 500;
 }
