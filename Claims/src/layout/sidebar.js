@@ -21,7 +21,6 @@ import {
   ChevronLeft as ChevronLeftIcon,
 } from "@mui/icons-material";
 
-
 const navItems = [
   { label: "Dashboard", path: "/", icon: <DashboardIcon /> },
   { label: "Activities", path: "/activities", icon: <ActivitiesIcon /> },
