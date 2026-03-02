@@ -12,6 +12,7 @@ const Sidebar = () => {
   const navItems = [
     { label: "Dashboard", path: "/" },
     { label: "Users", path: "/users" },
+    { label: "Invoice", path: "invoice" },
     ...(isPolicyPage
       ? [{ label: "Policy Summary", path: location.pathname }]
       : []),
