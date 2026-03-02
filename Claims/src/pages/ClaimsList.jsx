@@ -1,67 +1,196 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography } from '@mui/material';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TablePagination,
+  TableSortLabel,
+  Button,
+  Typography,
+  Chip,
+} from "@mui/material";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const api = axios.create({ baseURL: process.env.REACT_APP_API_URL || 'http://10.192.190.158:5000/api' });
+const api = axios.create({
+  baseURL:
+    process.env.REACT_APP_API_URL || "http://10.192.190.158:5000/api",
+});
 
 export default function ClaimsList() {
   const [claims, setClaims] = useState([]);
+  const [page, setPage] = useState(0); // MUI starts from 0
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [orderBy, setOrderBy] = useState("createdAt");
+  const [order, setOrder] = useState("desc");
+
   const navigate = useNavigate();
 
-  const fetch = async () => {
+  const fetchData = async () => {
     try {
-      const res = await api.get('/claims');
+      const res = await api.get("/claims/list", {
+        params: {
+          page: page + 1,
+          limit: rowsPerPage,
+          sortBy: orderBy,
+          order,
+        },
+      });
+
       setClaims(res.data.claims || []);
+      setTotal(res.data.total || 0);
     } catch (err) {
       console.error(err);
     }
   };
 
   useEffect(() => {
-    fetch();
-    const handler = (e) => {
-      // when a claim is created elsewhere, refresh list
-      fetch();
-    };
-    window.addEventListener('claimCreated', handler);
-    return () => window.removeEventListener('claimCreated', handler);
-  }, []);
+    fetchData();
+  }, [page, rowsPerPage, orderBy, order]);
+
+  // Sorting handler
+  const handleSort = (property) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+
+  const columns = [
+    { id: "claimNumber", label: "Claim ID" },
+    { id: "policyNumber", label: "Policy ID" },
+    { id: "insured", label: "Insured" },
+    { id: "lossDate", label: "Date of Loss" },
+    { id: "status", label: "Status" },
+  ];
 
   return (
-    <Box p={3}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h5">Claims</Typography>
+    <Box p={4} sx={{ backgroundColor: "#f5f7fa", minHeight: "100vh" }}>
+      {/* Header */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <Typography variant="h5" fontWeight={600} color="black">
+          Claims
+        </Typography>
+
         <Box>
-          <Button variant="outlined" sx={{ mr: 2 }} onClick={fetch}>Refresh</Button>
-          <Button variant="contained" onClick={() => navigate('/claims/create')}>Create Claim</Button>
+          <Button variant="outlined" sx={{ mr: 2 }} onClick={fetchData}>
+            Refresh
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => navigate("/claims/create")}
+          >
+            Create Claim
+          </Button>
         </Box>
       </Box>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Claim #</TableCell>
-              <TableCell>Policy #</TableCell>
-              <TableCell>Claimant</TableCell>
-              <TableCell>Date of Loss</TableCell>
-              <TableCell>Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {claims.map((c) => (
-              <TableRow key={c._id}>
-                <TableCell>{c.claimNumber}</TableCell>
-                <TableCell>{c.policyNumber}</TableCell>
-                <TableCell>{c.claimantName}</TableCell>
-                <TableCell>{new Date(c.dateOfLoss).toLocaleDateString()}</TableCell>
-                <TableCell>{c.status}</TableCell>
+      {/* Table */}
+      <Paper elevation={3} sx={{ borderRadius: 3 }}>
+        <TableContainer sx={{ maxHeight: 600 }}>
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    sx={{ fontWeight: 700, backgroundColor: "#f4f6f8" }}                >
+                    
+                      <TableSortLabel
+                        active={orderBy === column.id}
+                        direction={orderBy === column.id ? order : "asc"}
+                        onClick={() => handleSort(column.id)}
+                      >
+                        {column.label}
+                      </TableSortLabel>                  
+                  </TableCell>
+                ))}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+
+            <TableBody>
+              {claims.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
+                    <Typography color="text.secondary">
+                      No claims found.
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                claims.map((c, index) => (
+                  <TableRow
+                    key={c._id}
+                    hover                   
+                  >
+                    <TableCell
+                     sx={{                      
+                      cursor: "pointer",
+                    }}
+                    onClick={() =>
+                      navigate(`/Claim/summary/${c.claimNumber}`)
+                    }>
+                      <Typography color="primary">
+                        {c.claimNumber}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>{c.policyNumber}</TableCell>
+                    <TableCell>{c.insured?.name}</TableCell>
+                    <TableCell>
+                      {new Date(c.lossDate).toLocaleDateString("en-GB")}
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={c.status}
+                        size="small"
+                        sx={{
+                          fontWeight: 600,
+                          borderRadius: "8px",
+                        }}
+                        color={
+                          c.status === "Approved"
+                            ? "success"
+                            : c.status === "Rejected"
+                            ? "error"
+                            : c.status === "Open"
+                            ? "warning"
+                            : "default"
+                        }
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {/* Pagination */}
+        <TablePagination
+          component="div"
+          count={total}
+          page={page}
+          onPageChange={(e, newPage) => setPage(newPage)}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10));
+            setPage(0);
+          }}
+          rowsPerPageOptions={[5, 10, 25, 50]}
+        />
+      </Paper>
     </Box>
   );
 }

@@ -27,19 +27,45 @@ exports.createClaim = async (req, res) => {
 // GET /api/claims/list - return all claims (optionally filter by policyNumber)
 exports.getClaimsList = async (req, res) => {
   try {
-    const { policyNumber } = req.query;
+    const { policyNumber, page, limit, sortBy, order } = req.query;
+
+    // Filtering
     const filter = {};
-    if (policyNumber) filter.policyNumber = policyNumber;
- 
-    // fetch all matching claims, most recent first
-    const claims = await Claim.find(filter).sort({ createdAt: -1 }).lean();
- 
-    return res.status(200).json({ count: claims.length, claims });
+    if (policyNumber) {
+      filter.policyNumber = policyNumber;
+    }
+
+    // Pagination defaults (optional)
+    const pageNumber = parseInt(page) > 0 ? parseInt(page) : 1;
+    const pageSize = parseInt(limit) > 0 ? parseInt(limit) : 10;
+    const skip = (pageNumber - 1) * pageSize;
+
+    // Sorting logic
+    const sortField = sortBy ? sortBy : "createdAt";
+    const sortOrder = order === "asc" ? 1 : -1;
+
+    const total = await Claim.countDocuments(filter);
+
+    const claims = await Claim.find(filter)
+      .sort({ [sortField]: sortOrder })
+      .skip(skip)
+      .limit(pageSize)
+      .lean();
+
+    return res.status(200).json({
+      total,
+      page: pageNumber,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      count: claims.length,
+      claims,
+    });
   } catch (error) {
     console.error("Error fetching claims list:", error);
-    return res
-      .status(500)
-      .json({ message: "Failed to fetch claims", error: error.message });
+    return res.status(500).json({
+      message: "Failed to fetch claims",
+      error: error.message,
+    });
   }
 };
  

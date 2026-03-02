@@ -151,8 +151,8 @@ export default function BasicInformation() {
         {/* ================= REPORTED BY ================= */}
         <Typography variant="h6">Reported By</Typography>
 
-        <Grid container spacing={3} mt={1}>
-          <Grid item xs={12} sm={4}>
+        <Grid container spacing={4} mt={1}>
+          <Grid item xs={12} sm={5}>
             <FormControl fullWidth>
               <InputLabel>How Reported</InputLabel>
               <Select

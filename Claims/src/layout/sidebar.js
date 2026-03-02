@@ -25,7 +25,7 @@ const navItems = [
   { label: "Dashboard", path: "/", icon: <DashboardIcon /> },
   { label: "Activities", path: "/activities", icon: <ActivitiesIcon /> },
   { label: "Claims", path: "/claims", icon: <ClaimsIcon /> },
-  { label: "Create Claim", path: "/claims/create", icon: <CreateClaimIcon /> },
+  { label: "Create Claim", path: "/Claim", icon: <CreateClaimIcon /> },
   { label: "Exposures", path: "/exposures", icon: <ExposuresIcon /> },
   { label: "Queues", path: "/queues", icon: <QueueIcon /> },
 ];
@@ -100,7 +100,7 @@ const Sidebar = () => {
                         bottom: 8,
                         width: "4px",
                         borderRadius: "4px",
-                        backgroundColor: "#32145a",
+                        backgroundColor: "#4f3597",
                       }
                       : {},
                   }}
@@ -112,7 +112,7 @@ const Sidebar = () => {
                       justifyContent: "center",
 
                       // Icon color logic
-                      color: isActive ? "#32145a" : "#6b7280",
+                      color: isActive ? "#4f3597" : "#6b7280",
                     }}
                   >
                     {item.icon}

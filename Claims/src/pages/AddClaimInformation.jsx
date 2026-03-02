@@ -161,7 +161,7 @@ export default function AddClaimInfo() {
 
         {/* ACTIONS */}
         <Box textAlign="right" mt={3}>
-          <Button variant="contained" onClick={handleNext}>
+          <Button variant="contained" color = '#ffp7eso' onClick={handleNext}>
             Next →
           </Button>
         </Box>
