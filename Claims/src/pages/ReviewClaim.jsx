@@ -8,7 +8,8 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 
 const api = axios.create({
-  baseURL: "http://10.192.190.158:5000/api",
+  baseURL:
+    process.env.REACT_APP_API_URL || "http://10.192.190.158:5000/api",
 });
 
 export default function ReviewClaim() {

@@ -25,8 +25,8 @@ export default function CreateClaim() {
 
   // ✅ Normalized policy object
   const [policy, setPolicy] = useState(null);
-
   const [lossDate, setLossDate] = useState("");
+  const [error, setError] = useState("");
   const [claimType, setClaimType] = useState("Auto"); // Use default value - Auto
 
   /* =========================
@@ -42,6 +42,24 @@ export default function CreateClaim() {
       }
     }
   }, [location.state]);
+
+  const handleDateChange = (e, policy) => {
+      const minDate = policy?.effectiveDate?.split("T")[0];
+      const maxDate = policy?.expiryDate?.split("T")[0];
+      const value = e;
+      setLossDate(value);
+
+       // Validate only if the value is non-empty
+        if (value) {
+          if (value < minDate || value > maxDate) {
+            setError(`Date must be between ${minDate} and ${maxDate}`);
+          } else {
+            setError(""); // valid
+          }
+        } else {
+          setError(""); // empty input
+        }
+  }
 
   /* =========================
      ➡️ NEXT: BASIC INFO
@@ -137,8 +155,10 @@ export default function CreateClaim() {
         <TextField
           type="date"
           value={lossDate}
-          onChange={(e) => setLossDate(e.target.value)}
+          onChange={(e) => handleDateChange(e.target.value, policy)}
           required
+          error={!!error}
+          helperText={error}
          inputProps={{
             min: policy.effectiveDate.split("T")[0],
             max: policy.expiryDate.split("T")[0],
@@ -175,7 +195,7 @@ export default function CreateClaim() {
         <Box display="flex" justifyContent="flex-end">
           <Button
             variant="contained"
-            disabled={!lossDate || !claimType}
+            disabled={!lossDate || !claimType || error}
             onClick={handleNext}
           >
             Next →
