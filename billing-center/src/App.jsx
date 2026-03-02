@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import PolicyDashboard from "./pages/Policy";
 import Users from "./pages/Users";
 import PolicySummary from "./components/policySummary";
+import Invoice from "./pages/Invoice.jsx";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/users" element={<Users />} />
           <Route path="/policy" element={<PolicyDashboard />} />
+          <Route path="/invoice" element={<Invoice />} />
           <Route
             path="/policy-summary/:policyNumber"
             element={<PolicySummary />}
