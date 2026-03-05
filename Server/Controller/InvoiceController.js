@@ -53,9 +53,8 @@ exports.getAllInvoice = async (req, res) => {
 exports.getInvoiceByPolicyNumber = async (req, res) => {
   const { policyNumber } = req.params;
 
-  const invoice = await Invoice.findOne({ policyNumber });
-  // const invoice = await Policy.findOne({ policyNumber }).populate("policyId");
-  // .populate("contactId");
+  // const invoice = await Invoice.findOne({ policyNumber });
+  const invoice = await Policy.findOne({ policyNumber }).populate("policyId");
 
   if (!invoice) {
     return res.status(404).json({ message: "Invoice not found" });

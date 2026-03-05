@@ -96,7 +96,9 @@ const formatDate = (d) => {
 
 const PolicySummary = () => {
   const location = useLocation();
-  const { policyNumber } = useParams();
+  const { policyNumber: urlPolicyNumber } = useParams();
+  const storedPolicyNumber = localStorage.getItem("policyNumber");
+  const policyNumber = urlPolicyNumber || storedPolicyNumber;
   const navigate = useNavigate();
   const [policy, setPolicy] = useState(location.state?.policy || null);
   const [loading, setLoading] = useState(!policy);
@@ -105,21 +107,39 @@ const PolicySummary = () => {
   useEffect(() => {
     const hasDetails =
       policy && (policy.totalPremium || policy.coverages || policy.accountId);
-    if (hasDetails) return;
+    if (hasDetails) {
+      localStorage.setItem("policyNumber", policy.policyNumber);
+      return;
+    }
+
     const fetchPolicy = async () => {
       setLoading(true);
       try {
         const base = "http://10.192.190.158:5000";
+
         const res = await axios.get(
           `${base}/api/policies/getPolicyByNumber/${policyNumber}`
         );
+
+        const policyData = res.data.policy || res.data;
+
         setPolicy(res.data.policy || res.data);
+
+        // store policy number
+        localStorage.setItem(
+          "policyNumber",
+          (res.data.policy || res.data).policyNumber
+        );
+
+        // ✅ store policy number
+        localStorage.setItem("policyNumber", policyData.policyNumber);
       } catch (err) {
         setError("Unable to fetch policy details");
       } finally {
         setLoading(false);
       }
     };
+
     if (policyNumber) fetchPolicy();
   }, [policyNumber, policy]);
 

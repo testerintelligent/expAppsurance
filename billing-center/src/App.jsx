@@ -15,7 +15,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/users" element={<Users />} />
           <Route path="/policy" element={<PolicyDashboard />} />
-          <Route path="/invoice" element={<Invoice />} />
+          <Route path="/invoice/:policyNumber" element={<Invoice />} />
           <Route
             path="/policy-summary/:policyNumber"
             element={<PolicySummary />}
