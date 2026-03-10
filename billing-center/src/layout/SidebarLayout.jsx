@@ -6,15 +6,28 @@ import ListItemText from "@mui/material/ListItemText";
 
 const Sidebar = () => {
   const location = useLocation();
-  const isPolicyPage = location.pathname.startsWith("/policy-summary");
+  const isPolicySummary = location.pathname.startsWith("/policy-summary");
+  const isInvoice = location.pathname.startsWith("/invoice");
+
+  const isPolicyPage = isPolicySummary || isInvoice;
   const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const policyNumber = location.pathname.split("/")[2];
 
   const navItems = [
     { label: "Dashboard", path: "/" },
     { label: "Users", path: "/users" },
-    { label: "Invoice", path: "invoice" },
+
     ...(isPolicyPage
-      ? [{ label: "Policy Summary", path: location.pathname }]
+      ? [
+          {
+            label: "Policy Summary",
+            path: `/policy-summary/${policyNumber}`,
+          },
+          {
+            label: "Invoice",
+            path: `/invoice/${policyNumber}`,
+          },
+        ]
       : []),
   ];
 

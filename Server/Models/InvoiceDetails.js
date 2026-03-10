@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 const invoiceSchema = new mongoose.Schema({
   totalCost: { type: Number, required: true },
-  policyNumber: { type: String, required: true },
+  policyNumber: { type: mongoose.Schema.Types.ObjectId, ref: "PolicyDetails" },
   productType: { type: String, required: true },
   effectiveDate: { type: Date, required: true },
   expiryDate: { type: Date, required: true },
