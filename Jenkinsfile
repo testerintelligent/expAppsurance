@@ -16,7 +16,7 @@ pipeline {
                 script {
                     sh '''
                         echo "P@ssw0rd" | sudo -S docker-compose down
-                        docker-compose up --build -d
+                        sudo docker-compose up --build -d
                     '''
                 }
             }
