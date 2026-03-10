@@ -58,6 +58,8 @@ services:
   mongo:
     image: mongo:latest
     container_name: database
+    ports:
+      - "27017:27017"
     volumes:
       - mongo_data:/data/db
     restart: unless-stopped
