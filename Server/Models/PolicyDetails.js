@@ -24,4 +24,13 @@ const policySchema = new mongoose.Schema({
   vehicleId: { type: mongoose.Schema.Types.ObjectId, ref: 'VehicleDetails' },
 });
 
+policySchema.virtual("claims", {
+  ref: "Claim",
+  localField: "_id",
+  foreignField: "policyId"
+});
+
+policySchema.set("toObject", { virtuals: true });
+policySchema.set("toJSON", { virtuals: true });
+
 module.exports = mongoose.model("PolicyDetails", policySchema);
