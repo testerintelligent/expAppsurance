@@ -134,7 +134,8 @@ exports.getPolicyByNumber = async (req, res) => {
 
   const policy = await Policy.findOne({ policyNumber })
     .populate('accountId')
-    .populate('contactId');
+    .populate('contactId')
+    .populate('claims');
 
   if (!policy) {
     return res.status(404).json({ message: 'Policy not found' });
@@ -153,7 +154,7 @@ exports.getPolicyByNumber = async (req, res) => {
     contact: policy.contactId,
     account: policy.accountId,
     vehicle: vehicles,
-    driver: drivers,
+    driver: drivers
   });
 };
 
