@@ -19,7 +19,7 @@ import { useNavigate } from "react-router-dom";
 
 const api = axios.create({
   baseURL:
-    process.env.REACT_APP_API_URL || "http://10.192.190.158:5000/api",
+    process.env.REACT_APP_API_URL || "http://localhost:5000/api",
 });
 
 export default function ClaimsList() {
@@ -160,11 +160,11 @@ export default function ClaimsList() {
                           borderRadius: "8px",
                         }}
                         color={
-                          c.status === "Approved"
+                          c.status === "Open"
                             ? "success"
-                            : c.status === "Rejected"
+                            : c.status === "Closed"
                             ? "error"
-                            : c.status === "Open"
+                            : c.status === "Draft"
                             ? "warning"
                             : "default"
                         }
