@@ -4,42 +4,35 @@ const ClaimSchema = new mongoose.Schema(
   {
     claimNumber: { type: String, unique: true },
     policyNumber: String,
-    policyId: String,
-
+    policyId: {type: mongoose.Schema.Types.ObjectId, ref: 'PolicyDetails', required: true},
     insured: {
       name: String,
       phone: String,
       address: String,
     },
-
     lossDate: Date,
     dateOfNotice: Date,
     claimType: String,
-
     howReported: String,
     reportedBy: String,
     relationToInsured: String,
-
+    lossCause: String,
+    weather: String,
+    faultRating: String,
+    incidentOnly: {
+      type: Boolean,
+      default: false,
+    },
     lossDescription: String,
     lossLocation: String,
     policeReported: Boolean,
 
     vehicles: [
-      {
-        vehicleId: String,
-        make: String,
-        model: String,
-        year: Number,
-        licensePlate: String,
-      },
+      {type: mongoose.Schema.Types.ObjectId, ref: 'VehicleDetails'}
     ],
 
     drivers: [
-      {
-        driverId: String,
-        name: String,
-        phone: String,
-      },
+     {type: mongoose.Schema.Types.ObjectId, ref: 'DriverDetails'}
     ],
 
     status: {

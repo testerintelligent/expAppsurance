@@ -14,9 +14,11 @@ import {
   Radio,
   Grid,
   Checkbox,
-  Divider,
+  Divider
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
+import PolicyTitleBar from "./PolicyTitleBar";
+
 
 export default function BasicInformation() {
   const location = useLocation();
@@ -83,15 +85,13 @@ export default function BasicInformation() {
   const vehicles = policy.vehicle || [];
   const drivers = policy.driver || [];
 
-  const insuredFullName = `${contact?.firstName || ""} ${
-    contact?.lastName || ""
-  }`.trim();
+  const insuredFullName = `${contact?.firstName || ""} ${contact?.lastName || ""
+    }`.trim();
 
   const insuredAddress =
     contact?.address ||
     contact?.street ||
-    `${contact?.city || ""}, ${contact?.state || ""} ${
-      contact?.zipCode || ""
+    `${contact?.city || ""}, ${contact?.state || ""} ${contact?.zipCode || ""
     }`;
 
   /* ===============================
@@ -133,26 +133,35 @@ export default function BasicInformation() {
     <Box p={3}>
       <Paper elevation={3} sx={{ p: 3, maxWidth: 1200, margin: "0 auto" }}>
         {/* HEADER */}
-        <Box display="flex" justifyContent="space-between" mb={3}>
+
+
+        <PolicyTitleBar 
+        policyNumber = {policy?.policyNumber}
+        insured = {insuredFullName}
+        lossDate = {lossDate}
+        status = 'Draft'
+        ></PolicyTitleBar>     
+
+        <Box display="flex" justifyContent="space-between" mb={3} mt={3}>
           <Button variant="outlined" color="error">
             Cancel
           </Button>
 
           <Box>
             <Button variant="outlined" sx={{ mr: 2 }} onClick={() => navigate(-1)}>
-              &lt; Back
+              ← Back
             </Button>
             <Button variant="contained" onClick={handleNext}>
-              Next &gt;
+              Next →
             </Button>
           </Box>
         </Box>
 
         {/* ================= REPORTED BY ================= */}
-        <Typography variant="h6">Reported By</Typography>
+        <Typography variant="h6" align="left" sx={{ fontWeight: 600 }}>Reported By</Typography>
 
         <Grid container spacing={4} mt={1}>
-          <Grid item xs={12} sm={5}>
+          <Grid item size={{ xs: 12, md: 3, sm: 5 }}>
             <FormControl fullWidth>
               <InputLabel>How Reported</InputLabel>
               <Select
@@ -167,7 +176,7 @@ export default function BasicInformation() {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={4}>
+          <Grid item size={{ xs: 12, md: 4, sm: 5 }}>
             <FormControl fullWidth>
               <InputLabel>Name</InputLabel>
               <Select
@@ -176,12 +185,11 @@ export default function BasicInformation() {
                 onChange={(e) => setReportedName(e.target.value)}
               >
                 <MenuItem value={insuredFullName}>{insuredFullName}</MenuItem>
-                <MenuItem value="Other">Other</MenuItem>
               </Select>
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={4}>
+          <Grid item size={{ xs: 12, md: 3, sm: 5 }}>
             <FormControl fullWidth>
               <InputLabel>Relation</InputLabel>
               <Select
@@ -202,15 +210,17 @@ export default function BasicInformation() {
         <Divider sx={{ my: 3 }} />
 
         {/* ================= INSURED ================= */}
-        <Typography variant="h6">Insured</Typography>
-        <Typography><strong>Name:</strong> {insuredFullName}</Typography>
-        <Typography><strong>Address:</strong> {insuredAddress}</Typography>
-        <Typography><strong>Phone:</strong> {contact?.phone || "N/A"}</Typography>
+        <Typography variant="h6" align="left" sx={{ fontWeight: 600 }}>Insured</Typography>
+        <div>
+          <Typography align="left">Name: {insuredFullName}</Typography>
+          <Typography align="left">Address: {insuredAddress}</Typography>
+          <Typography align="left">Phone: {contact?.phone || "N/A"}</Typography>
+        </div>
 
         <Divider sx={{ my: 3 }} />
 
         {/* ================= VEHICLES ================= */}
-        <Typography variant="h6">Involved Vehicles</Typography>
+        <Typography variant="h6" align="left" sx={{ fontWeight: 600 }}>Involved Vehicles</Typography>
 
         {vehicles.length > 0 ? (
           vehicles.map((v) => (
@@ -231,7 +241,7 @@ export default function BasicInformation() {
         <Divider sx={{ my: 3 }} />
 
         {/* ================= DRIVERS ================= */}
-        <Typography variant="h6">Drivers</Typography>
+        <Typography variant="h6" align="left" sx={{ fontWeight: 600 }}>Drivers</Typography>
 
         {drivers.length > 0 ? (
           drivers.map((d) => (

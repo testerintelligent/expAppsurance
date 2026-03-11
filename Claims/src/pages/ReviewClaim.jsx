@@ -9,7 +9,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const api = axios.create({
   baseURL:
-    process.env.REACT_APP_API_URL || "http://10.192.190.158:5000/api",
+    process.env.REACT_APP_API_URL || "http://localhost:5000/api",
 });
 
 export default function ReviewClaim() {
@@ -19,8 +19,7 @@ export default function ReviewClaim() {
   const handleSubmit = async () => {
     const payload = {
       policyNumber: state.policy.policyNumber,
-      policyId: state.policy.policyId,
-
+      policyId: state.policy._id,
       insured: {
         name: `${state.policy.contact.firstName} ${state.policy.contact.lastName}`,
         phone: state.policy.contact.phone,
@@ -34,18 +33,26 @@ export default function ReviewClaim() {
       howReported: state.howReported,
       reportedBy: state.reportedName,
       relationToInsured: state.relation,
+      lossCause: state.lossCause,
+      weather: state.weather,
+      faultRating: state.faultRating,
+      incidentOnly: state.incidentOnly,
 
       lossDescription: state.lossDescription,
       lossLocation: state.lossLocation,
       policeReported: state.policeReported,
 
-      vehicles: state.selectedVehicles.map((id) =>
-        state.policy.vehicle.find((v) => v._id === id)
-      ),
+      vehicles: state.selectedVehicles.map((id) => {
+        if(state.policy.vehicle.find((v) => v._id === id)) {
+          return id
+        }
+      }),
 
-      drivers: state.selectedDrivers.map((id) =>
-        state.policy.driver.find((d) => d._id === id)
-      ),
+      drivers: state.selectedDrivers.map((id) => {
+        if(state.policy.driver.find((d) => d._id === id)) {
+          return id
+        }
+      }),
     };
 
     const res = await api.post("/claims/create", payload);
