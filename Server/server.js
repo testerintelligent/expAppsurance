@@ -1,6 +1,7 @@
 // server.js
 const express = require("express");
 const mongoose = require("mongoose");
+const config = require("config");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
@@ -14,6 +15,7 @@ const quoteRoutes = require("./Routes/QuoteRoute");
 const policyRoutes = require("./Routes/PolicyRoute");
 const claimRoutes = require("./Routes/ClaimRoute");
 const invoiceRoutes = require("./Routes/InvoiceRoute");
+const authRoutes = require("./Routes/AuthRoute");
 
 // Load environment variables from .env
 dotenv.config();
@@ -27,6 +29,11 @@ app.use(cors());
 // Swagger documentation
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+if (!config.get("jwtPrivateKey")) {
+  console.log("FATAL ERROR: jwtPrivateKey is not defined.");
+  process.exit(1);
+}
+
 // Use main routes
 app.use("/api/contacts", contactRoutes);
 app.use("/api/accounts", accountRoutes);
@@ -37,6 +44,7 @@ app.use("/api/quotes", quoteRoutes);
 app.use("/api/policies", policyRoutes);
 app.use("/api/claims", claimRoutes);
 app.use("/api/billing", invoiceRoutes);
+app.use("/api/register", authRoutes);
 
 // Root endpoint
 app.get("/", (req, res) => {

@@ -16,7 +16,7 @@ import {
   TableHead,
   TableRow,
   MenuItem,
-  Modal,
+  Modal
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
@@ -476,7 +476,7 @@ export default function Contact() {
                   </TextField>
                 </Grid>
                 {/* Row 3 */}
-                <Grid size={12}>
+                <Grid size={6}>
                   <TextField
                     fullWidth
                     label="Email"
@@ -496,6 +496,7 @@ export default function Contact() {
                     InputProps={{ readOnly: !isEditMode }}
                   />
                 </Grid>
+
                 {/* Row 4 */}
                 <Grid size={6}>
                   <TextField
@@ -676,7 +677,7 @@ export default function Contact() {
               </Grid>
 
               {/* Row 3 */}
-              <Grid size={12}>
+              <Grid size={6}>
                 <TextField
                   fullWidth
                   label="Email"
@@ -716,7 +717,7 @@ export default function Contact() {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid size={6}>
+              <Grid size={4}>
                 <TextField
                   select
                   fullWidth
@@ -734,26 +735,7 @@ export default function Contact() {
                 </TextField>
               </Grid>
 
-              {/* Row 6: City + State (dependent) */}
-              <Grid size={6}>
-                <TextField
-                  select
-                  fullWidth
-                  label="City"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleCityChange}
-                  disabled={!cities.length}
-                >
-                  <MenuItem value="">Select City</MenuItem>
-                  {cities.map((ct) => (
-                    <MenuItem key={ct} value={ct}>
-                      {ct}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid size={6}>
+              <Grid size={4}>
                 <TextField
                   select
                   fullWidth
@@ -772,8 +754,29 @@ export default function Contact() {
                 </TextField>
               </Grid>
 
+              {/* Row 6: City + State (dependent) */}
+              <Grid size={4}>
+                <TextField
+                  select
+                  fullWidth
+                  label="City"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleCityChange}
+                  disabled={!cities.length}
+                >
+                  <MenuItem value="">Select City</MenuItem>
+                  {cities.map((ct) => (
+                    <MenuItem key={ct} value={ct}>
+                      {ct}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              
+
               {/* Row 7: Zip Code + Organization */}
-              <Grid size={6}>
+              <Grid size={4}>
                 <TextField
                   select
                   fullWidth
@@ -791,7 +794,7 @@ export default function Contact() {
                   ))}
                 </TextField>
               </Grid>
-              <Grid size={6}>
+              <Grid size={4}>
                 <TextField
                   select
                   fullWidth
@@ -804,7 +807,7 @@ export default function Contact() {
                   <MenuItem value="Other">Other</MenuItem>
                 </TextField>
               </Grid>
-              <Grid size={6}>
+              <Grid size={4}>
                 <TextField
                   select
                   fullWidth
