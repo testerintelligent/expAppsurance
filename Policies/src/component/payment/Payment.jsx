@@ -126,7 +126,7 @@ export default function Payment() {
       const policyData = {
         submissionId,
         accountId,
-        contactId: contact._id || "",
+        contactId: contact._id ? contact._id : undefined,
         vehicleData,
         quoteId,
         quoteNumber,
