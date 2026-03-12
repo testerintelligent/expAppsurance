@@ -19,7 +19,7 @@ export default function SignupPage() {
     e.preventDefault();
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/register/signup",
+        "http://10.192.190.158:5000/api/register/signup",
         formData
       );
       const token = res.headers["x-auth-token"];
