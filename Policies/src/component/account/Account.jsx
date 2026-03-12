@@ -349,7 +349,7 @@ export default function Account() {
             </Grid>
 
             {/* Account Info and Policies */}
-            <Grid item xs={12} md={8} sx={{ position: "relative" }}>
+            <Grid item xs={12} md={8}>
               <Grid container spacing={2} sx={{ mb: 2 }}>
                 <Grid item xs={12} sm={6} md={6}>
                   <Box sx={{ bgcolor: "#e3f2fd", p: 2, borderRadius: 2 }}>
@@ -385,14 +385,16 @@ export default function Account() {
                 </Grid>
               </Grid>
 
-              <Typography
-                variant="h5"
-                fontWeight={600}
-                color="#2c3e50"
-                sx={{ mt: 2, mb: 2 }}
-              >
-                Policies
-              </Typography>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 3, mb: 2 }}>
+                <Typography
+                  variant="h5"
+                  fontWeight={600}
+                  color="#2c3e50"
+                >
+                  Policies
+                </Typography>
+              </Box>
+
               <Table>
                 <TableHead>
                   <TableRow>
@@ -434,8 +436,7 @@ export default function Account() {
                 </TableBody>
               </Table>
 
-              {/* Create New Submission Button */}
-              <Box sx={{ position: "absolute", right: 0, bottom: 0, m: 2 }}>
+              <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
                 <Button
                   variant="contained"
                   color="primary"
