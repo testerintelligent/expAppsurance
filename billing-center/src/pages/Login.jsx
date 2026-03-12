@@ -15,7 +15,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/register/login",
+        "http://10.192.190.158:5000/api/register/login",
         formData
       );
       const token = res.data;
