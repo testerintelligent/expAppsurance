@@ -17,7 +17,15 @@ export const createDriverForSubmission = async (submissionId, driverData) => {
 // 🔍 Fetch drivers by submissionId
 export const getDriversBySubmission = async (submissionId) => {
   const res = await axios.get(`${API_BASE_URL}/submission/${submissionId}`);
-  return res.data;
+  // Returns array of drivers (empty array if none found)
+  return Array.isArray(res.data) ? res.data : [];
+};
+
+// 🔍 Fetch drivers by accountId (for existing accounts)
+export const getDriversByAccount = async (accountId) => {
+  const res = await axios.get(`${API_BASE_URL}/account/${accountId}`);
+  // Returns array of drivers (empty array if none found)
+  return Array.isArray(res.data) ? res.data : [];
 };
 
 // 🔎 Search driver by driverId

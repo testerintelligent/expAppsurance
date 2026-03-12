@@ -1,5 +1,15 @@
 // PolicySummary.jsx
 import React, { useEffect, useState } from 'react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+  Chip
+} from "@mui/material";
 import axios from 'axios';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 
@@ -141,6 +151,14 @@ const formatDate = (d) => {
   }
 };
 
+const columns = [
+  { id: "claimNumber", label: "Claim ID" },
+  { id: "policyNumber", label: "Policy ID" },
+  { id: "insured", label: "Insured" },
+  { id: "lossDate", label: "DOL" },
+  { id: "status", label: "Status" },
+];
+
 const PolicySummary = () => {
   const location = useLocation();
   const { policyNumber } = useParams();
@@ -226,6 +244,77 @@ const PolicySummary = () => {
             ) : (
               <div style={{ color: '#6b7280' }}>No coverages listed</div>
             )}
+          </div>
+
+          {/* Claims */}
+          <div style={styles.section}>
+            <div style={styles.sectionTitle}>Claims</div>
+            <TableContainer sx={{ maxHeight: 600 }}>
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableCell
+                        key={column.id}
+                        sx={{ fontWeight: 700, backgroundColor: "#f4f6f8" }}>
+
+
+                        {column.label}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {policy.claims.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
+                        <Typography color="text.secondary">
+                          No claims found.
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    policy.claims.map((c, index) => (
+                      <TableRow
+                        key={c._id}
+                        hover
+                      >
+                        <TableCell>
+                          <Typography>
+                            <b>{c.claimNumber}</b>
+                          </Typography>
+                        </TableCell>
+                        <TableCell>{c.policyNumber}</TableCell>
+                        <TableCell>{c.insured?.name}</TableCell>
+                        <TableCell>
+                          {new Date(c.lossDate).toLocaleDateString("en-GB")}
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={c.status}
+                            size="small"
+                            sx={{
+                              fontWeight: 600,
+                              borderRadius: "8px",
+                            }}
+                            color={
+                              c.status === "Open"
+                                ? "success"
+                                : c.status === "Closed"
+                                  ? "error"
+                                  : c.status === "Draft"
+                                    ? "warning"
+                                    : "default"
+                            }
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </div>
         </div>
 

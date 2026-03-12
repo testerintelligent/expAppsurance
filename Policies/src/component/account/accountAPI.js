@@ -19,9 +19,9 @@ export const searchAccountByContact = async (contactId) => {
 };
 
 // 🔎 Search account via Account No, First Name, or Last Name (Dashboard flow)
-export const searchAccount = async ({ accountId, firstName, lastName, dateOfBirth }) => {
+export const searchAccount = async ({ accountNumber, firstName, lastName, dateOfBirth }) => {
   const res = await axios.get(`${API_BASE_URL}`, {
-    params: { accountId, firstName, lastName, dateOfBirth }
+    params: { accountNumber, firstName, lastName, dateOfBirth }
   });
   return res.data;
 };
