@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const quoteSchema = new mongoose.Schema({
-  submissionId: { type: mongoose.Schema.Types.ObjectId, ref: "SubmissionDetails", required: true },
-  contactId: { type: mongoose.Schema.Types.ObjectId, ref: "ContactDetails", required: true },
+  submissionId: { type: String, required: true, index: true }, // ✅ FIXED: String, not ObjectId (matches SubmissionDetails.submissionId)
+  contactId: { type: mongoose.Schema.Types.ObjectId, ref: "ContactDetails" },
   accountId: { type: mongoose.Schema.Types.ObjectId, ref: "AccountDetails", required: true },
   productSelected: { type: String, required: true },
   quoteNumber: { type: String, required: true, unique: true },
