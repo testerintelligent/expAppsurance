@@ -491,10 +491,6 @@ export default function Contact() {
                         <TableCell>{contact.gender}</TableCell>
                         <TableCell>{contact.organization}</TableCell>
                         <TableCell>{contact.producerCode}</TableCell>
-                        <TableCell>{contact.dateOfBirth}</TableCell>
-                        <TableCell>{contact.city}</TableCell>
-                        <TableCell>{contact.zipCode}</TableCell>
-                        <TableCell>{contact.address}</TableCell>
                         <TableCell>
                           <VisibilityIcon
                             color="primary"
