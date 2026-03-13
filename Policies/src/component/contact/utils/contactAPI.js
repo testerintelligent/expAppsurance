@@ -24,6 +24,12 @@ export const createContact = async (contactData) => {
   return res.data;
 };
 
+// Get all the contacts
+export const getContact = async () => {
+  const res = await axios.get(`${API_URL}/getContact`);
+  return res.data;
+};
+
 // ✏️ Update Contact
 export const updateContact = async (id, updatedData) => {
   const res = await axios.put(`${API_URL}/${id}`, updatedData);

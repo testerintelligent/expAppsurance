@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
-import { searchContact, createContact } from "./utils/contactAPI";
+import { searchContact, createContact, getContact } from "./utils/contactAPI";
 import {
   createAccountForContact,
   searchAccountByContact,
@@ -218,6 +218,20 @@ export default function Contact() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  // Get all the contacts
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const response = await getContact();
+        console.log("response", response)
+        //setAccountDetails(response.data);
+      } catch (error) {
+        console.error("Error fetching policies:", error);
+      }
+    };
+    fetchContacts();
+  }, [])
 
   // API Calls
   const handleSearch = async () => {
