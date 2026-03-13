@@ -63,6 +63,21 @@ const createContact = async (req, res) => {
   }
 };
 
+const getAllContact = async (req, res) => {
+  try {
+    // Fetch all contacts from the database
+    const contacts = await Contact.find({});
+
+    res.status(200).json({
+      message: "Contacts fetched successfully",
+      contact: contacts,
+    });
+  } catch (err) {
+    console.error("Error fetching contacts:", err);
+    res.status(500).json({ message: "Error fetching contacts" });
+  }
+};
+
 // --- GET: Search Contacts ---
 /**
  * @swagger
@@ -187,6 +202,7 @@ const deleteContact = async (req, res) => {
 
 module.exports = {
   createContact,
+  getAllContact,
   searchContact,
   editContact,
   deleteContact
