@@ -123,6 +123,7 @@ export default function Contact() {
   const [selectedContact, setSelectedContact] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
   const navigate = useNavigate();
+  const [contactDetails, setContactDetails] = useState([]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -154,14 +155,77 @@ export default function Contact() {
     const fetchContacts = async () => {
       try {
         const response = await getContact();
-        console.log("response", response)
-        //setAccountDetails(response.data);
+        console.log("response", response.contact)
+        setContactDetails(response.contact);
       } catch (error) {
         console.error("Error fetching policies:", error);
       }
     };
     fetchContacts();
   }, [])
+
+  // Utility Functions
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return isNaN(date.getTime())
+      ? "Invalid Date"
+      : `${String(date.getDate()).padStart(2, "0")}/${String(
+          date.getMonth() + 1
+        ).padStart(2, "0")}/${date.getFullYear()}`;
+  };
+  
+  //Filter the search data
+  const filteredData = contactDetails.filter((item) => {
+    return (
+      item.firstName
+        ?.toLowerCase()
+        .includes(searchData.firstName.toLowerCase()) &&
+      item.lastName
+        ?.toLowerCase()
+        .includes(searchData.lastName.toLowerCase()) &&
+      item.dateOfBirth
+        ?.toLowerCase()
+        .includes(searchData.dateOfBirth.toLowerCase())
+    );
+  });
+
+  //Function for account search
+  const accountSearch = async(contact) => {
+    try {
+      let account;
+      // 1️⃣ First check if this contact already has an account
+      const existingAccount =
+        await searchAccountByContact(contact._id);
+
+      if (
+        existingAccount &&
+        existingAccount.accountId
+      ) {
+        // ✅ Account exists
+        account = existingAccount;
+        console.log(
+          "Existing account found:",
+          account
+        );
+      } else {
+        // ❌ No existing account — create one
+        account = await createAccountForContact(
+          contact
+        );
+        console.log("New account created:", account);
+      }
+
+      // 2️⃣ Navigate to Account screen
+      navigate("/account", { state: { account } });
+    } catch (err) {
+      console.error(err);
+      alert(
+        err.response?.data?.message ||
+          "Failed to fetch or create account"
+      );
+    }
+  }
 
   // API Calls
   const handleSearch = async () => {
@@ -316,73 +380,45 @@ export default function Contact() {
             </Grid>
 
             {/* Search Result Table */}
-            {searchResult && searchResult?.length > 0 && (
-              <TableContainer component={Paper} sx={{ mt: 3 }}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Select</TableCell>
-                      <TableCell>First Name</TableCell>
-                      <TableCell>Last Name</TableCell>
-                      <TableCell>DOB</TableCell>
-                      <TableCell>City</TableCell>
-                      <TableCell>Zipcode</TableCell>
-                      <TableCell>Address</TableCell>
-                      <TableCell>View</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {paginatedData.map((contact, index) => (
+            {contactDetails && contactDetails?.length > 0 && (
+            <TableContainer component={Paper} sx={{ mt: 3 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Select</TableCell>
+                    <TableCell>First Name</TableCell>
+                    <TableCell>Last Name</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Phone</TableCell>
+                    <TableCell>DOB</TableCell>
+                    <TableCell>Gender</TableCell>
+                    <TableCell>Organisation</TableCell>
+                    <TableCell>ProducerCode</TableCell>
+                    <TableCell>View</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredData
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((contact, index) => (
                       <TableRow key={index}>
                         <TableCell>
                           <Button
                             variant="contained"
                             size="small"
-                            onClick={async () => {
-                              try {
-                                let account;
-                                // 1️⃣ First check if this contact already has an account
-                                const existingAccount =
-                                  await searchAccountByContact(contact._id);
-
-                                if (
-                                  existingAccount &&
-                                  existingAccount.accountId
-                                ) {
-                                  // ✅ Account exists
-                                  account = existingAccount;
-                                  console.log(
-                                    "Existing account found:",
-                                    account
-                                  );
-                                } else {
-                                  // ❌ No existing account — create one
-                                  account = await createAccountForContact(
-                                    contact
-                                  );
-                                  console.log("New account created:", account);
-                                }
-
-                                // 2️⃣ Navigate to Account screen
-                                navigate("/account", { state: { account } });
-                              } catch (err) {
-                                console.error(err);
-                                alert(
-                                  err.response?.data?.message ||
-                                    "Failed to fetch or create account"
-                                );
-                              }
-                            }}
+                            onClick={() => accountSearch(contact)}
                           >
                             Select
                           </Button>
                         </TableCell>
                         <TableCell>{contact.firstName}</TableCell>
                         <TableCell>{contact.lastName}</TableCell>
-                        <TableCell>{contact.dateOfBirth}</TableCell>
-                        <TableCell>{contact.city}</TableCell>
-                        <TableCell>{contact.zipcode}</TableCell>
-                        <TableCell>{contact.address}</TableCell>
+                        <TableCell>{contact.email}</TableCell>
+                        <TableCell>{contact.phone}</TableCell>
+                        <TableCell>{formatDate(contact.dateOfBirth)}</TableCell>
+                        <TableCell>{contact.gender}</TableCell>
+                        <TableCell>{contact.organization}</TableCell>
+                        <TableCell>{contact.producerCode}</TableCell>
                         <TableCell>
                           <VisibilityIcon
                             color="primary"
@@ -392,20 +428,20 @@ export default function Contact() {
                         </TableCell>
                       </TableRow>
                     ))}
-                  </TableBody>
-                </Table>
-                {/* Pagination Controls */}
-                <TablePagination
-                  component="div"
-                  count={searchResult?.length}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  rowsPerPage={rowsPerPage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  rowsPerPageOptions={[5, 10, 25]}
-                />
-              </TableContainer>
-            )}
+                </TableBody>
+              </Table>
+              {/* Pagination Controls */}
+              <TablePagination
+                component="div"
+                count={contactDetails?.length}
+                page={page}
+                onPageChange={handleChangePage}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                rowsPerPageOptions={[5, 10, 25]}
+              />
+            </TableContainer>
+          )}
           </Paper>
         </TabPanel>
 
