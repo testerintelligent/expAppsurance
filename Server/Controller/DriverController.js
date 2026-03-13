@@ -5,50 +5,50 @@ const Submission = require("../Models/SubmissionDetails");
 exports.createDriver = async (req, res) => {
   try {
     const { submissionId, ...driverData } = req.body;
-    console.log("submi111", submissionId);
-    let finalSubmissionId = null;
-    console.log("submi", submissionId);
-    // 🔍 Validate Submission exists (works even if submissionId is a string like SUB1760xxxx)
-    if (submissionId) {
-      const submission = await Submission.findOne({ submissionId });
-      console.log("submission", submission);
-      // if (!submission) {
-      //   return res.status(404).json({
-      //     message: `Submission not found for ID: ${submissionId}`,
-      //   });
-      // }
+    
+    console.log("🔍 Received submissionId:", submissionId);
+    console.log("🔍 Request body keys:", Object.keys(req.body));
 
-      finalSubmissionId = submission.submissionId;
+    if (!submissionId) {
+      return res.status(400).json({
+        message: "submissionId is required",
+      });
     }
-    // const submission = await Submission.findOne({ submissionId });
 
-    // if (!submission) {
-    //   return res
-    //     .status(404)
-    //     .json({ message: `Submission not found for ID: ${submissionId}` });
+    console.log("✅ Creating driver for submissionId:", submissionId);
+    
+    // ✅ Validate Submission exists (works even if submissionId is a string like SUB1760xxxx)
+    const submission = await Submission.findOne({ submissionId });
+    console.log("🔍 Submission lookup result:", submission ? "Found" : "Not found");
+    
+    if (!submission) {
+      console.log("❌ Submission not found with submissionId:", submissionId);
+      return res.status(404).json({
+        message: `Submission not found for ID: ${submissionId}`,
+      });
+    }
 
-    // }
+    console.log("✅ Submission found:", submission.submissionId);
 
-    // 🧩 Create driver linked to this submission
+    // 🧩 Create driver linked to this submission using the string submissionId
     const driver = new Driver({
       ...driverData,
-      // submissionId: linkedSubmissionId,
-      submissionId: finalSubmissionId,
-      // submissionId: submission.submissionId, // store string ID, not Mongo _id
+      submissionId: submissionId, // ✅ Use the string submissionId passed from frontend
     });
 
+    console.log("📝 Saving driver with submissionId:", driver.submissionId);
     await driver.save();
-    console.log("messgae");
+    console.log("✅ Driver saved successfully. Driver ID:", driver._id);
+    
     res.status(201).json({
       message: "Driver created successfully",
       driver,
     });
   } catch (err) {
-    console.error("❌ Error creating driver:", err);
+    console.error("❌ Error creating driver:", err.message);
     res.status(500).json({
       message: err.message,
     });
-    // res.status(500).json({ message: 'Server error while creating driver' });
   }
 };
 
@@ -56,17 +56,49 @@ exports.createDriver = async (req, res) => {
 exports.getDriversBySubmission = async (req, res) => {
   try {
     const { submissionId } = req.params;
+    
+    console.log("Fetching drivers for submissionId:", submissionId);
 
     const drivers = await Driver.find({ submissionId });
+    
+    console.log(`Found ${drivers.length} drivers for submissionId: ${submissionId}`);
+    
     if (!drivers || drivers.length === 0) {
-      return res
-        .status(404)
-        .json({ message: `No drivers found for submission ${submissionId}` });
+      return res.status(200).json([]); // ✅ Return empty array instead of 404 for better frontend handling
     }
 
     res.status(200).json(drivers);
   } catch (err) {
     console.error("❌ Error fetching drivers:", err);
+    res.status(500).json({ message: "Server error while fetching drivers" });
+  }
+};
+
+// 🔍 Get all drivers for an account (across all submissions)
+exports.getDriversByAccount = async (req, res) => {
+  try {
+    const { accountId } = req.params;
+    
+    console.log("Fetching drivers for accountId:", accountId);
+
+    // First get all submissions for this account
+    const Submission = require("../Models/SubmissionDetails");
+    const submissions = await Submission.find({ accountId });
+    
+    if (!submissions || submissions.length === 0) {
+      return res.status(200).json([]); // No submissions, no drivers
+    }
+
+    const submissionIds = submissions.map(s => s.submissionId);
+    
+    // Get all unique drivers across these submissions
+    const drivers = await Driver.find({ submissionId: { $in: submissionIds } });
+    
+    console.log(`Found ${drivers.length} drivers for accountId: ${accountId}`);
+    
+    res.status(200).json(drivers);
+  } catch (err) {
+    console.error("❌ Error fetching drivers by account:", err);
     res.status(500).json({ message: "Server error while fetching drivers" });
   }
 };

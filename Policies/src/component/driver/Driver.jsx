@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import InfoBar from "../InfoBar";
 import { useLocation, useNavigate } from "react-router-dom";
-import { createDriverForSubmission } from "./driverAPI";
+import { createDriverForSubmission, getDriversBySubmission, getDriversByAccount } from "./driverAPI";
 import PrimaryDriverQuestion from "./IsNewDriver";
+import { formatDateForInput } from "../../utils/dateFormatter";
 import {
   Box,
   Typography,
@@ -18,6 +19,7 @@ import {
   Button,
   Snackbar,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import { yellow } from "@mui/material/colors";
 
@@ -28,6 +30,8 @@ export default function Driver() {
   const [isPrimaryDriver, setIsPrimaryDriver] = useState(
     state?.isPrimaryDriver || ""
   );
+  const [loading, setLoading] = useState(false);
+  const [existingDrivers, setExistingDrivers] = useState([]);
 
   console.log("isPrimary", isPrimaryDriver);
 
@@ -53,18 +57,103 @@ export default function Driver() {
   };
 
   const [formData, setFormData] = useState(emptyForm);
+  const [selectedDriverId, setSelectedDriverId] = useState("");
 
   const [tab, setTab] = useState(0);
   const [errorOpen, setErrorOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
+  // ✅ Fetch existing drivers when isPrimaryDriver changes or when dealing with existing account
   useEffect(() => {
+    const accountId = state?.account?._id;
+    const isExistingAccount = state?.isExistingAccount;
+
     if (isPrimaryDriver === "yes") {
-      setFormData({ ...emptyForm, ...contact });
+      // Yes: Account holder is primary driver - fetch existing drivers or use contact info
+      setLoading(true);
+      
+      let driverPromise;
+      if (isExistingAccount && accountId) {
+        // Existing account: fetch all drivers for this account
+        console.log("Fetching drivers for existing account:", accountId);
+        driverPromise = getDriversByAccount(accountId);
+      } else if (state?.submissionId) {
+        // New submission: fetch drivers for this submission
+        console.log("Fetching drivers for submission:", state.submissionId);
+        driverPromise = getDriversBySubmission(state.submissionId);
+      } else {
+        setLoading(false);
+        setFormData({ ...emptyForm, ...contact });
+        return;
+      }
+
+      driverPromise
+        .then((drivers) => {
+          setExistingDrivers(drivers);
+          if (drivers && drivers.length > 0) {
+            // Pre-fill with first driver found
+            const driver = drivers[0];
+            setFormData({
+              firstName: driver.firstName || "",
+              lastName: driver.lastName || "",
+              dateOfBirth: formatDateForInput(driver.dateOfBirth) || "",
+              maritalStatus: driver.maritalStatus || "",
+              phone: driver.phone || "",
+              email: driver.email || "",
+              secondaryEmail: driver.secondaryEmail || "",
+              country: driver.country || "India",
+              address: driver.address || "",
+              address2: driver.address2 || "",
+              city: driver.city || "",
+              state: driver.state || "",
+              zipCode: driver.zipCode || "",
+              licenseType: driver.licenseType || "",
+              licenseCountry: driver.licenseCountry || "",
+              licenseDate: formatDateForInput(driver.licenseDate) || "",
+              drivingExperience: driver.drivingExperience || "",
+              accidentsClaims: driver.accidentsClaims || "",
+            });
+          } else {
+            // No driver found, use contact details
+            setFormData({ ...emptyForm, ...contact });
+          }
+        })
+        .catch(() => {
+          // No drivers or error - use contact details
+          setFormData({ ...emptyForm, ...contact });
+          setExistingDrivers([]);
+        })
+        .finally(() => setLoading(false));
     } else if (isPrimaryDriver === "no") {
+      // No: User should select from available drivers or create new
       setFormData(emptyForm);
+      setLoading(true);
+      
+      let driverPromise;
+      if (isExistingAccount && accountId) {
+        // Existing account: fetch all drivers for this account
+        console.log("Fetching drivers for existing account (no primary):", accountId);
+        driverPromise = getDriversByAccount(accountId);
+      } else if (state?.submissionId) {
+        // New submission: fetch drivers for this submission
+        console.log("Fetching drivers for submission (no primary):", state.submissionId);
+        driverPromise = getDriversBySubmission(state.submissionId);
+      } else {
+        setLoading(false);
+        setExistingDrivers([]);
+        return;
+      }
+
+      driverPromise
+        .then((drivers) => {
+          setExistingDrivers(drivers);
+        })
+        .catch(() => {
+          setExistingDrivers([]);
+        })
+        .finally(() => setLoading(false));
     }
-  }, [isPrimaryDriver]); // ✅ contact removed
+  }, [isPrimaryDriver, state?.submissionId, state?.isExistingAccount, state?.account?._id]);
 
   // ✅ Validate both Contact and Roles tabs
 
@@ -123,16 +212,33 @@ export default function Driver() {
     }
 
     try {
+      // If isPrimaryDriver is "no" and an existing driver is selected, skip creation
+      if (isPrimaryDriver === "no" && selectedDriverId) {
+        navigate("/vehicle", {
+          state: {
+            ...state,
+            driverId: selectedDriverId,
+            contact: formData,
+          },
+        });
+        return;
+      }
+
       const payload = {
         ...formData,
         drivingExperience: Number(formData.drivingExperience),
         accidentsClaims: Number(formData.accidentsClaims),
       };
 
+      console.log("📤 Creating driver with submissionId:", state.submissionId);
+      console.log("📤 Driver payload:", payload);
+
       const driver = await createDriverForSubmission(
         state.submissionId,
         payload
       );
+      
+      console.log("✅ Driver created:", driver);
 
       navigate("/vehicle", {
         state: {
@@ -178,7 +284,63 @@ export default function Driver() {
           <Tab label="Roles" />
         </Tabs>
 
-        {/* --- Contact Detail Tab --- */}
+        {/* --- Loading state --- */}
+        {loading && (
+          <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+            <CircularProgress />
+          </Box>
+        )}
+
+        {!loading && (
+          <>
+            {/* --- Driver Selection (when isPrimaryDriver === "no") --- */}
+            {isPrimaryDriver === "no" && existingDrivers.length > 0 && (
+              <Box sx={{ mb: 4, p: 3, bgcolor: "#f5f5f5", borderRadius: 2 }}>
+                <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
+                  Select an Existing Driver
+                </Typography>
+                <TextField
+                  select
+                  fullWidth
+                  label="Available Drivers"
+                  value={selectedDriverId}
+                  onChange={(e) => {
+                    const driverId = e.target.value;
+                    setSelectedDriverId(driverId);
+                    const driver = existingDrivers.find(d => d._id === driverId);
+                    if (driver) {
+                      setFormData({
+                        firstName: driver.firstName || "",
+                        lastName: driver.lastName || "",
+                        dateOfBirth: formatDateForInput(driver.dateOfBirth) || "",
+                        maritalStatus: driver.maritalStatus || "",
+                        phone: driver.phone || "",
+                        email: driver.email || "",
+                        secondaryEmail: driver.secondaryEmail || "",
+                        country: driver.country || "India",
+                        address: driver.address || "",
+                        address2: driver.address2 || "",
+                        city: driver.city || "",
+                        state: driver.state || "",
+                        zipCode: driver.zipCode || "",
+                        licenseType: driver.licenseType || "",
+                        licenseCountry: driver.licenseCountry || "",
+                        licenseDate: formatDateForInput(driver.licenseDate) || "",
+                        drivingExperience: driver.drivingExperience || "",
+                        accidentsClaims: driver.accidentsClaims || "",
+                      });
+                    }
+                  }}
+                >
+                  <MenuItem value="">-- Create New Driver --</MenuItem>
+                  {existingDrivers.map((driver) => (
+                    <MenuItem key={driver._id} value={driver._id}>
+                      {driver.firstName} {driver.lastName}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Box>
+            )}        {/* --- Contact Detail Tab --- */}
         {tab === 0 && (
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
@@ -486,6 +648,8 @@ export default function Driver() {
             Next
           </Button>
         </Box>
+          </>
+        )}
       </Paper>
 
       {/* --- Snackbar for errors --- */}

@@ -114,7 +114,7 @@ const BillingDashboard = () => {
   );
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "14px" }}>
       {/* ✅ Summary Cards */}
       <div
         style={{
@@ -129,25 +129,21 @@ const BillingDashboard = () => {
             label: "Total Policies",
             value: summary?.totalPolicies || 0,
             bg: "linear-gradient(135deg, #34495e 60%, #2c3e50 100%)",
-            icon: "📄",
           },
           {
             label: "In Force",
             value: summary?.["In Force"] || 0,
             bg: "linear-gradient(135deg, #27ae60 60%, #219150 100%)",
-            icon: "✅",
           },
           {
             label: "Under Review",
             value: summary?.underReview || 0,
             bg: "linear-gradient(135deg, #f39c12 60%, #e67e22 100%)",
-            icon: "🕵️‍♂️",
           },
           {
             label: "Cancelled",
             value: summary?.cancelled || 0,
             bg: "linear-gradient(135deg, #e74c3c 60%, #c0392b 100%)",
-            icon: "❌",
           },
         ].map(({ label, value, bg, icon }, idx) => (
           <Paper

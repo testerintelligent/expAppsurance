@@ -123,6 +123,8 @@ export default function NewSubmission() {
             expiryDate: currentExpirationDate,
             submissionId: newSubmission?.submissionId || "",
             productName: product.name,
+            isExistingAccount: true,
+            account: account,
           },
         });
       } else {

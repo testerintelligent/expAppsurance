@@ -16,7 +16,7 @@ import {
   TableHead,
   TableRow,
   MenuItem,
-  Modal,
+  Modal
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
@@ -35,6 +35,21 @@ function TabPanel(props) {
     </div>
   );
 }
+
+// Helper function to format date for input[type="date"]
+const formatDateForInput = (dateValue) => {
+  if (!dateValue) return "";
+  try {
+    const date = new Date(dateValue);
+    if (isNaN(date.getTime())) return "";
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  } catch (e) {
+    return "";
+  }
+};
 
 export default function Contact() {
   const [tabValue, setTabValue] = useState(0);
@@ -94,6 +109,11 @@ export default function Contact() {
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [zips, setZips] = useState([]);
+  
+  // Modal-specific dropdown states
+  const [modalStates, setModalStates] = useState([]);
+  const [modalCities, setModalCities] = useState([]);
+  const [modalZips, setModalZips] = useState([]);
 
   const handleCountryChange = (e) => {
     const country = e.target.value;
@@ -116,6 +136,28 @@ export default function Contact() {
     setZips(city ? (LOCATION_DATA.zips[city] || []) : []);
   };
 
+  // Modal dropdown handlers
+  const handleModalCountryChange = (e) => {
+    const country = e.target.value;
+    setSelectedContact(prev => ({ ...prev, country, state: '', city: '', zipCode: '' }));
+    setModalStates(country ? (LOCATION_DATA.states[country] || []) : []);
+    setModalCities([]);
+    setModalZips([]);
+  };
+
+  const handleModalStateChange = (e) => {
+    const state = e.target.value;
+    setSelectedContact(prev => ({ ...prev, state, city: '', zipCode: '' }));
+    setModalCities(state ? (LOCATION_DATA.cities[state] || []) : []);
+    setModalZips([]);
+  };
+
+  const handleModalCityChange = (e) => {
+    const city = e.target.value;
+    setSelectedContact(prev => ({ ...prev, city, zipCode: '' }));
+    setModalZips(city ? (LOCATION_DATA.zips[city] || []) : []);
+  };
+
   const [page, setPage] = useState(0); // current page
   const [rowsPerPage, setRowsPerPage] = useState(5); // rows per page
 
@@ -124,6 +166,34 @@ export default function Contact() {
   const [isEditMode, setIsEditMode] = useState(false);
   const navigate = useNavigate();
   const [contactDetails, setContactDetails] = useState([]);
+
+  // useEffect to initialize modal dropdown states when modal opens
+  useEffect(() => {
+    if (showContact && selectedContact && selectedContact.country) {
+      console.log("Initializing modal with contact:", selectedContact);
+      
+      // Initialize states based on country
+      const statesForCountry = LOCATION_DATA.states[selectedContact.country] || [];
+      setModalStates(statesForCountry);
+      
+      // Initialize cities based on state
+      if (selectedContact.state) {
+        const citiesForState = LOCATION_DATA.cities[selectedContact.state] || [];
+        setModalCities(citiesForState);
+        
+        // Initialize zips based on city
+        if (selectedContact.city) {
+          const zipsForCity = LOCATION_DATA.zips[selectedContact.city] || [];
+          setModalZips(zipsForCity);
+        } else {
+          setModalZips([]);
+        }
+      } else {
+        setModalCities([]);
+        setModalZips([]);
+      }
+    }
+  }, [showContact, selectedContact]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -280,7 +350,9 @@ export default function Contact() {
   };
 
   const handleView = (contact) => {
+    console.log("Opening modal for contact:", contact);
     setSelectedContact(contact);
+    setIsEditMode(false); // Always open in view mode
     setShowContact(true);
   };
   const handleClose = () => {
@@ -290,7 +362,7 @@ export default function Contact() {
   const handleEditToggle = () => setIsEditMode((prev) => !prev);
 
   const handleContactChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setSelectedContact({ ...selectedContact, [e.target.name]: e.target.value });
   };
 
   const handleOk = () => {
@@ -419,6 +491,10 @@ export default function Contact() {
                         <TableCell>{contact.gender}</TableCell>
                         <TableCell>{contact.organization}</TableCell>
                         <TableCell>{contact.producerCode}</TableCell>
+                        <TableCell>{contact.dateOfBirth}</TableCell>
+                        <TableCell>{contact.city}</TableCell>
+                        <TableCell>{contact.zipCode}</TableCell>
+                        <TableCell>{contact.address}</TableCell>
                         <TableCell>
                           <VisibilityIcon
                             color="primary"
@@ -474,29 +550,17 @@ export default function Contact() {
                     InputProps={{ readOnly: !isEditMode }}
                   />
                 </Grid>
-                {/* Row 1 */}
-                <Grid size={6}>
-                  <TextField
-                    fullWidth
-                    label="First Name"
-                    name="firstName"
-                    value={selectedContact.firstName}
-                    onChange={handleChange}
-                    required
-                    InputProps={{ readOnly: !isEditMode }}
-                  />
-                </Grid>
                 <Grid size={6}>
                   <TextField
                     fullWidth
                     label="Last Name"
                     name="lastName"
-                    value={selectedContact.lastName}
-                    onChange={handleChange}
-                    required
+                    value={selectedContact.lastName || ""}
+                    onChange={handleContactChange}
                     InputProps={{ readOnly: !isEditMode }}
                   />
                 </Grid>
+
                 {/* Row 2 */}
                 <Grid size={6}>
                   <TextField
@@ -504,10 +568,9 @@ export default function Contact() {
                     type="date"
                     label="Date of Birth *"
                     name="dateOfBirth"
-                    value={selectedContact.dateOfBirth}
-                    onChange={handleChange}
+                    value={formatDateForInput(selectedContact.dateOfBirth) || ""}
+                    onChange={handleContactChange}
                     InputLabelProps={{ shrink: true }}
-                    required
                     InputProps={{ readOnly: !isEditMode }}
                   />
                 </Grid>
@@ -517,22 +580,25 @@ export default function Contact() {
                     fullWidth
                     label="Gender"
                     name="gender"
-                    value={selectedContact.gender}
-                    onChange={handleChange}
-                    InputProps={{ readOnly: !isEditMode }}
+                    value={selectedContact.gender || ""}
+                    onChange={handleContactChange}
+                    disabled={!isEditMode}
+                    InputLabelProps={{ shrink: true }}
                   >
+                    <MenuItem value="">Select Gender</MenuItem>
                     <MenuItem value="Male">Male</MenuItem>
                     <MenuItem value="Female">Female</MenuItem>
                   </TextField>
                 </Grid>
+
                 {/* Row 3 */}
-                <Grid size={12}>
+                <Grid size={6}>
                   <TextField
                     fullWidth
                     label="Email"
                     name="email"
-                    value={selectedContact.email}
-                    onChange={handleChange}
+                    value={selectedContact.email || ""}
+                    onChange={handleContactChange}
                     InputProps={{ readOnly: !isEditMode }}
                   />
                 </Grid>
@@ -541,85 +607,150 @@ export default function Contact() {
                     fullWidth
                     label="Phone"
                     name="phone"
-                    value={selectedContact.phone}
-                    onChange={handleChange}
+                    value={selectedContact.phone || ""}
+                    onChange={handleContactChange}
                     InputProps={{ readOnly: !isEditMode }}
                   />
                 </Grid>
+
                 {/* Row 4 */}
                 <Grid size={6}>
                   <TextField
                     fullWidth
                     label="Address"
                     name="address"
-                    value={selectedContact.address}
-                    onChange={handleChange}
+                    value={selectedContact.address || ""}
+                    onChange={handleContactChange}
                     InputProps={{ readOnly: !isEditMode }}
                   />
                 </Grid>
-                {/* Row 5 */}
                 <Grid size={6}>
                   <TextField
                     fullWidth
                     label="Street"
                     name="street"
-                    value={selectedContact.street}
-                    onChange={handleChange}
+                    value={selectedContact.street || ""}
+                    onChange={handleContactChange}
                     InputProps={{ readOnly: !isEditMode }}
                   />
                 </Grid>
-                <Grid size={6}>
+
+                {/* Row 5: Country */}
+                <Grid size={4}>
                   <TextField
+                    select
                     fullWidth
-                    label="City"
-                    name="city"
-                    value={selectedContact.city}
-                    onChange={handleChange}
-                    InputProps={{ readOnly: !isEditMode }}
-                  />
+                    label="Country"
+                    name="country"
+                    value={selectedContact.country || ""}
+                    onChange={handleModalCountryChange}
+                    disabled={!isEditMode}
+                    InputLabelProps={{ shrink: true }}
+                  >
+                    <MenuItem value="">Select Country</MenuItem>
+                    {countries.map((c) => (
+                      <MenuItem key={c.code} value={c.code}>
+                        {c.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
-                {/* Row 6 */}
-                <Grid size={6}>
+
+                {/* Row 5: State */}
+                <Grid size={4}>
                   <TextField
+                    select
                     fullWidth
                     label="State"
                     name="state"
-                    value={selectedContact.state}
-                    onChange={handleChange}
-                    InputProps={{ readOnly: !isEditMode }}
-                  />
+                    value={selectedContact.state || ""}
+                    onChange={handleModalStateChange}
+                    disabled={!isEditMode || !modalStates.length}
+                    InputLabelProps={{ shrink: true }}
+                  >
+                    <MenuItem value="">Select State</MenuItem>
+                    {modalStates.map((s) => (
+                      <MenuItem key={s.code} value={s.code}>
+                        {s.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
-                <Grid size={6}>
+
+                {/* Row 5: City */}
+                <Grid size={4}>
                   <TextField
+                    select
+                    fullWidth
+                    label="City"
+                    name="city"
+                    value={selectedContact.city || ""}
+                    onChange={handleModalCityChange}
+                    disabled={!isEditMode || !modalCities.length}
+                    InputLabelProps={{ shrink: true }}
+                  >
+                    <MenuItem value="">Select City</MenuItem>
+                    {modalCities.map((ct) => (
+                      <MenuItem key={ct} value={ct}>
+                        {ct}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+
+                {/* Row 6: Zip Code */}
+                <Grid size={4}>
+                  <TextField
+                    select
                     fullWidth
                     label="Zip Code"
                     name="zipCode"
-                    value={selectedContact.zipCode}
-                    onChange={handleChange}
-                    InputProps={{ readOnly: !isEditMode }}
-                  />
+                    value={selectedContact.zipCode || ""}
+                    onChange={handleContactChange}
+                    disabled={!isEditMode || !modalZips.length}
+                    InputLabelProps={{ shrink: true }}
+                  >
+                    <MenuItem value="">Select Zip</MenuItem>
+                    {modalZips.map((z) => (
+                      <MenuItem key={z} value={z}>
+                        {z}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
-                {/* Row 7 */}
-                <Grid size={6}>
+
+                {/* Row 6: Organization */}
+                <Grid size={4}>
                   <TextField
+                    select
                     fullWidth
                     label="Organization"
                     name="organization"
-                    value={selectedContact.organization}
-                    onChange={handleChange}
-                    InputProps={{ readOnly: !isEditMode }}
-                  />
+                    value={selectedContact.organization || ""}
+                    onChange={handleContactChange}
+                    disabled={!isEditMode}
+                    InputLabelProps={{ shrink: true }}
+                  >
+                    <MenuItem value="Expleo">Expleo</MenuItem>
+                    <MenuItem value="Other">Other</MenuItem>
+                  </TextField>
                 </Grid>
-                <Grid size={6}>
+
+                {/* Row 6: Producer Code */}
+                <Grid size={4}>
                   <TextField
+                    select
                     fullWidth
                     label="Producer Code"
                     name="producerCode"
-                    value={selectedContact.producerCode}
-                    onChange={handleChange}
-                    InputProps={{ readOnly: !isEditMode }}
-                  />
-                </Grid>{" "}
+                    value={selectedContact.producerCode || ""}
+                    onChange={handleContactChange}
+                    disabled={!isEditMode}
+                    InputLabelProps={{ shrink: true }}
+                  >
+                    <MenuItem value="EXP-INS-01">EXP-INS-01</MenuItem>
+                  </TextField>
+                </Grid>
               </Grid>
 
               {/* Buttons Section */}
@@ -726,7 +857,7 @@ export default function Contact() {
               </Grid>
 
               {/* Row 3 */}
-              <Grid size={12}>
+              <Grid size={6}>
                 <TextField
                   fullWidth
                   label="Email"
@@ -766,7 +897,7 @@ export default function Contact() {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid size={6}>
+              <Grid size={4}>
                 <TextField
                   select
                   fullWidth
@@ -784,26 +915,7 @@ export default function Contact() {
                 </TextField>
               </Grid>
 
-              {/* Row 6: City + State (dependent) */}
-              <Grid size={6}>
-                <TextField
-                  select
-                  fullWidth
-                  label="City"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleCityChange}
-                  disabled={!cities.length}
-                >
-                  <MenuItem value="">Select City</MenuItem>
-                  {cities.map((ct) => (
-                    <MenuItem key={ct} value={ct}>
-                      {ct}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid size={6}>
+              <Grid size={4}>
                 <TextField
                   select
                   fullWidth
@@ -822,8 +934,29 @@ export default function Contact() {
                 </TextField>
               </Grid>
 
+              {/* Row 6: City + State (dependent) */}
+              <Grid size={4}>
+                <TextField
+                  select
+                  fullWidth
+                  label="City"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleCityChange}
+                  disabled={!cities.length}
+                >
+                  <MenuItem value="">Select City</MenuItem>
+                  {cities.map((ct) => (
+                    <MenuItem key={ct} value={ct}>
+                      {ct}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              
+
               {/* Row 7: Zip Code + Organization */}
-              <Grid size={6}>
+              <Grid size={4}>
                 <TextField
                   select
                   fullWidth
@@ -841,7 +974,7 @@ export default function Contact() {
                   ))}
                 </TextField>
               </Grid>
-              <Grid size={6}>
+              <Grid size={4}>
                 <TextField
                   select
                   fullWidth
@@ -854,7 +987,7 @@ export default function Contact() {
                   <MenuItem value="Other">Other</MenuItem>
                 </TextField>
               </Grid>
-              <Grid size={6}>
+              <Grid size={4}>
                 <TextField
                   select
                   fullWidth

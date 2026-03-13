@@ -7,7 +7,7 @@ const Submission = require("../Models/SubmissionDetails");
 exports.createQuote = async (req, res) => {
   try {
     const {
-      submissionId,  // Can be MongoDB ObjectId or SubmissionId string
+      submissionId,  // String format
       contactId,
       accountId,
       productSelected,
@@ -15,42 +15,49 @@ exports.createQuote = async (req, res) => {
       coverages,
       effectiveDate,
       expiryDate,
+      vehicleData,
     } = req.body;
+
+    console.log("📤 Creating quote with submissionId:", submissionId);
+    console.log("📤 Quote payload:", req.body);
+
+    // --- Validate required fields ---
+    if (!submissionId || !accountId || !premiumAmount) {
+      return res.status(400).json({ message: "Missing required fields: submissionId, accountId, premiumAmount" });
+    }
 
     // --- Find Submission ---
     let submission = null;
 
-    // Check if submissionId is a valid ObjectId
-    if (mongoose.Types.ObjectId.isValid(submissionId)) {
-      submission = await Submission.findById(submissionId);
-    }
-
-    // If not found, try searching by submissionId string
-    if (!submission) {
-      submission = await Submission.findOne({ submissionId });
-    }
+    // Try to find by submissionId string first (preferred)
+    submission = await Submission.findOne({ submissionId: submissionId });
 
     if (!submission) {
-      return res.status(404).json({ message: "Submission not found" });
+      console.error(`❌ Submission not found with submissionId: ${submissionId}`);
+      return res.status(404).json({ message: `Submission not found with ID: ${submissionId}` });
     }
+
+    console.log("✅ Found submission:", submission._id);
 
     // --- Generate Unique Quote Number ---
     const quoteNumber = "QTE" + Math.floor(100000 + Math.random() * 900000);
 
     // --- Create Quote ---
     const newQuote = new Quote({
-      submissionId: submission._id, // Always store ObjectId
-      contactId,
-      accountId,
-      productSelected: productSelected || submission.product, // fallback to submission product
+      submissionId: submissionId, // ✅ Store as string, matching SubmissionDetails.submissionId
+      contactId: contactId || submission.contactId,
+      accountId: accountId,
+      productSelected: productSelected || submission.product,
       premiumAmount,
-      coverages,
-      effectiveDate: effectiveDate || submission.effectiveDate,
-      expiryDate: expiryDate || submission.expirationDate,
+      coverages: coverages || [],
+      effectiveDate: effectiveDate ? new Date(effectiveDate) : submission.effectiveDate,
+      expiryDate: expiryDate ? new Date(expiryDate) : submission.expirationDate,
       quoteNumber,
     });
 
     await newQuote.save();
+
+    console.log("✅ Quote created successfully:", newQuote._id);
 
     res.status(201).json({
       message: "Quote created successfully",
@@ -60,8 +67,8 @@ exports.createQuote = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("Error creating quote:", err);
-    res.status(500).json({ message: "Server error while creating quote" });
+    console.error("❌ Error creating quote:", err);
+    res.status(500).json({ message: "Server error while creating quote", error: err.message });
   }
 };
 
@@ -70,30 +77,28 @@ exports.getQuotesBySubmission = async (req, res) => {
   try {
     const { submissionId } = req.params;
 
-    let submission = null;
+    console.log("Fetching quotes for submissionId:", submissionId);
 
-    // Check if submissionId is a valid ObjectId
-    if (mongoose.Types.ObjectId.isValid(submissionId)) {
-      submission = await Submission.findById(submissionId);
-    }
-
-    // If not found, search by submissionId string
-    if (!submission) {
-      submission = await Submission.findOne({ submissionId });
-    }
+    // Find submission by submissionId string
+    const submission = await Submission.findOne({ submissionId });
 
     if (!submission) {
+      console.error(`❌ Submission not found with submissionId: ${submissionId}`);
       return res.status(404).json({ message: "Submission not found" });
     }
 
-    // Fetch quotes
-    const quotes = await Quote.find({ submissionId: submission._id })
-      .populate("submissionId", "submissionId product")
-      .populate("contactId", "firstName lastName email")
+    // Fetch quotes using string submissionId
+    const quotes = await Quote.find({ submissionId: submissionId })
       .populate("accountId", "accountNumber accountName");
 
+    console.log(`Found ${quotes.length} quotes for submissionId: ${submissionId}`);
+
     if (!quotes || quotes.length === 0) {
-      return res.status(404).json({ message: "No quotes found for this submission" });
+      return res.status(200).json({ 
+        message: "No quotes found for this submission",
+        count: 0,
+        data: []
+      });
     }
 
     res.status(200).json({
@@ -103,7 +108,7 @@ exports.getQuotesBySubmission = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("Error fetching quotes:", err);
+    console.error("❌ Error fetching quotes:", err);
     res.status(500).json({ message: "Server error while fetching quotes" });
   }
 };

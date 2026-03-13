@@ -22,6 +22,7 @@ const ClaimDashboard = () => {
   const navigate = useNavigate();
 
   const [claimData, setClaimData] = useState([]);
+  const [claimTotal, setClaimTotal] = useState([0]);
   const [filteredData, setFilteredData] = useState([]);
   const [sortOrder, setSortOrder] = useState("asc");
   const [sortedColumn, setSortedColumn] = useState("CurrentDate");
@@ -37,6 +38,7 @@ const ClaimDashboard = () => {
         );
         console.log("response", response);
         setClaimData(response.data.claims);
+        setClaimTotal(response.data.count);
         setFilteredData(response.data.claims);
       } catch (error) {
         console.error("Error fetching policies:", error);
@@ -52,7 +54,7 @@ const ClaimDashboard = () => {
       return;
     }
 
-    const totals = { totalPolicies: claimData.length };
+    const summaryData = { totalClaims: claimTotal };
 
     // normalize status keys and compute counts
     const byStatus = claimData.reduce((acc, p) => {
@@ -61,15 +63,10 @@ const ClaimDashboard = () => {
       return acc;
     }, {});
 
-    totals["In Force"] = byStatus["In Force"] || byStatus["InForce"] || 0;
-    totals.underReview =
-      byStatus["Under Review"] ||
-      byStatus["UnderReview"] ||
-      byStatus["underReview"] ||
-      0;
-    totals.cancelled = byStatus["Cancelled"] || byStatus["cancelled"] || 0;
-
-    setSummary(totals);
+    summaryData["openClaims"] = byStatus["Open"] || byStatus["Open"] || 0;   
+    summaryData["closedClaims"] = byStatus["Closed"] || byStatus["Closed"] || 0;
+    console.log(summaryData)
+    setSummary(summaryData);
   }, [claimData]);
 
   const generateRandomNumber = () =>
@@ -133,26 +130,20 @@ const ClaimDashboard = () => {
       >
         {[
           {
-            label: "Total Policies",
-            value: summary?.totalPolicies || 0,
+            label: "Total Claims",
+            value: summary?.totalClaims || 0,
             bg: "linear-gradient(135deg, #34495e 60%, #2c3e50 100%)",
             icon: "📄",
           },
           {
-            label: "In Force",
-            value: summary?.["In Force"] || 0,
+            label: "Open",
+            value: summary?.openClaims || 0,
             bg: "linear-gradient(135deg, #27ae60 60%, #219150 100%)",
             icon: "✅",
-          },
+          },          
           {
-            label: "Under Review",
-            value: summary?.underReview || 0,
-            bg: "linear-gradient(135deg, #f39c12 60%, #e67e22 100%)",
-            icon: "🕵️‍♂️",
-          },
-          {
-            label: "Cancelled",
-            value: summary?.cancelled || 0,
+            label: "Closed",
+            value: summary?.closedClaims || 0,
             bg: "linear-gradient(135deg, #e74c3c 60%, #c0392b 100%)",
             icon: "❌",
           },

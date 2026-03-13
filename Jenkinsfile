@@ -14,10 +14,16 @@ pipeline {
         stage('Build and Run Containers') {
             steps {
                 script {
-                    sh '''
-                        echo "P@ssw0rd" | sudo -S docker-compose down
-                        docker-compose up --build -d
-                    '''
+                sh '''
+            echo "Stopping existing containers..."
+            docker compose down --timeout 5 || true
+
+            echo "Removing stopped containers..."
+            docker container prune -f || true
+
+            echo "Building and starting containers..."
+            docker compose up -d --build
+            '''
                 }
             }
         }

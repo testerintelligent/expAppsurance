@@ -22,27 +22,40 @@ exports.createPolicy = async (req, res) => {
       coverages,
     } = req.body;
 
-    // Generate unique policy number
-    const policyNumber = "POL" + Math.floor(100000000 + Math.random() * 900000000);
+    console.log("📤 Creating policy with submission:", submissionId);
+    console.log("📤 Policy payload:", { submissionId, quoteId, accountId, contactId, productType });
+
+    // --- Validate required fields ---
+    if (!submissionId || !accountId || !quoteId || !productType) {
+      return res.status(400).json({ message: "Missing required fields: submissionId, accountId, quoteId, productType" });
+    }
+
+    // --- Sanitize contactId (convert empty string to null) ---
+    const sanitizedContactId = contactId && contactId.trim() !== "" ? contactId : null;
+
+    // Generate unique policy number (POL + timestamp, no hyphen)
+    const policyNumber = "POL" + Date.now();
 
     // Generate unique payment reference
-    const paymentRef = "PAY" + Math.floor(100000000 + Math.random() * 900000000);
+    const paymentRef = "PAY" + Math.floor(100000 + Math.random() * 900000);
+
+    console.log("✅ Creating new policy with policyNumber:", policyNumber);
 
     // Create new policy
     const newPolicy = new Policy({
       submissionId,
       quoteId,
       accountId,
-      contactId,
+      contactId: sanitizedContactId, //Use sanitized contactId (null if empty)
       productType,
-      effectiveDate,
-      expiryDate,
+      effectiveDate: new Date(effectiveDate),
+      expiryDate: new Date(expiryDate),
       totalPremium,
       taxes,
       totalCost,
       billingMethod,
       paymentSchedule,
-      coverages,
+      coverages: coverages || [],
       policyNumber,
       paymentRef,
       status: "In Force",
@@ -51,9 +64,12 @@ exports.createPolicy = async (req, res) => {
     // Save the new policy
     const savedPolicy = await newPolicy.save();
 
+    console.log("✅ Policy saved successfully with ID:", savedPolicy._id);
+
     // Now, update the corresponding account by adding the policy to the `policies` field
-    const account = await Account.findById(accountId); // Assuming `accountId` is passed correctly in the request body
+    const account = await Account.findById(accountId);
     if (!account) {
+      console.error("❌ Account not found with ID:", accountId);
       return res.status(404).json({ message: "Account not found" });
     }
 
@@ -63,14 +79,16 @@ exports.createPolicy = async (req, res) => {
     // Save the updated account
     await account.save();
 
+    console.log("✅ Policy associated with account. Account now has", account.policies.length, "policies");
+
     res.status(201).json({
       message: "Policy created and associated with account successfully",
       policy: savedPolicy,
       account: account,
     });
   } catch (err) {
-    console.error("Error creating policy:", err);
-    res.status(500).json({ message: "Server error while creating policy" });
+    console.error("❌ Error creating policy:", err);
+    res.status(500).json({ message: "Server error while creating policy", error: err.message });
   }
 };
 
@@ -134,7 +152,8 @@ exports.getPolicyByNumber = async (req, res) => {
 
   const policy = await Policy.findOne({ policyNumber })
     .populate('accountId')
-    .populate('contactId');
+    .populate('contactId')
+    .populate('claims');
 
   if (!policy) {
     return res.status(404).json({ message: 'Policy not found' });
@@ -153,7 +172,7 @@ exports.getPolicyByNumber = async (req, res) => {
     contact: policy.contactId,
     account: policy.accountId,
     vehicle: vehicles,
-    driver: drivers,
+    driver: drivers
   });
 };
 

@@ -5,7 +5,7 @@ const policySchema = new mongoose.Schema({
   submissionId: { type: String, ref: "SubmissionDetails", required: true },
   quoteId: { type: mongoose.Schema.Types.ObjectId, ref: "QuoteDetails", required: true },
   accountId: { type: mongoose.Schema.Types.ObjectId, ref: "AccountDetails", required: true },
-  contactId: { type: mongoose.Schema.Types.ObjectId, ref: "ContactDetails", required: true },
+  contactId: { type: mongoose.Schema.Types.ObjectId, ref: "ContactDetails", default: null }, // ✅ Made optional, default to null
   policyNumber: { type: String, required: true, unique: true },
   productType: { type: String, required: true },
   effectiveDate: { type: Date, required: true },
@@ -23,5 +23,14 @@ const policySchema = new mongoose.Schema({
   driverId: { type: mongoose.Schema.Types.ObjectId, ref: 'DriverDetails' },
   vehicleId: { type: mongoose.Schema.Types.ObjectId, ref: 'VehicleDetails' },
 });
+
+policySchema.virtual("claims", {
+  ref: "Claim",
+  localField: "_id",
+  foreignField: "policyId"
+});
+
+policySchema.set("toObject", { virtuals: true });
+policySchema.set("toJSON", { virtuals: true });
 
 module.exports = mongoose.model("PolicyDetails", policySchema);

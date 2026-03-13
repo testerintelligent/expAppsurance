@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 export default function Navbar() {
   const navigate = useNavigate();
   return (
-    <header className="border-b-4 border-slate-600 bg-blue-500">
+    <header className="border-b-4 border-slate-600 bg-color">
       <div className="max-w-full mx-auto">
         <div className="flex items-center px-3 lg:px-6 h-12">
           <div className="mr-4">
@@ -22,7 +22,7 @@ export default function Navbar() {
             <NavLink
               to="/Claim"
               className={({ isActive, isPending }) =>
-                isPending ? "pending" : isActive ? "active" : ""
+                isPending ? "pending" : isActive ? "nav-active" : ""
               }
             >
               Claim
@@ -30,7 +30,7 @@ export default function Navbar() {
             <NavLink
               to="/search"
               className={({ isActive, isPending }) =>
-                isPending ? "pending" : isActive ? "active" : ""
+                isPending ? "pending" : isActive ? "nav-active" : ""
               }
             >
               Search
@@ -38,7 +38,7 @@ export default function Navbar() {
             <NavLink
               to="/contact"
               className={({ isActive, isPending }) =>
-                isPending ? "pending" : isActive ? "active" : ""
+                isPending ? "pending" : isActive ? "nav-active" : ""
               }
             >
               Contact
@@ -46,7 +46,7 @@ export default function Navbar() {
             <NavLink
               to="/admin"
               className={({ isActive, isPending }) =>
-                isPending ? "pending" : isActive ? "active" : ""
+                isPending ? "pending" : isActive ? "nav-active" : ""
               }
             >
               Administration
