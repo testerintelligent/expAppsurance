@@ -165,23 +165,7 @@ export default function PolicySearchPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  /* =========================
-     ➡️ PROCEED TO CLAIM
-     ========================= */
-  const handleProceedToClaim = () => {
-    if (!policyResponse) {
-      setError('Select a policy first');
-      return;
-    }
-
-
-  };
-
-  // Aliases
-  const policy = policyResponse;
-  const contact = policyResponse?.contact;
+  };  
 
   return (
     <Box p={4}>
