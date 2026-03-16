@@ -105,15 +105,15 @@ exports.getPoliciesForDashboard = async (req, res) => {
   try {
     const policies = await Policy.find()
       .populate({
-        path: "accountId", 
+        path: "accountId",
         select: "accountId accountHolderName",
       })
       .select("policyNumber productType effectiveDate expiryDate status")
       .exec();
 
     const policyDashboardData = policies.map((policy) => ({
-      accountNumber: policy.accountId ? policy.accountId.accountId : "N/A",  
-      accountHolderName: policy.accountId ? policy.accountId.accountHolderName : "Unknown",  
+      accountNumber: policy.accountId ? policy.accountId.accountId : "N/A",
+      accountHolderName: policy.accountId ? policy.accountId.accountHolderName : "Unknown",
       policyNumber: policy.policyNumber,
       policyType: policy.productType,
       startDate: policy.effectiveDate,
@@ -160,7 +160,7 @@ exports.getPolicyByNumber = async (req, res) => {
 
 
 ///API's for Claim Module
- 
+
 exports.getAllPoliciesWithContactAndAddress = async (req, res) => {
   try {
     const policies = await Policy.find()
@@ -192,4 +192,99 @@ exports.getAllPoliciesWithContactAndAddress = async (req, res) => {
     res.status(500).json({ message: "Server error fetching policies", error: err.message });
   }
 };
+
+
+exports.getPoliciesForClaim = async (req, res) => {
+
+ try {
+  const { page, limit, sortBy, order, policyNumber, insured, policyType } = req.query;
+
+  const pageNumber = parseInt(page) > 0 ? parseInt(page) : 1;
+  const pageSize = parseInt(limit) > 0 ? parseInt(limit) : 10;
+  const skip = (pageNumber - 1) * pageSize;
+
+  const sortOrder = order === "asc" ? 1 : -1;
+  const sortField = sortBy === "insured" ? "contact.firstName" : (sortBy || "issuedAt");
+
+  const baseMatch = {
+    ...(policyNumber && { policyNumber: { $regex: policyNumber, $options: "i" } }),
+    ...(policyType && { policyType })
+  };
+
+  const contactMatch = insured
+    ? { "contact.firstName": { $regex: insured, $options: "i" } }
+    : {};
+
+  const pipeline = [
+    { $match: baseMatch },
+
+    {
+      $lookup: {
+        from: "contactdetails",   // collection name
+        localField: "contactId",
+        foreignField: "_id",
+        as: "contact"
+      }
+    },
+
+    { $unwind: "$contact" },
+
+    ...(insured ? [{ $match: contactMatch }] : []),
+
+    {
+      $facet: {
+        policies: [
+          { $sort: { [sortField]: sortOrder } },
+          { $skip: skip },
+          { $limit: pageSize },
+          {
+            $project: {
+              policyNumber: 1,
+              productType: 1,              
+              issuedAt: 1,
+              effectiveDate:1,
+              expiryDate:1,
+              contact: {
+                firstName: "$contact.firstName",
+                lastName: "$contact.lastName",
+                address: "$contact.address",
+                city: "$contact.city",
+                state: "$contact.state"
+              }
+            }
+          }
+        ],
+        totalCount: [
+          { $count: "count" }
+        ]
+      }
+    }
+  ];
+
+  const result = await Policy.aggregate(pipeline);
+
+  const policies = result[0].policies;
+  const total = result[0].totalCount[0]?.count || 0;
+
+  return res.status(200).json({
+    total,
+    page: pageNumber,
+    limit: pageSize,
+    totalPages: Math.ceil(total / pageSize),
+    count: policies.length,
+    policies
+  });
+
+} catch (err) {
+  res.status(500).json({
+    message: "Server error fetching policies",
+    error: err.message
+  });
+}
+};
+
+
+
+
+
 

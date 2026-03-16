@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Box,
@@ -14,7 +14,9 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  TablePagination,
+  TableSortLabel
 } from '@mui/material';
 
 import SearchIcon from '@mui/icons-material/Search';
@@ -23,7 +25,7 @@ import { useNavigate } from 'react-router-dom';
 // Axios instance
 const api = axios.create({
   baseURL:
-    process.env.REACT_APP_API_URL || "http://localhost:5000/api"    
+    process.env.REACT_APP_API_URL || "http://localhost:5000/api"
 });
 // const api = axios.create({
 //   baseURL: process.env.REACT_APP_API_URL || 'http://10.192.190.158:5000/api',
@@ -32,18 +34,90 @@ const api = axios.create({
 
 export default function PolicySearchPage() {
   const [policyNumber, setPolicyNumber] = useState('');
+  const [policyType, setPolicyType] = useState('');
+  const [insured, setInsured] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [policies, setPolicies] = useState([]);
+  const [page, setPage] = useState(0); // MUI starts from 0
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [sortBy, setsortBy] = useState("issuedAt");
+  const [order, setOrder] = useState("desc");
 
   // ✅ Store NORMALIZED policy object
   const [policyResponse, setPolicyResponse] = useState(null);
 
   const navigate = useNavigate();
 
+  const api = axios.create({
+    baseURL:
+      process.env.REACT_APP_API_URL || "http://localhost:5000/api",
+  });
+
+  /* =========================
+     LIST POLICIES (API)
+    ========================= */
+
+  const fetchData = async () => {
+    try {
+      const res = await api.get("/policies/getPoliciesForClaims", {
+        params: {
+          page: page + 1,
+          limit: rowsPerPage,
+          sortBy: sortBy,
+          order,
+          policyNumber: policyNumber,
+          policyType: policyType,
+          insured: insured
+
+
+        },
+      })
+      setPolicies(res.data.policies || []);
+      setTotal(res.data.total || 0);
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [page, rowsPerPage, sortBy, order]);
+
+  const handleSearch = () => {
+    fetchData();
+  }
+
+  const handleReset = () => {
+    setPolicyNumber('');
+    setInsured('');
+    setPolicyType('');
+    fetchData();
+  }
+
+
+  const handleSort = (property) => {
+    const isAsc = sortBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setsortBy(property);
+  };
+
+  const columns = [
+    { id: "policyNumber", label: "Policy Number", sort: true },
+    { id: "insured", label: "Insured Name", sort: true },
+    { id: "contact.address", label: "Address", sort: true },
+    { id: "contact.city", label: "City", sort: true },
+    { id: "contact.street", label: "State", sort: true },
+    { id: "productType", label: "Product Type", sort: true },
+    { id: "effectiveDate", label: "Effective Date", sort: false },
+    { id: "expiryDate", label: "Expiry Date", sort: false }
+  ];
+
   /* =========================
      🔍 SEARCH POLICY (API)
      ========================= */
-  const handleSearch = async () => {
+  const handleSelect = async (policyNumber) => {
     if (!policyNumber) {
       setError('Please enter a policy number');
       return;
@@ -74,7 +148,15 @@ export default function PolicySearchPage() {
         driver: payload.driver || [],
       };
 
-      setPolicyResponse(normalizedPolicy);
+      // ✅ Persist normalized policy
+      sessionStorage.setItem(
+        'selectedPolicyForClaim',
+        JSON.stringify(normalizedPolicy)
+      );
+
+      navigate('/Claim/CreateClaim', {
+        state: { policy: normalizedPolicy },
+      });
     } catch (err) {
       console.error(err);
       setError(
@@ -94,15 +176,7 @@ export default function PolicySearchPage() {
       return;
     }
 
-    // ✅ Persist normalized policy
-    sessionStorage.setItem(
-      'selectedPolicyForClaim',
-      JSON.stringify(policyResponse)
-    );
 
-    navigate('/Claim/CreateClaim', {
-      state: { policy: policyResponse },
-    });
   };
 
   // Aliases
@@ -111,17 +185,15 @@ export default function PolicySearchPage() {
 
   return (
     <Box p={4}>
-      <Paper elevation={3} sx={{ p: 3, maxWidth: 920, margin: '0 auto' }}>
+      <Paper elevation={3} sx={{ p: 3, maxWidth: 1200, margin: "0 auto" }}>
         <Typography variant="h5" gutterBottom>
-          Find a Policy
+          Search Policy
         </Typography>
-        <Typography variant="body2" color="text.secondary" gutterBottom>
-          Enter a policy number to fetch policy and insured details.
-        </Typography>
+
         <Grid container spacing={2} alignItems="center" justifyContent="center" sx={{ mt: 1 }}>
-          <Grid item size={{ xs: 6, md: 8 }}>
+          <Grid item size={{ xs: 6, md: 3 }}>
             <TextField
-              label="Search by policy number"
+              label="Policy number"
               value={policyNumber}
               onChange={(e) => setPolicyNumber(e.target.value)}
               fullWidth
@@ -130,6 +202,35 @@ export default function PolicySearchPage() {
             />
           </Grid>
           <Grid item size={{ xs: 6, md: 3 }}>
+            <TextField
+              label="Insured"
+              value={insured}
+              onChange={(e) => setInsured(e.target.value)}
+              fullWidth
+              size="small"
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            />
+          </Grid>
+          <Grid item size={{ xs: 6, md: 3 }}>
+            <TextField
+              label="Policy Type"
+              value={policyType}
+              onChange={(e) => setPolicyType(e.target.value)}
+              fullWidth
+              size="small"
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            />
+          </Grid>
+          <Grid item size={{ xs: 4, md: 1 }}>
+            <Button
+              variant="outlined"
+              onClick={handleReset}
+              disabled={loading}
+            >
+              Reset
+            </Button>
+          </Grid>
+          <Grid item size={{ xs: 4, md: 2 }}>
             <Button
               variant="contained"
               startIcon={
@@ -138,15 +239,8 @@ export default function PolicySearchPage() {
               onClick={handleSearch}
               disabled={loading}
 
-              sx={{
-                backgroundColor: '#004b50',
-                color: '#fff',
-                '&:hover': {
-                  backgroundColor: '#00363a',
-                },
-              }}
             >
-              {loading ? 'Searching...' : 'Search Policy'}
+              {loading ? 'Searching...' : 'Search'}
             </Button>
           </Grid>
         </Grid>
@@ -157,81 +251,107 @@ export default function PolicySearchPage() {
           </Typography>
         )}
 
-        <Divider sx={{ my: 3 }} />
 
-        {/* =========================
-            📋 POLICY RESULT TABLE
-           ========================= */}
-        {policy ? (
-          <Box>
-            <TableContainer component={Paper} sx={{ mb: 2 }}>
-              <Table size="small">
-                <TableHead>
+        <Box sx={{ mt: 2 }}>
+          <TableContainer component={Paper} sx={{ mb: 2 }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Select</TableCell>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      sx={{ fontWeight: 700, backgroundColor: "#f4f6f8" }}                >
+                      {column.sort ? (<TableSortLabel
+                        active={sortBy === column.id}
+                        direction={sortBy === column.id ? order : "asc"}
+                        onClick={() => handleSort(column.id)}
+                      >
+                        {column.label}
+                      </TableSortLabel>) : (column.label)}
+
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+
+                {policies.length === 0 ? (
                   <TableRow>
-                    <TableCell>Policy Number</TableCell>
-                    <TableCell>Insured Name</TableCell>
-                    <TableCell>Address</TableCell>
-                    <TableCell>City</TableCell>
-                    <TableCell>State</TableCell>
-                    <TableCell>Product Type</TableCell>
-                    <TableCell>Effective Date</TableCell>
-                    <TableCell>Expiry Date</TableCell>
-                  </TableRow>
-                </TableHead>
-
-                <TableBody>
-                  <TableRow>
-                    <TableCell>{policy.policyNumber}</TableCell>
-
-                    <TableCell>
-                      {contact
-                        ? `${contact.firstName || ''} ${contact.lastName || ''
-                          }`.trim()
-                        : 'N/A'}
-                    </TableCell>
-
-                    <TableCell>
-                      {contact?.address ||
-                        contact?.street ||
-                        'N/A'}
-                    </TableCell>
-
-                    <TableCell>{contact?.city || 'N/A'}</TableCell>
-                    <TableCell>{contact?.state || 'N/A'}</TableCell>
-
-                    <TableCell>{policy.productType || 'N/A'}</TableCell>
-
-                    <TableCell>
-                      {policy.effectiveDate
-                        ? new Date(
-                          policy.effectiveDate
-                        ).toLocaleDateString()
-                        : 'N/A'}
-                    </TableCell>
-
-                    <TableCell>
-                      {policy.expiryDate
-                        ? new Date(
-                          policy.expiryDate
-                        ).toLocaleDateString()
-                        : 'N/A'}
+                    <TableCell colSpan={8} align="center" sx={{ py: 6 }}>
+                      <Typography color="text.secondary">
+                        No policies found.
+                      </Typography>
                     </TableCell>
                   </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+                ) :
+                  (
+                    policies.map((p, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <Button                           
+                            variant="contained"
+                            onClick={() => handleSelect(p.policyNumber)}
+                          >
+                            Select
+                          </Button></TableCell>
+                        <TableCell>{p.policyNumber}</TableCell>
 
-            <Box display="flex" justifyContent="flex-end">
-              <Button variant="contained" onClick={handleProceedToClaim}>
-                Create Claim
-              </Button>
-            </Box>
-          </Box>
-        ) : (
-          <Typography variant="body2" color="text.secondary">
-            No policy selected. Search above to fetch a policy.
-          </Typography>
-        )}
+                        <TableCell>
+                          {p.contact
+                            ? `${p.contact.firstName || ''} ${p.contact.lastName || ''
+                              }`.trim()
+                            : 'N/A'}
+                        </TableCell>
+
+                        <TableCell>
+                          {p.contact?.address ||
+                            p.contact?.street ||
+                            'N/A'}
+                        </TableCell>
+
+                        <TableCell>{p.contact?.city || 'N/A'}</TableCell>
+                        <TableCell>{p.contact?.state || 'N/A'}</TableCell>
+
+                        <TableCell>{p.productType || 'N/A'}</TableCell>
+
+                        <TableCell>
+                          {p.effectiveDate
+                            ? new Date(
+                              p.effectiveDate
+                            ).toLocaleDateString()
+                            : 'N/A'}
+                        </TableCell>
+
+                        <TableCell>
+                          {p.expiryDate
+                            ? new Date(
+                              p.expiryDate
+                            ).toLocaleDateString()
+                            : 'N/A'}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          {/* Pagination */}
+          <TablePagination
+            component="div"
+            count={total}
+            page={page}
+            onPageChange={(e, newPage) => setPage(newPage)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={(e) => {
+              setRowsPerPage(parseInt(e.target.value, 10));
+              setPage(0);
+            }}
+            rowsPerPageOptions={[5, 10, 25, 50]}
+          />
+        </Box>
       </Paper>
     </Box>
   );
