@@ -7,4 +7,6 @@ router.get("/getAllPolicies", policyController.getAllPolicies);
 router.get("/getPoliciesForDashboard", policyController.getPoliciesForDashboard);
 router.get("/getPolicyByNumber/:policyNumber", policyController.getPolicyByNumber);
 router.get("/policysearchforClaim", policyController.getAllPoliciesWithContactAndAddress);
+router.get("/getPoliciesForClaims", policyController.getPoliciesForClaim);
+
 module.exports = router;
