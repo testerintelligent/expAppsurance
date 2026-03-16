@@ -458,14 +458,14 @@ export default function Contact() {
                 <TableHead>
                   <TableRow>
                     <TableCell>Select</TableCell>
-                    <TableCell>First Name</TableCell>
-                    <TableCell>Last Name</TableCell>
+                    <TableCell>Name</TableCell>
+                    {/* <TableCell>Last Name</TableCell> */}
                     <TableCell>Email</TableCell>
                     <TableCell>Phone</TableCell>
                     <TableCell>DOB</TableCell>
                     <TableCell>Gender</TableCell>
-                    <TableCell>Organisation</TableCell>
-                    <TableCell>ProducerCode</TableCell>
+                    {/* <TableCell>Organisation</TableCell>
+                    <TableCell>ProducerCode</TableCell> */}
                     <TableCell>View</TableCell>
                   </TableRow>
                 </TableHead>
@@ -483,14 +483,14 @@ export default function Contact() {
                             Select
                           </Button>
                         </TableCell>
-                        <TableCell>{contact.firstName}</TableCell>
-                        <TableCell>{contact.lastName}</TableCell>
+                        <TableCell>{contact.firstName} {contact.lastName}</TableCell>
+                        {/* <TableCell>{contact.lastName}</TableCell> */}
                         <TableCell>{contact.email}</TableCell>
                         <TableCell>{contact.phone}</TableCell>
                         <TableCell>{formatDate(contact.dateOfBirth)}</TableCell>
                         <TableCell>{contact.gender}</TableCell>
-                        <TableCell>{contact.organization}</TableCell>
-                        <TableCell>{contact.producerCode}</TableCell>
+                        {/* <TableCell>{contact.organization}</TableCell>
+                        <TableCell>{contact.producerCode}</TableCell> */}
                         <TableCell>
                           <VisibilityIcon
                             color="primary"
