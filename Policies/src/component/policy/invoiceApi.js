@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5000/api/billing";
+// const API_BASE_URL = "http://localhost:5000/api/billing";
+const API_BASE_URL = "http://10.192.190.158:5000/api/billing";
 
 export const createInvoice = async (invoiceData) => {
   try {

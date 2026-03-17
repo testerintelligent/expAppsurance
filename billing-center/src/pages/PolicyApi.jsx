@@ -6,8 +6,9 @@ import axios from "axios";
 export const searchPolicy = async (policyNumber) => {
   try {
     const response = await axios.get(
-      `http://localhost:5000/api/Policies/getPolicyByNumber/${policyNumber}`
+      `http:// 10.192.190.158:5000/api/Policies/getPolicyByNumber/${policyNumber}`
     );
+    // `http://localhost:5000/api/Policies/getPolicyByNumber/${policyNumber}`
 
     return response.data;
   } catch (err) {
