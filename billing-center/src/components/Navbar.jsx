@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../utils/logout.js";
+import NotificationButton from "./NotificationIcon";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -26,6 +27,9 @@ const Navbar = () => {
           Policy
         </NavLink>
       </nav>
+      <div>
+        <NotificationButton />
+      </div>
 
       <div>
         <button
