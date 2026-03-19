@@ -241,7 +241,7 @@ export default function PolicySearchPage() {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>Select</TableCell>
+                  <TableCell sx={{ fontWeight: 700, backgroundColor: "#f4f6f8" }} >Select</TableCell>
                   {columns.map((column) => (
                     <TableCell
                       key={column.id}
