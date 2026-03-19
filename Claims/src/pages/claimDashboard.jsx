@@ -15,11 +15,21 @@ import {
   DialogContent,
   DialogTitle,
   TablePagination,
+  Stack,
+  Typography,
+  Box,
+  Grid
 } from "@mui/material";
 import { FaEye } from "react-icons/fa";
+import { useTheme } from '@mui/material/styles';
+
+import MainCard from '../layout/MainCard';
+
+
 
 const ClaimDashboard = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const [claimData, setClaimData] = useState([]);
   const [claimTotal, setClaimTotal] = useState([0]);
@@ -63,7 +73,7 @@ const ClaimDashboard = () => {
       return acc;
     }, {});
 
-    summaryData["openClaims"] = byStatus["Open"] || byStatus["Open"] || 0;   
+    summaryData["openClaims"] = byStatus["Open"] || byStatus["Open"] || 0;
     summaryData["closedClaims"] = byStatus["Closed"] || byStatus["Closed"] || 0;
     console.log(summaryData)
     setSummary(summaryData);
@@ -113,63 +123,186 @@ const ClaimDashboard = () => {
     return isNaN(date.getTime())
       ? "Invalid Date"
       : `${String(date.getDate()).padStart(2, "0")}/${String(
-          date.getMonth() + 1
-        ).padStart(2, "0")}/${date.getFullYear()}`;
+        date.getMonth() + 1
+      ).padStart(2, "0")}/${date.getFullYear()}`;
   };
+
+  const gridSpacing = 3;
+
 
   return (
     <div style={{ padding: "20px" }}>
       {/* ✅ Summary Cards */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "24px",
-          marginBottom: "32px",
-        }}
-      >
-        {[
-          {
-            label: "Total Claims",
-            value: summary?.totalClaims || 0,
-            bg: "linear-gradient(135deg, #34495e 60%, #2c3e50 100%)",
-            icon: "📄",
-          },
-          {
-            label: "Open",
-            value: summary?.openClaims || 0,
-            bg: "linear-gradient(135deg, #27ae60 60%, #219150 100%)",
-            icon: "✅",
-          },          
-          {
-            label: "Closed",
-            value: summary?.closedClaims || 0,
-            bg: "linear-gradient(135deg, #e74c3c 60%, #c0392b 100%)",
-            icon: "❌",
-          },
-        ].map(({ label, value, bg, icon }, idx) => (
-          <Paper
-            key={idx}
-            elevation={4}
-            style={{
-              padding: "28px 20px",
-              borderRadius: "18px",
-              background: bg,
-              color: "white",
-              textAlign: "center",
-              boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
-            }}
-          >
-            <span style={{ fontSize: "2.2rem" }}>{icon}</span>
-            <div style={{ fontWeight: "bold", fontSize: "1.1rem" }}>
-              {label}
-            </div>
-            <div style={{ fontSize: "2.1rem", fontWeight: "bold" }}>
-              {value}
-            </div>
-          </Paper>
-        ))}
-      </div>
+
+      <Grid container spacing={gridSpacing} mb={3}>
+            <Grid size={{ lg: 4, md: 4, sm: 6, xs: 12 }}>
+              <MainCard
+                border={false}
+                content={false}
+                sx={{
+                  bgcolor: '#5e35b1',
+                  color: '#fff',
+                  overflow: 'hidden',
+                  position: 'relative',
+                  width: '100%',
+                  '&:after': {
+                    content: '""',
+                    position: 'absolute',
+                    width: 210,
+                    height: 210,
+                    background: '#4527a0',
+                    borderRadius: '50%',
+                    top: { xs: -85 },
+                    right: { xs: -95 }
+                  },
+                  '&:before': {
+                    content: '""',
+                    position: 'absolute',
+                    width: 210,
+                    height: 210,
+                    background: '#4527a0',
+                    borderRadius: '50%',
+                    top: { xs: -125 },
+                    right: { xs: -15 },
+                    opacity: 0.5
+                  }
+                }}
+              >
+                <Box sx={{ p: 2.25 }}>
+
+                  <Stack direction="row" sx={{ alignItems: 'center' }}>
+                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.totalClaims || 0}</Typography>
+
+                  </Stack>
+                  <Typography
+                    sx={{
+                      mb: 1.25,
+                      fontSize: '1.2rem',
+                      fontWeight: 500,
+                      color: '#b39ddb',
+                      float: 'left'
+                    }}
+                  >
+                    Total Claims
+                  </Typography>
+
+
+                </Box>
+              </MainCard>
+            </Grid>
+            <Grid size={{ lg: 4, md: 4, sm: 6, xs: 12 }}>
+             <MainCard
+                border={false}
+                content={false}
+                sx={{
+                  bgcolor: '#1e88e5',
+                  color: '#fff',
+                  overflow: 'hidden',
+                  position: 'relative',
+                  width: '100%',
+                  '&:after': {
+                    content: '""',
+                    position: 'absolute',
+                    width: 210,
+                    height: 210,
+                    background: '#1565c0',
+                    borderRadius: '50%',
+                    top: { xs: -85 },
+                    right: { xs: -95 }
+                  },
+                  '&:before': {
+                    content: '""',
+                    position: 'absolute',
+                    width: 210,
+                    height: 210,
+                    background: '#1565c0',
+                    borderRadius: '50%',
+                    top: { xs: -125 },
+                    right: { xs: -15 },
+                    opacity: 0.5
+                  }
+                }}
+              >
+                <Box sx={{ p: 2.25 }}>
+
+                  <Stack direction="row" sx={{ alignItems: 'center' }}>
+                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.openClaims || 0}</Typography>
+
+                  </Stack>
+                  <Typography
+                    sx={{
+                      mb: 1.25,
+                      fontSize: '1.2rem',
+                      fontWeight: 500,
+                      color: '#90caf9',
+                      float: 'left'
+                    }}
+                  >
+                    Claims Open
+                  </Typography>
+
+
+                </Box>
+              </MainCard>
+            </Grid>
+            <Grid size={{ lg: 4, md: 4, sm: 12, xs: 12 }}>
+                <Grid size={{ sm: 6, xs: 12, md: 6, lg: 12 }}>
+                <MainCard
+                border={false}
+                content={false}
+                sx={{
+                  bgcolor: '#ff7043',
+                  color: '#fff',
+                  overflow: 'hidden',
+                  position: 'relative',
+                  width: '100%',
+                  '&:after': {
+                    content: '""',
+                    position: 'absolute',
+                    width: 210,
+                    height: 210,
+                    background: '#d84315',
+                    borderRadius: '50%',
+                    top: { xs: -85 },
+                    right: { xs: -95 }
+                  },
+                  '&:before': {
+                    content: '""',
+                    position: 'absolute',
+                    width: 210,
+                    height: 210,
+                    background: '#d84315',
+                    borderRadius: '50%',
+                    top: { xs: -125 },
+                    right: { xs: -15 },
+                    opacity: 0.5
+                  }
+                }}
+              >
+                <Box sx={{ p: 2.25 }}>
+
+                  <Stack direction="row" sx={{ alignItems: 'center' }}>
+                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.closedClaims || 0}</Typography>
+
+                  </Stack>
+                  <Typography
+                    sx={{
+                      mb: 1.25,
+                      fontSize: '1.2rem',
+                      fontWeight: 500,
+                      color: '#d84315',
+                      float: 'left'
+                    }}
+                  >
+                    Claims Closed
+                  </Typography>
+
+
+                </Box>
+              </MainCard>
+              </Grid>
+            </Grid>
+      </Grid>     
       {/* ✅ Data Table */}
       {filteredData.length > 0 ? (
         <TableContainer
@@ -179,14 +312,25 @@ const ClaimDashboard = () => {
         >
           <Table>
             <TableHead>
-              <TableRow style={{ backgroundColor: "black" }}>
+              <TableRow>
+                <TableCell
+                  style={{
+                    color: "#fff",
+                    backgroundColor: "#4527a0",
+                    fontWeight: 500,
+                    padding: "12px",
+                    textAlign: "center",
+                  }}
+                >
+                  View
+                </TableCell>
                 {columns.map((col) => (
                   <TableCell
                     key={col.key}
                     style={{
-                      color: "white",
-                      backgroundColor: "black",
-                      fontWeight: "bold",
+                      color: "#fff",
+                      backgroundColor: "#4527a0",
+                      fontWeight: 500,
                       cursor: "pointer",
                       padding: "12px",
                       textAlign: "center",
@@ -198,17 +342,7 @@ const ClaimDashboard = () => {
                       (sortOrder === "asc" ? "↑" : "↓")}
                   </TableCell>
                 ))}
-                <TableCell
-                  style={{
-                    color: "white",
-                    backgroundColor: "black",
-                    fontWeight: "bold",
-                    padding: "12px",
-                    textAlign: "center",
-                  }}
-                >
-                  VIEW
-                </TableCell>
+                
               </TableRow>
             </TableHead>
 
@@ -225,6 +359,16 @@ const ClaimDashboard = () => {
                           index % 2 === 0 ? "#ecf0f1" : "#ffffff",
                       }}
                     >
+                       <TableCell
+                        style={{ padding: "12px", textAlign: "center" }}
+                      >
+                        <button
+                          onClick={() => navigate(`/Claim/summary/${claim.claimNumber}`)}
+                          style={{ textTransform: "none", borderRadius: "5px" }}
+                        >
+                          <FaEye size="25px" />
+                        </button>
+                      </TableCell>
                       <TableCell
                         style={{ padding: "12px", textAlign: "center" }}
                       >
@@ -269,17 +413,7 @@ const ClaimDashboard = () => {
                         style={{ padding: "12px", textAlign: "center" }}
                       >
                         {claim.status}
-                      </TableCell>
-                      <TableCell
-                        style={{ padding: "12px", textAlign: "center" }}
-                      >
-                        <button
-                          // onClick={() => updatePolicy(insurance, "view")}
-                          style={{ textTransform: "none", borderRadius: "5px" }}
-                        >
-                          <FaEye size="25px" />
-                        </button>
-                      </TableCell>
+                      </TableCell>                     
                     </TableRow>
                   );
                 })}
