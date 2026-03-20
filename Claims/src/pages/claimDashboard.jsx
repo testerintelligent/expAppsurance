@@ -134,179 +134,176 @@ const ClaimDashboard = () => {
     <div style={{ padding: "20px" }}>
       {/* ✅ Summary Cards */}
 
-      <Grid container spacing={gridSpacing} mb={2}>
-            <Grid size={{ lg: 3, md: 4, sm: 6, xs: 12 }}>
-              <MainCard
-                border={false}
-                content={false}
-                sx={{
-                  bgcolor: '#5e35b1',
-                  color: '#fff',
-                  overflow: 'hidden',
-                  position: 'relative',
-                  width: '100%',
-                  maxWidth: 260,
-                  '&:after': {
-                    content: '""',
-                    position: 'absolute',
-                    width: 180,
-                    height: 180,
-                    background: '#4527a0',
-                    borderRadius: '50%',
-                    top: { xs: -85 },
-                    right: { xs: -95 }
-                  },
-                  '&:before': {
-                    content: '""',
-                    position: 'absolute',
-                    width: 180,
-                    height: 180,
-                    background: '#4527a0',
-                    borderRadius: '50%',
-                    top: { xs: -125 },
-                    right: { xs: -15 },
-                    opacity: 0.5
-                  }
-                }}
-              >
-                <Box sx={{ p: 1.5 }}>
+      <Box
+        display="grid"
+        gridTemplateColumns="repeat(auto-fill, 260px)"
+        justifyContent="start"
+        gap={1}
+        mb={3}
+      >
+        <MainCard
+          border={false}
+          content={false}
+          sx={{
+            bgcolor: '#5e35b1',
+            color: '#fff',
+            overflow: 'hidden',
+            position: 'relative',
+            width: '100%',
+            '&:after': {
+              content: '""',
+              position: 'absolute',
+              width: 180,
+              height: 180,
+              background: '#4527a0',
+              borderRadius: '50%',
+              top: { xs: -85 },
+              right: { xs: -95 }
+            },
+            '&:before': {
+              content: '""',
+              position: 'absolute',
+              width: 180,
+              height: 180,
+              background: '#4527a0',
+              borderRadius: '50%',
+              top: { xs: -125 },
+              right: { xs: -15 },
+              opacity: 0.5
+            }
+          }}
+        >
+          <Box sx={{ p: 1.5 }}>
 
-                  <Stack direction="row" sx={{ alignItems: 'center' }}>
-                    <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.totalClaims || 0}</Typography>
+            <Stack direction="row" sx={{ alignItems: 'center' }}>
+              <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.totalClaims || 0}</Typography>
 
-                  </Stack>
-                  <Typography
-                    sx={{
-                      mb: 1.25,
-                      fontSize: '1rem',
-                      fontWeight: 500,
-                      color: '#b39ddb',
-                      float: 'left'
-                    }}
-                  >
-                    Total Claims
-                  </Typography>
-
-
-                </Box>
-              </MainCard>
-            </Grid>
-            <Grid size={{ lg: 3, md: 4, sm: 6, xs: 12 }}>
-             <MainCard
-                border={false}
-                content={false}
-                sx={{
-                  bgcolor: '#1e88e5',
-                  color: '#fff',
-                  overflow: 'hidden',
-                  position: 'relative',
-                  width: '100%',
-                  maxWidth: 260,
-                  '&:after': {
-                    content: '""',
-                    position: 'absolute',
-                    width: 180,
-                    height: 180,
-                    background: '#1565c0',
-                    borderRadius: '50%',
-                    top: { xs: -85 },
-                    right: { xs: -95 }
-                  },
-                  '&:before': {
-                    content: '""',
-                    position: 'absolute',
-                    width: 180,
-                    height: 180,
-                    background: '#1565c0',
-                    borderRadius: '50%',
-                    top: { xs: -125 },
-                    right: { xs: -15 },
-                    opacity: 0.5
-                  }
-                }}
-              >
-                <Box sx={{ p: 1.5 }}>
-
-                  <Stack direction="row" sx={{ alignItems: 'center' }}>
-                    <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.openClaims || 0}</Typography>
-
-                  </Stack>
-                  <Typography
-                    sx={{
-                      mb: 1.25,
-                      fontSize: '1rem',
-                      fontWeight: 500,
-                      color: '#90caf9',
-                      float: 'left'
-                    }}
-                  >
-                    Claims Open
-                  </Typography>
+            </Stack>
+            <Typography
+              sx={{
+                mb: 1.25,
+                fontSize: '1rem',
+                fontWeight: 500,
+                color: '#b39ddb',
+                float: 'left'
+              }}
+            >
+              Total Claims
+            </Typography>
 
 
-                </Box>
-              </MainCard>
-            </Grid>
-            <Grid size={{ lg: 3, md: 4, sm: 12, xs: 12 }}>
-                <Grid size={{ sm: 6, xs: 12, md: 6, lg: 12 }}>
-                <MainCard
-                border={false}
-                content={false}
-                sx={{
-                  bgcolor: '#ff7043',
-                  color: '#fff',
-                  overflow: 'hidden',
-                  position: 'relative',
-                  width: '100%',
-                  maxWidth: 260,
-                  '&:after': {
-                    content: '""',
-                    position: 'absolute',
-                    width: 180,
-                    height: 180,
-                    background: '#d84315',
-                    borderRadius: '50%',
-                    top: { xs: -85 },
-                    right: { xs: -95 }
-                  },
-                  '&:before': {
-                    content: '""',
-                    position: 'absolute',
-                    width: 180,
-                    height: 180,
-                    background: '#d84315',
-                    borderRadius: '50%',
-                    top: { xs: -125 },
-                    right: { xs: -15 },
-                    opacity: 0.5
-                  }
-                }}
-              >
-                <Box sx={{ p: 1.5 }}>
+          </Box>
+        </MainCard>
+        <MainCard
+          border={false}
+          content={false}
+          sx={{
+            bgcolor: '#1e88e5',
+            color: '#fff',
+            overflow: 'hidden',
+            position: 'relative',
+            width: '100%',
+            '&:after': {
+              content: '""',
+              position: 'absolute',
+              width: 180,
+              height: 180,
+              background: '#1565c0',
+              borderRadius: '50%',
+              top: { xs: -85 },
+              right: { xs: -95 }
+            },
+            '&:before': {
+              content: '""',
+              position: 'absolute',
+              width: 180,
+              height: 180,
+              background: '#1565c0',
+              borderRadius: '50%',
+              top: { xs: -125 },
+              right: { xs: -15 },
+              opacity: 0.5
+            }
+          }}
+        >
+          <Box sx={{ p: 1.5 }}>
 
-                  <Stack direction="row" sx={{ alignItems: 'center' }}>
-                    <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.closedClaims || 0}</Typography>
+            <Stack direction="row" sx={{ alignItems: 'center' }}>
+              <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.openClaims || 0}</Typography>
 
-                  </Stack>
-                  <Typography
-                    sx={{
-                      mb: 1.25,
-                      fontSize: '1rem',
-                      fontWeight: 500,
-                      color: '#d84315',
-                      float: 'left',
-                      opacity: 0.7
-                    }}
-                  >
-                    Claims Closed
-                  </Typography>
+            </Stack>
+            <Typography
+              sx={{
+                mb: 1.25,
+                fontSize: '1rem',
+                fontWeight: 500,
+                color: '#90caf9',
+                float: 'left'
+              }}
+            >
+              Claims Open
+            </Typography>
 
 
-                </Box>
-              </MainCard>
-              </Grid>
-            </Grid>
-      </Grid>     
+          </Box>
+        </MainCard>
+        <MainCard
+          border={false}
+          content={false}
+          sx={{
+            bgcolor: '#ff7043',
+            color: '#fff',
+            overflow: 'hidden',
+            position: 'relative',
+            width: '100%',
+            '&:after': {
+              content: '""',
+              position: 'absolute',
+              width: 180,
+              height: 180,
+              background: '#d84315',
+              borderRadius: '50%',
+              top: { xs: -85 },
+              right: { xs: -95 }
+            },
+            '&:before': {
+              content: '""',
+              position: 'absolute',
+              width: 180,
+              height: 180,
+              background: '#d84315',
+              borderRadius: '50%',
+              top: { xs: -125 },
+              right: { xs: -15 },
+              opacity: 0.5
+            }
+          }}
+        >
+          <Box sx={{ p: 1.5 }}>
+
+            <Stack direction="row" sx={{ alignItems: 'center' }}>
+              <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.closedClaims || 0}</Typography>
+
+            </Stack>
+            <Typography
+              sx={{
+                mb: 1.25,
+                fontSize: '1rem',
+                fontWeight: 500,
+                color: '#d84315',
+                float: 'left',
+                opacity: 0.7
+              }}
+            >
+              Claims Closed
+            </Typography>
+
+
+          </Box>
+        </MainCard>
+      </Box>
+
+
       {/* ✅ Data Table */}
       {filteredData.length > 0 ? (
         <TableContainer
@@ -346,7 +343,7 @@ const ClaimDashboard = () => {
                       (sortOrder === "asc" ? "↑" : "↓")}
                   </TableCell>
                 ))}
-                
+
               </TableRow>
             </TableHead>
 
@@ -363,7 +360,7 @@ const ClaimDashboard = () => {
                           index % 2 === 0 ? "#ecf0f1" : "#ffffff",
                       }}
                     >
-                       <TableCell
+                      <TableCell
                         style={{ padding: "12px", textAlign: "center" }}
                       >
                         <button
@@ -417,7 +414,7 @@ const ClaimDashboard = () => {
                         style={{ padding: "12px", textAlign: "center" }}
                       >
                         {claim.status}
-                      </TableCell>                     
+                      </TableCell>
                     </TableRow>
                   );
                 })}
