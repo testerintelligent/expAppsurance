@@ -201,6 +201,7 @@ const ClaimDashboard = () => {
                   overflow: 'hidden',
                   position: 'relative',
                   width: '100%',
+                  maxWidth: 260,
                   '&:after': {
                     content: '""',
                     position: 'absolute',
@@ -257,6 +258,7 @@ const ClaimDashboard = () => {
                   overflow: 'hidden',
                   position: 'relative',
                   width: '100%',
+                  maxWidth: 260,
                   '&:after': {
                     content: '""',
                     position: 'absolute',
@@ -438,7 +440,7 @@ const ClaimDashboard = () => {
         </TableContainer>
       ) : (
         <p style={{ textAlign: "center", color: "#7f8c8d", fontSize: "18px" }}>
-          No insurance data available
+          No claim data available
         </p>
       )}
     </div>
