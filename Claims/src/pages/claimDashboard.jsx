@@ -127,15 +127,15 @@ const ClaimDashboard = () => {
       ).padStart(2, "0")}/${date.getFullYear()}`;
   };
 
-  const gridSpacing = 3;
+  const gridSpacing = 1;
 
 
   return (
     <div style={{ padding: "20px" }}>
       {/* ✅ Summary Cards */}
 
-      <Grid container spacing={gridSpacing} mb={3}>
-            <Grid size={{ lg: 4, md: 4, sm: 6, xs: 12 }}>
+      <Grid container spacing={gridSpacing} mb={2}>
+            <Grid size={{ lg: 3, md: 4, sm: 6, xs: 12 }}>
               <MainCard
                 border={false}
                 content={false}
@@ -145,11 +145,12 @@ const ClaimDashboard = () => {
                   overflow: 'hidden',
                   position: 'relative',
                   width: '100%',
+                  maxWidth: 260,
                   '&:after': {
                     content: '""',
                     position: 'absolute',
-                    width: 210,
-                    height: 210,
+                    width: 180,
+                    height: 180,
                     background: '#4527a0',
                     borderRadius: '50%',
                     top: { xs: -85 },
@@ -158,8 +159,8 @@ const ClaimDashboard = () => {
                   '&:before': {
                     content: '""',
                     position: 'absolute',
-                    width: 210,
-                    height: 210,
+                    width: 180,
+                    height: 180,
                     background: '#4527a0',
                     borderRadius: '50%',
                     top: { xs: -125 },
@@ -168,16 +169,16 @@ const ClaimDashboard = () => {
                   }
                 }}
               >
-                <Box sx={{ p: 2.25 }}>
+                <Box sx={{ p: 1.5 }}>
 
                   <Stack direction="row" sx={{ alignItems: 'center' }}>
-                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.totalClaims || 0}</Typography>
+                    <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.totalClaims || 0}</Typography>
 
                   </Stack>
                   <Typography
                     sx={{
                       mb: 1.25,
-                      fontSize: '1.2rem',
+                      fontSize: '1rem',
                       fontWeight: 500,
                       color: '#b39ddb',
                       float: 'left'
@@ -190,7 +191,7 @@ const ClaimDashboard = () => {
                 </Box>
               </MainCard>
             </Grid>
-            <Grid size={{ lg: 4, md: 4, sm: 6, xs: 12 }}>
+            <Grid size={{ lg: 3, md: 4, sm: 6, xs: 12 }}>
              <MainCard
                 border={false}
                 content={false}
@@ -203,8 +204,8 @@ const ClaimDashboard = () => {
                   '&:after': {
                     content: '""',
                     position: 'absolute',
-                    width: 210,
-                    height: 210,
+                    width: 180,
+                    height: 180,
                     background: '#1565c0',
                     borderRadius: '50%',
                     top: { xs: -85 },
@@ -213,8 +214,8 @@ const ClaimDashboard = () => {
                   '&:before': {
                     content: '""',
                     position: 'absolute',
-                    width: 210,
-                    height: 210,
+                    width: 180,
+                    height: 180,
                     background: '#1565c0',
                     borderRadius: '50%',
                     top: { xs: -125 },
@@ -223,16 +224,16 @@ const ClaimDashboard = () => {
                   }
                 }}
               >
-                <Box sx={{ p: 2.25 }}>
+                <Box sx={{ p: 1.5 }}>
 
                   <Stack direction="row" sx={{ alignItems: 'center' }}>
-                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.openClaims || 0}</Typography>
+                    <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.openClaims || 0}</Typography>
 
                   </Stack>
                   <Typography
                     sx={{
                       mb: 1.25,
-                      fontSize: '1.2rem',
+                      fontSize: '1rem',
                       fontWeight: 500,
                       color: '#90caf9',
                       float: 'left'
@@ -245,7 +246,7 @@ const ClaimDashboard = () => {
                 </Box>
               </MainCard>
             </Grid>
-            <Grid size={{ lg: 4, md: 4, sm: 12, xs: 12 }}>
+            <Grid size={{ lg: 3, md: 4, sm: 12, xs: 12 }}>
                 <Grid size={{ sm: 6, xs: 12, md: 6, lg: 12 }}>
                 <MainCard
                 border={false}
@@ -259,8 +260,8 @@ const ClaimDashboard = () => {
                   '&:after': {
                     content: '""',
                     position: 'absolute',
-                    width: 210,
-                    height: 210,
+                    width: 180,
+                    height: 180,
                     background: '#d84315',
                     borderRadius: '50%',
                     top: { xs: -85 },
@@ -269,8 +270,8 @@ const ClaimDashboard = () => {
                   '&:before': {
                     content: '""',
                     position: 'absolute',
-                    width: 210,
-                    height: 210,
+                    width: 180,
+                    height: 180,
                     background: '#d84315',
                     borderRadius: '50%',
                     top: { xs: -125 },
@@ -279,19 +280,20 @@ const ClaimDashboard = () => {
                   }
                 }}
               >
-                <Box sx={{ p: 2.25 }}>
+                <Box sx={{ p: 1.5 }}>
 
                   <Stack direction="row" sx={{ alignItems: 'center' }}>
-                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.closedClaims || 0}</Typography>
+                    <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.closedClaims || 0}</Typography>
 
                   </Stack>
                   <Typography
                     sx={{
                       mb: 1.25,
-                      fontSize: '1.2rem',
+                      fontSize: '1rem',
                       fontWeight: 500,
                       color: '#d84315',
-                      float: 'left'
+                      float: 'left',
+                      opacity: 0.7
                     }}
                   >
                     Claims Closed
