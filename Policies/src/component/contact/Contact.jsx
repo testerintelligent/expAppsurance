@@ -370,7 +370,7 @@ export default function Contact() {
   };
 
   return (
-    <Box sx={{ width: "100%", maxWidth: 1200, mx: "auto", mt: 2 }}>
+    <Box sx={{ width: "100%", maxWidth: 1200}}>
       <Paper
         elevation={4}
         sx={{

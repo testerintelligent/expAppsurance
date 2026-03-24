@@ -9,18 +9,12 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   TablePagination,
   Stack,
   Typography,
   Box,
-  Grid
 } from "@mui/material";
-import { FaEye } from "react-icons/fa";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useTheme } from '@mui/material/styles';
 
 import MainCard from '../layout/MainCard';
@@ -144,34 +138,8 @@ const ClaimDashboard = () => {
         <MainCard
           border={false}
           content={false}
-          sx={{
-            bgcolor: '#5e35b1',
-            color: '#fff',
-            overflow: 'hidden',
-            position: 'relative',
-            width: '100%',
-            '&:after': {
-              content: '""',
-              position: 'absolute',
-              width: 180,
-              height: 180,
-              background: '#4527a0',
-              borderRadius: '50%',
-              top: { xs: -85 },
-              right: { xs: -95 }
-            },
-            '&:before': {
-              content: '""',
-              position: 'absolute',
-              width: 180,
-              height: 180,
-              background: '#4527a0',
-              borderRadius: '50%',
-              top: { xs: -125 },
-              right: { xs: -15 },
-              opacity: 0.5
-            }
-          }}
+          bgcolor='#5e35b1'
+          background='#4527a0'
         >
           <Box sx={{ p: 1.5 }}>
 
@@ -197,34 +165,8 @@ const ClaimDashboard = () => {
         <MainCard
           border={false}
           content={false}
-          sx={{
-            bgcolor: '#1e88e5',
-            color: '#fff',
-            overflow: 'hidden',
-            position: 'relative',
-            width: '100%',
-            '&:after': {
-              content: '""',
-              position: 'absolute',
-              width: 180,
-              height: 180,
-              background: '#1565c0',
-              borderRadius: '50%',
-              top: { xs: -85 },
-              right: { xs: -95 }
-            },
-            '&:before': {
-              content: '""',
-              position: 'absolute',
-              width: 180,
-              height: 180,
-              background: '#1565c0',
-              borderRadius: '50%',
-              top: { xs: -125 },
-              right: { xs: -15 },
-              opacity: 0.5
-            }
-          }}
+          bgcolor='#1e88e5'
+          background='#1565c0'
         >
           <Box sx={{ p: 1.5 }}>
 
@@ -250,34 +192,8 @@ const ClaimDashboard = () => {
         <MainCard
           border={false}
           content={false}
-          sx={{
-            bgcolor: '#ff7043',
-            color: '#fff',
-            overflow: 'hidden',
-            position: 'relative',
-            width: '100%',
-            '&:after': {
-              content: '""',
-              position: 'absolute',
-              width: 180,
-              height: 180,
-              background: '#d84315',
-              borderRadius: '50%',
-              top: { xs: -85 },
-              right: { xs: -95 }
-            },
-            '&:before': {
-              content: '""',
-              position: 'absolute',
-              width: 180,
-              height: 180,
-              background: '#d84315',
-              borderRadius: '50%',
-              top: { xs: -125 },
-              right: { xs: -15 },
-              opacity: 0.5
-            }
-          }}
+          bgcolor='#ff7043'
+          background='#d84315'
         >
           <Box sx={{ p: 1.5 }}>
 
@@ -363,12 +279,12 @@ const ClaimDashboard = () => {
                       <TableCell
                         style={{ padding: "12px", textAlign: "center" }}
                       >
-                        <button
+                        <VisibilityIcon
+                          color="primary"
                           onClick={() => navigate(`/Claim/summary/${claim.claimNumber}`)}
-                          style={{ textTransform: "none", borderRadius: "5px" }}
-                        >
-                          <FaEye size="25px" />
-                        </button>
+                          style={{ cursor: "pointer" }} // optional: makes it clickable
+                        />
+
                       </TableCell>
                       <TableCell
                         style={{ padding: "12px", textAlign: "center" }}

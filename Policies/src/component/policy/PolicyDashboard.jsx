@@ -10,8 +10,13 @@ import {
   TableRow,
   Paper,
   TablePagination,
+  Stack,
+  Typography,
+  Box
 } from "@mui/material";
-import { FaEye } from "react-icons/fa";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import MainCard from '../../layout/MainCard';
+
 
 const PolicyDashboard = () => {
   const [insuranceData, setInsuranceData] = useState([]);
@@ -68,8 +73,8 @@ const PolicyDashboard = () => {
     return isNaN(date.getTime())
       ? "Invalid Date"
       : `${String(date.getDate()).padStart(2, "0")}/${String(
-          date.getMonth() + 1
-        ).padStart(2, "0")}/${date.getFullYear()}`;
+        date.getMonth() + 1
+      ).padStart(2, "0")}/${date.getFullYear()}`;
   };
 
   const generateRandomNumber = () =>
@@ -110,71 +115,147 @@ const PolicyDashboard = () => {
   return (
     <div style={{ padding: "20px" }}>
       {/* ✅ Summary Cards */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "24px",
-          marginBottom: "32px",
-        }}
+    
+ <Box
+        display="grid"
+        gridTemplateColumns="repeat(auto-fill, 230px)"
+        justifyContent="start"
+        gap={1}
+        mb={3}
       >
-        {[ 
-          {
-            label: "Total Policies",
-            value: summary?.totalPolicies || 0,
-            bg: "linear-gradient(135deg, #34495e 60%, #2c3e50 100%)",
-            icon: "📄",
-          },
-          {
-            label: "In Force",
-            value: summary?.["In Force"] || 0,
-            bg: "linear-gradient(135deg, #27ae60 60%, #219150 100%)",
-            icon: "✅",
-          },
-          {
-            label: "Under Review",
-            value: summary?.underReview || 0,
-            bg: "linear-gradient(135deg, #f39c12 60%, #e67e22 100%)",
-            icon: "🕵️‍♂️",
-          },
-          {
-            label: "Cancelled",
-            value: summary?.cancelled || 0,
-            bg: "linear-gradient(135deg, #e74c3c 60%, #c0392b 100%)",
-            icon: "❌",
-          },
-        ].map(({ label, value, bg, icon }, idx) => (
-          <Paper
-            key={idx}
-            elevation={4}
-            style={{
-              padding: "28px 20px",
-              borderRadius: "18px",
-              background: bg,
-              color: "white",
-              textAlign: "center",
-              boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
-            }}
-          >
-            <span style={{ fontSize: "2.2rem" }}>{icon}</span>
-            <div style={{ fontWeight: "bold", fontSize: "1.1rem" }}>{label}</div>
-            <div style={{ fontSize: "2.1rem", fontWeight: "bold" }}>{value}</div>
-          </Paper>
-        ))}
-      </div>
+        <MainCard
+          border={false}
+          content={false}
+          bgcolor='#5e35b1'
+          background='#4527a0'
+        >
+          <Box sx={{ p: 1.5 }}>
 
+            <Stack direction="row" sx={{ alignItems: 'center' }}>
+              <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.totalPolicies || 0}</Typography>
+
+            </Stack>
+            <Typography
+              sx={{
+                mb: 1.25,
+                fontSize: '1rem',
+                fontWeight: 500,
+                color: '#b39ddb',
+                float: 'left'
+              }}
+            >
+              Total Policies
+            </Typography>
+
+
+          </Box>
+        </MainCard>
+        <MainCard
+          border={false}
+          content={false}
+          bgcolor='#1e88e5'
+          background='#1565c0'
+        >
+          <Box sx={{ p: 1.5 }}>
+
+            <Stack direction="row" sx={{ alignItems: 'center' }}>
+              <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.["In Force"] || 0}</Typography>
+
+            </Stack>
+            <Typography
+              sx={{
+                mb: 1.25,
+                fontSize: '1rem',
+                fontWeight: 500,
+                color: '#90caf9',
+                float: 'left'
+              }}
+            >
+              In Force
+            </Typography>
+
+
+          </Box>
+        </MainCard>
+         <MainCard
+          border={false}
+          content={false}
+          bgcolor='#f39c12'
+          background='#e67e22'
+        >
+          <Box sx={{ p: 1.5 }}>
+
+            <Stack direction="row" sx={{ alignItems: 'center' }}>
+              <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.underReview || 0}</Typography>
+
+            </Stack>
+            <Typography
+              sx={{
+                mb: 1.25,
+                fontSize: '1rem',
+                fontWeight: 500,
+                color: '#e67e22',
+                float: 'left'
+              }}
+            >
+              Under Review
+            </Typography>
+
+
+          </Box>
+        </MainCard>
+        <MainCard
+          border={false}
+          content={false}
+          bgcolor='#ff7043'
+          background='#d84315'
+        >
+          <Box sx={{ p: 1.5 }}>
+
+            <Stack direction="row" sx={{ alignItems: 'center' }}>
+              <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.cancelled || 0}</Typography>
+
+            </Stack>
+            <Typography
+              sx={{
+                mb: 1.25,
+                fontSize: '1rem',
+                fontWeight: 500,
+                color: '#d84315',
+                float: 'left',
+                opacity: 0.7
+              }}
+            >
+              Cancelled
+            </Typography>
+
+
+          </Box>
+        </MainCard>
+      </Box>
       {/* ✅ Data Table */}
       {filteredData.length > 0 ? (
         <TableContainer component={Paper} elevation={3} style={{ borderRadius: "8px" }}>
           <Table>
             <TableHead>
               <TableRow style={{ backgroundColor: "black" }}>
+                <TableCell
+                  style={{
+                    color: "white",
+                    backgroundColor: "#4527a0",
+                    fontWeight: "bold",
+                    padding: "12px",
+                    textAlign: "center",
+                  }}
+                >
+                  View
+                </TableCell>
                 {columns.map((col) => (
                   <TableCell
                     key={col.key}
                     style={{
                       color: "white",
-                      backgroundColor: "black",
+                      backgroundColor: "#4527a0",
                       fontWeight: "bold",
                       cursor: "pointer",
                       padding: "12px",
@@ -186,18 +267,8 @@ const PolicyDashboard = () => {
                     {sortedColumn === col.key && (sortOrder === "asc" ? "↑" : "↓")}
                   </TableCell>
                 ))}
-                
-                <TableCell
-                  style={{
-                    color: "white",
-                    backgroundColor: "black",
-                    fontWeight: "bold",
-                    padding: "12px",
-                    textAlign: "center",
-                  }}
-                >
-                  VIEW
-                </TableCell>
+
+
               </TableRow>
             </TableHead>
 
@@ -205,14 +276,36 @@ const PolicyDashboard = () => {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((insurance, index) => {
-                  
-                   return (
+
+                  return (
                     <TableRow
                       key={insurance._id || index}
                       style={{
                         backgroundColor: index % 2 === 0 ? "#ecf0f1" : "#ffffff",
                       }}
                     >
+
+                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
+                        {insurance.policyNumber ? (
+
+
+
+                          <VisibilityIcon
+                            color="primary"
+                            onClick={() => navigate(`/policy-summary/${insurance.policyNumber}`, { state: { policy: insurance } })}
+                            style={{ cursor: "pointer" }} // optional: makes it clickable
+                          />
+                        ) : (
+
+                          <VisibilityIcon
+                            color="primary"
+                            disabled
+                            title="Policy number not available"
+                            style={{ opacity: 0.6, cursor: 'not-allowed' }} // optional: makes it clickable
+                          />
+
+                        )}
+                      </TableCell>
                       <TableCell style={{ padding: "12px", textAlign: "center" }}>
                         {insurance.accountNumber || "N/A"}
                       </TableCell>
@@ -233,20 +326,6 @@ const PolicyDashboard = () => {
                       </TableCell>
                       <TableCell style={{ padding: "12px", textAlign: "center" }}>
                         {insurance.status}
-                      </TableCell>
-                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                        {insurance.policyNumber ? (
-                          <button
-                            onClick={() => navigate(`/policy-summary/${insurance.policyNumber}`, { state: { policy: insurance } })}
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
-                          >
-                            View <FaEye size={20} />
-                          </button>
-                        ) : (
-                          <button disabled title="Policy number not available" style={{ opacity: 0.6, cursor: 'not-allowed' }}>
-                            View <FaEye size={20} />
-                          </button>
-                        )}
                       </TableCell>
                     </TableRow>
                   );
@@ -270,7 +349,7 @@ const PolicyDashboard = () => {
         </TableContainer>
       ) : (
         <p style={{ textAlign: "center", color: "#7f8c8d", fontSize: "18px" }}>
-          No insurance data available
+          No policy data available
         </p>
       )}
     </div>

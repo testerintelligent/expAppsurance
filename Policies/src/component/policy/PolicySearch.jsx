@@ -3,10 +3,9 @@ import axios from "axios";
 import {
   Box,
   Typography,
-  InputBase,
-  IconButton,
+  TextField,
   CircularProgress,
-  Tooltip,
+  Grid,
   Button,
   Paper,
   Table,
@@ -88,89 +87,98 @@ const PolicySearch = () => {
   };
 
   return (
-    <Box className="policy-search-wrapper">
-      {/* HEADER */}
-      <Typography className="policy-search-header" variant="h4" fontWeight="800">
-        🔍 Find Your Policy
-      </Typography>
+    <Box sx={{ width: "100%", maxWidth: 1200 }}>
+      <Paper sx={{ p: 3 }}>
 
-      {/* SEARCH BAR */}
-      <Box className="search-input-box">
-        <InputBase
-          placeholder="Enter Policy Number..."
-          value={policyNumber}
-          onChange={(e) => setPolicyNumber(e.target.value)}
-          className="search-input-field"
-        />
-        <Tooltip title="Search Policy">
-          <IconButton onClick={() => handleSearch()} className="search-button">
-            <SearchIcon sx={{ color: "#fff" }} />
-          </IconButton>
-        </Tooltip>
-      </Box>
-
-      {/* LOADER */}
-      {loading && (
-        <Box sx={{ textAlign: "center", marginTop: "20px" }}>
-          <CircularProgress thickness={4} />
-        </Box>
-      )}
-
-      {/* ERROR */}
-      {error && (
-        <Typography color="error" sx={{ marginTop: "20px", textAlign: "center" }}>
-          {error}
+        <Typography variant="h6" sx={{ fontWeight: "bold", fontSize: 16 }}>
+          Search Policy
         </Typography>
-      )}
-      {/* Search Result Table */}
-      {policyDetails && policyDetails?.length > 0 && (
-        <TableContainer component={Paper} sx={{ mt: 3 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Select</TableCell>
-                <TableCell>Policy ID</TableCell>
-                <TableCell>Account Holder Name</TableCell>
-                <TableCell>Policy Type</TableCell>
-                <TableCell>Status</TableCell>
-                {/* <TableCell>Zipcode</TableCell>
+        <Grid container spacing={2}>
+          <Grid item size={{ xs: 10, md: 10 }}>
+            <TextField
+              fullWidth
+              label="Policy Number"
+              name="Search by policy number"
+              value={policyNumber}
+              onChange={(e) => setPolicyNumber(e.target.value)}
+            />
+          </Grid>
+          <Grid className="flex items-start">
+            <Button
+              variant="contained"
+              onClick={handleSearch}
+              className="self-center"
+            >
+              Search
+            </Button>
+          </Grid>
+        </Grid>
+
+
+
+        {/* LOADER */}
+        {loading && (
+          <Box sx={{ textAlign: "center", marginTop: "20px" }}>
+            <CircularProgress thickness={4} />
+          </Box>
+        )}
+
+        {/* ERROR */}
+        {error && (
+          <Typography color="error" sx={{ marginTop: "20px", textAlign: "center" }}>
+            {error}
+          </Typography>
+        )}
+        {/* Search Result Table */}
+        {policyDetails && policyDetails?.length > 0 && (
+          <TableContainer component={Paper} sx={{ mt: 3 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Select</TableCell>
+                  <TableCell>Policy ID</TableCell>
+                  <TableCell>Account Holder Name</TableCell>
+                  <TableCell>Policy Type</TableCell>
+                  <TableCell>Status</TableCell>
+                  {/* <TableCell>Zipcode</TableCell>
                       <TableCell>Address</TableCell> */}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {policyDetails
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((policy, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Button
-                        variant="contained"
-                        size="small"
-                        onClick={() => handleSearch(policy.policyNumber)}
-                      >
-                        Select
-                      </Button>
-                    </TableCell>
-                    <TableCell>{policy.policyNumber}</TableCell>
-                    <TableCell>{policy.accountHolderName}</TableCell>
-                    <TableCell>{policy.policyType}</TableCell>
-                    <TableCell>{policy.status}</TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-          {/* Pagination Controls */}
-          <TablePagination
-            component="div"
-            count={policyDetails?.length}
-            page={page}
-            onPageChange={handleChangePage}
-            rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            rowsPerPageOptions={[5, 10, 25]}
-          />
-        </TableContainer>
-      )}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {policyDetails
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((policy, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <Button
+                          variant="contained"
+                          size="small"
+                          onClick={() => handleSearch(policy.policyNumber)}
+                        >
+                          Select
+                        </Button>
+                      </TableCell>
+                      <TableCell>{policy.policyNumber}</TableCell>
+                      <TableCell>{policy.accountHolderName}</TableCell>
+                      <TableCell>{policy.policyType}</TableCell>
+                      <TableCell>{policy.status}</TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+            {/* Pagination Controls */}
+            <TablePagination
+              component="div"
+              count={policyDetails?.length}
+              page={page}
+              onPageChange={handleChangePage}
+              rowsPerPage={rowsPerPage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              rowsPerPageOptions={[5, 10, 25]}
+            />
+          </TableContainer>
+        )}
+      </Paper>
     </Box>
   );
 };
