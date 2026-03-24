@@ -126,6 +126,7 @@ exports.getPoliciesForDashboard = async (req, res) => {
         path: "accountId",
         select: "accountId accountHolderName",
       })
+      .populate('claims')
       .select("policyNumber productType effectiveDate expiryDate status")
       .exec();
 
