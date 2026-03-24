@@ -135,10 +135,10 @@ export default function Account() {
   };
 
   return (
-    <Box sx={{ width: "100%", maxWidth: 1200, mx: "auto", mt: 2 }}>
+    <Box sx={{ width: "100%", maxWidth: 1200}}>
 
       {!location.state?.contact && searchModel && (
-        <Paper sx={{ p: 3, mb: 3 }}>
+        <Paper sx={{ p: 3}}>
           <Typography variant="h6" sx={{ fontWeight: "bold", fontSize: 16 }}>
             Search Account
           </Typography>
@@ -184,7 +184,6 @@ export default function Account() {
             <Grid className="flex items-start">
               <Button
                 variant="contained"
-                color="primary"
                 onClick={handleSearch}
                 className="self-center"
                 sx={{}}

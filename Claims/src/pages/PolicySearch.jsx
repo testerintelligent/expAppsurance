@@ -168,7 +168,7 @@ export default function PolicySearchPage() {
   };  
 
   return (
-    <Box p={4}>
+    <Box sx={{ width: "100%", maxWidth: 1200}}>
       <Paper elevation={3} sx={{ p: 3, maxWidth: 1200, margin: "0 auto" }}>
         <Typography variant="h5" gutterBottom>
           Search Policy
@@ -181,7 +181,6 @@ export default function PolicySearchPage() {
               value={policyNumber}
               onChange={(e) => setPolicyNumber(e.target.value)}
               fullWidth
-              size="small"
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             />
           </Grid>
@@ -191,7 +190,6 @@ export default function PolicySearchPage() {
               value={insured}
               onChange={(e) => setInsured(e.target.value)}
               fullWidth
-              size="small"
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             />
           </Grid>
@@ -201,7 +199,6 @@ export default function PolicySearchPage() {
               value={policyType}
               onChange={(e) => setPolicyType(e.target.value)}
               fullWidth
-              size="small"
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             />
           </Grid>
@@ -276,6 +273,7 @@ export default function PolicySearchPage() {
                         <TableCell>
                           <Button                           
                             variant="contained"
+                            size="small"
                             onClick={() => handleSelect(p.policyNumber)}
                           >
                             Select
