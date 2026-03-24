@@ -138,6 +138,7 @@ exports.getPoliciesForDashboard = async (req, res) => {
       startDate: policy.effectiveDate,
       endDate: policy.expiryDate,
       status: policy.status,
+      claims: policy.claims
     }));
 
 
