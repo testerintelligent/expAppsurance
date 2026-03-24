@@ -16,6 +16,10 @@ const policyRoutes = require("./Routes/PolicyRoute");
 const claimRoutes = require("./Routes/ClaimRoute");
 const invoiceRoutes = require("./Routes/InvoiceRoute");
 const authRoutes = require("./Routes/AuthRoute");
+const rateTableRoutes = require("./Routes/rateTableRoutes")
+const rateRoutineRoutes = require("./Routes/rateRoutineRoutes")
+const rateBookRoutes = require("./Routes/rateBookRoutes")
+const pricingRoutes = require("./Routes/pricingRoutes")
 
 // Load environment variables from .env
 dotenv.config();
@@ -45,6 +49,10 @@ app.use("/api/policies", policyRoutes);
 app.use("/api/claims", claimRoutes);
 app.use("/api/billing", invoiceRoutes);
 app.use("/api/register", authRoutes);
+app.use("/api/ratetable", rateTableRoutes);
+app.use("/api/rateroutine", rateRoutineRoutes);
+app.use("/api/ratebook", rateBookRoutes);
+app.use("/api/pricing", pricingRoutes);
 
 // Root endpoint
 app.get("/", (req, res) => {
