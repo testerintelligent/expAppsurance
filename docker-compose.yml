@@ -57,13 +57,13 @@ services:
 
   micro-service:
     build:
-      context: ./Services/premimum-service
+      context: ./Services/premium-service
       dockerfile: Dockerfile.server
     container_name: micro-service
     ports:
       - "5001:5001"
     environment:
-      MONGO_URI: mongodb://mongo:27017/registeredUser
+      - MONGO_URI=mongodb://mongo:27017/registeredUser
     depends_on:
       - mongo
     restart: unless-stopped
