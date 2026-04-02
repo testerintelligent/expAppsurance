@@ -57,7 +57,7 @@ services:
 
   micro-service:
     build:
-      context: ./Services/permimum-service
+      context: ./Services/premimum-service
       dockerfile: Dockerfile.server
     container_name: micro-service
     ports:
