@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Paper, Typography } from "@mui/material";
 import axios from "axios";
-import PublicLayout from "../layout/PublicLayout";
+import PublicLayout from "../../layout/PublicLayout";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function LoginPage() {
@@ -87,7 +87,7 @@ export default function LoginPage() {
           <Button
             type="submit"
             variant="contained"
-            className="!bg-violet-900 hover:bg-purple-900"
+            className="bg-purple-800 hover:bg-purple-900"
           >
             Sign In
           </Button>

@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../utils/logout.js";
 import NotificationButton from "./NotificationIcon";
+import "./navbar.css";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ const Navbar = () => {
     navigate("/login"); // redirect to login page
   };
   return (
-    <header className="h-14 w-full border-b-1 border-slate-600 bg-purple-700 flex items-center justify-between px-4 shadow z-10">
+    <header className="h-14 w-full border-b-1 border-slate-600 bg-color flex items-center justify-between px-4 shadow z-10">
       <div className="flex">
         <h1 className="font-semibold text-white" onClick={() => navigate("/")}>
           Expleosurance BillingCenter

@@ -15,6 +15,10 @@ import Payment from "./component/payment/Payment";
 import PolicyIssuance from "./component/policy/PolicyIssuance";
 import PolicySearch from "./component/policy/PolicySearch";
 import PolicySummary from "./component/policy/PolicySummary";
+import RequireAuth from "./component/auth/RequireAuth";
+import Login from "./component/auth/Login";
+import Signup from "./component/auth/Signup";
+import DashboardLayout from "./layout/DashboardLayout";
 
 function App() {
   const [policies] = useState([]);
@@ -22,34 +26,51 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <div className="flex flex-col h-full">
+        {/* <div className="flex flex-col h-full">
           <Navbar />
           <div className="flex flex-1">
             <Sidebar />
-            <main className="flex-1 bg-gray-50">
-              <Routes>
-                <Route
-                  path="/"
-                  element={<PolicyDashboard policies={policies} />}
-                ></Route>
-                <Route path="/insurance" element={<InsurancePage />}></Route>
-                <Route path="/contact" element={<Contact />}></Route>
-                <Route path="/account" element={<Account />}></Route>
-                <Route path="/new-submission" element={<NewSubmission />} />
-                <Route path="/driver" element={<Driver />} />
-                <Route path="/vehicle" element={<Vehicle />} />
-                <Route path="/quote" element={<Quote />} />
-                <Route path="/payment" element={<Payment />} />
-                <Route path="/policy-issuance" element={<PolicyIssuance />} />
-                <Route path="/policy" element={<PolicySearch />} />
-                <Route
-                  path="/policy-summary/:policyNumber"
-                  element={<PolicySummary />}
-                />
-              </Routes>
-            </main>
+            <main className="flex-1 bg-gray-50"> */}
+
+        <Routes>
+          <Route path="/login" element={<Login />}></Route>
+          <Route path="/signup" element={<Signup />}></Route>
+          <Route
+            element={
+              <RequireAuth>
+                <DashboardLayout />
+              </RequireAuth>
+            }
+          >
+            <Route
+              index
+              element={<PolicyDashboard />}
+              policies={policies}
+            ></Route>
+            <Route
+              path="/"
+              element={<PolicyDashboard />}
+              policies={policies}
+            ></Route>
+            <Route path="/insurance" element={<InsurancePage />}></Route>
+            <Route path="/contact" element={<Contact />}></Route>
+            <Route path="/account" element={<Account />}></Route>
+            <Route path="/new-submission" element={<NewSubmission />} />
+            <Route path="/driver" element={<Driver />} />
+            <Route path="/vehicle" element={<Vehicle />} />
+            <Route path="/quote" element={<Quote />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/policy-issuance" element={<PolicyIssuance />} />
+            <Route path="/policy" element={<PolicySearch />} />
+            <Route
+              path="/policy-summary/:policyNumber"
+              element={<PolicySummary />}
+            />
+          </Route>
+        </Routes>
+        {/* </main>
           </div>
-        </div>
+        </div> */}
       </Router>
     </div>
   );

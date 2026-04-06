@@ -118,7 +118,7 @@ export default function SignupPage() {
           <Button
             type="submit"
             variant="contained"
-            className="bg-purple-800 hover:bg-purple-900"
+            className="!bg-violet-900 hover:bg-purple-900"
           >
             Sign Up
           </Button>
