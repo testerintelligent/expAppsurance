@@ -2,12 +2,17 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import "./navbar.css";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../../utils/logout";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const handleLogout = () => {
+    logout(); // remove token
+    navigate("/login"); // redirect to login page
+  };
   return (
-    <header className="border-b-4 border-slate-600 bg-color">
-      <div className="max-w-full mx-auto">
+    <header className="grid grid-cols-2 border-b-4 border-slate-600 bg-color">
+      <div className="  max-w-full mx-auto">
         <div className="flex items-center px-3 lg:px-6 h-12">
           <div className="mr-4">
             <h1
@@ -53,6 +58,14 @@ export default function Navbar() {
             </NavLink>
           </nav>
         </div>
+      </div>
+      <div className="grid justify-items-end">
+        <button
+          onClick={handleLogout}
+          className="text-white font-semibold px-4 py-2 rounded hover:text-red-800"
+        >
+          Logout
+        </button>
       </div>
     </header>
   );

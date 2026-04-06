@@ -1,0 +1,13 @@
+.bg-color {
+    background-color: #4f3597;
+    font-weight: 500;
+  }
+
+  .nav-active {
+    background-color: #32145a;
+    color: #fff;
+    font-weight: 500; 
+    padding: 20px;  
+    text-decoration: "none"
+    
+  }
