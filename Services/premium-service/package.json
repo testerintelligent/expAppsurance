@@ -2,10 +2,10 @@
   "name": "premium-service",
   "version": "1.0.0",
   "description": "Microservice for premium module",
-  "main": "src/server.js",
+  "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/server.js",
-    "start": "node src/server.js",
+    "dev": "nodemon server.js",
+    "start": "nodemon server.js -w app/",
     "test": "echo \"No tests yet\" && exit 0"
   },
   "keywords": ["nodejs", "microservice", "mongodb"],

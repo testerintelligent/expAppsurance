@@ -13,12 +13,12 @@ RUN npm install -g npm@11.4.2
 RUN npm install --force
 
 # Copy the rest of the application files
-COPY src ./src
+COPY . .
 
 # Expose the port the app runs on
 EXPOSE 5001
 
 # Run the server
-CMD ["node", "src/server.js"]
+CMD ["node", "server.js"]
 
 
