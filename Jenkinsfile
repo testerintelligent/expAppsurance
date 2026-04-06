@@ -17,22 +17,7 @@ pipeline {
                 git branch: 'main', url: "${env.GIT_REPO_URL}"
             }
         }
-
-        stage('Debug Paths') {
-            steps {
-                sh '''
-                echo "Current path:"
-                pwd
-
-                echo "Listing root:"
-                ls -l
-
-                echo "Listing Services folder:"
-                ls -l Services/
-                '''
-            }
-        }
-
+      
         stage('Build and Run Containers') {
             steps {
                 sh '''
