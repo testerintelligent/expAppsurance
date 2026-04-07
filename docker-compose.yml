@@ -46,7 +46,7 @@ services:
       context: ./pricing_app
       dockerfile: Dockerfile.pricing
     ports:
-      - "3004:3004"
+      - "3004:80"
     depends_on:
       - server
     networks:
