@@ -40,6 +40,19 @@ services:
       - app-network
     restart: unless-stopped
 
+  # Pricing app
+  pricingapp:
+    build:
+      context: ./pricing_app
+      dockerfile: Dockerfile.pricing
+    ports:
+      - "3004:3004"
+    depends_on:
+      - server
+    networks:
+      - app-network
+    restart: unless-stopped
+
   # Main Server
   server:
     build:

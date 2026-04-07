@@ -28,7 +28,7 @@ const MotorForm = () => {
 
   const calculatePremium = async () => {
     try {
-      const base = "http://10.192.190.158:5000";
+      const base = "http://10.192.190.158:5001";
 
       const res = await axios.post(`${base}/api/pricing/calculate`, {
         product: "PERSONAL_AUTO",
