@@ -1,68 +1,91 @@
-services:
-  #contactcentre:
-  #  build:
-  #    context: ./ContactCustomer
-  #    dockerfile: Dockerfile.contact
-  #  container_name: contactcentre
-  #  ports:
-  #    - "3000:3000"
-  #  depends_on:
-  #    - server
+version: '3.8'
 
+services:
+  # Policies Centre
   policiescentre:
     build:
       context: ./Policies
       dockerfile: Dockerfile.policy
-    container_name: policycentre
     ports:
       - "3001:3001"
     depends_on:
       - server
+    networks:
+      - app-network
     restart: unless-stopped
 
+  # Claims Centre
   claimscentre:
     build:
       context: ./Claims
       dockerfile: Dockerfile.claim
-    container_name: claimscentre
     ports:
       - "3003:3003"
     depends_on:
       - server
+    networks:
+      - app-network
     restart: unless-stopped
 
+  # Billing Centre
   billingcentre:
     build:
       context: ./billing-center
       dockerfile: Dockerfile.billing
-    container_name: billingcentre
     ports:
       - "3002:80"
     depends_on:
       - server
+    networks:
+      - app-network
     restart: unless-stopped
 
+  # Main Server
   server:
     build:
       context: ./Server
       dockerfile: Dockerfile.server
-    container_name: server
     ports:
       - "5000:5000"
     environment:
       MONGO_URI: mongodb://mongo:27017/registeredUser
     depends_on:
       - mongo
+    networks:
+      - app-network
     restart: unless-stopped
 
+  # Micro Service (Premium)
+  micro-service:
+    build:
+      context: ./Services/premium-service
+      dockerfile: Dockerfile.server
+    ports:
+      - "5001:5001"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/registeredUser
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Mongo Database
   mongo:
     image: mongo:latest
-    container_name: database
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    networks:
+      - app-network
     restart: unless-stopped
 
+# Named volume for MongoDB persistence
 volumes:
   mongo_data:
+
+# Explicit network for stable container DNS
+networks:
+  app-network:
+    driver: bridge
