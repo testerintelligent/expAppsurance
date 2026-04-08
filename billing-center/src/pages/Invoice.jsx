@@ -15,8 +15,7 @@ import { useParams } from "react-router-dom";
 
 const Invoice = () => {
   const [invoiceData, setInvoiceData] = useState({});
-  // const API_BASE_URL = "http://localhost:5000/api/billing";
-  const API_BASE_URL = "http:// 10.192.190.158:5000/api/billing";
+  const API_BASE_URL = "http://10.192.190.158:5000/api/billing";
 
   const { policyNumber } = useParams(); // ✅ get from URL
 
