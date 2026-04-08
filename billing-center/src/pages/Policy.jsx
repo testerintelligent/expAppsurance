@@ -99,6 +99,7 @@ const PolicyDashboard = () => {
         state: { policy: result.policy },
       });
     } catch (err) {
+      console.log("error", err.message);
       setError("Failed to fetch policy details");
     }
   };
