@@ -24,7 +24,7 @@ import {
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { createVehicleForSubmission } from "./vehicleAPI";
+import { createVehicleForSubmission, calculatePremium } from "./vehicleAPI";
 
 export default function Vehicle() {
   const { state } = useLocation();
@@ -55,6 +55,29 @@ export default function Vehicle() {
     "Andhra Pradesh",
     "Maharashtra",
   ];
+
+  const stateCodeMap = {
+    // Short codes from Contact form
+    "TN": "Tamil Nadu",
+    "KR": "Karnataka",
+    "KL": "Kerala",
+    "AP": "Andhra Pradesh",
+    "MH": "Maharashtra",
+    "CA": "California",
+    "NY": "New York",
+    "Tamil Nadu": "Tamil Nadu",
+    "Karnataka": "Karnataka",
+    "Kerala": "Kerala",
+    "Andhra Pradesh": "Andhra Pradesh",
+    "Maharashtra": "Maharashtra",
+    "California": "California",
+    "New York": "New York",
+  };
+
+  const getFullStateName = (stateInput) => {
+    if (!stateInput) return "Tamil Nadu";
+    return stateCodeMap[stateInput] || stateInput;
+  };
 
  const coverageOptions = [
   {
@@ -99,7 +122,7 @@ export default function Vehicle() {
   "Third-Party Liability",
 ]);
 
-// 3️⃣ THEN calculate totalPremium
+// THEN calculate totalPremium
 const totalPremium = coverageOptions
   .filter((c) => coverages.includes(c.name))
   .reduce((sum, c) => sum + c.premium, 0);
@@ -173,18 +196,53 @@ const totalPremium = coverageOptions
         coverages,
       };
 
+
       await createVehicleForSubmission(submissionId, payload);
+
+      // Build pricing API payload from all screen data
+      console.log("State data:", state);
+      
+      // Calculate vehicle age from year (2025 = 1 year old, 2024 = 2 years old, etc.)
+      const currentYear = 2026;
+      const vehicleAge = currentYear - parseInt(vehicleData.year);
+
+      // Map licenseType full name to abbreviation
+      const licenseTypeMap = {
+        "Light Motor Vehicle": "LMV",
+        "Heavy Motor Vehicle": "HMV"
+      };
+      const licenseTypeAbbrev = licenseTypeMap[state?.driver?.licenseType] || "LMV";
+
+      const pricingPayload = {
+        product: state?.productName,
+        policyDate: state?.effectiveDate || new Date().toISOString().split('T')[0],
+        input: {
+          country: state?.contact?.country || "India",
+          state: getFullStateName(state?.contact?.state || state?.contact?.stateCode || vehicleData.stateRegistered),
+          city: state?.contact?.city || "",
+          licenseType: licenseTypeAbbrev,
+          drivingExperience: parseInt(state?.driver?.drivingExperience) || 0,
+          claimHistory: parseInt(state?.driver?.claimHistory) || 0,
+          vehicleAge: vehicleAge,
+        }
+      };
+
+      console.log("Calling pricing API with payload:", pricingPayload);
+      
+      const pricingResult = await calculatePremium(pricingPayload);
+      console.log("Pricing API Response:", pricingResult);
 
       navigate("/quote", {
         state: {
           ...state,
           vehicleData,
           coverages,
+          pricingData: pricingResult,
         },
       });
     } catch (err) {
-      console.error("Error creating vehicle:", err);
-      setErrorMsg("Failed to create vehicle. Please try again.");
+      console.error("Error in vehicle submission:", err);
+      setErrorMsg(err.response?.data?.message || "Failed to process vehicle. Please try again.");
       setErrorOpen(true);
     }
   };
@@ -457,7 +515,7 @@ const totalPremium = coverageOptions
     })}
 
     {/* Premium Summary Card */}
-    <Paper
+    {/*<Paper
       elevation={3}
       sx={{
         mt: 4,
@@ -479,7 +537,7 @@ const totalPremium = coverageOptions
       <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
         Based on selected coverages
       </Typography>
-    </Paper>
+    </Paper> */}
   </Box>
 )}
         {/* Navigation */}
@@ -493,7 +551,7 @@ const totalPremium = coverageOptions
           </Button>
 
           <Button variant="contained" color="primary" onClick={handleNext}>
-            Next
+            Quote
           </Button>
         </Box>
       </Paper>
