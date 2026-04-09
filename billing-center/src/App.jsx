@@ -8,6 +8,7 @@ import Invoice from "./pages/Invoice.jsx";
 import Signup from "./pages/Signup.jsx";
 import Login from "./pages/Login.jsx";
 import RequireAuth from "./components/RequireAuth";
+import PaymentSchedule from "./pages/PaymentSchedule.jsx";
 
 function App() {
   return (
@@ -30,6 +31,10 @@ function App() {
           <Route
             path="/policy-summary/:policyNumber"
             element={<PolicySummary />}
+          />
+          <Route
+            path="/payment-schedule/:policyNumber"
+            element={<PaymentSchedule />}
           />
         </Route>
       </Routes>
