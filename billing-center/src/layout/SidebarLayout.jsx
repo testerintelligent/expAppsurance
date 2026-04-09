@@ -7,21 +7,24 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
 import DescriptionIcon from "@mui/icons-material/Description"; // for Policy Summary
 import ReceiptIcon from "@mui/icons-material/Receipt"; // for Invoice
+import PaymentsIcon from "@mui/icons-material/Payments"; // for Invoice
 
 const Sidebar = () => {
   const location = useLocation();
   const isPolicySummary = location.pathname.startsWith("/policy-summary");
   const isInvoice = location.pathname.startsWith("/invoice");
+  const PROTECTED_ROUTES = ["/policy-summary", "/invoice", "/payment-schedule"];
 
-  const isPolicyPage = isPolicySummary || isInvoice;
+  const isPolicyPage = PROTECTED_ROUTES.some(route =>
+    location.pathname.startsWith(route)
+  );
+
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const policyNumber = location.pathname.split("/")[2];
 
   const navItems = [
-    { label: "Dashboard", path: "/", icon: <DashboardIcon /> },
-    { label: "Users", path: "/users", icon: <PeopleIcon /> },
-    ...(isPolicyPage
-      ? [
+     { label: "Dashboard", path: "/", icon: <DashboardIcon /> },
+    { label: "Users", path: "/users", icon: <PeopleIcon /> },  ...(isPolicyPage ? [
           {
             label: "Policy Summary",
             path: `/policy-summary/${policyNumber}`,
@@ -32,8 +35,13 @@ const Sidebar = () => {
             path: `/invoice/${policyNumber}`,
             icon: <ReceiptIcon />,
           },
-        ]
-      : []),
+           {
+            label: "PaymentSchedule",
+            path: `/payment-schedule/${policyNumber}`,
+            icon: <PaymentsIcon />,
+          },
+        ]  : []
+    ),
   ];
 
   return (
