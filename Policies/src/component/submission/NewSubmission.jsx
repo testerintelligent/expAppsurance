@@ -22,33 +22,7 @@ const products = [
     name: "Commercial Auto",
     description: "Commercial Auto",
     status: "Available",
-  },
-  {
-    name: "Commercial Package",
-    description: "Commercial Package",
-    status: "Available",
-  },
-  {
-    name: "Commercial Property",
-    description: "Commercial Property",
-    status: "Available",
-  },
-  {
-    name: "General Liability",
-    description: "General Liability",
-    status: "Available",
-  },
-  {
-    name: "Businessowners",
-    description: "Business Owners",
-    status: "Available",
-  },
-  { name: "Inland Marine", description: "Inland Marine", status: "Available" },
-  {
-    name: "Workers' Compensation",
-    description: "Workers' Compensation",
-    status: "Available",
-  },
+  }
 ];
 
 export default function NewSubmission() {
@@ -68,7 +42,7 @@ export default function NewSubmission() {
   const [form, setForm] = useState({
     organization: defaultOrganization,
     producerCode: defaultProducerCode,
-    termType: "6 months",
+    termType: "12 months",
     effectiveDate: new Date().toISOString().slice(0, 10),
     expirationDate: "",
     writtenDate: new Date().toISOString().slice(0, 10),
