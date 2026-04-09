@@ -228,8 +228,10 @@ const PolicySummary = () => {
           {/* Premium & Charges */}
           <div style={styles.section}>
             <div style={styles.sectionTitle}>Premium & Charges</div>
-            <div style={styles.row}><div style={styles.label}>Total Premium</div><div style={styles.money}>{formatCurrency(policy.totalPremium)}</div></div>
-            <div style={styles.row}><div style={styles.label}>Taxes</div><div style={styles.money}>{formatCurrency(policy.taxes)}</div></div>
+            <div style={styles.row}><div style={styles.label}>Base Premium</div><div style={styles.money}>{formatCurrency(policy.basePremium || policy.totalPremium || 0)}</div></div>
+            <div style={styles.row}><div style={styles.label}>Coverages</div><div style={styles.money}>{formatCurrency(policy.selectedCoveragesTotal || 0)}</div></div>
+            <div style={styles.row}><div style={styles.label}>Subtotal</div><div style={styles.money}>{formatCurrency((policy.basePremium || policy.totalPremium || 0) + (policy.selectedCoveragesTotal || 0))}</div></div>
+            <div style={styles.row}><div style={styles.label}>Taxes (18%)</div><div style={styles.money}>{formatCurrency(policy.taxAmount || policy.taxes || 0)}</div></div>
             <div style={{ height: 8 }} />
             <div style={{ ...styles.row, fontSize: 16 }}><div style={styles.label}>Total</div><div style={{ ...styles.value, ...styles.emphasizedMoney }}>{formatCurrency(policy.totalCost)}</div></div>
           </div>
@@ -266,7 +268,7 @@ const PolicySummary = () => {
                 </TableHead>
 
                 <TableBody>
-                  {policy.claims.length === 0 ? (
+                  {!policy.claims || policy.claims.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
                         <Typography color="text.secondary">

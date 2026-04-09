@@ -21,6 +21,10 @@ import {
   Step,
   StepLabel,
   Stack,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  Button as MuiButton
 } from "@mui/material";
 import { ArrowBack, Payment as PaymentIcon } from "@mui/icons-material";
 import { createPolicy } from "../policy/policyAPI";
@@ -30,6 +34,7 @@ import "./payment.css";
 export default function Payment() {
   const { state } = useLocation();
   const navigate = useNavigate();
+  const [showConfirm, setShowConfirm] = useState(false);
 
   // --- Extract info from previous screens ---
   const {
@@ -122,7 +127,7 @@ export default function Payment() {
     }));
   };
 
-  const handleConfirmPayment = async () => {
+  const handleBindPolicy = async () => {
     try {
       const policyNumber = `POL-${Date.now()}`;
       const paymentRef = `PAY-${Math.floor(Math.random() * 1000000)}`;
@@ -178,6 +183,15 @@ export default function Payment() {
     } catch (error) {
       console.error("Error creating policy:", error);
     }
+  };
+
+  const handleConfirmYes = () => {
+    setShowConfirm(false);
+    handleBindPolicy();
+  };
+
+  const handleConfirmNo = () => {
+    setShowConfirm(false);
   };
 
   return (
@@ -528,12 +542,25 @@ export default function Payment() {
         <Button
           variant="contained"
           color="success"
-          startIcon={<PaymentIcon />}
-          onClick={handleConfirmPayment}
+          onClick={() => setShowConfirm(true)}
         >
-          Confirm Payment
+          Bind Policy
         </Button>
+        <Dialog open={showConfirm} onClose={handleConfirmNo}>
+        <DialogTitle>
+          Are you sure you want to Issue a Policy?
+        </DialogTitle>
+        <DialogActions>
+          <MuiButton onClick={handleConfirmNo} color="secondary">
+            No
+          </MuiButton>
+          <MuiButton onClick={handleConfirmYes} color="success" variant="contained">
+            Yes
+          </MuiButton>
+        </DialogActions>
+      </Dialog>
       </Box>
     </Box>
+    
   );
 }

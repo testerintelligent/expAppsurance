@@ -1,5 +1,5 @@
 // PolicyIssuance.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Grid,
@@ -13,12 +13,25 @@ import {
   CheckCircle,
   FileDownload,
   ArrowBack,
+  Home as HomeIcon,
 } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function PolicyIssuance() {
   const { state } = useLocation();
   const navigate = useNavigate();
+
+  // --- Prevent back navigation after policy issuance ---
+  useEffect(() => {
+    // Block browser back button
+    const handlePopState = (event) => {
+      event.preventDefault();
+      navigate("/", { replace: true });
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [navigate]);
 
   // ---------------- COVERAGE OPTIONS ----------------
   const coverageOptions = [
@@ -43,13 +56,13 @@ export default function PolicyIssuance() {
   const expiryDate = policy.expiryDate || state?.expiryDate || "N/A";
   const coverages = policy.coverages || state?.coverages || [];
 
-  // ----------- PREMIUM CALCULATION -------------
-  const totalPremium = coverageOptions
-    .filter((c) => coverages.includes(c.name))
-    .reduce((sum, c) => sum + c.premium, 0);
-
-  const taxes = totalPremium * 0.18;
-  const totalCost = totalPremium + taxes;
+  // ----------- PREMIUM CALCULATION (from Quote screen data) -------------
+  // Use premium values from state (passed from Quote/Payment) if available
+  const basePremium = policy.basePremium || state?.basePremium || state?.totalPremium || 1500;
+  const selectedCoveragesTotal = policy.selectedCoveragesTotal || state?.selectedCoveragesTotal || 0;
+  const totalBeforeTax = basePremium + selectedCoveragesTotal;
+  const totalTax = policy.taxAmount || state?.taxAmount || state?.taxes || Math.round(totalBeforeTax * 0.18);
+  const totalCost = policy.totalCost || state?.totalCost || (totalBeforeTax + totalTax);
 
   const paymentSchedule =
     policy.paymentSchedule || state?.paymentSchedule || "Yearly";
@@ -109,6 +122,7 @@ export default function PolicyIssuance() {
         Policy Issued Successfully — confirmation sent to registered email.
       </Alert>
 
+
       {/* HEADER / POLICY SUMMARY */}
       <Paper sx={{ p: 3, mb: 4, borderRadius: 2, background: "#f0f8ff" }}>
         <Typography variant="h5" fontWeight={700} sx={{ mb: 2 }}>
@@ -116,7 +130,7 @@ export default function PolicyIssuance() {
         </Typography>
         <Divider sx={{ mb: 2 }} />
 
-        <Grid container spacing={2}>
+        <Grid container spacing={48}>
           <Grid item xs={12} md={6}>
             <InfoRow label="Policy Number" value={policyNumber} />
             <InfoRow label="Submission ID" value={submissionId} />
@@ -139,8 +153,10 @@ export default function PolicyIssuance() {
           Premium Summary
         </Typography>
         <Divider sx={{ mb: 2 }} />
-        <InfoRow label="Total Premium" value={`₹ ${totalPremium.toLocaleString("en-IN")}`} />
-        <InfoRow label="Taxes (18%)" value={`₹ ${taxes.toFixed(2)}`} />
+        <InfoRow label="Base Premium" value={`₹ ${basePremium.toLocaleString("en-IN")}`} />
+        <InfoRow label="Coverages" value={`₹ ${selectedCoveragesTotal.toLocaleString("en-IN")}`} />
+        <InfoRow label="Subtotal" value={`₹ ${totalBeforeTax.toLocaleString("en-IN")}`} />
+        <InfoRow label="Taxes (18%)" value={`₹ ${totalTax.toLocaleString("en-IN")}`} />
         <Divider sx={{ my: 1.5 }} />
         <InfoRow label="Total Amount Payable" value={`₹ ${totalCost.toLocaleString("en-IN")}`} />
       </Paper>
@@ -183,26 +199,10 @@ export default function PolicyIssuance() {
       {/* ACTION BUTTONS */}
       <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, flexWrap: "wrap" }}>
         <Button
-          variant="outlined"
-          startIcon={<ArrowBack />}
-          onClick={() => navigate(-1)}
-          sx={{ textTransform: "none" }}
-        >
-          Back
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<FileDownload />}
-          onClick={() => alert(`Downloading policy ${policyNumber}`)}
-          sx={{ textTransform: "none" }}
-        >
-          Download Policy
-        </Button>
-        <Button
           variant="contained"
           color="success"
-          onClick={() => alert("Policy confirmed and closed")}
+          startIcon={<HomeIcon />}
+          onClick={() => navigate("/", { replace: true })}
           sx={{ textTransform: "none" }}
         >
           Confirm & Close
