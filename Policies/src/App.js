@@ -1,24 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
-import PolicyDashboard from "./component/policy/PolicyDashboard";
-import InsurancePage from "./component/insurance/InsurancePage";
-import Contact from "./component/contact/Contact";
-import Account from "./component/account/Account";
-import Sidebar from "./layout/sidebar";
-import Navbar from "./component/navbar/navbar";
-import NewSubmission from "./component/submission/NewSubmission";
-import Driver from "./component/driver/Driver";
-import Vehicle from "./component/vehicle/Vehicle";
-import Quote from "./component/quote/Quote";
-import Payment from "./component/payment/Payment";
-import PolicyIssuance from "./component/policy/PolicyIssuance";
-import PolicySearch from "./component/policy/PolicySearch";
-import PolicySummary from "./component/policy/PolicySummary";
-import RequireAuth from "./component/auth/RequireAuth";
-import Login from "./component/auth/Login";
-import Signup from "./component/auth/Signup";
-import DashboardLayout from "./layout/DashboardLayout";
+const PolicyDashboard = lazy(() =>
+  import("./component/policy/PolicyDashboard")
+);
+const InsurancePage = lazy(() => import("./component/insurance/InsurancePage"));
+const Contact = lazy(() => import("./component/contact/Contact"));
+const Account = lazy(() => import("./component/account/Account"));
+const NewSubmission = lazy(() =>
+  import("./component/submission/NewSubmission")
+);
+const Driver = lazy(() => import("./component/driver/Driver"));
+const Vehicle = lazy(() => import("./component/vehicle/Vehicle"));
+const Quote = lazy(() => import("./component/quote/Quote"));
+const Payment = lazy(() => import("./component/payment/Payment"));
+const PolicyIssuance = lazy(() => import("./component/policy/PolicyIssuance"));
+const PolicySearch = lazy(() => import("./component/policy/PolicySearch"));
+const PolicySummary = lazy(() => import("./component/policy/PolicySummary"));
+const RequireAuth = lazy(() => import("./component/auth/RequireAuth"));
+const Login = lazy(() => import("./component/auth/Login"));
+const Signup = lazy(() => import("./component/auth/Signup"));
+const DashboardLayout = lazy(() => import("./layout/DashboardLayout"));
 
 function App() {
   const [policies] = useState([]);
@@ -26,51 +28,44 @@ function App() {
   return (
     <div className="App">
       <Router>
-        {/* <div className="flex flex-col h-full">
-          <Navbar />
-          <div className="flex flex-1">
-            <Sidebar />
-            <main className="flex-1 bg-gray-50"> */}
-
-        <Routes>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/signup" element={<Signup />}></Route>
-          <Route
-            element={
-              <RequireAuth>
-                <DashboardLayout />
-              </RequireAuth>
-            }
-          >
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/signup" element={<Signup />}></Route>
             <Route
-              index
-              element={<PolicyDashboard />}
-              policies={policies}
-            ></Route>
-            <Route
-              path="/"
-              element={<PolicyDashboard />}
-              policies={policies}
-            ></Route>
-            <Route path="/insurance" element={<InsurancePage />}></Route>
-            <Route path="/contact" element={<Contact />}></Route>
-            <Route path="/account" element={<Account />}></Route>
-            <Route path="/new-submission" element={<NewSubmission />} />
-            <Route path="/driver" element={<Driver />} />
-            <Route path="/vehicle" element={<Vehicle />} />
-            <Route path="/quote" element={<Quote />} />
-            <Route path="/payment" element={<Payment />} />
-            <Route path="/policy-issuance" element={<PolicyIssuance />} />
-            <Route path="/policy" element={<PolicySearch />} />
-            <Route
-              path="/policy-summary/:policyNumber"
-              element={<PolicySummary />}
-            />
-          </Route>
-        </Routes>
-        {/* </main>
-          </div>
-        </div> */}
+              element={
+                <RequireAuth>
+                  <DashboardLayout />
+                </RequireAuth>
+              }
+            >
+              <Route
+                index
+                element={<PolicyDashboard />}
+                policies={policies}
+              ></Route>
+              <Route
+                path="/"
+                element={<PolicyDashboard />}
+                policies={policies}
+              ></Route>
+              <Route path="/insurance" element={<InsurancePage />}></Route>
+              <Route path="/contact" element={<Contact />}></Route>
+              <Route path="/account" element={<Account />}></Route>
+              <Route path="/new-submission" element={<NewSubmission />} />
+              <Route path="/driver" element={<Driver />} />
+              <Route path="/vehicle" element={<Vehicle />} />
+              <Route path="/quote" element={<Quote />} />
+              <Route path="/payment" element={<Payment />} />
+              <Route path="/policy-issuance" element={<PolicyIssuance />} />
+              <Route path="/policy" element={<PolicySearch />} />
+              <Route
+                path="/policy-summary/:policyNumber"
+                element={<PolicySummary />}
+              />
+            </Route>
+          </Routes>
+        </Suspense>
       </Router>
     </div>
   );
