@@ -115,7 +115,7 @@ const PaymentSchedule = () => {
                             Total Premium
                         </Typography>
                         <Typography className="mx-2">:</Typography>
-                        <Typography>₹ {(policyData?.totalPremium).toFixed(2)}</Typography>
+                        <Typography>₹ {policyData?.totalPremium?.toFixed(2)}</Typography>
                     </div>
 
                     <div className="flex items-center">
