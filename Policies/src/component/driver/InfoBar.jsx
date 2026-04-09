@@ -1,14 +1,14 @@
 import React from "react";
 import { Paper, Grid, Typography } from "@mui/material";
 
-export default function InfoBar({
+const InfoBar = ({
   product,
   contactName,
   submissionId,
   accountNumber,
   effectiveDate,
   expiryDate,
-}) {
+}) => {
   return (
     <Paper sx={{ p: 2, mb: 4, borderRadius: 2 }}>
       <Grid container spacing={2}>
@@ -39,4 +39,5 @@ export default function InfoBar({
       </Grid>
     </Paper>
   );
-}
+};
+export default InfoBar;

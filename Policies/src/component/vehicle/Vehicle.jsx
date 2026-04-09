@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import InfoBar from "../InfoBar";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -58,19 +58,19 @@ export default function Vehicle() {
 
   const stateCodeMap = {
     // Short codes from Contact form
-    "TN": "Tamil Nadu",
-    "KR": "Karnataka",
-    "KL": "Kerala",
-    "AP": "Andhra Pradesh",
-    "MH": "Maharashtra",
-    "CA": "California",
-    "NY": "New York",
+    TN: "Tamil Nadu",
+    KR: "Karnataka",
+    KL: "Kerala",
+    AP: "Andhra Pradesh",
+    MH: "Maharashtra",
+    CA: "California",
+    NY: "New York",
     "Tamil Nadu": "Tamil Nadu",
-    "Karnataka": "Karnataka",
-    "Kerala": "Kerala",
+    Karnataka: "Karnataka",
+    Kerala: "Kerala",
     "Andhra Pradesh": "Andhra Pradesh",
-    "Maharashtra": "Maharashtra",
-    "California": "California",
+    Maharashtra: "Maharashtra",
+    California: "California",
     "New York": "New York",
   };
 
@@ -79,63 +79,65 @@ export default function Vehicle() {
     return stateCodeMap[stateInput] || stateInput;
   };
 
- const coverageOptions = [
-  {
-    name: "Third-Party Liability",
-    description:
-      "Covers damages or injuries caused to a third party by your vehicle. Mandatory by law.",
-    premium: 120,
-  },
-  {
-    name: "Own Damage",
-    description:
-      "Covers repair or replacement costs for damage to your own vehicle.",
-    premium: 250,
-  },
-  {
-    name: "Comprehensive",
-    description:
-      "Provides combined protection including third-party liability and own damage.",
-    premium: 400,
-  },
-  {
-    name: "Personal Accident Cover",
-    description:
-      "Covers medical expenses or compensation in case of injury or death of the driver.",
-    premium: 80,
-  },
-  {
-    name: "Zero Depreciation",
-    description:
-      "Allows full claim without deducting depreciation on replaced parts.",
-    premium: 150,
-  },
-  {
-    name: "Vehicle theft",
-    description:
-      "Provides coverage if your vehicle is stolen or declared a total loss.",
-    premium: 110,
-  },
-];
+  const coverageOptions = [
+    {
+      name: "Third-Party Liability",
+      description:
+        "Covers damages or injuries caused to a third party by your vehicle. Mandatory by law.",
+      premium: 120,
+    },
+    {
+      name: "Own Damage",
+      description:
+        "Covers repair or replacement costs for damage to your own vehicle.",
+      premium: 250,
+    },
+    {
+      name: "Comprehensive",
+      description:
+        "Provides combined protection including third-party liability and own damage.",
+      premium: 400,
+    },
+    {
+      name: "Personal Accident Cover",
+      description:
+        "Covers medical expenses or compensation in case of injury or death of the driver.",
+      premium: 80,
+    },
+    {
+      name: "Zero Depreciation",
+      description:
+        "Allows full claim without deducting depreciation on replaced parts.",
+      premium: 150,
+    },
+    {
+      name: "Vehicle theft",
+      description:
+        "Provides coverage if your vehicle is stolen or declared a total loss.",
+      premium: 110,
+    },
+  ];
 
- const [coverages, setCoverages] = useState([
-  "Third-Party Liability",
-]);
+  const [coverages, setCoverages] = useState(
+    state?.coverages || ["Third-Party Liability"]
+  );
 
-// THEN calculate totalPremium
-const totalPremium = coverageOptions
-  .filter((c) => coverages.includes(c.name))
-  .reduce((sum, c) => sum + c.premium, 0);
+  // THEN calculate totalPremium
+  const totalPremium = coverageOptions
+    .filter((c) => coverages.includes(c.name))
+    .reduce((sum, c) => sum + c.premium, 0);
 
   // Vehicle form data
-  const [vehicleData, setVehicleData] = useState({
-    make: "",
-    model: "",
-    year: "",
-    vin: "",
-    licensePlate: "",
-    stateRegistered: "",
-  });
+  const [vehicleData, setVehicleData] = useState(
+    state?.vehicleData || {
+      make: "",
+      model: "",
+      year: "",
+      vin: "",
+      licensePlate: "",
+      stateRegistered: "",
+    }
+  );
 
   const handleCoverageChange = (coverage) => {
     if (coverage === "Third-Party Liability") return;
@@ -146,6 +148,14 @@ const totalPremium = coverageOptions
         : [...prev, coverage]
     );
   };
+
+  useEffect(() => {
+    localStorage.setItem("vehicleData", JSON.stringify(vehicleData));
+  }, [vehicleData]);
+
+  useEffect(() => {
+    localStorage.setItem("coverages", JSON.stringify(coverages));
+  }, [coverages]);
 
   const validateForm = () => {
     const requiredFields = [
@@ -196,12 +206,11 @@ const totalPremium = coverageOptions
         coverages,
       };
 
-
       await createVehicleForSubmission(submissionId, payload);
 
       // Build pricing API payload from all screen data
       console.log("State data:", state);
-      
+
       // Calculate vehicle age from year (2025 = 1 year old, 2024 = 2 years old, etc.)
       const currentYear = 2026;
       const vehicleAge = currentYear - parseInt(vehicleData.year);
@@ -209,26 +218,32 @@ const totalPremium = coverageOptions
       // Map licenseType full name to abbreviation
       const licenseTypeMap = {
         "Light Motor Vehicle": "LMV",
-        "Heavy Motor Vehicle": "HMV"
+        "Heavy Motor Vehicle": "HMV",
       };
-      const licenseTypeAbbrev = licenseTypeMap[state?.driver?.licenseType] || "LMV";
+      const licenseTypeAbbrev =
+        licenseTypeMap[state?.driver?.licenseType] || "LMV";
 
       const pricingPayload = {
         product: state?.productName,
-        policyDate: state?.effectiveDate || new Date().toISOString().split('T')[0],
+        policyDate:
+          state?.effectiveDate || new Date().toISOString().split("T")[0],
         input: {
           country: state?.contact?.country || "India",
-          state: getFullStateName(state?.contact?.state || state?.contact?.stateCode || vehicleData.stateRegistered),
+          state: getFullStateName(
+            state?.contact?.state ||
+              state?.contact?.stateCode ||
+              vehicleData.stateRegistered
+          ),
           city: state?.contact?.city || "",
           licenseType: licenseTypeAbbrev,
           drivingExperience: parseInt(state?.driver?.drivingExperience) || 0,
           claimHistory: parseInt(state?.driver?.claimHistory) || 0,
           vehicleAge: vehicleAge,
-        }
+        },
       };
 
       console.log("Calling pricing API with payload:", pricingPayload);
-      
+
       const pricingResult = await calculatePremium(pricingPayload);
       console.log("Pricing API Response:", pricingResult);
 
@@ -242,7 +257,10 @@ const totalPremium = coverageOptions
       });
     } catch (err) {
       console.error("Error in vehicle submission:", err);
-      setErrorMsg(err.response?.data?.message || "Failed to process vehicle. Please try again.");
+      setErrorMsg(
+        err.response?.data?.message ||
+          "Failed to process vehicle. Please try again."
+      );
       setErrorOpen(true);
     }
   };
@@ -272,232 +290,253 @@ const totalPremium = coverageOptions
 
         {/* Vehicle Information Tab */}
         {/* ================= VEHICLE INFORMATION TAB ================= */}
-{tab === 0 && (
-  <Box>
-    <Grid container spacing={4}>
-      
-      {/* Vehicle Specifications */}
-      <Grid item xs={12} md={6}>
-        <Paper
-          elevation={2}
-          sx={{ p: 3, borderRadius: 3 }}
-        >
-          <Typography
-            variant="h6"
-            fontWeight={600}
-            sx={{ mb: 3 }}
-          >
-            Vehicle Specifications
-          </Typography>
+        {tab === 0 && (
+          <Box>
+            <Grid container spacing={4}>
+              {/* Vehicle Specifications */}
+              <Grid item xs={12} md={6}>
+                <Paper elevation={2} sx={{ p: 3, borderRadius: 3 }}>
+                  <Typography variant="h6" fontWeight={600} sx={{ mb: 3 }}>
+                    Vehicle Specifications
+                  </Typography>
 
-          {/* Make */}
-          <TextField
-            select
-            label="Make"
-            fullWidth
-            sx={{ mb: 3 }}
-            value={vehicleData.make}
-            onChange={(e) =>
-              setVehicleData({
-                ...vehicleData,
-                make: e.target.value,
-                model: "",
-              })
-            }
-          >
-            {makeOptions.map((make) => (
-              <MenuItem key={make} value={make}>
-                {make}
-              </MenuItem>
-            ))}
-          </TextField>
+                  {/* Make */}
+                  <TextField
+                    select
+                    label="Make"
+                    fullWidth
+                    sx={{ mb: 3 }}
+                    value={vehicleData.make}
+                    onChange={(e) =>
+                      setVehicleData({
+                        ...vehicleData,
+                        make: e.target.value,
+                        model: "",
+                      })
+                    }
+                  >
+                    {makeOptions.map((make) => (
+                      <MenuItem key={make} value={make}>
+                        {make}
+                      </MenuItem>
+                    ))}
+                  </TextField>
 
-          {/* Model */}
-          <TextField
-            select
-            label="Model"
-            fullWidth
-            sx={{ mb: 3 }}
-            value={vehicleData.model}
-            onChange={(e) =>
-              setVehicleData({
-                ...vehicleData,
-                model: e.target.value,
-              })
-            }
-            disabled={!vehicleData.make}
-          >
-            {(modelOptions[vehicleData.make] || []).map(
-              (model) => (
-                <MenuItem key={model} value={model}>
-                  {model}
-                </MenuItem>
-              )
-            )}
-          </TextField>
+                  {/* Model */}
+                  <TextField
+                    select
+                    label="Model"
+                    fullWidth
+                    sx={{ mb: 3 }}
+                    value={vehicleData.model}
+                    onChange={(e) =>
+                      setVehicleData({
+                        ...vehicleData,
+                        model: e.target.value,
+                      })
+                    }
+                    disabled={!vehicleData.make}
+                  >
+                    {(modelOptions[vehicleData.make] || []).map((model) => (
+                      <MenuItem key={model} value={model}>
+                        {model}
+                      </MenuItem>
+                    ))}
+                  </TextField>
 
-          {/* Year */}
-          <TextField
-            select
-            label="Year"
-            fullWidth
-            value={vehicleData.year}
-            onChange={(e) =>
-              setVehicleData({
-                ...vehicleData,
-                year: e.target.value,
-              })
-            }
-          >
-            {yearOptions.map((year) => (
-              <MenuItem key={year} value={year}>
-                {year}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Paper>
-      </Grid>
+                  {/* Year */}
+                  <TextField
+                    select
+                    label="Year"
+                    fullWidth
+                    value={vehicleData.year}
+                    onChange={(e) =>
+                      setVehicleData({
+                        ...vehicleData,
+                        year: e.target.value,
+                      })
+                    }
+                  >
+                    {yearOptions.map((year) => (
+                      <MenuItem key={year} value={year}>
+                        {year}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Paper>
+              </Grid>
 
-      {/* Registration Details */}
-      <Grid item xs={12} md={6}>
-        <Paper
-          elevation={2}
-          sx={{ p: 3, borderRadius: 3 }}
-        >
-          <Typography
-            variant="h6"
-            fontWeight={600}
-            sx={{ mb: 3 }}
-          >
-            Registration Details
-          </Typography>
+              {/* Registration Details */}
+              <Grid item xs={12} md={6}>
+                <Paper elevation={2} sx={{ p: 3, borderRadius: 3 }}>
+                  <Typography variant="h6" fontWeight={600} sx={{ mb: 3 }}>
+                    Registration Details
+                  </Typography>
 
-          {/* VIN */}
-          <TextField
-            label="VIN"
-            fullWidth
-            sx={{ mb: 3 }}
-            value={vehicleData.vin}
-            onChange={(e) =>
-              setVehicleData({
-                ...vehicleData,
-                vin: e.target.value,
-              })
-            }
-          />
+                  {/* VIN */}
+                  <TextField
+                    label="VIN"
+                    fullWidth
+                    sx={{ mb: 3 }}
+                    value={vehicleData.vin}
+                    onChange={(e) =>
+                      setVehicleData({
+                        ...vehicleData,
+                        vin: e.target.value,
+                      })
+                    }
+                  />
 
-          {/* License Plate */}
-          <TextField
-            label="License Plate"
-            fullWidth
-            sx={{ mb: 3 }}
-            value={vehicleData.licensePlate}
-            onChange={(e) =>
-              setVehicleData({
-                ...vehicleData,
-                licensePlate: e.target.value,
-              })
-            }
-          />
+                  {/* License Plate */}
+                  <TextField
+                    label="License Plate"
+                    fullWidth
+                    sx={{ mb: 3 }}
+                    value={vehicleData.licensePlate}
+                    onChange={(e) =>
+                      setVehicleData({
+                        ...vehicleData,
+                        licensePlate: e.target.value,
+                      })
+                    }
+                  />
 
-          {/* State Registered */}
-          <TextField
-            select
-            label="State Registered"
-            fullWidth
-            value={vehicleData.stateRegistered}
-            onChange={(e) =>
-              setVehicleData({
-                ...vehicleData,
-                stateRegistered: e.target.value,
-              })
-            }
-          >
-            {stateOptions.map((state) => (
-              <MenuItem key={state} value={state}>
-                {state}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Paper>
-      </Grid>
-    </Grid>
-  </Box>
-)}
+                  {/* State Registered */}
+                  <TextField
+                    select
+                    label="State Registered"
+                    fullWidth
+                    value={vehicleData.stateRegistered}
+                    onChange={(e) =>
+                      setVehicleData({
+                        ...vehicleData,
+                        stateRegistered: e.target.value,
+                      })
+                    }
+                  >
+                    {stateOptions.map((state) => (
+                      <MenuItem key={state} value={state}>
+                        {state}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Paper>
+              </Grid>
+            </Grid>
+          </Box>
+        )}
 
         {/* Coverages Tab */}
-         {tab === 1 && (
-  <Box>
-    <Typography variant="h6" fontWeight={600} sx={{ mb: 3 }}>
-      Select Coverages
-    </Typography>
+        {tab === 1 && (
+          <Box>
+            <Typography variant="h6" fontWeight={600} sx={{ mb: 3 }}>
+              Select Coverages
+            </Typography>
 
-    {coverageOptions.map((cov) => {
-      const isSelected = coverages.includes(cov.name);
-      const isMandatory = cov.name === "Third-Party Liability";
+            {coverageOptions.map((cov) => {
+              const isSelected = coverages.includes(cov.name);
+              const isMandatory = cov.name === "Third-Party Liability";
 
-      return (
-        <Accordion
-          key={cov.name}
-          defaultExpanded={isMandatory}
-          sx={{
-            mb: 2,
-            borderRadius: 2,
-            border: isSelected
-              ? "2px solid #1976d2"
-              : "1px solid #e0e0e0",
-            transition: "all 0.3s ease",
-            boxShadow: isSelected
-              ? "0 0 15px rgba(25, 118, 210, 0.4)"
-              : "none",
-            "&:before": { display: "none" },
-          }}
-        >
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Box
+              return (
+                <Accordion
+                  key={cov.name}
+                  defaultExpanded={isMandatory}
+                  sx={{
+                    mb: 2,
+                    borderRadius: 2,
+                    border: isSelected
+                      ? "2px solid #1976d2"
+                      : "1px solid #e0e0e0",
+                    transition: "all 0.3s ease",
+                    boxShadow: isSelected
+                      ? "0 0 15px rgba(25, 118, 210, 0.4)"
+                      : "none",
+                    "&:before": { display: "none" },
+                  }}
+                >
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        width: "100%",
+                      }}
+                    >
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={isSelected}
+                            onChange={() => handleCoverageChange(cov.name)}
+                            disabled={isMandatory}
+                          />
+                        }
+                        label={
+                          <Box>
+                            <Typography fontWeight={600}>
+                              {cov.name}
+                              {isMandatory && (
+                                <Typography
+                                  component="span"
+                                  color="error"
+                                  sx={{ ml: 1, fontSize: 12 }}
+                                >
+                                  (Mandatory)
+                                </Typography>
+                              )}
+                            </Typography>
+
+                            <Typography variant="body2" color="text.secondary">
+                              ₹{cov.premium} / year
+                            </Typography>
+                          </Box>
+                        }
+                      />
+
+                      <Tooltip title={cov.description} arrow>
+                        <IconButton size="small">
+                          <InfoOutlinedIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  </AccordionSummary>
+
+                  <AccordionDetails>
+                    <Typography variant="body2" color="text.secondary">
+                      {cov.description}
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+              );
+            })}
+
+            {/* Premium Summary Card */}
+            <Paper
+              elevation={3}
               sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%",
+                mt: 4,
+                p: 3,
+                borderRadius: 3,
+                background: "linear-gradient(135deg, #1976d2, #42a5f5)",
+                color: "white",
+                transition: "all 0.3s ease",
               }}
             >
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isSelected}
-                    onChange={() =>
-                      handleCoverageChange(cov.name)
-                    }
-                    disabled={isMandatory}
-                  />
-                }
-                label={
-                  <Box>
-                    <Typography fontWeight={600}>
-                      {cov.name}
-                      {isMandatory && (
-                        <Typography
-                          component="span"
-                          color="error"
-                          sx={{ ml: 1, fontSize: 12 }}
-                        >
-                          (Mandatory)
-                        </Typography>
-                      )}
-                    </Typography>
+              <Typography variant="h6" fontWeight={600}>
+                Total Premium
+              </Typography>
 
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                    >
-                      ₹{cov.premium} / year
-                    </Typography>
-                  </Box>
-                }
-              />
+              <Typography variant="h4" fontWeight={700} sx={{ mt: 1 }}>
+                ₹{totalPremium.toLocaleString("en-IN")}
+              </Typography>
 
-              <Tooltip title={cov.description} arrow>
+              <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
+                Based on selected coverages
+              </Typography>
+            </Paper>
+          </Box>
+        )}
+        {/* <Tooltip title={cov.description} arrow>
                 <IconButton size="small">
                   <InfoOutlinedIcon fontSize="small" />
                 </IconButton>
@@ -512,10 +551,10 @@ const totalPremium = coverageOptions
           </AccordionDetails>
         </Accordion>
       );
-    })}
+    })} */}
 
-    {/* Premium Summary Card */}
-    {/*<Paper
+        {/* Premium Summary Card */}
+        {/*<Paper
       elevation={3}
       sx={{
         mt: 4,
@@ -538,14 +577,22 @@ const totalPremium = coverageOptions
         Based on selected coverages
       </Typography>
     </Paper> */}
-  </Box>
-)}
+        {/* </Box>
+)} */}
         {/* Navigation */}
         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => navigate("/driver", { state })}
+            onClick={() =>
+              navigate("/driver", {
+                state: {
+                  ...state,
+                  vehicleData,
+                  coverages,
+                },
+              })
+            }
           >
             Back
           </Button>
