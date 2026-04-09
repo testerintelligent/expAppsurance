@@ -176,7 +176,7 @@ export default function Driver() {
     state?.account?._id,
   ]);
 
-  // ✅ Validate both Contact and Roles tabs
+  // Validate both Contact and Roles tabs
 
   const validateForm = () => {
     const contactFields = [
@@ -251,8 +251,8 @@ export default function Driver() {
         accidentsClaims: Number(formData.accidentsClaims),
       };
 
-      console.log("📤 Creating driver with submissionId:", state.submissionId);
-      console.log("📤 Driver payload:", payload);
+      console.log("Creating driver with submissionId:", state.submissionId);
+      console.log("Driver payload:", payload);
 
       const driver = await createDriverForSubmission(
         state.submissionId,
@@ -265,6 +265,7 @@ export default function Driver() {
         state: {
           ...state,
           driverId: driver?._id,
+          driver: driver,
           contact: formData,
           driverForm: formData,
         },

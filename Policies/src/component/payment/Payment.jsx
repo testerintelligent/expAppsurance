@@ -43,6 +43,10 @@ export default function Payment() {
     expiryDate = "",
     quoteId = "",
     quoteNumber = "",
+    basePremium = 0,
+    selectedCoveragesTotal = 0,
+    taxAmount = 0,
+    totalPremium: totalPremiumFromQuote = 0,
   } = state || {};
 
   const [billingMethod, setBillingMethod] = useState("Direct Bill");
@@ -93,12 +97,12 @@ export default function Payment() {
     },
   ];
 
-  const totalPremium = coverageOptions
-    .filter((c) => coverages.includes(c.name))
-    .reduce((sum, c) => sum + c.premium, 0);
-
-  const taxes = totalPremium * 0.18;
-  const totalCost = totalPremium + taxes;
+  // Use premium values from Quote screen if available, otherwise calculate
+  const base = basePremium || 1500;
+  const coverageTotal = selectedCoveragesTotal || 0;
+  const totalBeforeTax = base + coverageTotal;
+  const totalTax = taxAmount || Math.round(totalBeforeTax * 0.18);
+  const totalCost = totalBeforeTax + totalTax;
 
   const policyHolder = `${contact.firstName || ""} ${contact.lastName || ""}`;
 
@@ -107,8 +111,8 @@ export default function Payment() {
     if (paymentSchedule === "Monthly") periods = 12;
     else if (paymentSchedule === "Quarterly") periods = 4;
     else if (paymentSchedule === "Half Yearly") periods = 2;
-    const premiumPer = (totalPremium / periods).toFixed(2);
-    const taxesPer = (taxes / periods).toFixed(2);
+    const premiumPer = (totalBeforeTax / periods).toFixed(2);
+    const taxesPer = (totalTax / periods).toFixed(2);
     const totalPer = (totalCost / periods).toFixed(2);
     return Array.from({ length: periods }, (_, i) => ({
       period: i + 1,
@@ -133,8 +137,8 @@ export default function Payment() {
         coverages,
         effectiveDate,
         expiryDate,
-        totalPremium,
-        taxes,
+        totalPremium: totalBeforeTax,
+        taxes: totalTax,
         totalCost,
         billingMethod,
         paymentSchedule,
@@ -294,16 +298,24 @@ export default function Payment() {
               Premium Summary
             </Typography>
             <Box className="summary-row">
-              <span>Total Premium</span>
-              <strong>₹{totalPremium.toLocaleString("en-IN")}</strong>
+              <span>Base Premium</span>
+              <strong>₹{base.toLocaleString("en-IN")}</strong>
+            </Box>
+            <Box className="summary-row">
+              <span>Coverages</span>
+              <strong>₹{coverageTotal.toLocaleString("en-IN")}</strong>
+            </Box>
+            <Box className="summary-row">
+              <span>Subtotal</span>
+              <strong>₹{totalBeforeTax.toLocaleString("en-IN")}</strong>
             </Box>
             <Box className="summary-row">
               <span>Taxes (18%)</span>
-              <strong>₹{taxes.toLocaleString("en-IN")}</strong>
+              <strong>₹{totalTax.toLocaleString("en-IN")}</strong>
             </Box>
-            <Box className="summary-row">
+            <Box className="summary-row" sx={{ borderTop: "2px solid #2e7d32", pt: 1.5, mt: 1.5 }}>
               <span>Total Cost</span>
-              <strong>₹{totalCost.toLocaleString("en-IN")}</strong>
+              <strong style={{ fontSize: "1.1em", color: "#2e7d32" }}>₹{totalCost.toLocaleString("en-IN")}</strong>
             </Box>
             <Chip
               label="Ready for Payment"

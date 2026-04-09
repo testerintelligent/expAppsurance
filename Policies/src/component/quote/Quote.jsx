@@ -9,6 +9,13 @@ import {
   Stack,
   Chip,
   Tooltip,
+  Grid,
+  Card,
+  CardContent,
+  CardHeader,
+  Alert,
+  Container,
+  Paper as MuiPaper,
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import InfoBar from "../InfoBar";
@@ -22,6 +29,10 @@ import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import MapIcon from "@mui/icons-material/Map";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import SecurityIcon from "@mui/icons-material/Security";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import VerifiedIcon from "@mui/icons-material/Verified";
 
 export default function Quote() {
   const { state } = useLocation();
@@ -34,6 +45,7 @@ export default function Quote() {
   const productName = state?.productName || "Auto Insurance";
   const effectiveDate = state?.effectiveDate || "-";
   const expiryDate = state?.expiryDate || "-";
+  const pricingData = state?.pricingData || {}; // Premium from pricing API
 
   const [saveStatus, setSaveStatus] = useState("");
   const [loading, setLoading] = useState(false);
@@ -77,9 +89,22 @@ export default function Quote() {
     },
   ];
 
-  const totalPremium = coverageOptions
+  // Premium from API or default
+  const basePremium = pricingData?.premium || 1500;
+  
+  // Calculate selected coverages total
+  const selectedCoveragesTotal = coverageOptions
     .filter((c) => coverages.includes(c.name))
     .reduce((sum, c) => sum + c.premium, 0);
+
+  // Calculate total before tax
+  const totalBeforeTax = basePremium + selectedCoveragesTotal;
+  
+  // Calculate tax (18%)
+  const taxAmount = Math.round(totalBeforeTax * 0.18);
+  
+  // Calculate final total
+  const finalTotal = totalBeforeTax + taxAmount;
 
   const getCoverageTooltip = (name) => {
     const cov = coverageOptions.find((c) => c.name === name);
@@ -106,7 +131,10 @@ export default function Quote() {
         contactId: contact?._id,
         accountId: state?.accountId,
         productSelected: productName,
-        premiumAmount: totalPremium,
+        premiumAmount: finalTotal,
+        basePremium,
+        selectedCoveragesTotal,
+        taxAmount,
         coverages,
         effectiveDate,
         expiryDate,
@@ -120,7 +148,19 @@ export default function Quote() {
           ...state,
           quoteId: response?.quoteId || "",
           quoteNumber: response?.quoteNumber || "",
-          totalPremium,
+          totalPremium: finalTotal,
+          basePremium,
+          selectedCoveragesTotal,
+          taxAmount,
+          pricingData,
+          vehicleData: vehicle,
+          contact,
+          coverages,
+          submissionId,
+          accountNumber,
+          productName,
+          effectiveDate,
+          expiryDate,
         },
       });
     } catch (err) {
@@ -131,7 +171,7 @@ export default function Quote() {
   };
 
   return (
-    <Box sx={{ maxWidth: 900, mx: "auto", mt: 4, p: 2 }}>
+    <Container maxWidth="xl" sx={{ background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)", minHeight: "100vh", py: 4 }}>
       {/* Header */}
       <InfoBar
         accountNumber={accountNumber}
@@ -142,211 +182,287 @@ export default function Quote() {
         expiryDate={expiryDate}
       />
 
-      <Typography
-        variant="h4"
-        fontWeight={700}
-        sx={{ mb: 4, color: "primary.main", textAlign: "center" }}
-      >
-        Quote Summary
-      </Typography>
-
-      <Stack spacing={3}>
-        {/* Vehicle Card */}
-        <Paper
-  sx={{
-    p: 3,
-    borderRadius: 3,
-    boxShadow: 3,
-    backgroundColor: "#f9f9f9",
-  }}
->
-  <Typography variant="h6" fontWeight={600} sx={{ mb: 3 }}>
-    Vehicle Information 🚗
-  </Typography>
-
-  <Stack spacing={2}>
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-      <DirectionsCarIcon color="primary" />
-      <Typography>
-        <b>Model:</b> {vehicle.year} {vehicle.make} {vehicle.model || "N/A"}
-      </Typography>
-    </Box>
-
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-      <ConfirmationNumberIcon color="primary" />
-      <Typography>
-        <b>License Plate:</b> {vehicle.licensePlate || "N/A"}
-      </Typography>
-    </Box>
-
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-      <FingerprintIcon color="primary" />
-      <Typography>
-        <b>VIN:</b> {vehicle.vin || "N/A"}
-      </Typography>
-    </Box>
-
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-      <MapIcon color="primary" />
-      <Typography>
-        <b>Registered State:</b> {vehicle.stateRegistered || "N/A"}
-      </Typography>
-    </Box>
-  </Stack>
-</Paper>
-
-        {/* Contact Card */}
-        <Paper
-  sx={{
-    p: 3,
-    borderRadius: 3,
-    boxShadow: 3,
-    backgroundColor: "#f9f9f9",
-  }}
->
-  <Typography variant="h6" fontWeight={600} sx={{ mb: 3 }}>
-    Driver & Contact Details 👤
-  </Typography>
-
-  <Stack spacing={2}>
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-      <PersonIcon color="primary" />
-      <Typography>
-        <b>Name:</b> {contact.firstName} {contact.lastName}
-      </Typography>
-    </Box>
-
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-      <EmailIcon color="primary" />
-      <Typography>
-        <b>Email:</b> {contact.email || "N/A"}
-      </Typography>
-    </Box>
-
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-      <PhoneIcon color="primary" />
-      <Typography>
-        <b>Phone:</b> {contact.phone || "N/A"}
-      </Typography>
-    </Box>
-
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-      <HomeIcon color="primary" />
-      <Typography>
-        <b>Address:</b> {contact.address || "N/A"}
-      </Typography>
-    </Box>
-
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-      <BadgeIcon color="primary" />
-      <Typography sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <b>License Type:</b>{" "}
-        <Chip
-          label={contact.licenseType || "N/A"}
-          color="info"
-          size="small"
-        />
-      </Typography>
-    </Box>
-  </Stack>
-</Paper>
-
-        {/* Coverages Card */}
-        <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 3 }}>
-          <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
-            Selected Coverages & Costs
-          </Typography>
-          <Stack spacing={2}>
-            {coverages.map((cov) => {
-              const coverage = coverageOptions.find((c) => c.name === cov);
-              return (
-                <Box
-                  key={cov}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    py: 1.5,
-                    px: 2,
-                    borderRadius: 2,
-                    backgroundColor: "#f5f5f5",
-                    boxShadow: 1,
-                  }}
-                >
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <Typography fontWeight={500}>{cov}</Typography>
-                    {cov === "Third-Party Liability" && (
-                      <Chip label="MANDATORY" size="small" color="error" />
-                    )}
-                    <Tooltip title={getCoverageTooltip(cov)} arrow>
-                      <InfoIcon sx={{ fontSize: 16, cursor: "help" }} />
-                    </Tooltip>
-                  </Stack>
-                  <Typography fontWeight={600}>
-                    ₹{coverage?.premium.toLocaleString("en-IN")}
-                  </Typography>
-                </Box>
-              );
-            })}
-
-            <Divider sx={{ my: 2 }} />
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                py: 2,
-                borderTop: "2px solid #1976d2",
-              }}
-            >
-              <Typography variant="h6" fontWeight={700}>
-                Total Premium
-              </Typography>
-              <Typography variant="h4" fontWeight={700} color="primary.main">
-                ₹{totalPremium.toLocaleString("en-IN")}
-              </Typography>
-            </Box>
-          </Stack>
-        </Paper>
-
-        {/* Action Buttons */}
-        <Stack spacing={2} sx={{ mt: 2 }}>
-          <Button
-            variant="contained"
-            color="success"
-            size="large"
-            fullWidth
-            onClick={handlePayment}
-            disabled={loading || totalPremium === 0}
-          >
-            {loading ? "Processing..." : "Buy Policy Now"}
-          </Button>
-          <Button variant="outlined" color="primary" fullWidth onClick={handleEdit}>
-            Edit Details
-          </Button>
-          <Button variant="text" color="primary" fullWidth onClick={handleSaveQuote}>
-            Save & Email Quote
-          </Button>
-
-          {saveStatus && (
-            <Typography
-              variant="caption"
-              color={saveStatus.includes("✅") ? "success.dark" : "error.main"}
-              sx={{ mt: 1, textAlign: "center" }}
-            >
-              {saveStatus}
-            </Typography>
-          )}
-
-          <Divider sx={{ my: 2 }} />
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ textAlign: "center" }}
-          >
-            This policy is issued for 12 months. Price guarantee valid for 7 days.
-          </Typography>
-        </Stack>
+      {/* Title Section */}
+      <Stack spacing={1} sx={{ textAlign: "center", mb: 4, mt: 2 }}>
+        <Typography variant="h3" fontWeight={800} sx={{ color: "#1976d2" }}>
+          Your Quote is Ready ✓
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ fontSize: 16 }}>
+          Review your personalized insurance quote below
+        </Typography>
       </Stack>
-    </Box>
+
+      {/* Success Alert */}
+      <Alert severity="success" sx={{ mb: 3, borderRadius: 2 }}>
+        <Typography fontWeight={600}>
+          🎉 Your quote is valid for 7 days. Complete your purchase to lock in this price.
+        </Typography>
+      </Alert>
+
+      <Grid container spacing={3}>
+        {/* Left Column - Details */}
+        <Grid item xs={12} lg={8}>
+          <Stack spacing={3}>
+            {/* Policy Overview Card */}
+            <Card sx={{ borderRadius: 3, boxShadow: 4, overflow: "hidden" }}>
+              <CardHeader
+                title="📋 Policy Overview"
+                titleTypographyProps={{ variant: "h6", fontWeight: 700 }}
+                sx={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", color: "white", p: 3 }}
+              />
+              <CardContent sx={{ p: 3 }}>
+                <Grid container spacing={2}>
+                  {[
+                    { label: "Effective Date", value: effectiveDate },
+                    { label: "Expiry Date", value: expiryDate },
+                    { label: "Policy Term", value: "12 Months" },
+                    { label: "Submission", value: submissionId },
+                  ].map((item) => (
+                    <Grid item xs={6} sm={3} key={item.label}>
+                      <Stack spacing={0.5} sx={{ textAlign: "center" }}>
+                        <Typography variant="body2" color="text.secondary">
+                          {item.label}
+                        </Typography>
+                        <Typography variant="h6" fontWeight={700}>
+                          {item.value}
+                        </Typography>
+                      </Stack>
+                    </Grid>
+                  ))}
+                </Grid>
+              </CardContent>
+            </Card>
+
+            {/* Vehicle Information Card */}
+            <Card sx={{ borderRadius: 3, boxShadow: 3, overflow: "hidden" }}>
+              <CardHeader
+                avatar={<DirectionsCarIcon sx={{ fontSize: 28, color: "white" }} />}
+                title="Vehicle Information"
+                titleTypographyProps={{ variant: "h6", fontWeight: 700 }}
+                sx={{ background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)", color: "white", p: 2.5 }}
+              />
+              <CardContent sx={{ p: 3 }}>
+                <Grid container spacing={2}>
+                  {[
+                    { icon: DirectionsCarIcon, label: "Vehicle Model", value: `${vehicle.year} ${vehicle.make} ${vehicle.model}` },
+                    { icon: ConfirmationNumberIcon, label: "License Plate", value: vehicle.licensePlate },
+                    { icon: FingerprintIcon, label: "VIN", value: vehicle.vin },
+                    { icon: MapIcon, label: "Registered State", value: vehicle.stateRegistered },
+                  ].map((item) => (
+                    <Grid item xs={12} sm={6} key={item.label}>
+                      <Stack direction="row" spacing={2}>
+                        <item.icon color="primary" sx={{ mt: 0.5, flexShrink: 0 }} />
+                        <Stack spacing={0.3}>
+                          <Typography variant="body2" color="text.secondary">
+                            {item.label}
+                          </Typography>
+                          <Typography variant="body1" fontWeight={600}>
+                            {item.value}
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                    </Grid>
+                  ))}
+                </Grid>
+              </CardContent>
+            </Card>
+
+            {/* Driver & Contact Information Card */}
+            <Card sx={{ borderRadius: 3, boxShadow: 3, overflow: "hidden" }}>
+              <CardHeader
+                avatar={<PersonIcon sx={{ fontSize: 28, color: "white" }} />}
+                title="Driver & Contact Details"
+                titleTypographyProps={{ variant: "h6", fontWeight: 700 }}
+                sx={{ background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)", color: "white", p: 2.5 }}
+              />
+              <CardContent sx={{ p: 3 }}>
+                <Grid container spacing={2}>
+                  {[
+                    { icon: PersonIcon, label: "Full Name", value: `${contact.firstName} ${contact.lastName}`, isChip: false },
+                    { icon: BadgeIcon, label: "License Type", value: contact.licenseType, isChip: true },
+                    { icon: EmailIcon, label: "Email", value: contact.email, isChip: false },
+                    { icon: PhoneIcon, label: "Phone", value: contact.phone, isChip: false },
+                  ].map((item) => (
+                    <Grid item xs={12} sm={6} key={item.label}>
+                      <Stack direction="row" spacing={2}>
+                        <item.icon color="primary" sx={{ mt: 0.5, flexShrink: 0 }} />
+                        <Stack spacing={0.3} sx={{ flex: 1 }}>
+                          <Typography variant="body2" color="text.secondary">
+                            {item.label}
+                          </Typography>
+                          {item.isChip ? (
+                            <Chip label={item.value} color="primary" variant="outlined" size="small" />
+                          ) : (
+                            <Typography variant="body1" fontWeight={600}>
+                              {item.value}
+                            </Typography>
+                          )}
+                        </Stack>
+                      </Stack>
+                    </Grid>
+                  ))}
+                  <Grid item xs={12}>
+                    <Stack direction="row" spacing={2}>
+                      <HomeIcon color="primary" sx={{ mt: 0.5, flexShrink: 0 }} />
+                      <Stack spacing={0.3} sx={{ flex: 1 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          Address
+                        </Typography>
+                        <Typography variant="body1" fontWeight={600}>
+                          {contact.address}
+                        </Typography>
+                      </Stack>
+                    </Stack>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+
+            {/* Coverages Selected Card */}
+            <Card sx={{ borderRadius: 3, boxShadow: 3, overflow: "hidden" }}>
+              <CardHeader
+                avatar={<CheckCircleIcon sx={{ fontSize: 28, color: "white" }} />}
+                title="Selected Coverages"
+                titleTypographyProps={{ variant: "h6", fontWeight: 700 }}
+                sx={{ background: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)", color: "white", p: 2.5 }}
+              />
+              <CardContent sx={{ p: 3 }}>
+                <Stack spacing={1.5}>
+                  {coverages.map((cov) => {
+                    const coverage = coverageOptions.find((c) => c.name === cov);
+                    return (
+                      <Paper
+                        key={cov}
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          p: 1.5,
+                          borderRadius: 1.5,
+                          backgroundColor: "#f0f9f7",
+                          border: "1px solid #e0f2f1",
+                        }}
+                      >
+                        <Stack direction="row" spacing={1} sx={{ alignItems: "center", flex: 1 }}>
+                          <VerifiedIcon sx={{ color: "#43e97b", fontSize: 20, flexShrink: 0 }} />
+                          <Stack spacing={0.3}>
+                            <Typography fontWeight={600} sx={{ fontSize: 14 }}>
+                              {cov}
+                            </Typography>
+                            {cov === "Third-Party Liability" && (
+                              <Typography variant="caption" color="error">
+                                ⚠ MANDATORY
+                              </Typography>
+                            )}
+                          </Stack>
+                        </Stack>
+                        <Typography fontWeight={700} color="primary" sx={{ fontSize: 15 }}>
+                          ₹{coverage?.premium.toLocaleString("en-IN")}
+                        </Typography>
+                      </Paper>
+                    );
+                  })}
+                </Stack>
+              </CardContent>
+            </Card>
+          </Stack>
+        </Grid>
+
+        {/* Right Column - Premium Breakdown & CTA */}
+        <Grid item xs={12} lg={4}>
+          <Stack spacing={3}>
+            {/* Premium Breakdown Card */}
+            <Card sx={{ borderRadius: 3, boxShadow: 4, overflow: "hidden" }}>
+              <CardHeader
+                avatar={<LocalOfferIcon sx={{ fontSize: 28, color: "white" }} />}
+                title="Premium Breakdown"
+                titleTypographyProps={{ variant: "h6", fontWeight: 700 }}
+                sx={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", color: "white", p: 2.5 }}
+              />
+              <CardContent sx={{ p: 3 }}>
+                <Stack spacing={2}>
+                  <Stack direction="row" justifyContent="space-between" sx={{ pb: 1 }}>
+                    <Typography fontWeight={500} color="text.secondary">
+                      Base Premium
+                    </Typography>
+                    <Typography fontWeight={700}>₹{basePremium.toLocaleString("en-IN")}</Typography>
+                  </Stack>
+
+                  <Stack direction="row" justifyContent="space-between" sx={{ pb: 1 }}>
+                    <Typography fontWeight={500} color="text.secondary">
+                      Coverages
+                    </Typography>
+                    <Typography fontWeight={700}>₹{selectedCoveragesTotal.toLocaleString("en-IN")}</Typography>
+                  </Stack>
+
+                  <Divider />
+
+                  <Stack direction="row" justifyContent="space-between" sx={{ py: 1 }}>
+                    <Typography fontWeight={600}>Subtotal</Typography>
+                    <Typography fontWeight={700}>₹{totalBeforeTax.toLocaleString("en-IN")}</Typography>
+                  </Stack>
+
+                  <Stack direction="row" justifyContent="space-between" sx={{ py: 1 }}>
+                    <Typography fontWeight={500} color="text.secondary">
+                      Tax (18% GST)
+                    </Typography>
+                    <Typography fontWeight={700}>₹{taxAmount.toLocaleString("en-IN")}</Typography>
+                  </Stack>
+
+                  <Divider sx={{ borderWidth: 2 }} />
+
+                  <Paper
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      py: 2,
+                      px: 1.5,
+                      backgroundColor: "#f0f7ff",
+                      borderRadius: 1,
+                      border: "2px solid #667eea",
+                    }}
+                  >
+                    <Typography variant="h6" fontWeight={700}>
+                      Total Due
+                    </Typography>
+                    <Typography variant="h5" fontWeight={800} color="primary">
+                      ₹{finalTotal.toLocaleString("en-IN")}
+                    </Typography>
+                  </Paper>
+                </Stack>
+              </CardContent>
+            </Card>
+
+            {/* Action Buttons */}
+            <Stack spacing={2}>
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                onClick={handlePayment}
+                disabled={loading || finalTotal === 0}
+                sx={{
+                  py: 1.8,
+                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  fontSize: 16,
+                  fontWeight: 700,
+                }}
+              >
+                {loading ? "Processing..." : "Buy Policy Now"}
+              </Button>
+              <Button
+                variant="outlined"
+                size="large"
+                fullWidth
+                onClick={handleEdit}
+                sx={{ py: 1.5, fontSize: 14, fontWeight: 600 }}
+              >
+                Edit Details
+              </Button>
+            </Stack>
+          </Stack>
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
