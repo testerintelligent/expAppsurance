@@ -12,7 +12,7 @@ import {
   Grid,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { calculatePremium, updateForm } from "../redux/premiumcalSlice";
+import { calculatePremium, updateForm } from "../redux/premiumCalSlice.js";
 
 const MotorForm = () => {
   const dispatch = useDispatch();
