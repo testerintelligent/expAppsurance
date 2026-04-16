@@ -23,14 +23,14 @@ export default function CreateClaim() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // ✅ Normalized policy object
+  // Normalized policy object
   const [policy, setPolicy] = useState(null);
   const [lossDate, setLossDate] = useState("");
   const [error, setError] = useState("");
   const [claimType, setClaimType] = useState("Auto"); // Use default value - Auto
 
   /* =========================
-     🔄 LOAD POLICY CONTEXT
+     LOAD POLICY CONTEXT
      ========================= */
   useEffect(() => {
     if (location.state?.policy) {
@@ -62,16 +62,19 @@ export default function CreateClaim() {
   }
 
   /* =========================
-     ➡️ NEXT: BASIC INFO
+     BASIC INFO
      ========================= */
   const handleNext = () => {
     if (!lossDate || !claimType) return;
 
     navigate("/Claim/basicinfo", {
       state: {
-        policy, // ✅ normalized policy
+        policy, 
         lossDate,
         claimType,
+        contact,
+        vehicles: policy.vehicle || [],
+        drivers: policy.driver || [],
       },
     });
   };
