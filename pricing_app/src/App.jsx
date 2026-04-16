@@ -1,10 +1,8 @@
-import { useState } from "react";
 import "./App.css";
-import MotorForm from "./components/MotorForm";
+import MotorForm from "./components/premiumCalForm";
+import RateTable from "./components/RateTable";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <div
       className="min-h-screen
@@ -12,7 +10,8 @@ function App() {
     bg-cover bg-no-repeat
     flex items-center justify-center p-2 overflow-y-auto"
     >
-      <MotorForm />
+      {/* <MotorForm /> */}
+      <RateTable />
     </div>
   );
 }

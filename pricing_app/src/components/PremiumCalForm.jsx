@@ -11,82 +11,27 @@ import {
   Typography,
   Grid,
 } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { calculatePremium, updateForm } from "../redux/premiumcalSlice";
 
 const MotorForm = () => {
-  const [premium, setPremium] = useState(null);
-  const [form, setForm] = useState({
-    product: "PERSONAL_AUTO",
-    policyDate: "2026-05-01",
-    country: "",
-    state: "",
-    city: "",
-    licenseType: "LMV",
-    drivingExperience: 5,
-    claimHistory: 1,
-    vehicleAge: 3,
-  });
-
-  const calculatePremium = async () => {
-    try {
-      const base = "http://10.192.190.158:5001";
-
-      const res = await axios.post(`${base}/api/pricing/calculate`, {
-        product: "PERSONAL_AUTO",
-        product: form.product,
-        policyDate: form.policyDate,
-        input: {
-          country: form.country,
-          state: form.state,
-          city: form.city,
-          licenseType: form.licenseType,
-          drivingExperience: form.drivingExperience,
-          claimHistory: form.claimHistory,
-          vehicleAge: form.vehicleAge,
-        },
-      });
-      setPremium(res.data);
-      console.log("res", res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const dispatch = useDispatch();
+  const { form, premium, loading } = useSelector((state) => state.premium);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
 
-    let newValue;
+    let newValue =
+      name === "drivingExperience" ||
+      name === "claimHistory" ||
+      name === "vehicleAge"
+        ? Number(value)
+        : value;
+    dispatch(updateForm({ name, value, newValue }));
+  };
 
-    switch (name) {
-      case "product":
-      case "country":
-      case "state":
-      case "city":
-      case "licenseType":
-        // These are string fields
-        newValue = value;
-        break;
-
-      case "drivingExperince":
-      case "claimHistory":
-      case "vehicleAge":
-        // These are numeric fields
-        newValue = value === "" ? "" : Number(value);
-        break;
-
-      case "policyDate":
-        // For date, keep as string (or parse if needed)
-        newValue = value;
-        break;
-
-      default:
-        // Fallback: for checkboxes or any other input
-        newValue = type === "checkbox" ? checked : value;
-    }
-
-    setForm((prev) => ({
-      ...prev,
-      [name]: newValue,
-    }));
+  const handleSubmit = () => {
+    dispatch(calculatePremium(form));
   };
 
   return (
@@ -241,9 +186,10 @@ const MotorForm = () => {
               mt: 2,
               background: "linear-gradient(to right, #D8B4FE, #2D0B4E)",
             }}
-            onClick={calculatePremium}
+            onClick={handleSubmit}
+            disabled={loading}
           >
-            Calculate Premium
+            {loading ? "Calculating..." : "Calculate Premium"}
           </Button>
           {premium && premium.success && (
             <Typography
