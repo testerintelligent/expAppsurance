@@ -139,7 +139,7 @@ export default function PolicySearchPage() {
 
       const payload = res.data;
 
-      // ✅ Normalize API response
+      // Normalize API response
       const normalizedPolicy = {
         ...payload.policy,
         contact: payload.contact,
@@ -148,14 +148,17 @@ export default function PolicySearchPage() {
         driver: payload.driver || [],
       };
 
-      // ✅ Persist normalized policy
+      // Persist normalized policy
       sessionStorage.setItem(
         'selectedPolicyForClaim',
         JSON.stringify(normalizedPolicy)
       );
 
       navigate('/Claim/CreateClaim', {
-        state: { policy: normalizedPolicy },
+        state: { 
+          policy: normalizedPolicy,
+          ...normalizedPolicy,
+        },
       });
     } catch (err) {
       console.error(err);

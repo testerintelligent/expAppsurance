@@ -58,7 +58,11 @@ export default function ReviewClaim() {
     const res = await api.post("/claims/create", payload);
 
     navigate("/Claim/success", {
-      state: { claim: res.data.claim },
+      state: { 
+        claim: res.data.claim,
+        ...state,
+        createdClaim: res.data.claim
+      },
     });
   };
 
