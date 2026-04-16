@@ -20,6 +20,8 @@ const Invoice = () => {
   const [paymentSchedule, setPaymentSchedule] = useState("Yearly");
   const [totalTax, setTotalTax] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
+  const [rows, setRows] = useState([]);
+
   // const API_BASE_URL = "http://10.192.190.158:5000/api/billing";
   const API_BASE_URL = "http://10.192.190.158:5000";
 
@@ -65,6 +67,10 @@ const Invoice = () => {
       getPolicyByNumber();
     }
   }, [policyNumber]);
+
+  useEffect(() => {
+    setRows(getScheduleRows());
+  }, [policyData, paymentSchedule]);
 
   const getScheduleRows = () => {
     let periods = 1;
@@ -117,6 +123,7 @@ const Invoice = () => {
       else if (currentDate >= billDate) status = "Billed";
 
       return {
+        id: i,
         period: i + 1,
         premium: premiumPer,
         taxes: taxesPer,
@@ -127,6 +134,12 @@ const Invoice = () => {
         status,
       };
     });
+  };
+
+  const handlePay = (index) => {
+    const updatedRows = [...rows];
+    updatedRows[index].status = "Paid";
+    setRows(updatedRows);
   };
 
   // Table Column Config
@@ -141,6 +154,7 @@ const Invoice = () => {
     ],
     []
   );
+
 
   return (
     // <Box sx={{ maxWidth: 1250, mx: "auto", p: 4 }}>
@@ -386,22 +400,24 @@ const Invoice = () => {
 
           <TableBody>
 
-            {getScheduleRows().map((row) => (
+            {rows.map((row) => (
               <TableRow key={row.period}>
                 <TableCell sx={{ textAlign: "center", padding: "12px" }}>
                   <Button
                     variant="contained"
                     size="small"
-                    onClick={() => handleSearch(policy.policyNumber)}
+                    onClick={() => handlePay(row.id)}
+                    disabled={row.status === "Paid"}
                     sx={{
-                      backgroundColor: "#1565c0",
+                      backgroundColor: row.status === "Paid" ? "#e0e0e0" : "#1565c0",
+                      color: row.status === "Paid" ? "#666" : "#fff",
                       fontWeight: 600,
                       "&:hover": {
-                        backgroundColor: "#1e88e5",
+                        backgroundColor: row.status === "Paid" ? "#e0e0e0" : "#1e88e5",
                       },
                     }}
                   >
-                    Pay
+                    {row.status === "Paid" ? "Paid" : "Pay"}
                   </Button>
                 </TableCell>
                 <TableCell style={{ padding: "12px", textAlign: "center" }}>{row.billDate}</TableCell>
