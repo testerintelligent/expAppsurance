@@ -1,5 +1,5 @@
 import "./App.css";
-import MotorForm from "./components/premiumCalForm";
+import MotorForm from "./components/PremiumCalForm";
 import RateTable from "./components/RateTable";
 
 function App() {
