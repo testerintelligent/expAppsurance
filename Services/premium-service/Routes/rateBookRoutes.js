@@ -12,14 +12,14 @@ const {
 // POST endpoints
 router.post("/create", createRateBook);
 
-// GET endpoints
-router.get("/", getAllRateBooks);
-router.get("/product/:product", getRateBooksByProduct);
-router.get("/product/:product/active", getActiveRateBook);
-router.get("/:id", getRateBookById);
-
-// Legacy endpoints
+// GET endpoints - SPECIFIC ROUTES FIRST, THEN GENERIC
 router.get("/history", getHistory);
+router.get("/product/:product/active", getActiveRateBook);
+router.get("/product/:product", getRateBooksByProduct);
+router.get("/:id", getRateBookById);
+router.get("/", getAllRateBooks);
+
+// PUT endpoints
 router.put("/status", updateStatus);
 
 module.exports = router;
