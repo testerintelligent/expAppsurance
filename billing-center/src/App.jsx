@@ -8,6 +8,8 @@ import Invoice from "./pages/Invoice.jsx";
 import Signup from "./pages/Signup.jsx";
 import Login from "./pages/Login.jsx";
 import RequireAuth from "./components/RequireAuth";
+import PaymentSchedule from "./pages/PaymentSchedule.jsx";
+import PaymentPage from "./components/PaymentPage.jsx";
 
 function App() {
   return (
@@ -15,6 +17,10 @@ function App() {
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route
+            path="/expleosurance/payment-portal/pay"
+            element={<PaymentPage />}
+          />
         <Route
           element={
             <RequireAuth>
@@ -31,7 +37,12 @@ function App() {
             path="/policy-summary/:policyNumber"
             element={<PolicySummary />}
           />
+          <Route
+            path="/payment-schedule/:policyNumber"
+            element={<PaymentSchedule />}
+          />          
         </Route>
+        
       </Routes>
     </BrowserRouter>
   );
