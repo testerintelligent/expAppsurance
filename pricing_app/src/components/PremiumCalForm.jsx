@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React from "react";
+
 import {
   Box,
   TextField,
@@ -12,71 +12,71 @@ import {
   Grid,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { calculatePremium, updateForm } from "../redux/premiumCalSlice.js";
+import { useNavigate } from "react-router-dom";
+import {
+  calculatePremium,
+  updateForm,
+  // setFormData,
+} from "../redux/premiumCalSlice.js";
 
 const MotorForm = () => {
   const dispatch = useDispatch();
-  const { form, premium, loading } = useSelector((state) => state.premium);
+  const navigate = useNavigate();
+
+  const { form, loading } = useSelector((state) => state.premium);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     let newValue =
-      name === "drivingExperience" ||
-      name === "claimHistory" ||
+      name === "basePremium" ||
+      name === "locationFactor" ||
       name === "vehicleAge"
         ? Number(value)
         : value;
-    dispatch(updateForm({ name, value, newValue }));
+    dispatch(updateForm({ name, value: newValue }));
   };
 
-  const handleSubmit = () => {
-    dispatch(calculatePremium(form));
+  const handleSubmit = async () => {
+    await dispatch(calculatePremium(form));
+    navigate("/");
   };
 
   return (
     <Box
       sx={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "linear-gradient(to bottom, #0f172a, #374151, #000)",
+        width: 550,
+        p: 4,
+        bgcolor: "white",
+        borderRadius: 3,
+        boxShadow: 3,
       }}
     >
-      <Box
+      <Typography
+        variant="subtitle1"
+        align="center"
         sx={{
-          width: 550,
-          p: 4,
-          bgcolor: "white",
-          borderRadius: 3,
-          boxShadow: 3,
+          mb: 2,
+          fontWeight: "bold",
+          color: "#2D0B4E",
         }}
       >
-        <Typography
-          variant="subtitle1"
-          align="center"
-          sx={{
-            mb: 2,
-            fontWeight: "bold",
-            color: "#2D0B4E",
-          }}
-        >
-          Motor Insurance Premium Calculator
-        </Typography>
+        Motor Insurance Premium Calculator
+      </Typography>
 
-        <Box
-          display="flex"
-          flexDirection="column"
-          gap={2}
-          sx={{
-            maxHeight: "80vh", // 👈 limit height
-            overflowY: "auto",
-          }}
-        >
+      <Box
+        display="flex"
+        flexDirection="column"
+        gap={2}
+        sx={{
+          maxHeight: "80vh", // 👈 limit height
+          overflowY: "auto",
+        }}
+      >
+        <div className="p-1 flex flex-col gap-y-4">
           {/* Product */}
           <FormControl fullWidth>
-            <InputLabel>Product</InputLabel>
+            <InputLabel>Vehicle Type</InputLabel>
             <Select
               name="product"
               value={form.product}
@@ -88,96 +88,53 @@ const MotorForm = () => {
               <MenuItem value="COMMERCIAL_AUTO">Commercial Auto</MenuItem>
             </Select>
           </FormControl>
-          {/* Policy Date */}
-          <TextField
-            label="Policy Date"
-            type="date"
-            name="policyDate"
-            value={form.policyDate}
-            onChange={handleChange}
-            InputLabelProps={{ shrink: true }}
-            fullWidth
-            size="small"
-          />
-          {/* License */}
+
           <FormControl fullWidth>
-            <InputLabel>License Type</InputLabel>
+            <InputLabel>Vehicle Age</InputLabel>
             <Select
-              name="licenseType"
-              value={form.licenseType}
+              name="vehicleAge"
+              value={form.vehicleAge}
               onChange={handleChange}
-              label="License Type"
+              label="Vehicle Age"
               size="small"
             >
-              <MenuItem value="LMV">LMV</MenuItem>
-              <MenuItem value="HMV">HMV</MenuItem>
-              <MenuItem value="MCV">MCV</MenuItem>
+              <MenuItem value="0-5">0-5</MenuItem>
+              <MenuItem value="5-10">5-10</MenuItem>
+              <MenuItem value="10-15">10-15</MenuItem>
+              <MenuItem value="15-20">15-20</MenuItem>
+              <MenuItem value="Greater than 20"> Greater than 20</MenuItem>
             </Select>
           </FormControl>
-          <FormControl fullWidth>
-            <InputLabel>Country</InputLabel>
-            <Select
-              name="country"
-              value={form.country}
-              onChange={handleChange}
-              label="Country"
-              size="small"
-            >
-              <MenuItem value="">Select</MenuItem>
-              <MenuItem value="United States">United States</MenuItem>
-              <MenuItem value="Canada">Canada</MenuItem>
-              <MenuItem value="India">India</MenuItem>
-              <MenuItem value="United Kingdom">United Kingdom</MenuItem>
-              <MenuItem value="Australia">Australia</MenuItem>
-              <MenuItem value="Other">Other</MenuItem>
-            </Select>
-          </FormControl>
+
           <TextField
-            label="State"
-            name="state"
-            value={form.state}
+            label="Location"
+            name="location"
+            value={form.location}
             onChange={handleChange}
             fullWidth
             size="small"
           />
-          {/* City */}
+
           <TextField
-            label="City"
-            name="city"
-            value={form.city}
-            onChange={handleChange}
-            fullWidth
-            size="small"
-          />
-          {/* Driving Experience */}
-          <TextField
-            label="Driving Experience"
+            label="Base Premium"
             type="number"
-            name="drivingExperience"
-            value={form.drivingExperience}
+            name="basePremium"
+            value={form.basePremium}
             onChange={handleChange}
             fullWidth
             size="small"
           />
           {/* Claim History */}
           <TextField
-            label="Claim History"
+            label="Location Factor"
             type="number"
-            name="claimHistory"
-            value={form.claimHistory}
+            name="locationFactor"
+            value={form.locationFactor}
             onChange={handleChange}
             fullWidth
             size="small"
           />
-          <TextField
-            label="Vehicle Age"
-            type="number"
-            name="vehicleAge"
-            value={form.vehicleAge}
-            onChange={handleChange}
-            fullWidth
-            size="small"
-          />
+
           {/* Button */}
           <Button
             variant="contained"
@@ -189,17 +146,9 @@ const MotorForm = () => {
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? "Calculating..." : "Calculate Premium"}
+            {loading ? "Saving" : "Save"}
           </Button>
-          {premium && premium.success && (
-            <Typography
-              align="center"
-              sx={{ mt: 2, fontWeight: "bold", color: "green" }}
-            >
-              Estimated Premium: ₹ {premium.premium.toFixed(2)}
-            </Typography>
-          )}
-        </Box>
+        </div>
       </Box>
     </Box>
   );

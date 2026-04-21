@@ -24,7 +24,7 @@ export const calculatePremium = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(err.response?.data || "Error");
     }
-  }
+  },
 );
 
 const initialState = {
@@ -52,6 +52,9 @@ const premiumSlice = createSlice({
       const { name, value } = action.payload;
       state.form[name] = value;
     },
+    setFormData: (state, action) => {
+      state.form = { ...state.form, ...action.payload };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -70,5 +73,5 @@ const premiumSlice = createSlice({
   },
 });
 
-export const { updateForm } = premiumSlice.actions;
+export const { updateForm, setFormData } = premiumSlice.actions;
 export default premiumSlice.reducer;
