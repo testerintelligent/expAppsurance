@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   Table,
   TableBody,
@@ -10,17 +11,23 @@ import {
   TableRow,
   Paper,
   TablePagination,
+  Stack,
+  Typography,
+  Box,
 } from "@mui/material";
 import { FaEye } from "react-icons/fa";
+import MainCard from "../layout/MainCard";
 
 const BillingDashboard = () => {
+  const [randomNumber] = useState(() =>
+    Math.floor(100000 + Math.random() * 900000),
+  );
   const [insuranceData, setInsuranceData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [sortOrder, setSortOrder] = useState("asc");
   const [sortedColumn, setSortedColumn] = useState("CurrentDate");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [summary, setSummary] = useState(null);
 
   const navigate = useNavigate();
 
@@ -29,7 +36,7 @@ const BillingDashboard = () => {
     const fetchPolicies = async () => {
       try {
         const response = await axios.get(
-          "http://10.192.190.158:5000/api/Policies/getPoliciesForDashboard"
+          "http://10.192.190.158:5000/api/Policies/getPoliciesForDashboard",
         );
         setInsuranceData(response.data);
         setFilteredData(response.data);
@@ -40,16 +47,13 @@ const BillingDashboard = () => {
     fetchPolicies();
   }, []);
 
-  // Compute summary counts when policies are fetched/updated
-  useEffect(() => {
+  const summary = useMemo(() => {
     if (!insuranceData || insuranceData.length === 0) {
-      setSummary(null);
-      return;
+      return null;
     }
 
     const totals = { totalPolicies: insuranceData.length };
 
-    // normalize status keys and compute counts
     const byStatus = insuranceData.reduce((acc, p) => {
       const s = (p.status || "").toString();
       acc[s] = (acc[s] || 0) + 1;
@@ -64,7 +68,7 @@ const BillingDashboard = () => {
       0;
     totals.cancelled = byStatus["Cancelled"] || byStatus["cancelled"] || 0;
 
-    setSummary(totals);
+    return totals;
   }, [insuranceData]);
 
   // Utility Functions
@@ -74,12 +78,11 @@ const BillingDashboard = () => {
     return isNaN(date.getTime())
       ? "Invalid Date"
       : `${String(date.getDate()).padStart(2, "0")}/${String(
-          date.getMonth() + 1
+          date.getMonth() + 1,
         ).padStart(2, "0")}/${date.getFullYear()}`;
   };
 
-  const generateRandomNumber = () =>
-    Math.floor(100000 + Math.random() * 900000);
+  const generateRandomNumber = () => randomNumber;
 
   const sortData = (column) => {
     const order = sortOrder === "asc" ? 1 : -1;
@@ -110,66 +113,156 @@ const BillingDashboard = () => {
       { key: "endDate", label: "End Date" },
       { key: "status", label: "Status" },
     ],
-    []
+    [],
   );
 
   return (
     <div style={{ padding: "14px" }}>
       {/* ✅ Summary Cards */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "24px",
-          marginBottom: "32px",
-        }}
-      >
-        {[
-          {
-            label: "Total Policies",
-            value: summary?.totalPolicies || 0,
-            bg: "linear-gradient(135deg, #34495e 60%, #2c3e50 100%)",
-          },
-          {
-            label: "In Force",
-            value: summary?.["In Force"] || 0,
-            bg: "linear-gradient(135deg, #27ae60 60%, #219150 100%)",
-          },
-          {
-            label: "Under Review",
-            value: summary?.underReview || 0,
-            bg: "linear-gradient(135deg, #f39c12 60%, #e67e22 100%)",
-          },
-          {
-            label: "Cancelled",
-            value: summary?.cancelled || 0,
-            bg: "linear-gradient(135deg, #e74c3c 60%, #c0392b 100%)",
-          },
-        ].map(({ label, value, bg, icon }, idx) => (
-          <Paper
-            key={idx}
-            elevation={4}
-            style={{
-              padding: "28px 20px",
-              borderRadius: "18px",
-              background: bg,
-              color: "white",
-              textAlign: "center",
-              boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
-            }}
-          >
-            <span style={{ fontSize: "2.2rem" }}>{icon}</span>
-            <div style={{ fontWeight: "bold", fontSize: "1.1rem" }}>
-              {label}
-            </div>
-            <div style={{ fontSize: "2.1rem", fontWeight: "bold" }}>
-              {value}
-            </div>
-          </Paper>
-        ))}
-      </div>
 
+      <Box
+        display="grid"
+        gridTemplateColumns="repeat(auto-fill, 230px)"
+        justifyContent="start"
+        gap={2.5}
+        mb={3}
+      >
+        <MainCard
+          border={false}
+          content={false}
+          bgcolor="#5e35b1"
+          background="#4527a0"
+        >
+          <Box sx={{ p: 1.5 }}>
+            <Stack direction="row" sx={{ alignItems: "center" }}>
+              <Typography
+                sx={{
+                  fontSize: "1.5rem",
+                  fontWeight: 500,
+                  mr: 1,
+                  mt: 1.75,
+                  mb: 0.75,
+                }}
+              >
+                {summary?.totalPolicies || 0}
+              </Typography>
+            </Stack>
+            <Typography
+              sx={{
+                mb: 1.25,
+                fontSize: "1rem",
+                fontWeight: 500,
+                color: "#b39ddb",
+                float: "left",
+              }}
+            >
+              Total Policies
+            </Typography>
+          </Box>
+        </MainCard>
+        <MainCard
+          border={false}
+          content={false}
+          bgcolor="#1e88e5"
+          background="#1565c0"
+        >
+          <Box sx={{ p: 1.5 }}>
+            <Stack direction="row" sx={{ alignItems: "center" }}>
+              <Typography
+                sx={{
+                  fontSize: "1.5rem",
+                  fontWeight: 500,
+                  mr: 1,
+                  mt: 1.75,
+                  mb: 0.75,
+                }}
+              >
+                {summary?.["In Force"] || 0}
+              </Typography>
+            </Stack>
+            <Typography
+              sx={{
+                mb: 1.25,
+                fontSize: "1rem",
+                fontWeight: 500,
+                color: "#90caf9",
+                float: "left",
+              }}
+            >
+              In Force
+            </Typography>
+          </Box>
+        </MainCard>
+        <MainCard
+          border={false}
+          content={false}
+          bgcolor="#f39c12"
+          background="#e67e22"
+        >
+          <Box sx={{ p: 1.5 }}>
+            <Stack direction="row" sx={{ alignItems: "center" }}>
+              <Typography
+                sx={{
+                  fontSize: "1.5rem",
+                  fontWeight: 500,
+                  mr: 1,
+                  mt: 1.75,
+                  mb: 0.75,
+                }}
+              >
+                {summary?.underReview || 0}
+              </Typography>
+            </Stack>
+            <Typography
+              sx={{
+                mb: 1.25,
+                fontSize: "1rem",
+                fontWeight: 500,
+                color: "#e67e22",
+                float: "left",
+              }}
+            >
+              Under Review
+            </Typography>
+          </Box>
+        </MainCard>
+        <MainCard
+          border={false}
+          content={false}
+          bgcolor="#ff7043"
+          background="#d84315"
+        >
+          <Box sx={{ p: 1.5 }}>
+            <Stack direction="row" sx={{ alignItems: "center" }}>
+              <Typography
+                sx={{
+                  fontSize: "1.5rem",
+                  fontWeight: 500,
+                  mr: 1,
+                  mt: 1.75,
+                  mb: 0.75,
+                }}
+              >
+                {summary?.cancelled || 0}
+              </Typography>
+            </Stack>
+            <Typography
+              sx={{
+                mb: 1.25,
+                fontSize: "1rem",
+                fontWeight: 500,
+                color: "#d84315",
+                float: "left",
+                opacity: 0.7,
+              }}
+            >
+              Cancelled
+            </Typography>
+          </Box>
+        </MainCard>
+      </Box>
       {/* ✅ Data Table */}
+
       {filteredData.length > 0 ? (
         <TableContainer
           component={Paper}
@@ -179,12 +272,23 @@ const BillingDashboard = () => {
           <Table>
             <TableHead>
               <TableRow style={{ backgroundColor: "black" }}>
+                <TableCell
+                  style={{
+                    color: "white",
+                    backgroundColor: "#4527a0",
+                    fontWeight: "bold",
+                    padding: "12px",
+                    textAlign: "center",
+                  }}
+                >
+                  View
+                </TableCell>
                 {columns.map((col) => (
                   <TableCell
                     key={col.key}
                     style={{
                       color: "white",
-                      backgroundColor: "black",
+                      backgroundColor: "#4527a0",
                       fontWeight: "bold",
                       cursor: "pointer",
                       padding: "12px",
@@ -197,18 +301,6 @@ const BillingDashboard = () => {
                       (sortOrder === "asc" ? "↑" : "↓")}
                   </TableCell>
                 ))}
-
-                <TableCell
-                  style={{
-                    color: "white",
-                    backgroundColor: "black",
-                    fontWeight: "bold",
-                    padding: "12px",
-                    textAlign: "center",
-                  }}
-                >
-                  VIEW
-                </TableCell>
               </TableRow>
             </TableHead>
 
@@ -224,6 +316,29 @@ const BillingDashboard = () => {
                           index % 2 === 0 ? "#ecf0f1" : "#ffffff",
                       }}
                     >
+                      <TableCell
+                        style={{ padding: "12px", textAlign: "center" }}
+                      >
+                        {insurance.policyNumber ? (
+                          <VisibilityIcon
+                            color="primary"
+                            onClick={() =>
+                              navigate(
+                                `/policy-summary/${insurance.policyNumber}`,
+                                { state: { policy: insurance } },
+                              )
+                            }
+                            style={{ cursor: "pointer" }} // optional: makes it clickable
+                          />
+                        ) : (
+                          <VisibilityIcon
+                            color="primary"
+                            disabled
+                            title="Policy number not available"
+                            style={{ opacity: 0.6, cursor: "not-allowed" }} // optional: makes it clickable
+                          />
+                        )}
+                      </TableCell>
                       <TableCell
                         style={{ padding: "12px", textAlign: "center" }}
                       >
@@ -259,35 +374,6 @@ const BillingDashboard = () => {
                       >
                         {insurance.status}
                       </TableCell>
-                      <TableCell
-                        style={{ padding: "12px", textAlign: "center" }}
-                      >
-                        {insurance.policyNumber ? (
-                          <button
-                            onClick={() =>
-                              navigate(
-                                `/policy-summary/${insurance.policyNumber}`,
-                                { state: { policy: insurance } }
-                              )
-                            }
-                            style={{
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: 8,
-                            }}
-                          >
-                            View <FaEye size={20} />
-                          </button>
-                        ) : (
-                          <button
-                            disabled
-                            title="Policy number not available"
-                            style={{ opacity: 0.6, cursor: "not-allowed" }}
-                          >
-                            View <FaEye size={20} />
-                          </button>
-                        )}
-                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -310,7 +396,7 @@ const BillingDashboard = () => {
         </TableContainer>
       ) : (
         <p style={{ textAlign: "center", color: "#7f8c8d", fontSize: "18px" }}>
-          No insurance data available
+          No policy data available
         </p>
       )}
     </div>
