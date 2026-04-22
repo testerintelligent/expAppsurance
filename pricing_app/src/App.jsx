@@ -1,7 +1,7 @@
 import "./App.css";
 import MotorForm from "./components/PremiumCalForm";
 import RateTable from "./components/RateTable";
-
+import { Routes, Route } from "react-router-dom";
 function App() {
   return (
     <div
@@ -10,8 +10,10 @@ function App() {
     bg-cover bg-no-repeat
     flex items-center justify-center p-2 overflow-y-auto"
     >
-      {/* <MotorForm /> */}
-      <RateTable />
+      <Routes>
+        <Route path="/" element={<RateTable />} />
+        {/* <Route path="/form" element={<MotorForm />} /> */}
+      </Routes>
     </div>
   );
 }

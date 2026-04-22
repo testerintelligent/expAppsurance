@@ -8,6 +8,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+
 import { useEffect } from "react";
 import { useState } from "react";
 import axios from "axios";
@@ -28,23 +29,6 @@ const RateTable = () => {
     return age?.factor || 1;
   };
 
-  const baseRate = premium.basePremium?.[0]?.baseRate || 0;
-
-  const rows = premium.location.flatMap((loc) => {
-    return premium.vehicleAge.map((age) => {
-      const premiumAmount = baseRate * loc.factor * age.factor;
-
-      return {
-        location: loc.key,
-        locationFactor: loc.factor,
-        vehicleRange: `${age.min} - ${age.max}`,
-        vehicleFactor: age.factor,
-        baseRate,
-        premiumAmount,
-      };
-    });
-  });
-
   useEffect(() => {
     if (premium.location.length === 0) return;
 
@@ -53,7 +37,7 @@ const RateTable = () => {
       defaults[loc.key] = "0-5";
     });
 
-    setSelectedAge(defaults);
+    // setSelectedAge(defaults);
   }, [premium.location]);
 
   useEffect(() => {
@@ -63,10 +47,10 @@ const RateTable = () => {
 
       const locationData = apiData.find((item) => item.name === "RT_LOCATION");
       const vehicleAgeData = apiData.find(
-        (item) => item.name === "RT_VEHICLE_AGE"
+        (item) => item.name === "RT_VEHICLE_AGE",
       );
       const basePremiumData = apiData.find(
-        (item) => item.name === "RT_BASE_PREMIUM"
+        (item) => item.name === "RT_BASE_PREMIUM",
       );
 
       setPremium({
@@ -95,18 +79,20 @@ const RateTable = () => {
         <Table>
           <TableHead className="bg-amber-400 text-white font-bold ">
             <TableRow>
+              <TableCell>Vehicle Type</TableCell>
               <TableCell>Location</TableCell>
               <TableCell>Base Premium</TableCell>
               <TableCell>Location Factor</TableCell>
               <TableCell>Vehicle Age</TableCell>
               <TableCell>Vehicle Factor</TableCell>
               <TableCell>Premium Amount</TableCell>
+              {/* <TableCell>Actions</TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
             {premium.location.map((loc, index) => {
               const baseRate = premium.basePremium?.[0]?.baseRate || 0;
-
+              const vehicleType = premium.basePremium?.[0]?.key || "--";
               const ageLabel = selectedAge[loc.key] || "0-5";
               const vehicleFactor = getVehicleFactor(loc.key, ageLabel);
 
@@ -114,6 +100,7 @@ const RateTable = () => {
 
               return (
                 <TableRow key={index}>
+                  <TableCell>{vehicleType}</TableCell>
                   <TableCell>{loc.key}</TableCell>
 
                   <TableCell>{baseRate}</TableCell>
@@ -141,6 +128,29 @@ const RateTable = () => {
                   <TableCell>{vehicleFactor}</TableCell>
 
                   <TableCell>{premiumAmount}</TableCell>
+                  {/* <TableCell>
+                    <button
+                      onClick={() => {
+                        // send selected row data to redux
+                        dispatch(
+                          updateForm({
+                            name: "editData",
+                            value: {
+                              location: loc.key,
+                              baseRate,
+                              locationFactor: loc.factor,
+                              vehicleAge: ageLabel,
+                              vehicleFactor,
+                            },
+                          }),
+                        );
+
+                        navigate("/form");
+                      }}
+                    >
+                      Edit
+                    </button>
+                  </TableCell> */}
                 </TableRow>
               );
             })}
