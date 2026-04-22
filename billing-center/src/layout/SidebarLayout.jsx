@@ -1,30 +1,48 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
 import DescriptionIcon from "@mui/icons-material/Description"; // for Policy Summary
 import ReceiptIcon from "@mui/icons-material/Receipt"; // for Invoice
-import PaymentsIcon from "@mui/icons-material/Payments"; // for Invoice
+import PaymentsIcon from "@mui/icons-material/Payments";
+import {
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
+  Tooltip,
+  Divider,
+} from "@mui/material";
+
+import {
+  Dashboard as DashboardIcon,
+  Autorenew as RenewalsIcon,
+  AssignmentTurnedIn as SubmissionIcon,
+  ReceiptLong as OtherPolicyIcon,
+  Queue as QueueIcon,
+  Menu as MenuIcon,
+  ChevronLeft as ChevronLeftIcon,
+  Edit as ChangePolicyIcon,
+  SettingsBackupRestore as ReinstateIcon,
+  Cancel as CancelIcon,
+} from "@mui/icons-material";
 
 const Sidebar = () => {
   const location = useLocation();
-  const isPolicySummary = location.pathname.startsWith("/policy-summary");
-  const isInvoice = location.pathname.startsWith("/invoice");
+  const [isOpen, setIsOpen] = React.useState(true);
   const PROTECTED_ROUTES = ["/policy-summary", "/invoice", "/payment-schedule"];
-
-  const isPolicyPage = PROTECTED_ROUTES.some(route =>
-    location.pathname.startsWith(route)
+  const isPolicyPage = PROTECTED_ROUTES.some((route) =>
+    location.pathname.startsWith(route),
   );
 
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  // const [selectedIndex, setSelectedIndex] = React.useState(0);
   const policyNumber = location.pathname.split("/")[2];
 
-  const navItems = [
-     { label: "Dashboard", path: "/", icon: <DashboardIcon /> },
-    { label: "Users", path: "/users", icon: <PeopleIcon /> },  ...(isPolicyPage ? [
+  const menuItems = [
+    { label: "Dashboard", path: "/", icon: <DashboardIcon /> },
+    { label: "Users", path: "/users", icon: <PeopleIcon /> },
+    ...(isPolicyPage
+      ? [
           {
             label: "Policy Summary",
             path: `/policy-summary/${policyNumber}`,
@@ -35,55 +53,137 @@ const Sidebar = () => {
             path: `/invoice/${policyNumber}`,
             icon: <ReceiptIcon />,
           },
-           {
+          {
             label: "PaymentSchedule",
             path: `/payment-schedule/${policyNumber}`,
             icon: <PaymentsIcon />,
           },
-        ]  : []
-    ),
+        ]
+      : []),
   ];
 
+  const policySummaryMenu = [
+    {
+      label: "Change Policy",
+      path: "/policy-summary/change",
+      icon: <ChangePolicyIcon />,
+    },
+    {
+      label: "Reinstate Policy",
+      path: "/policy-summary/reinstate",
+      icon: <ReinstateIcon />,
+    },
+    {
+      label: "Cancel Policy",
+      path: "/policy-summary/cancel",
+      icon: <CancelIcon />,
+    },
+  ];
+
+  const isPolicySummaryPage = location.pathname.startsWith("/policy-summary");
+
+  const navItems = isPolicySummaryPage ? policySummaryMenu : menuItems;
+
   return (
-    <aside className="w-60 bg-white border-r-8 h-full flex flex-col overflow-auto">
-      <div className="overflow-auto mt-4">
-        <List disablePadding className="text-sm pb-10">
-          {navItems.map((item, index) => (
-            <NavLink
-              key={index}
-              to={item.path}
-              className={({ isActive }) =>
-                `block ${
-                  isActive
-                    ? "bg-purple-700 text-white font-medium p-1 rounded"
-                    : "text-gray-700"
-                } `
-              }
-            >
-              <ListItemButton
-                dense
-                selected={selectedIndex === index}
-                onClick={() => setSelectedIndex(index)}
-                className="flex items-center gap-4 mb-3" // ensures icon and text are aligned
-              >
-                {/* Render the icon */}
-                <span className="ml-4">{item.icon}</span>
-                <ListItemText
-                  primary={item.label}
-                  primaryTypographyProps={{
-                    style: { fontSize: "0.85rem" },
-                  }}
-                  sx={{
-                    "& .MuiListItemText-primary": {
-                      fontWeight: selectedIndex === index ? "bold" : "normal",
-                    },
-                  }}
-                />
-              </ListItemButton>
-            </NavLink>
-          ))}
-        </List>
+    <aside
+      style={{
+        width: isOpen ? 240 : 64,
+        background: "#ffffff",
+        borderRight: "1px solid #e0e0e0",
+        transition: "width 0.3s ease",
+        height: "auto",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      {/* Toggle Button */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: isOpen ? "flex-end" : "center",
+        }}
+      >
+        <IconButton onClick={() => setIsOpen(!isOpen)} size="small">
+          {isOpen ? <ChevronLeftIcon /> : <MenuIcon />}
+        </IconButton>
       </div>
+
+      <Divider />
+
+      <List disablePadding sx={{ mt: 1 }}>
+        {navItems.map((item, index) => (
+          <NavLink
+            key={index}
+            to={item.path}
+            style={{ textDecoration: "none" }}
+          >
+            {({ isActive }) => (
+              <Tooltip
+                title={!isOpen ? item.label : ""}
+                placement="right"
+                arrow
+              >
+                <ListItemButton
+                  sx={{
+                    mx: 1,
+                    my: 0.5,
+                    borderRadius: 2,
+                    justifyContent: isOpen ? "flex-start" : "center",
+                    px: 2,
+                    position: "relative",
+
+                    // Background
+                    backgroundColor: isActive ? "#e1dfdd" : "transparent",
+                    color: "#333",
+
+                    "&:hover": {
+                      backgroundColor: "#edebe9",
+                    },
+
+                    // Right purple highlight bar
+                    "&::after": isActive
+                      ? {
+                          content: '""',
+                          position: "absolute",
+                          left: 0,
+                          top: 8,
+                          bottom: 8,
+                          width: "4px",
+                          borderRadius: "4px",
+                          backgroundColor: "#4f3597",
+                        }
+                      : {},
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: isOpen ? 2 : 0,
+                      justifyContent: "center",
+
+                      // Icon color logic
+                      color: isActive ? "#4f3597" : "#6b7280",
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+
+                  {isOpen && (
+                    <ListItemText
+                      primary={item.label}
+                      primaryTypographyProps={{
+                        fontSize: "0.9rem",
+                        fontWeight: isActive ? 600 : 500,
+                        color: "#333",
+                      }}
+                    />
+                  )}
+                </ListItemButton>
+              </Tooltip>
+            )}
+          </NavLink>
+        ))}
+      </List>
     </aside>
   );
 };
