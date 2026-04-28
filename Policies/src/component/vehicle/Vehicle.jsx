@@ -122,11 +122,6 @@ export default function Vehicle() {
     state?.coverages || ["Third-Party Liability"]
   );
 
-  // THEN calculate totalPremium
-  const totalPremium = coverageOptions
-    .filter((c) => coverages.includes(c.name))
-    .reduce((sum, c) => sum + c.premium, 0);
-
   // Vehicle form data
   const [vehicleData, setVehicleData] = useState(
     state?.vehicleData || {
@@ -510,30 +505,7 @@ export default function Vehicle() {
               );
             })}
 
-            {/* Premium Summary Card */}
-            <Paper
-              elevation={3}
-              sx={{
-                mt: 4,
-                p: 3,
-                borderRadius: 3,
-                background: "linear-gradient(135deg, #1976d2, #42a5f5)",
-                color: "white",
-                transition: "all 0.3s ease",
-              }}
-            >
-              <Typography variant="h6" fontWeight={600}>
-                Total Premium
-              </Typography>
-
-              <Typography variant="h4" fontWeight={700} sx={{ mt: 1 }}>
-                ₹{totalPremium.toLocaleString("en-IN")}
-              </Typography>
-
-              <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
-                Based on selected coverages
-              </Typography>
-            </Paper>
+            
           </Box>
         )}
         {/* <Tooltip title={cov.description} arrow>

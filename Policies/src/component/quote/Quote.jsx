@@ -16,6 +16,11 @@ import {
   Alert,
   Container,
   Paper as MuiPaper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Snackbar,
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import InfoBar from "../InfoBar";
@@ -49,6 +54,8 @@ export default function Quote() {
 
   const [saveStatus, setSaveStatus] = useState("");
   const [loading, setLoading] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [errorSnackbar, setErrorSnackbar] = useState({ open: false, message: "" });
 
   const coverageOptions = [
     {
@@ -120,7 +127,16 @@ export default function Quote() {
   };
 
   const handleEdit = () => {
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmEdit = () => {
+    setConfirmDialogOpen(false);
     navigate("/vehicle", { state: { ...state, readOnly: false } });
+  };
+
+  const handleCancelEdit = () => {
+    setConfirmDialogOpen(false);
   };
 
   const handlePayment = async () => {
@@ -164,7 +180,9 @@ export default function Quote() {
         },
       });
     } catch (err) {
-      alert("Failed to create quote. Please try again.");
+      console.error("Quote creation error:", err);
+      const errorMessage = err?.message || err?.error || "Failed to create quote. Please try again.";
+      setErrorSnackbar({ open: true, message: errorMessage });
     } finally {
       setLoading(false);
     }
@@ -463,6 +481,72 @@ export default function Quote() {
           </Stack>
         </Grid>
       </Grid>
+
+      {/* Confirmation Dialog for Edit Details */}
+      <Dialog
+        open={confirmDialogOpen}
+        onClose={handleCancelEdit}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: { borderRadius: 2, boxShadow: 6 },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            fontSize: 18,
+            fontWeight: 700,
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            color: "white",
+            pb: 2,
+          }}
+        >
+          Confirm Edit Details
+        </DialogTitle>
+        <DialogContent sx={{ pt: 3 }}>
+          <Typography variant="body1" sx={{ mb: 2, fontWeight: 500 }}>
+            ⚠️ Are you sure you want to edit your details?
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            If you proceed, your current quote will be discarded and you'll be taken back to the vehicle details screen. You'll need to generate a new quote after making changes.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2.5, gap: 1.5 }}>
+          <Button
+            onClick={handleCancelEdit}
+            variant="outlined"
+            sx={{ fontWeight: 600 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmEdit}
+            variant="contained"
+            sx={{
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              fontWeight: 600,
+            }}
+          >
+            Yes, Edit Details
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Error Snackbar */}
+      <Snackbar
+        open={errorSnackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setErrorSnackbar({ open: false, message: "" })}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={() => setErrorSnackbar({ open: false, message: "" })}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {errorSnackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

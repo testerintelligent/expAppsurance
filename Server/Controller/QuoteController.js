@@ -68,6 +68,15 @@ exports.createQuote = async (req, res) => {
 
   } catch (err) {
     console.error("❌ Error creating quote:", err);
+    
+    // Handle duplicate key error (E11000)
+    if (err.code === 11000) {
+      return res.status(409).json({ 
+        message: "Quote already exists with this number. Please try again.",
+        error: "Duplicate quote number"
+      });
+    }
+    
     res.status(500).json({ message: "Server error while creating quote", error: err.message });
   }
 };
