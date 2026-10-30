@@ -1,83 +1,68 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import {
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  IconButton,
-  Tooltip,
-  Divider,
-} from "@mui/material";
-
-import {
-  Dashboard as DashboardIcon,
-  Autorenew  as RenewalsIcon,
-  AssignmentTurnedIn  as SubmissionIcon,
-  ReceiptLong  as OtherPolicyIcon,
-  Queue as QueueIcon,
-  Menu as MenuIcon,
-  ChevronLeft as ChevronLeftIcon,
-  Edit as ChangePolicyIcon,
-  SettingsBackupRestore  as ReinstateIcon,
-  Cancel as CancelIcon
-} from "@mui/icons-material";
-
 
 const Sidebar = () => {
   const location = useLocation();
-  const [isOpen, setIsOpen] = React.useState(true);
-
 
   const menuItems = [
-    { label: "Dashboard", path: "/" , icon: <DashboardIcon /> },
-    { label: "Submissions", path: "/submissions", icon: <SubmissionIcon />  },
-    { label: "Renewals", path: "/renewals", icon: <RenewalsIcon />  },
-    { label: "Other Policy Transactions", path: "/transactions", icon: <OtherPolicyIcon /> },
-    { label: "Queues", path: "/queues"  , icon: <QueueIcon />},
+    { label: "My Activities", path: "/" },
+    { label: "My Accounts", path: "/account" },
+    { label: "My Submissions", path: "/new-submission" },
+    { label: "My Renewals", path: "/renewals" },
+    { label: "My Other Policy Transactions", path: "/transactions" },
+    { label: "My Queues", path: "/queues" },
   ];
 
   const policySummaryMenu = [
-    { label: "Change Policy", path: "/policy-summary/change" , icon: <ChangePolicyIcon /> },
-    { label: "Reinstate Policy", path: "/policy-summary/reinstate" , icon: <ReinstateIcon />},
-    { label: "Cancel Policy", path: "/policy-summary/cancel" , icon: <CancelIcon />},
+    { label: "Change Policy", path: "/policy-summary/change" },
+    { label: "Reinstate Policy", path: "/policy-summary/reinstate" },
+    { label: "Cancel Policy", path: "/policy-summary/cancel" },
   ];
 
-  const isPolicySummaryPage = location.pathname.startsWith("/policy-summary");
-
-
-  const navItems = isPolicySummaryPage ? policySummaryMenu : menuItems;
-
-  
+  const navItems = location.pathname.startsWith("/policy-summary") ? policySummaryMenu : menuItems;
 
   return (
-   <aside
+    <aside
       style={{
-        width: isOpen ? 240 : 64,
-        background: "#ffffff",
-        borderRight: "1px solid #e0e0e0",
-        transition: "width 0.3s ease",
-        height: "auto",
+        width: 214,
+        background: "#e9edf1",
+        borderRight: "1px solid #d0d7de",
         display: "flex",
         flexDirection: "column",
+        color: "#3d4c5d",
       }}
     >
-      {/* Toggle Button */}
       <div
         style={{
           display: "flex",
-          justifyContent: isOpen ? "flex-end" : "center",
-          padding: "8px",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "12px 12px 8px",
+          borderBottom: "1px solid #d0d7de",
+          background: "#edf1f5",
+          fontWeight: 700,
+          fontSize: 12,
+          color: "#2e3e4c",
         }}
       >
-        <IconButton onClick={() => setIsOpen(!isOpen)} size="small">
-          {isOpen ? <ChevronLeftIcon /> : <MenuIcon />}
-        </IconButton>
+        <span>Actions</span>
+        <button
+          style={{
+            border: "1px solid #c5ccd5",
+            background: "#f4f6f8",
+            borderRadius: 3,
+            width: 20,
+            height: 20,
+            cursor: "pointer",
+            fontSize: 14,
+            color: "#586877",
+          }}
+        >
+          ▾
+        </button>
       </div>
 
-      <Divider />
-
-      <List disablePadding sx={{ mt: 1 }}>
+      <div style={{ padding: "8px 0 0" }}>
         {navItems.map((item, index) => (
           <NavLink
             key={index}
@@ -85,72 +70,34 @@ const Sidebar = () => {
             style={{ textDecoration: "none" }}
           >
             {({ isActive }) => (
-              <Tooltip
-                title={!isOpen ? item.label : ""}
-                placement="right"
-                arrow
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "8px 12px",
+                  margin: "0 6px 2px",
+                  borderRadius: 4,
+                  background: isActive ? "#dbe5f0" : "transparent",
+                  color: isActive ? "#1d3348" : "#3d5164",
+                  fontSize: 12,
+                  fontWeight: isActive ? 600 : 500,
+                  borderLeft: isActive ? "3px solid #5f7ea4" : "3px solid transparent",
+                }}
               >
-                <ListItemButton
-                  sx={{
-                    mx: 1,
-                    my: 0.5,
-                    borderRadius: 2,
-                    justifyContent: isOpen ? "flex-start" : "center",
-                    px: 2,
-                    position: "relative",
-
-                    // Background
-                    backgroundColor: isActive ? "#e1dfdd" : "transparent",
-                    color: "#333",
-
-                    "&:hover": {
-                      backgroundColor: "#edebe9",
-                    },
-
-                    // Right purple highlight bar
-                    "&::after": isActive
-                      ? {
-                        content: '""',
-                        position: "absolute",
-                        left: 0,
-                        top: 8,
-                        bottom: 8,
-                        width: "4px",
-                        borderRadius: "4px",
-                        backgroundColor: "#4f3597",
-                      }
-                      : {},
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: isOpen ? 2 : 0,
-                      justifyContent: "center",
-
-                      // Icon color logic
-                      color: isActive ? "#4f3597" : "#6b7280",
-                    }}
-                  >
-                    {item.icon}
-                  </ListItemIcon>
-
-                  {isOpen && (
-                    <ListItemText
-                      primary={item.label}
-                      primaryTypographyProps={{
-                        fontSize: "0.9rem",
-                        fontWeight: isActive ? 600 : 500,
-                        color: "#333",
-                      }}
-                    />
-                  )}
-                </ListItemButton>
-              </Tooltip>
+                <span>{item.label}</span>
+                {index === 0 && (
+                  <span style={{ color: "#f0ad4e", fontSize: 14 }}>★</span>
+                )}
+              </div>
             )}
           </NavLink>
         ))}
-      </List>
+      </div>
+
+      <div style={{ marginTop: "auto", borderTop: "1px solid #d0d7de", padding: 8 }}>
+        <div style={{ width: "100%", height: 10, background: "#dfe5eb", borderRadius: 3 }} />
+      </div>
     </aside>
   );
 };
