@@ -1,53 +1,78 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import {
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
+  Tooltip,
+  Divider,
+} from "@mui/material";
+import {
+  Dashboard as DashboardIcon,
+  PersonOutline as AccountIcon,
+  AssignmentOutlined as SubmissionIcon,
+  Autorenew as RenewalsIcon,
+  ReceiptLong as TransactionsIcon,
+  Edit as ChangePolicyIcon,
+  SettingsBackupRestore as ReinstateIcon,
+  Cancel as CancelIcon,
+  Menu as MenuIcon,
+  ChevronLeft as ChevronLeftIcon,
+} from "@mui/icons-material";
 
 const Sidebar = () => {
   const location = useLocation();
+  const [isOpen, setIsOpen] = React.useState(true);
 
   const menuItems = [
-    { label: "Activities", path: "/" },
-    { label: "Accounts", path: "/account" },
-    { label: "Submissions", path: "/new-submission" },
-    { label: "Renewals", path: "/renewals" },
-    { label: "Other Policy Transactions", path: "/transactions" },
+    { label: "Activities",               path: "/",                icon: <DashboardIcon /> },
+    { label: "Accounts",                 path: "/account",         icon: <AccountIcon /> },
+    { label: "Submissions",              path: "/new-submission",  icon: <SubmissionIcon /> },
+    { label: "Renewals",                 path: "/renewals",        icon: <RenewalsIcon /> },
+    { label: "Other Policy Transactions",path: "/transactions",    icon: <TransactionsIcon /> },
   ];
 
   const policySummaryMenu = [
-    { label: "Change Policy", path: "/policy-summary/change" },
-    { label: "Reinstate Policy", path: "/policy-summary/reinstate" },
-    { label: "Cancel Policy", path: "/policy-summary/cancel" },
+    { label: "Change Policy",   path: "/policy-summary/change",    icon: <ChangePolicyIcon /> },
+    { label: "Reinstate Policy",path: "/policy-summary/reinstate", icon: <ReinstateIcon /> },
+    { label: "Cancel Policy",   path: "/policy-summary/cancel",    icon: <CancelIcon /> },
   ];
 
-  const navItems = location.pathname.startsWith("/policy-summary") ? policySummaryMenu : menuItems;
+  const navItems = location.pathname.startsWith("/policy-summary")
+    ? policySummaryMenu
+    : menuItems;
 
   return (
     <aside
       style={{
-        width: 214,
-        background: "#e9edf1",
-        borderRight: "1px solid #d0d7de",
+        width: isOpen ? 240 : 64,
+        background: "#ffffff",
+        borderRight: "1px solid #e0e0e0",
+        transition: "width 0.25s ease",
         display: "flex",
         flexDirection: "column",
-        color: "#3d4c5d",
+        flexShrink: 0,
+        overflowX: "hidden",
       }}
     >
+      {/* Collapse toggle */}
       <div
         style={{
           display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "12px 12px 8px",
-          borderBottom: "1px solid #d0d7de",
-          background: "#edf1f5",
-          fontWeight: 700,
-          fontSize: 12,
-          color: "#2e3e4c",
+          justifyContent: isOpen ? "flex-end" : "center",
+          padding: "4px 4px 2px",
         }}
       >
-        
+        <IconButton onClick={() => setIsOpen(!isOpen)} size="small">
+          {isOpen ? <ChevronLeftIcon fontSize="small" /> : <MenuIcon fontSize="small" />}
+        </IconButton>
       </div>
 
-      <div style={{ padding: "8px 0 0" }}>
+      <Divider />
+
+      <List disablePadding sx={{ mt: 0.5 }}>
         {navItems.map((item, index) => (
           <NavLink
             key={index}
@@ -55,34 +80,69 @@ const Sidebar = () => {
             style={{ textDecoration: "none" }}
           >
             {({ isActive }) => (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "8px 12px",
-                  margin: "0 6px 2px",
-                  borderRadius: 4,
-                  background: isActive ? "#dbe5f0" : "transparent",
-                  color: isActive ? "#1d3348" : "#3d5164",
-                  fontSize: 12,
-                  fontWeight: isActive ? 600 : 500,
-                  borderLeft: isActive ? "3px solid #5f7ea4" : "3px solid transparent",
-                }}
+              <Tooltip
+                title={!isOpen ? item.label : ""}
+                placement="right"
+                arrow
               >
-                <span>{item.label}</span>
-                {index === 0 && (
-                  <span style={{ color: "#f0ad4e", fontSize: 14 }}>★</span>
-                )}
-              </div>
+                <ListItemButton
+                  sx={{
+                    mx: 1,
+                    my: 0.5,
+                    borderRadius: 1,
+                    justifyContent: isOpen ? "flex-start" : "center",
+                    px: isOpen ? 1.5 : 1,
+                    position: "relative",
+                    backgroundColor: isActive ? "#e8f0fa" : "transparent",
+                    color: "#333",
+                    "&:hover": {
+                      backgroundColor: "#f0f4fb",
+                    },
+                    "&::after": isActive
+                      ? {
+                          content: '""',
+                          position: "absolute",
+                          left: 0,
+                          top: 6,
+                          bottom: 6,
+                          width: 4,
+                          borderRadius: "0 3px 3px 0",
+                          backgroundColor: "#1f5fa6",
+                        }
+                      : {},
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: isOpen ? 1.5 : 0,
+                      justifyContent: "center",
+                      color: isActive ? "#1f5fa6" : "#6b7280",
+                      "& .MuiSvgIcon-root": { fontSize: 19 },
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+
+                  {isOpen && (
+                    <ListItemText
+                      primary={item.label}
+                      primaryTypographyProps={{
+                        fontSize: "0.8rem",
+                        fontWeight: isActive ? 700 : 500,
+                        color: isActive ? "#1f2d3d" : "#3d5164",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    />
+                  )}
+                </ListItemButton>
+              </Tooltip>
             )}
           </NavLink>
         ))}
-      </div>
-
-      <div style={{ marginTop: "auto", borderTop: "1px solid #d0d7de", padding: 8 }}>
-        <div style={{ width: "100%", height: 10, background: "#dfe5eb", borderRadius: 3 }} />
-      </div>
+      </List>
     </aside>
   );
 };

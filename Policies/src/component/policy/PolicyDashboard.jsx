@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import api from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 
@@ -121,6 +121,21 @@ const PolicyDashboard = () => {
   const rowsPerPage = 10;
   const navigate = useNavigate();
 
+  const summary = useMemo(() => {
+    if (!insuranceData.length) return null;
+    const byStatus = insuranceData.reduce((acc, p) => {
+      const s = (p.status || "").toString();
+      acc[s] = (acc[s] || 0) + 1;
+      return acc;
+    }, {});
+    return {
+      total: insuranceData.length,
+      inForce: byStatus["In Force"] || byStatus["InForce"] || 0,
+      underReview: byStatus["Under Review"] || byStatus["UnderReview"] || byStatus["Pending"] || 0,
+      cancelled: byStatus["Cancelled"] || byStatus["cancelled"] || 0,
+    };
+  }, [insuranceData]);
+
   useEffect(() => {
     const fetchPolicies = async () => {
       try {
@@ -153,6 +168,26 @@ const PolicyDashboard = () => {
 
   return (
     <div style={{ padding: "16px 18px 0", background: "#eef2f5", minHeight: "100%" }}>
+      {/* Stat tiles */}
+      {summary && (
+        <div style={{ display: "flex", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+          {[
+            { label: "Total Policies", count: summary.total,       accent: "#1f5fa6" },
+            { label: "In Force",       count: summary.inForce,     accent: "#2b7a3e" },
+            { label: "Under Review",   count: summary.underReview, accent: "#b97d00" },
+            { label: "Cancelled",      count: summary.cancelled,   accent: "#c62828" },
+          ].map(({ label, count, accent }) => (
+            <div key={label} style={{
+              background: "#fff", border: "1px solid #d7dbe2",
+              borderLeft: `4px solid ${accent}`, padding: "12px 20px", minWidth: 150,
+            }}>
+              <div style={{ fontSize: 22, fontWeight: 700, color: "#1f2d3d" }}>{count}</div>
+              <div style={{ fontSize: 11, color: "#6b7c93", marginTop: 2 }}>{label}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div
         style={{
           fontSize: 18,
