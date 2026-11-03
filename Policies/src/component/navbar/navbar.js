@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import "./navbar.css";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import { logout } from "../../utils/logout";
 
 export default function Navbar() {
@@ -27,104 +27,75 @@ export default function Navbar() {
         alignItems: "center",
         justifyContent: "space-between",
         minHeight: 52,
-        background: "#f3f3f5",
-        borderBottom: "1px solid #d0d5db",
-        boxShadow: "inset 0 -1px 0 #dadde2",
-        padding: "0 12px 0 10px",
+        background: "#4f3597",
+        padding: "0 16px 0 12px",
+        zIndex: 100,
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", flex: 1, minWidth: 0 }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            paddingRight: 18,
-            borderRight: "1px solid #d8dbe0",
-            minHeight: 40,
-            color: "#2b3f59",
-            fontWeight: 700,
-          }}
-        >
-          <div
-            style={{
-              width: 18,
-              height: 18,
-              borderRadius: 4,
-              background: "linear-gradient(135deg, #0b6ab7, #2ea3d8)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "white",
-              fontSize: 11,
-              fontWeight: 700,
-            }}
-          >
-            E
-          </div>
-          <span
-            style={{ fontSize: 13, cursor: "pointer" }}
-            onClick={() => navigate("/")}
-          >
-            ExpleoSurance Policy
-          </span>
-        </div>
-
-        <nav
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            flexWrap: "wrap",
-            marginLeft: 18,
-            fontSize: 12,
-            color: "#4f5f6e",
-          }}
-        >
-          {navItems.map((item) => (
-            <NavLink
-              key={item.label}
-              to={item.to}
-              style={({ isActive }) => ({
-                textDecoration: "none",
-                color: isActive ? "#1f3a5a" : "#3f5367",
-                padding: "8px 10px",
-                borderRadius: 4,
-                fontWeight: isActive ? 600 : 500,
-                background: isActive ? "#e8eef5" : "transparent",
-              })}
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
+      {/* Left: Title */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          paddingRight: 20,
+          minHeight: 40,
+          cursor: "pointer",
+        }}
+        onClick={() => navigate("/")}
+      >
+        <span style={{ fontSize: 14, fontWeight: 700, color: "#fff", whiteSpace: "nowrap" }}>
+          ExpleoSurance PolicyCenter
+        </span>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: 16 }}>
-        <div
-          style={{
-            width: 20,
-            height: 20,
-            borderRadius: 4,
-            border: "1px solid #ccd3dc",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#4e5d6d",
-            fontSize: 12,
-          }}
-        >
-          ⏰
+      {/* Center: Nav links */}
+      <nav
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 4,
+          flex: 1,
+          marginLeft: 16,
+          fontSize: 13,
+          overflowX: "auto",
+        }}
+      >
+        {navItems.map((item) => (
+          <NavLink
+            key={item.label}
+            to={item.to}
+            style={({ isActive }) => ({
+              textDecoration: "none",
+              color: isActive ? "#fff" : "rgba(255,255,255,0.8)",
+              padding: "6px 12px",
+              fontWeight: isActive ? 700 : 500,
+              background: isActive ? "rgba(255,255,255,0.18)" : "transparent",
+              borderBottom: isActive ? "2px solid #fff" : "2px solid transparent",
+              whiteSpace: "nowrap",
+              fontSize: 13,
+            })}
+          >
+            {item.label}
+          </NavLink>
+        ))}
+      </nav>
+
+      {/* Right: Notification + Logout */}
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <div style={{ position: "relative", cursor: "pointer" }}>
+          <NotificationsIcon style={{ color: "#fff", fontSize: 20 }} />
         </div>
         <button
           onClick={handleLogout}
           style={{
             background: "transparent",
             border: "none",
-            color: "#3d5367",
+            color: "#fff",
             fontWeight: 600,
             cursor: "pointer",
-            fontSize: 12,
+            fontSize: 13,
+            padding: "4px 0",
           }}
         >
           Logout
