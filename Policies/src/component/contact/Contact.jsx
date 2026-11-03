@@ -16,11 +16,13 @@ import {
   TableHead,
   TableRow,
   MenuItem,
-  Modal
+  Modal,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
-import { searchContact, createContact, getContact } from "./utils/contactAPI";
+import { searchContact, createContact, getContact, updateContact } from "./utils/contactAPI";
 import {
   createAccountForContact,
   searchAccountByContact,
@@ -164,6 +166,7 @@ export default function Contact() {
   const [showContact, setShowContact] = useState(false);
   const [selectedContact, setSelectedContact] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
+  const [snack, setSnack] = useState({ open: false, msg: "", severity: "success" });
   const navigate = useNavigate();
   const [contactDetails, setContactDetails] = useState([]);
 
@@ -359,7 +362,19 @@ export default function Contact() {
     setShowContact(false);
     setSelectedContact(null);
   };
-  const handleEditToggle = () => setIsEditMode((prev) => !prev);
+  const handleEditToggle = async () => {
+    if (isEditMode) {
+      // Save changes
+      try {
+        await updateContact(selectedContact._id, selectedContact);
+        setSnack({ open: true, msg: "Contact updated successfully.", severity: "success" });
+      } catch (err) {
+        setSnack({ open: true, msg: "Failed to update contact.", severity: "error" });
+        return; // Don't toggle if save failed
+      }
+    }
+    setIsEditMode((prev) => !prev);
+  };
 
   const handleContactChange = (e) => {
     setSelectedContact({ ...selectedContact, [e.target.name]: e.target.value });
@@ -370,656 +385,350 @@ export default function Contact() {
   };
 
   return (
-    <Box sx={{ width: "100%", maxWidth: 1200}}>
-      <Paper
-        elevation={4}
-        sx={{
-          p: 1,
-          borderRadius: 4,
-          background: "linear-gradient(135deg, #f8fafc 60%, #e0e7ef 100%)",
-        }}
-      >
-        <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
-          centered
-          sx={{ mb: 3 }}
-        >
-          <Tab
-            label="Search Contact"
-            sx={{ fontWeight: "bold", fontSize: 16 }}
-          />
-          <Tab
-            label="Create Contact"
-            sx={{ fontWeight: "bold", fontSize: 16 }}
-          />
-        </Tabs>
+    <div style={{ width: "100%", maxWidth: 1200 }}>
 
-        {/* -------------------- Search Contact Tab -------------------- */}
-        <TabPanel value={tabValue} index={0}>
-          <Paper sx={{ p: 2, maxWidth: 1000, mx: "auto" }} elevation={3}>
-            <Typography variant="h6" gutterBottom>
+      {/* GW Tab bar */}
+      <div style={{ borderBottom: "1px solid #d7dbe2", background: "#f8fafb", display: "flex", marginBottom: 14 }}>
+        {["Search Contact", "Create Contact"].map((label, idx) => (
+          <button key={idx} onClick={() => setTabValue(idx)}
+            style={{
+              padding: "7px 18px", fontSize: 12, fontWeight: tabValue === idx ? 700 : 500,
+              color: tabValue === idx ? "#1f5fa6" : "#4e5d6d",
+              background: "none", border: "none", borderBottom: tabValue === idx ? "2px solid #1f5fa6" : "2px solid transparent",
+              cursor: "pointer", marginBottom: -1
+            }}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* ─── SEARCH TAB ─── */}
+      {tabValue === 0 && (
+        <div>
+          {/* Search filters */}
+          <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+            <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
               Search Contact
-            </Typography>
-
-            {/* Search Form */}
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  margin="normal"
-                  label="First Name"
-                  name="firstName"
-                  value={searchData.firstName}
-                  onChange={handleSearchChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  margin="normal"
-                  label="Last Name"
-                  name="lastName"
-                  value={searchData.lastName}
-                  onChange={handleSearchChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  margin="normal"
-                  type="date"
-                  label="Date of Birth"
-                  name="dateOfBirth"
-                  value={searchData.dateOfBirth}
-                  onChange={handleSearchChange}
-                  InputLabelProps={{ shrink: true }}
-                  required
-                />
-              </Grid>
-              <Grid className="flex items-start">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSearch}
-                  className="self-center"
-                >
+            </div>
+            <div style={{ padding: "12px 14px" }}>
+              <div style={{ display: "flex", gap: 12, alignItems: "flex-end", flexWrap: "wrap" }}>
+                <div style={{ flex: "1 1 160px" }}>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>First Name</label>
+                  <input type="text" name="firstName" value={searchData.firstName} onChange={handleSearchChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", outline: "none" }} />
+                </div>
+                <div style={{ flex: "1 1 160px" }}>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Last Name</label>
+                  <input type="text" name="lastName" value={searchData.lastName} onChange={handleSearchChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", outline: "none" }} />
+                </div>
+                <div style={{ flex: "1 1 160px" }}>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Date of Birth</label>
+                  <input type="date" name="dateOfBirth" value={searchData.dateOfBirth} onChange={handleSearchChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                </div>
+                <button onClick={handleSearch}
+                  style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "6px 18px", fontSize: 12, fontWeight: 600, cursor: "pointer", alignSelf: "flex-end", marginBottom: 0 }}>
                   Search
-                </Button>
-              </Grid>
-            </Grid>
+                </button>
+              </div>
+            </div>
+          </div>
 
-            {/* Search Result Table */}
-            {contactDetails && contactDetails?.length > 0 && (
-            <TableContainer component={Paper} sx={{ mt: 3 }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Select</TableCell>
-                    <TableCell>Name</TableCell>
-                    {/* <TableCell>Last Name</TableCell> */}
-                    <TableCell>Email</TableCell>
-                    <TableCell>Phone</TableCell>
-                    <TableCell>DOB</TableCell>
-                    <TableCell>Gender</TableCell>
-                    {/* <TableCell>Organisation</TableCell>
-                    <TableCell>ProducerCode</TableCell> */}
-                    <TableCell>View</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredData
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((contact, index) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          <Button
-                            variant="contained"
-                            size="small"
-                            onClick={() => accountSearch(contact)}
-                          >
+          {/* Results table */}
+          {contactDetails && contactDetails.length > 0 && (
+            <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
+              <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span>Contacts</span>
+                <span style={{ fontWeight: 400, color: "#4c5d72", textTransform: "none" }}>{contactDetails.length} records</span>
+              </div>
+              <div style={{ overflow: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                  <thead>
+                    <tr>
+                      {["", "Name", "Email", "Phone", "DOB", "Gender", "View"].map((col) => (
+                        <th key={col} style={{ padding: "8px 10px", background: "#f6f7f8", borderBottom: "2px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left", fontWeight: 700, color: "#31475f", fontSize: 11 }}>
+                          {col}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((contact, index) => (
+                      <tr key={index} style={{ background: index % 2 === 0 ? "#f8fafb" : "#fff" }}>
+                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>
+                          <button onClick={() => accountSearch(contact)}
+                            style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "3px 10px", fontSize: 11, cursor: "pointer" }}>
                             Select
-                          </Button>
-                        </TableCell>
-                        <TableCell>{contact.firstName} {contact.lastName}</TableCell>
-                        {/* <TableCell>{contact.lastName}</TableCell> */}
-                        <TableCell>{contact.email}</TableCell>
-                        <TableCell>{contact.phone}</TableCell>
-                        <TableCell>{formatDate(contact.dateOfBirth)}</TableCell>
-                        <TableCell>{contact.gender}</TableCell>
-                        {/* <TableCell>{contact.organization}</TableCell>
-                        <TableCell>{contact.producerCode}</TableCell> */}
-                        <TableCell>
-                          <VisibilityIcon
-                            color="primary"
-                            onClick={() => handleView(contact)} // pass contact if needed
-                            style={{ cursor: "pointer" }} // optional: makes it clickable
-                          />
-                        </TableCell>
-                      </TableRow>
+                          </button>
+                        </td>
+                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{contact.firstName} {contact.lastName}</td>
+                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{contact.email}</td>
+                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{contact.phone}</td>
+                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{formatDate(contact.dateOfBirth)}</td>
+                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{contact.gender}</td>
+                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee", textAlign: "center" }}>
+                          <VisibilityIcon onClick={() => handleView(contact)} style={{ cursor: "pointer", fontSize: 16, color: "#1f5fa6" }} />
+                        </td>
+                      </tr>
                     ))}
-                </TableBody>
-              </Table>
-              {/* Pagination Controls */}
-              <TablePagination
-                component="div"
-                count={contactDetails?.length}
-                page={page}
-                onPageChange={handleChangePage}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                rowsPerPageOptions={[5, 10, 25]}
-              />
-            </TableContainer>
+                  </tbody>
+                </table>
+              </div>
+              <div style={{ padding: "8px 12px", borderTop: "1px solid #d7dbe2", background: "#f8fafb", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, color: "#4c5d72" }}>
+                <span>{contactDetails.length} total</span>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span>Rows:</span>
+                  <select value={rowsPerPage} onChange={handleChangeRowsPerPage}
+                    style={{ border: "1px solid #c5ccd5", borderRadius: 2, padding: "2px 4px", fontSize: 12 }}>
+                    <option value={5}>5</option><option value={10}>10</option><option value={25}>25</option>
+                  </select>
+                  <button onClick={() => handleChangePage(null, page - 1)} disabled={page === 0}
+                    style={{ background: page === 0 ? "#f4f6f8" : "#fff", border: "1px solid #c5ccd5", borderRadius: 2, padding: "2px 8px", fontSize: 12, cursor: page === 0 ? "default" : "pointer" }}>‹</button>
+                  <span>{page + 1} / {Math.max(1, Math.ceil(contactDetails.length / rowsPerPage))}</span>
+                  <button onClick={() => handleChangePage(null, page + 1)} disabled={(page + 1) * rowsPerPage >= contactDetails.length}
+                    style={{ background: (page + 1) * rowsPerPage >= contactDetails.length ? "#f4f6f8" : "#fff", border: "1px solid #c5ccd5", borderRadius: 2, padding: "2px 8px", fontSize: 12, cursor: (page + 1) * rowsPerPage >= contactDetails.length ? "default" : "pointer" }}>›</button>
+                </div>
+              </div>
+            </div>
           )}
-          </Paper>
-        </TabPanel>
+        </div>
+      )}
 
-        {/* -------------------- view Contact Tab --------------------- */}
-        {showContact && selectedContact && (
-          <Modal open={showContact} onClose={handleClose} className="mt-12">
-            <Box
-              sx={{
-                width: "100%",
-                maxWidth: 1100,
-                mx: "auto",
-                p: 4,
-                backgroundColor: "#fff",
-                borderRadius: 3,
-                boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-              }}
-            >
-              <Typography variant="h5" gutterBottom>
-                View / Edit Contact
-              </Typography>
+      {/* ─── CREATE TAB ─── */}
+      {tabValue === 1 && (
+        <div>
+          <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+            <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+              Personal Information
+            </div>
+            <div style={{ padding: "12px 14px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px 20px" }}>
+                {[
+                  { label: "First Name *", name: "firstName", type: "text" },
+                  { label: "Last Name *", name: "lastName", type: "text" },
+                  { label: "Date of Birth *", name: "dateOfBirth", type: "date" },
+                ].map(({ label, name, type }) => (
+                  <div key={name}>
+                    <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>{label}</label>
+                    <input type={type} name={name} value={formData[name]} onChange={handleChange}
+                      style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                  </div>
+                ))}
+                <div>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Gender</label>
+                  <select name="gender" value={formData.gender} onChange={handleChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Email</label>
+                  <input type="email" name="email" value={formData.email} onChange={handleChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Phone</label>
+                  <input type="text" name="phone" value={formData.phone} onChange={handleChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                </div>
+              </div>
+            </div>
+          </div>
 
-              <Grid container spacing={3}>
-                <Grid size={6}>
-                  <TextField
-                    label="First Name"
-                    name="firstName"
-                    value={selectedContact.firstName || ""}
-                    onChange={handleContactChange}
-                    fullWidth
-                    InputProps={{ readOnly: !isEditMode }}
-                  />
-                </Grid>
-                <Grid size={6}>
-                  <TextField
-                    fullWidth
-                    label="Last Name"
-                    name="lastName"
-                    value={selectedContact.lastName || ""}
-                    onChange={handleContactChange}
-                    InputProps={{ readOnly: !isEditMode }}
-                  />
-                </Grid>
+          <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+            <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+              Address
+            </div>
+            <div style={{ padding: "12px 14px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px 20px" }}>
+                <div>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Address</label>
+                  <input type="text" name="address" value={formData.address} onChange={handleChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Street</label>
+                  <input type="text" name="street" value={formData.street} onChange={handleChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Country</label>
+                  <select name="country" value={formData.country} onChange={handleCountryChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
+                    <option value="">Select Country</option>
+                    {countries.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>State</label>
+                  <select name="state" value={formData.state} onChange={handleStateChange} disabled={!states.length}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: states.length ? "#fff" : "#f8fafb" }}>
+                    <option value="">Select State</option>
+                    {states.map((s) => <option key={s.code} value={s.code}>{s.name}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>City</label>
+                  <select name="city" value={formData.city} onChange={handleCityChange} disabled={!cities.length}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: cities.length ? "#fff" : "#f8fafb" }}>
+                    <option value="">Select City</option>
+                    {cities.map((ct) => <option key={ct} value={ct}>{ct}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Zip Code</label>
+                  <select name="zipCode" value={formData.zipCode} onChange={handleChange} disabled={!zips.length}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: zips.length ? "#fff" : "#f8fafb" }}>
+                    <option value="">Select Zip</option>
+                    {zips.map((z) => <option key={z} value={z}>{z}</option>)}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                {/* Row 2 */}
-                <Grid size={6}>
-                  <TextField
-                    fullWidth
-                    type="date"
-                    label="Date of Birth *"
-                    name="dateOfBirth"
-                    value={formatDateForInput(selectedContact.dateOfBirth) || ""}
-                    onChange={handleContactChange}
-                    InputLabelProps={{ shrink: true }}
-                    InputProps={{ readOnly: !isEditMode }}
-                  />
-                </Grid>
-                <Grid size={6}>
-                  <TextField
-                    select
-                    fullWidth
-                    label="Gender"
-                    name="gender"
-                    value={selectedContact.gender || ""}
-                    onChange={handleContactChange}
-                    disabled={!isEditMode}
-                    InputLabelProps={{ shrink: true }}
-                  >
-                    <MenuItem value="">Select Gender</MenuItem>
+          <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+            <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+              Organization
+            </div>
+            <div style={{ padding: "12px 14px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 20px", maxWidth: 520 }}>
+                <div>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Organization</label>
+                  <select name="organization" value={formData.organization} onChange={handleChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
+                    <option value="Expleo">Expleo</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Producer Code</label>
+                  <select name="producerCode" value={formData.producerCode} onChange={handleChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
+                    <option value="EXP-INS-01">EXP-INS-01</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "flex-end", paddingBottom: 16 }}>
+            <button onClick={handleCreate}
+              style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "6px 20px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+              Create Contact
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ─── SNACKBAR ─── */}
+      <Snackbar
+        open={snack.open}
+        autoHideDuration={4000}
+        onClose={() => setSnack((s) => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert onClose={() => setSnack((s) => ({ ...s, open: false }))} severity={snack.severity} sx={{ width: "100%" }}>
+          {snack.msg}
+        </Alert>
+      </Snackbar>
+
+      {/* ─── VIEW/EDIT MODAL ─── */}
+      {showContact && selectedContact && (
+        <Modal open={showContact} onClose={handleClose} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Box sx={{ width: "100%", maxWidth: 900, mx: 2, background: "#fff", border: "1px solid #d7dbe2", borderRadius: 1, outline: "none", maxHeight: "90vh", overflowY: "auto" }}>
+            <div style={{ background: "#f3f6f9", padding: "8px 14px", borderBottom: "1px solid #d7dbe2", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#2e3e4c" }}>VIEW / EDIT CONTACT</span>
+              <button onClick={handleClose} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: "#4e5d6d" }}>✕</button>
+            </div>
+            <div style={{ padding: 16 }}>
+              <Grid container spacing={2}>
+                {[
+                  { label: "First Name", name: "firstName", type: "text" },
+                  { label: "Last Name", name: "lastName", type: "text" },
+                  { label: "Date of Birth", name: "dateOfBirth", type: "date", isDate: true },
+                  { label: "Email", name: "email", type: "email" },
+                  { label: "Phone", name: "phone", type: "text" },
+                  { label: "Address", name: "address", type: "text" },
+                  { label: "Street", name: "street", type: "text" },
+                ].map(({ label, name, type, isDate }) => (
+                  <Grid size={6} key={name}>
+                    <TextField size="small" fullWidth label={label} name={name}
+                      type={type}
+                      value={isDate ? (formatDateForInput(selectedContact[name]) || "") : (selectedContact[name] || "")}
+                      onChange={handleContactChange}
+                      InputProps={{ readOnly: !isEditMode }}
+                      InputLabelProps={type === "date" ? { shrink: true } : undefined}
+                    />
+                  </Grid>
+                ))}
+                <Grid size={4}>
+                  <TextField select size="small" fullWidth label="Gender" name="gender"
+                    value={selectedContact.gender || ""} onChange={handleContactChange} disabled={!isEditMode} InputLabelProps={{ shrink: true }}>
+                    <MenuItem value="">Select</MenuItem>
                     <MenuItem value="Male">Male</MenuItem>
                     <MenuItem value="Female">Female</MenuItem>
                   </TextField>
                 </Grid>
-
-                {/* Row 3 */}
-                <Grid size={6}>
-                  <TextField
-                    fullWidth
-                    label="Email"
-                    name="email"
-                    value={selectedContact.email || ""}
-                    onChange={handleContactChange}
-                    InputProps={{ readOnly: !isEditMode }}
-                  />
-                </Grid>
-                <Grid size={6}>
-                  <TextField
-                    fullWidth
-                    label="Phone"
-                    name="phone"
-                    value={selectedContact.phone || ""}
-                    onChange={handleContactChange}
-                    InputProps={{ readOnly: !isEditMode }}
-                  />
-                </Grid>
-
-                {/* Row 4 */}
-                <Grid size={6}>
-                  <TextField
-                    fullWidth
-                    label="Address"
-                    name="address"
-                    value={selectedContact.address || ""}
-                    onChange={handleContactChange}
-                    InputProps={{ readOnly: !isEditMode }}
-                  />
-                </Grid>
-                <Grid size={6}>
-                  <TextField
-                    fullWidth
-                    label="Street"
-                    name="street"
-                    value={selectedContact.street || ""}
-                    onChange={handleContactChange}
-                    InputProps={{ readOnly: !isEditMode }}
-                  />
-                </Grid>
-
-                {/* Row 5: Country */}
                 <Grid size={4}>
-                  <TextField
-                    select
-                    fullWidth
-                    label="Country"
-                    name="country"
-                    value={selectedContact.country || ""}
-                    onChange={handleModalCountryChange}
-                    disabled={!isEditMode}
-                    InputLabelProps={{ shrink: true }}
-                  >
+                  <TextField select size="small" fullWidth label="Country" name="country"
+                    value={selectedContact.country || ""} onChange={handleModalCountryChange} disabled={!isEditMode} InputLabelProps={{ shrink: true }}>
                     <MenuItem value="">Select Country</MenuItem>
-                    {countries.map((c) => (
-                      <MenuItem key={c.code} value={c.code}>
-                        {c.name}
-                      </MenuItem>
-                    ))}
+                    {countries.map((c) => <MenuItem key={c.code} value={c.code}>{c.name}</MenuItem>)}
                   </TextField>
                 </Grid>
-
-                {/* Row 5: State */}
                 <Grid size={4}>
-                  <TextField
-                    select
-                    fullWidth
-                    label="State"
-                    name="state"
-                    value={selectedContact.state || ""}
-                    onChange={handleModalStateChange}
-                    disabled={!isEditMode || !modalStates.length}
-                    InputLabelProps={{ shrink: true }}
-                  >
+                  <TextField select size="small" fullWidth label="State" name="state"
+                    value={selectedContact.state || ""} onChange={handleModalStateChange} disabled={!isEditMode || !modalStates.length} InputLabelProps={{ shrink: true }}>
                     <MenuItem value="">Select State</MenuItem>
-                    {modalStates.map((s) => (
-                      <MenuItem key={s.code} value={s.code}>
-                        {s.name}
-                      </MenuItem>
-                    ))}
+                    {modalStates.map((s) => <MenuItem key={s.code} value={s.code}>{s.name}</MenuItem>)}
                   </TextField>
                 </Grid>
-
-                {/* Row 5: City */}
                 <Grid size={4}>
-                  <TextField
-                    select
-                    fullWidth
-                    label="City"
-                    name="city"
-                    value={selectedContact.city || ""}
-                    onChange={handleModalCityChange}
-                    disabled={!isEditMode || !modalCities.length}
-                    InputLabelProps={{ shrink: true }}
-                  >
+                  <TextField select size="small" fullWidth label="City" name="city"
+                    value={selectedContact.city || ""} onChange={handleModalCityChange} disabled={!isEditMode || !modalCities.length} InputLabelProps={{ shrink: true }}>
                     <MenuItem value="">Select City</MenuItem>
-                    {modalCities.map((ct) => (
-                      <MenuItem key={ct} value={ct}>
-                        {ct}
-                      </MenuItem>
-                    ))}
+                    {modalCities.map((ct) => <MenuItem key={ct} value={ct}>{ct}</MenuItem>)}
                   </TextField>
                 </Grid>
-
-                {/* Row 6: Zip Code */}
                 <Grid size={4}>
-                  <TextField
-                    select
-                    fullWidth
-                    label="Zip Code"
-                    name="zipCode"
-                    value={selectedContact.zipCode || ""}
-                    onChange={handleContactChange}
-                    disabled={!isEditMode || !modalZips.length}
-                    InputLabelProps={{ shrink: true }}
-                  >
+                  <TextField select size="small" fullWidth label="Zip Code" name="zipCode"
+                    value={selectedContact.zipCode || ""} onChange={handleContactChange} disabled={!isEditMode || !modalZips.length} InputLabelProps={{ shrink: true }}>
                     <MenuItem value="">Select Zip</MenuItem>
-                    {modalZips.map((z) => (
-                      <MenuItem key={z} value={z}>
-                        {z}
-                      </MenuItem>
-                    ))}
+                    {modalZips.map((z) => <MenuItem key={z} value={z}>{z}</MenuItem>)}
                   </TextField>
                 </Grid>
-
-                {/* Row 6: Organization */}
                 <Grid size={4}>
-                  <TextField
-                    select
-                    fullWidth
-                    label="Organization"
-                    name="organization"
-                    value={selectedContact.organization || ""}
-                    onChange={handleContactChange}
-                    disabled={!isEditMode}
-                    InputLabelProps={{ shrink: true }}
-                  >
+                  <TextField select size="small" fullWidth label="Organization" name="organization"
+                    value={selectedContact.organization || ""} onChange={handleContactChange} disabled={!isEditMode} InputLabelProps={{ shrink: true }}>
                     <MenuItem value="Expleo">Expleo</MenuItem>
                     <MenuItem value="Other">Other</MenuItem>
                   </TextField>
                 </Grid>
-
-                {/* Row 6: Producer Code */}
                 <Grid size={4}>
-                  <TextField
-                    select
-                    fullWidth
-                    label="Producer Code"
-                    name="producerCode"
-                    value={selectedContact.producerCode || ""}
-                    onChange={handleContactChange}
-                    disabled={!isEditMode}
-                    InputLabelProps={{ shrink: true }}
-                  >
+                  <TextField select size="small" fullWidth label="Producer Code" name="producerCode"
+                    value={selectedContact.producerCode || ""} onChange={handleContactChange} disabled={!isEditMode} InputLabelProps={{ shrink: true }}>
                     <MenuItem value="EXP-INS-01">EXP-INS-01</MenuItem>
                   </TextField>
                 </Grid>
               </Grid>
-
-              {/* Buttons Section */}
-              <Box sx={{ textAlign: "right", mt: 4 }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleEditToggle}
-                  sx={{ mr: 2 }}
-                >
-                  {isEditMode ? "Update" : "Edit"}
-                </Button>
-
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleOk}
-                >
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16, paddingTop: 12, borderTop: "1px solid #e3e8ee" }}>
+                <button onClick={handleOk}
+                  style={{ background: "#f4f6f8", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 14px", fontSize: 12, color: "#4e5d6d", cursor: "pointer" }}>
                   OK
-                </Button>
-              </Box>
-            </Box>
-          </Modal>
-        )}
-
-        {/* -------------------- Create Contact Tab -------------------- */}
-        <TabPanel value={tabValue} index={1}>
-          <Box
-            sx={{
-              width: "100%",
-              maxWidth: 1200,
-              mx: "auto",
-              p: 4,
-              backgroundColor: "#fff",
-              borderRadius: 3,
-              boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-            }}
-          >
-            <Typography
-              variant="h5"
-              fontWeight={700}
-              mb={3}
-              color="#2c3e50"
-              textAlign="center"
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 1,
-              }}
-            >
-              <span style={{ fontSize: "1.5rem", color: "#1976d2" }}>➕</span>
-              Create New Contact
-            </Typography>
-
-            <Grid container spacing={3}>
-              {/* Row 1 */}
-              <Grid size={6}>
-                <TextField
-                  fullWidth
-                  label="First Name"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid size={6}>
-                <TextField
-                  fullWidth
-                  label="Last Name"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-
-              {/* Row 2 */}
-              <Grid size={6}>
-                <TextField
-                  fullWidth
-                  type="date"
-                  label="Date of Birth *"
-                  name="dateOfBirth"
-                  value={formData.dateOfBirth}
-                  onChange={handleChange}
-                  InputLabelProps={{ shrink: true }}
-                  required
-                />
-              </Grid>
-              <Grid size={6}>
-                <TextField
-                  select
-                  fullWidth
-                  label="Gender"
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                >
-                  <MenuItem value="Male">Male</MenuItem>
-                  <MenuItem value="Female">Female</MenuItem>
-                </TextField>
-              </Grid>
-
-              {/* Row 3 */}
-              <Grid size={6}>
-                <TextField
-                  fullWidth
-                  label="Email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid size={6}>
-                <TextField
-                  fullWidth
-                  label="Phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                />
-              </Grid>
-
-              {/* Row 4 */}
-              <Grid size={6}>
-                <TextField
-                  fullWidth
-                  label="Address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                />
-              </Grid>
-
-              {/* Row 5: Street + Country */}
-              <Grid size={6}>
-                <TextField
-                  fullWidth
-                  label="Street"
-                  name="street"
-                  value={formData.street}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid size={4}>
-                <TextField
-                  select
-                  fullWidth
-                  label="Country"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleCountryChange}
-                >
-                  <MenuItem value="">Select Country</MenuItem>
-                  {countries.map((c) => (
-                    <MenuItem key={c.code} value={c.code}>
-                      {c.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-
-              <Grid size={4}>
-                <TextField
-                  select
-                  fullWidth
-                  label="State"
-                  name="state"
-                  value={formData.state}
-                  onChange={handleStateChange}
-                  disabled={!states.length}
-                >
-                  <MenuItem value="">Select State</MenuItem>
-                  {states.map((s) => (
-                    <MenuItem key={s.code} value={s.code}>
-                      {s.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-
-              {/* Row 6: City + State (dependent) */}
-              <Grid size={4}>
-                <TextField
-                  select
-                  fullWidth
-                  label="City"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleCityChange}
-                  disabled={!cities.length}
-                >
-                  <MenuItem value="">Select City</MenuItem>
-                  {cities.map((ct) => (
-                    <MenuItem key={ct} value={ct}>
-                      {ct}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              
-
-              {/* Row 7: Zip Code + Organization */}
-              <Grid size={4}>
-                <TextField
-                  select
-                  fullWidth
-                  label="Zip Code"
-                  name="zipCode"
-                  value={formData.zipCode}
-                  onChange={handleChange}
-                  disabled={!zips.length}
-                >
-                  <MenuItem value="">Select Zip</MenuItem>
-                  {zips.map((z) => (
-                    <MenuItem key={z} value={z}>
-                      {z}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid size={4}>
-                <TextField
-                  select
-                  fullWidth
-                  label="Organization"
-                  name="organization"
-                  value={formData.organization}
-                  onChange={handleChange}
-                >
-                  <MenuItem value="Expleo">Expleo</MenuItem>
-                  <MenuItem value="Other">Other</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid size={4}>
-                <TextField
-                  select
-                  fullWidth
-                  label="Producer Code"
-                  name="producerCode"
-                  value={formData.producerCode}
-                  onChange={handleChange}
-                >
-                  <MenuItem value="EXP-INS-01">EXP-INS-01</MenuItem>
-                </TextField>
-              </Grid>
-            </Grid>
-
-            <Box sx={{ textAlign: "center", mt: 4 }}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleCreate}
-                sx={{
-                  px: 6,
-                  py: 1.5,
-                  borderRadius: 2,
-                  fontWeight: 600,
-                  boxShadow: "0px 4px 10px rgba(25, 118, 210, 0.3)",
-                  "&:hover": {
-                    backgroundColor: "#1565c0",
-                    boxShadow: "0px 6px 12px rgba(25, 118, 210, 0.4)",
-                  },
-                }}
-              >
-                Create Contact
-              </Button>
-            </Box>
+                </button>
+                <button onClick={handleEditToggle}
+                  style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "5px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                  {isEditMode ? "Update" : "Edit"}
+                </button>
+              </div>
+            </div>
           </Box>
-        </TabPanel>
-      </Paper>
-    </Box>
+        </Modal>
+      )}
+    </div>
   );
 }

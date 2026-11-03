@@ -1,15 +1,3 @@
-import {
-  Typography,
-  Box,
-  Button,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableContainer,
-} from "@mui/material";
 import axios from "axios";
 import { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
@@ -22,29 +10,9 @@ const Invoice = () => {
   const [totalCost, setTotalCost] = useState(0);
   const [rows, setRows] = useState([]);
 
-  // const API_BASE_URL = "http://10.192.190.158:5000/api/billing";
   const API_BASE_URL = "http://10.192.190.158:5000";
 
-  const { policyNumber } = useParams(); // ✅ get from URL
-
-  // useEffect(() => {
-  //   const getInvoice = async () => {
-  //     try {
-  //       const res = await axios.get(
-  //         `${API_BASE_URL}/getInvoiceByPolicyNumber/${policyNumber}`
-  //       );
-  //       setInvoiceData(res.data);
-  //       console.log("invoice", res.data);
-  //     } catch (error) {
-  //       console.error("Error:", error);
-  //     }
-  //   };
-
-  //   if (policyNumber) {
-  //     getInvoice();
-  //   }
-  // }, [policyNumber]);
-
+  const { policyNumber } = useParams(); // get from URL
 
   useEffect(() => {
     const getPolicyByNumber = async () => {
@@ -109,7 +77,7 @@ const Invoice = () => {
     };
 
     return Array.from({ length: periods }, (_, i) => {
-      // ✅ Bill Date based on schedule gap
+      // Bill Date based on schedule gap
       const billDate = new Date(effectiveDate);
       billDate.setMonth(billDate.getMonth() + (monthGap * (i + 1)));
 
@@ -117,7 +85,7 @@ const Invoice = () => {
       const dueDate = new Date(billDate);
       dueDate.setDate(dueDate.getDate() + 3);
 
-      // ✅ Status Logic
+      // Status Logic
       let status = "Planned";
       if (currentDate > dueDate) status = "Overdue";
       else if (currentDate >= billDate) status = "Billed";
@@ -155,284 +123,45 @@ const Invoice = () => {
     []
   );
 
-
   return (
-    // <Box sx={{ maxWidth: 1250, mx: "auto", p: 4 }}>
-    //   <Paper
-    //     elevation={0}
-    //     sx={{
-    //       p: 2,
-    //       mb: 4,
-    //       background: "#e1bee7",
-    //       borderRadius: 2,
-    //       border: "1px solid #d0e4ff",
-    //       fontSize: "14px",
-    //       textAlign: "center",
-    //     }}
-    //   >
-    //     <Typography variant="h6">ABC General Insurance Ltd.</Typography>
-    //     <Typography>
-    //       No 12 Mount Road, Chennai. GSTIN:33ABCDE1234F1Z5
-    //     </Typography>
-    //     <Typography>Phone: 044-12345678</Typography>
-    //   </Paper>
-
-    //   <Paper
-    //     className="grid grid-cols-2 gap-8"
-    //     sx={{
-    //       p: 3,
-    //       background: "#f5f0ff", // light purple background
-    //       borderRadius: 2,
-    //       border: "1px solid #d6ccff", // light purple border
-    //     }}
-    //   >
-    //     {/* Left Section */}
-    //     <div className="space-y-3 border-r pr-6 border-purple-200">
-    //       <div className="flex items-center">
-    //         <Typography fontWeight="bold" className="w-44">
-    //           Policy Number
-    //         </Typography>
-    //         <Typography className="mx-2">:</Typography>
-    //         <Typography>{invoiceData?.invoice?.policyNumber}</Typography>
-    //       </div>
-
-    //       <div className="flex items-center">
-    //         <Typography fontWeight="bold" className="w-44">
-    //           Product Type
-    //         </Typography>
-    //         <Typography className="mx-2">:</Typography>
-    //         <Typography>{invoiceData?.invoice?.productType}</Typography>
-    //       </div>
-
-    //       <div className="flex items-center">
-    //         <Typography fontWeight="bold" className="w-44">
-    //           Billing Method
-    //         </Typography>
-    //         <Typography className="mx-2">:</Typography>
-    //         <Typography>{invoiceData?.invoice?.billingMethod}</Typography>
-    //       </div>
-
-    //       <div className="flex items-center">
-    //         <Typography fontWeight="bold" className="w-44">
-    //           Payment Schedule
-    //         </Typography>
-    //         <Typography className="mx-2">:</Typography>
-    //         <Typography>{invoiceData?.invoice?.paymentSchedule}</Typography>
-    //       </div>
-    //     </div>
-
-    //     {/* Right Section */}
-    //     <div className="space-y-3 pl-6">
-    //       <div className="flex items-center">
-    //         <Typography fontWeight="bold" className="w-44">
-    //           Total Premium
-    //         </Typography>
-    //         <Typography className="mx-2">:</Typography>
-    //         <Typography>₹ {invoiceData?.invoice?.totalPremium}</Typography>
-    //       </div>
-
-    //       <div className="flex items-center">
-    //         <Typography fontWeight="bold" className="w-44">
-    //           Status
-    //         </Typography>
-    //         <Typography className="mx-2">:</Typography>
-    //         <Typography>{invoiceData?.invoice?.status}</Typography>
-    //       </div>
-
-    //       <div className="flex items-center">
-    //         <Typography fontWeight="bold" className="w-44">
-    //           Payment Reference
-    //         </Typography>
-    //         <Typography className="mx-2">:</Typography>
-    //         <Typography>{invoiceData?.invoice?.paymentRef}</Typography>
-    //       </div>
-
-    //       <div className="flex items-center">
-    //         <Typography fontWeight="bold" className="w-44">
-    //           Policy ID
-    //         </Typography>
-    //         <Typography className="mx-2">:</Typography>
-    //         <Typography>{invoiceData?.invoice?.policyId}</Typography>
-    //       </div>
-    //     </div>
-    //   </Paper>
-    //   <Paper sx={{ mt: 3, border: "1px solid #e9d5ff" }}>
-    //     <TableContainer sx={{ maxHeight: 200 }}>
-    //       <Table stickyHeader>
-    //         <TableHead>
-    //           <TableRow sx={{ background: "#f3e8ff" }}>
-    //             <TableCell>
-    //               <b>Policy Number</b>
-    //             </TableCell>
-    //             <TableCell>
-    //               <b>Product Type</b>
-    //             </TableCell>
-    //             <TableCell>
-    //               <b>Effective Date</b>
-    //             </TableCell>
-    //             <TableCell>
-    //               <b>Expiry Date</b>
-    //             </TableCell>
-    //             <TableCell>
-    //               <b>Status</b>
-    //             </TableCell>
-    //           </TableRow>
-    //         </TableHead>
-
-    //         <TableBody>
-    //           <TableRow>
-    //             <TableCell>{invoiceData?.invoice?.policyNumber}</TableCell>
-    //             <TableCell>{invoiceData?.invoice?.productType}</TableCell>
-    //             <TableCell>
-    //               {new Date(
-    //                 invoiceData?.invoice?.effectiveDate
-    //               ).toLocaleDateString()}
-    //             </TableCell>
-    //             <TableCell>
-    //               {new Date(
-    //                 invoiceData?.invoice?.expiryDate
-    //               ).toLocaleDateString()}
-    //             </TableCell>
-    //             <TableCell>{invoiceData?.invoice?.status}</TableCell>
-    //           </TableRow>
-    //         </TableBody>
-    //       </Table>
-    //     </TableContainer>
-    //   </Paper>
-    //   <Paper sx={{ mt: 4, border: "1px solid #e9d5ff" }}>
-    //     <Typography
-    //       sx={{
-    //         textAlign: "center",
-    //         fontWeight: "bold",
-    //         background: "#f3e8ff",
-    //         p: 1,
-    //       }}
-    //     >
-    //       SCHEDULE OF PREMIUM
-    //     </Typography>
-    //     <TableContainer sx={{ maxHeight: 200 }}>
-    //       <Table stickyHeader>
-    //         <TableBody>
-    //           <TableRow>
-    //             <TableCell>Base Premium</TableCell>
-    //             <TableCell align="right">
-    //               ₹ {invoiceData?.invoice?.totalPremium}
-    //             </TableCell>
-    //           </TableRow>
-
-    //           <TableRow>
-    //             <TableCell>GST</TableCell>
-    //             <TableCell align="right">
-    //               ₹ {invoiceData?.invoice?.taxes}
-    //             </TableCell>
-    //           </TableRow>
-
-    //           <TableRow sx={{ background: "#f9f5ff" }}>
-    //             <TableCell>
-    //               <b>Total Cost</b>
-    //             </TableCell>
-    //             <TableCell align="right">
-    //               <b>₹ {invoiceData?.invoice?.totalCost}</b>
-    //             </TableCell>
-    //           </TableRow>
-    //         </TableBody>
-    //       </Table>
-    //     </TableContainer>
-    //   </Paper>
-    //   <Paper sx={{ mt: 4, border: "1px solid #e9d5ff" }}>
-    //     <TableContainer sx={{ maxHeight: 200 }}>
-    //       <Table stickyHeader>
-    //         <TableHead>
-    //           <TableRow sx={{ background: "#f3e8ff" }}>
-    //             <TableCell>
-    //               <b>Coverage</b>
-    //             </TableCell>
-    //           </TableRow>
-    //         </TableHead>
-
-    //         <TableBody>
-    //           {invoiceData?.invoice?.coverages?.map((c, i) => (
-    //             <TableRow key={i}>
-    //               <TableCell>{c}</TableCell>
-    //             </TableRow>
-    //           ))}
-    //         </TableBody>
-    //       </Table>
-    //     </TableContainer>
-    //   </Paper>
-    // </Box>
-    <div style={{ padding: "20px" }}>
-      <TableContainer component={Paper} elevation={3} style={{ borderRadius: "8px" }}>
-        <Table>
-          <TableHead>
-            <TableRow style={{ backgroundColor: "black" }}>
-              <TableCell
-                sx={{
-                  color: "white",
-                  backgroundColor: "#4527a0",
-                  fontWeight: 700,
-                  padding: "12px",
-                  textAlign: "center",
-                }}
-              >
-                Pay
-              </TableCell>
+    <div style={{ padding: "16px 18px", background: "#eef2f5", minHeight: "100%" }}>
+      <div style={{ fontSize: 16, fontWeight: 700, color: "#2d3e52", marginBottom: 12 }}>Invoice / Payment Schedule</div>
+      <div style={{ border: "1px solid #d7dbe2", background: "#fff", overflow: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+          <thead>
+            <tr>
+              <th style={{ padding: "8px 10px", background: "#f6f7f8", borderBottom: "2px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#31475f", width: 80 }}>Pay</th>
               {columns.map((col) => (
-                <TableCell
-                  key={col.key}
-                  style={{
-                    color: "white",
-                    backgroundColor: "#4527a0",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                    padding: "12px",
-                    textAlign: "center",
-                  }}
-                  onClick={() => sortData(col.key)}
-                >
-                  {col.label}{" "}
-                </TableCell>
+                <th key={col.key} style={{ padding: "8px 10px", background: "#f6f7f8", borderBottom: "2px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#31475f" }}>{col.label}</th>
               ))}
-
-
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-
-            {rows.map((row) => (
-              <TableRow key={row.period}>
-                <TableCell sx={{ textAlign: "center", padding: "12px" }}>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    onClick={() => handlePay(row.id)}
-                    disabled={row.status === "Paid"}
-                    sx={{
-                      backgroundColor: row.status === "Paid" ? "#e0e0e0" : "#1565c0",
-                      color: row.status === "Paid" ? "#666" : "#fff",
-                      fontWeight: 600,
-                      "&:hover": {
-                        backgroundColor: row.status === "Paid" ? "#e0e0e0" : "#1e88e5",
-                      },
-                    }}
-                  >
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, idx) => (
+              <tr key={row.period} style={{ background: idx % 2 === 0 ? "#f8fafb" : "#fff" }}>
+                <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee", textAlign: "center" }}>
+                  <button onClick={() => handlePay(row.id)} disabled={row.status === "Paid"}
+                    style={{ background: row.status === "Paid" ? "#e0e0e0" : "#1f5fa6", color: row.status === "Paid" ? "#666" : "#fff", border: "none", padding: "3px 10px", fontSize: 11, cursor: row.status === "Paid" ? "default" : "pointer", fontWeight: 600 }}>
                     {row.status === "Paid" ? "Paid" : "Pay"}
-                  </Button>
-                </TableCell>
-                <TableCell style={{ padding: "12px", textAlign: "center" }}>{row.billDate}</TableCell>
-                <TableCell style={{ padding: "12px", textAlign: "center" }}>{row.dueDate}</TableCell>
-                <TableCell style={{ padding: "12px", textAlign: "center" }}>{row.invoiceNumber}</TableCell>
-                <TableCell style={{ padding: "12px", textAlign: "center" }}>{policyData?.paymentSchedule}</TableCell>
-                <TableCell style={{ padding: "12px", textAlign: "center" }}>{row.status}</TableCell>
-                <TableCell style={{ padding: "12px", textAlign: "center" }}>{row.total}</TableCell>
-              </TableRow>
+                  </button>
+                </td>
+                <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{row.billDate}</td>
+                <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{row.dueDate}</td>
+                <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{row.invoiceNumber}</td>
+                <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{policyData?.paymentSchedule}</td>
+                <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>
+                  <span style={{
+                    background: row.status === "Paid" ? "#e8f5e9" : row.status === "Overdue" ? "#fce4e4" : "#e3f2fd",
+                    color: row.status === "Paid" ? "#2b7a3e" : row.status === "Overdue" ? "#c62828" : "#1f5fa6",
+                    padding: "2px 8px", fontSize: 11, fontWeight: 600
+                  }}>{row.status}</span>
+                </td>
+                <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", fontWeight: 600, color: "#2b7a3e" }}>{row.total}</td>
+              </tr>
             ))}
-
-
-          </TableBody>
-        </Table>
-      </TableContainer>
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

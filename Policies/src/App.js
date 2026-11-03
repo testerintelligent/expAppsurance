@@ -63,6 +63,24 @@ function App() {
                 path="/policy-summary/:policyNumber"
                 element={<PolicySummary />}
               />
+              <Route path="/renewals" element={
+                <div style={{ padding: 24, fontFamily: "sans-serif", color: "#2d3e52" }}>
+                  <h2 style={{ fontSize: 18, fontWeight: 700 }}>Renewals</h2>
+                  <p style={{ fontSize: 13, color: "#6b7c93" }}>Renewals management coming soon.</p>
+                </div>
+              } />
+              <Route path="/transactions" element={
+                <div style={{ padding: 24, fontFamily: "sans-serif", color: "#2d3e52" }}>
+                  <h2 style={{ fontSize: 18, fontWeight: 700 }}>Transactions</h2>
+                  <p style={{ fontSize: 13, color: "#6b7c93" }}>Transaction history coming soon.</p>
+                </div>
+              } />
+              <Route path="/admin" element={
+                <div style={{ padding: 24, fontFamily: "sans-serif", color: "#2d3e52" }}>
+                  <h2 style={{ fontSize: 18, fontWeight: 700 }}>Administration</h2>
+                  <p style={{ fontSize: 13, color: "#6b7c93" }}>Admin panel coming soon.</p>
+                </div>
+              } />
             </Route>
           </Routes>
         </Suspense>

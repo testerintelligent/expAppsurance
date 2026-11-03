@@ -1,357 +1,265 @@
-import React, { useEffect, useState, useMemo } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import api from "../../utils/api";
 import { useNavigate } from "react-router-dom";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TablePagination,
-  Stack,
-  Typography,
-  Box
-} from "@mui/material";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import MainCard from '../../layout/MainCard';
 
+const demoActivityRows = [
+  {
+    id: "9623142123",
+    dueDate: "Today",
+    priority: "High",
+    status: "Open",
+    subject: "Contact AK Company was changed",
+    accountHolder: "COMPANY",
+    product: "Expleo",
+    assignedBy: "California",
+    state: "California",
+  },
+  {
+    id: "1887559510",
+    dueDate: "Today",
+    priority: "High",
+    status: "Open",
+    subject: "Contact Anu v was changed",
+    accountHolder: "Anu v",
+    product: "Expleo",
+    assignedBy: "California",
+    state: "California",
+  },
+  {
+    id: "1887559510",
+    dueDate: "Today",
+    priority: "High",
+    status: "Open",
+    subject: "Contact Anu v was changed",
+    accountHolder: "Anu v",
+    product: "Expleo",
+    assignedBy: "California",
+    state: "California",
+  },
+  {
+    id: "548628540",
+    dueDate: "Today",
+    priority: "High",
+    status: "Open",
+    subject: "Contact Madhuri Test was changed",
+    accountHolder: "Madhuri Test",
+    product: "Expleo",
+    assignedBy: "Alaska",
+    state: "Alaska",
+  },
+  {
+    id: "644325427",
+    dueDate: "Today",
+    priority: "High",
+    status: "Open",
+    subject: "Contact Lucky test_pc was changed",
+    accountHolder: "Lucky",
+    product: "Expleo",
+    assignedBy: "New Jersey",
+    state: "New Jersey",
+  },
+  {
+    id: "644325427",
+    dueDate: "Today",
+    priority: "High",
+    status: "Open",
+    subject: "Contact Lucky test_pc was changed",
+    accountHolder: "Lucky",
+    product: "Expleo",
+    assignedBy: "New Jersey",
+    state: "New Jersey",
+  },
+  {
+    id: "7505660728",
+    dueDate: "Today",
+    priority: "High",
+    status: "Open",
+    subject: "Contact Test RW changed",
+    accountHolder: "Test PC",
+    product: "Expleo",
+    assignedBy: "Alaska",
+    state: "Alaska",
+  },
+  {
+    id: "7505660728",
+    dueDate: "Today",
+    priority: "High",
+    status: "Open",
+    subject: "Contact Test RW changed",
+    accountHolder: "Test PC",
+    product: "Expleo",
+    assignedBy: "Alaska",
+    state: "Alaska",
+  },
+  {
+    id: "1846047100",
+    dueDate: "Today",
+    priority: "High",
+    status: "Open",
+    subject: "Contact john john was changed",
+    accountHolder: "John John",
+    product: "Expleo",
+    assignedBy: "Wisconsin",
+    state: "Wisconsin",
+  },
+  {
+    id: "1846047100",
+    dueDate: "Today",
+    priority: "High",
+    status: "Open",
+    subject: "Contact john john was changed",
+    accountHolder: "John John",
+    product: "Expleo",
+    assignedBy: "Wisconsin",
+    state: "Wisconsin",
+  },
+];
 
 const PolicyDashboard = () => {
   const [insuranceData, setInsuranceData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [sortedColumn, setSortedColumn] = useState("CurrentDate");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [summary, setSummary] = useState(null);
-
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 10;
   const navigate = useNavigate();
 
-  // Fetch policies data from the API
   useEffect(() => {
     const fetchPolicies = async () => {
       try {
-        const response = await axios.get("http://10.192.190.158:5000/api/Policies/getPoliciesForDashboard");
-        setInsuranceData(response.data);
-        setFilteredData(response.data);
+        const response = await api.get("/api/Policies/getPoliciesForDashboard");
+        setInsuranceData(response.data || []);
       } catch (error) {
         console.error("Error fetching policies:", error);
       }
     };
+
     fetchPolicies();
   }, []);
 
-  // Compute summary counts when policies are fetched/updated
-  useEffect(() => {
-    if (!insuranceData || insuranceData.length === 0) {
-      setSummary(null);
-      return;
-    }
+  const mappedRows = insuranceData.length
+    ? insuranceData.map((policy, index) => ({
+        id: policy.policyNumber || `POL-${index + 1}`,
+        dueDate: policy.endDate || "Today",
+        priority: "High",
+        status: policy.status || "Open",
+        subject: `Contact ${policy.accountHolderName || "Account"} was changed`,
+        accountHolder: policy.accountHolderName || "N/A",
+        product: policy.policyType || "Expleo",
+        assignedBy: policy.accountNumber || "N/A",
+        state: policy.status || "California",
+      }))
+    : demoActivityRows;
 
-    const totals = { totalPolicies: insuranceData.length };
-
-    // normalize status keys and compute counts
-    const byStatus = insuranceData.reduce((acc, p) => {
-      const s = (p.status || "").toString();
-      acc[s] = (acc[s] || 0) + 1;
-      return acc;
-    }, {});
-
-    totals["In Force"] = byStatus["In Force"] || byStatus["InForce"] || 0;
-    totals.underReview = byStatus["Under Review"] || byStatus["UnderReview"] || byStatus["underReview"] || 0;
-    totals.cancelled = byStatus["Cancelled"] || byStatus["cancelled"] || 0;
-
-    setSummary(totals);
-  }, [insuranceData]);
-
-  // Utility Functions
-  const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return isNaN(date.getTime())
-      ? "Invalid Date"
-      : `${String(date.getDate()).padStart(2, "0")}/${String(
-        date.getMonth() + 1
-      ).padStart(2, "0")}/${date.getFullYear()}`;
-  };
-
-  const generateRandomNumber = () =>
-    Math.floor(100000 + Math.random() * 900000);
-
-  const sortData = (column) => {
-    const order = sortOrder === "asc" ? 1 : -1;
-    const sorted = [...filteredData].sort((a, b) => {
-      const valA = a[column];
-      const valB = b[column];
-      if (typeof valA === "string" && typeof valB === "string") {
-        return valA.localeCompare(valB) * order;
-      } else if (typeof valA === "number" && typeof valB === "number") {
-        return (valA - valB) * order;
-      } else {
-        return (new Date(valA) - new Date(valB)) * order;
-      }
-    });
-    setFilteredData(sorted);
-    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    setSortedColumn(column);
-  };
-
-  // Table Column Config
-  const columns = useMemo(
-    () => [
-      { key: "accountNumber", label: "Account Number" },
-      { key: "accountHolderName", label: "Account Holder Name" },
-      { key: "policyNumber", label: "Policy Number" },
-      { key: "policyType", label: "Policy Type" },
-      { key: "startDate", label: "Start Date" },
-      { key: "endDate", label: "End Date" },
-      { key: "status", label: "Status" },
-    ],
-    []
-  );
+  const totalPages = Math.max(1, Math.ceil(mappedRows.length / rowsPerPage));
+  const pageRows = mappedRows.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   return (
-    <div style={{ padding: "20px" }}>
-      {/* ✅ Summary Cards */}
-    
- <Box
-        display="grid"
-        gridTemplateColumns="repeat(auto-fill, 230px)"
-        justifyContent="start"
-        gap={1}
-        mb={3}
+    <div style={{ padding: "16px 18px 0", background: "#eef2f5", minHeight: "100%" }}>
+      <div
+        style={{
+          fontSize: 18,
+          fontWeight: 700,
+          color: "#2d3e52",
+          marginBottom: 8,
+          paddingLeft: 8,
+        }}
       >
-        <MainCard
-          border={false}
-          content={false}
-          bgcolor='#5e35b1'
-          background='#4527a0'
-        >
-          <Box sx={{ p: 1.5 }}>
+        My Activities
+      </div>
 
-            <Stack direction="row" sx={{ alignItems: 'center' }}>
-              <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.totalPolicies || 0}</Typography>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          background: "#f3f4f6",
+          border: "1px solid #d7dbe2",
+          borderBottom: "none",
+          padding: "8px 12px",
+          fontSize: 12,
+          color: "#4c5d72",
+        }}
+      >
+        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }}>
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            style={{ border: "1px solid #d7dbe2", background: "#fff", padding: "2px 8px", cursor: "pointer", fontSize: 12 }}
+          >
+            ‹
+          </button>
+          <span style={{ padding: "0 6px" }}>Page {page} of {totalPages}</span>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            style={{ border: "1px solid #d7dbe2", background: "#fff", padding: "2px 8px", cursor: "pointer", fontSize: 12 }}
+          >
+            ›
+          </button>
+        </div>
+      </div>
 
-            </Stack>
-            <Typography
-              sx={{
-                mb: 1.25,
-                fontSize: '1rem',
-                fontWeight: 500,
-                color: '#b39ddb',
-                float: 'left'
-              }}
-            >
-              Total Policies
-            </Typography>
-
-
-          </Box>
-        </MainCard>
-        <MainCard
-          border={false}
-          content={false}
-          bgcolor='#1e88e5'
-          background='#1565c0'
-        >
-          <Box sx={{ p: 1.5 }}>
-
-            <Stack direction="row" sx={{ alignItems: 'center' }}>
-              <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.["In Force"] || 0}</Typography>
-
-            </Stack>
-            <Typography
-              sx={{
-                mb: 1.25,
-                fontSize: '1rem',
-                fontWeight: 500,
-                color: '#90caf9',
-                float: 'left'
-              }}
-            >
-              In Force
-            </Typography>
-
-
-          </Box>
-        </MainCard>
-         <MainCard
-          border={false}
-          content={false}
-          bgcolor='#f39c12'
-          background='#e67e22'
-        >
-          <Box sx={{ p: 1.5 }}>
-
-            <Stack direction="row" sx={{ alignItems: 'center' }}>
-              <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.underReview || 0}</Typography>
-
-            </Stack>
-            <Typography
-              sx={{
-                mb: 1.25,
-                fontSize: '1rem',
-                fontWeight: 500,
-                color: '#e67e22',
-                float: 'left'
-              }}
-            >
-              Under Review
-            </Typography>
-
-
-          </Box>
-        </MainCard>
-        <MainCard
-          border={false}
-          content={false}
-          bgcolor='#ff7043'
-          background='#d84315'
-        >
-          <Box sx={{ p: 1.5 }}>
-
-            <Stack direction="row" sx={{ alignItems: 'center' }}>
-              <Typography sx={{ fontSize: '1.5rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{summary?.cancelled || 0}</Typography>
-
-            </Stack>
-            <Typography
-              sx={{
-                mb: 1.25,
-                fontSize: '1rem',
-                fontWeight: 500,
-                color: '#d84315',
-                float: 'left',
-                opacity: 0.7
-              }}
-            >
-              Cancelled
-            </Typography>
-
-
-          </Box>
-        </MainCard>
-      </Box>
-      {/* ✅ Data Table */}
-      {filteredData.length > 0 ? (
-        <TableContainer component={Paper} elevation={3} style={{ borderRadius: "8px" }}>
-          <Table>
-            <TableHead>
-              <TableRow style={{ backgroundColor: "black" }}>
-                <TableCell
+      <div style={{ overflow: "auto", border: "1px solid #d7dbe2", background: "#fff" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+          <thead>
+            <tr style={{ background: "#f6f7f8", color: "#31475f" }}>
+              {[
+                "",
+                "Due Date",
+                "Priority",
+                "Status",
+                "Subject",
+                "ID",
+                "Account Hol.",
+                "Product",
+                "Assigned By",
+                
+              ].map((column) => (
+                <th
+                  key={column}
                   style={{
-                    color: "white",
-                    backgroundColor: "#4527a0",
-                    fontWeight: "bold",
-                    padding: "12px",
-                    textAlign: "center",
+                    padding: "10px 8px",
+                    borderBottom: "1px solid #d7dbe2",
+                    borderRight: "1px solid #e3e8ee",
+                    textAlign: "left",
+                    fontWeight: 600,
                   }}
                 >
-                  View
-                </TableCell>
-                {columns.map((col) => (
-                  <TableCell
-                    key={col.key}
-                    style={{
-                      color: "white",
-                      backgroundColor: "#4527a0",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      padding: "12px",
-                      textAlign: "center",
-                    }}
-                    onClick={() => sortData(col.key)}
-                  >
-                    {col.label}{" "}
-                    {sortedColumn === col.key && (sortOrder === "asc" ? "↑" : "↓")}
-                  </TableCell>
-                ))}
+                  {column}
+                </th>
+              ))}
+            </tr>
+          </thead>
 
+          <tbody>
+            {pageRows.map((row, index) => (
+              <tr
+                key={`${row.id}-${index}`}
+                onClick={() => navigate(`/policy-summary/${row.id}`)}
+                style={{
+                  cursor: "pointer",
+                  background: index % 2 === 0 ? "#f8fafb" : "#ffffff",
+                }}
+              >
+                <td style={{ padding: "8px 8px", borderRight: "1px solid #e3e8ee", textAlign: "center" }}>
+                  <input type="checkbox" style={{ accentColor: "#4a6781" }} />
+                </td>
+                <td style={{ padding: "8px 8px", borderRight: "1px solid #e3e8ee" }}>{row.dueDate}</td>
+                <td style={{ padding: "8px 8px", borderRight: "1px solid #e3e8ee" }}>
+                  <span style={{ color: "#b97d00", fontWeight: 600 }}>{row.priority}</span>
+                </td>
+                <td style={{ padding: "8px 8px", borderRight: "1px solid #e3e8ee" }}>
+                  <span style={{ color: "#2b7a3e", fontWeight: 600 }}>{row.status}</span>
+                </td>
+                <td style={{ padding: "8px 8px", borderRight: "1px solid #e3e8ee" }}>{row.subject}</td>
+                <td style={{ padding: "8px 8px", borderRight: "1px solid #e3e8ee" }}>{row.id}</td>
+                <td style={{ padding: "8px 8px", borderRight: "1px solid #e3e8ee" }}>{row.accountHolder}</td>
+                <td style={{ padding: "8px 8px", borderRight: "1px solid #e3e8ee" }}>{row.product}</td>
+                <td style={{ padding: "8px 8px", borderRight: "1px solid #e3e8ee" }}>{row.assignedBy}</td>
 
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              {filteredData
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((insurance, index) => {
-
-                  return (
-                    <TableRow
-                      key={insurance._id || index}
-                      style={{
-                        backgroundColor: index % 2 === 0 ? "#ecf0f1" : "#ffffff",
-                      }}
-                    >
-
-                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                        {insurance.policyNumber ? (
-
-
-
-                          <VisibilityIcon
-                            color="primary"
-                            onClick={() => navigate(`/policy-summary/${insurance.policyNumber}`, { state: { policy: insurance } })}
-                            style={{ cursor: "pointer" }} // optional: makes it clickable
-                          />
-                        ) : (
-
-                          <VisibilityIcon
-                            color="primary"
-                            disabled
-                            title="Policy number not available"
-                            style={{ opacity: 0.6, cursor: 'not-allowed' }} // optional: makes it clickable
-                          />
-
-                        )}
-                      </TableCell>
-                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                        {insurance.accountNumber || "N/A"}
-                      </TableCell>
-                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                        {insurance?.accountHolderName || "N/A"}
-                      </TableCell>
-                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                        {insurance.policyNumber || generateRandomNumber()}
-                      </TableCell>
-                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                        {insurance.policyType}
-                      </TableCell>
-                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                        {formatDate(insurance.startDate)}
-                      </TableCell>
-                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                        {formatDate(insurance.endDate)}
-                      </TableCell>
-                      <TableCell style={{ padding: "12px", textAlign: "center" }}>
-                        {insurance.status}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={filteredData.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={(_, newPage) => setPage(newPage)}
-            onRowsPerPageChange={(e) => {
-              setRowsPerPage(parseInt(e.target.value, 10));
-              setPage(0);
-            }}
-            style={{ borderTop: "1px solid #ddd" }}
-          />
-        </TableContainer>
-      ) : (
-        <p style={{ textAlign: "center", color: "#7f8c8d", fontSize: "18px" }}>
-          No policy data available
-        </p>
-      )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

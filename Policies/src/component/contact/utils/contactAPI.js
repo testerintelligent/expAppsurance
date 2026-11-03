@@ -1,10 +1,7 @@
-import axios from "axios";
+import api from "../../../utils/api";
 
-const API_URL = "http://10.192.190.158:5000/api/contacts"; // ✅ includes /api prefix
-
-// 🔍 Search Contact with optional parameters
+// 🔍 Search contacts
 export const searchContact = async ({ firstName, lastName, dateOfBirth }) => {
-  // Build params object only with filled values
   const params = {};
   if (firstName) params.firstName = firstName;
   if (lastName) params.lastName = lastName;
@@ -14,30 +11,30 @@ export const searchContact = async ({ firstName, lastName, dateOfBirth }) => {
     throw new Error("Please provide at least one search field");
   }
 
-  const res = await axios.get(API_URL, { params });
+  const res = await api.get("/api/contacts", { params });
   return res.data;
 };
 
 // ➕ Create Contact
 export const createContact = async (contactData) => {
-  const res = await axios.post(API_URL, contactData);
+  const res = await api.post("/api/contacts", contactData);
   return res.data;
 };
 
-// Get all the contacts
+// 📋 Get all contacts
 export const getContact = async () => {
-  const res = await axios.get(`${API_URL}/getContact`);
+  const res = await api.get("/api/contacts/getContact");
   return res.data;
 };
 
 // ✏️ Update Contact
 export const updateContact = async (id, updatedData) => {
-  const res = await axios.put(`${API_URL}/${id}`, updatedData);
+  const res = await api.put(`/api/contacts/${id}`, updatedData);
   return res.data;
 };
 
 // ❌ Delete Contact
 export const deleteContact = async (id) => {
-  const res = await axios.delete(`${API_URL}/${id}`);
+  const res = await api.delete(`/api/contacts/${id}`);
   return res.data;
 };

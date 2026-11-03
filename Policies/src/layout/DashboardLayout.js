@@ -5,16 +5,16 @@ import Sidebar from "./sidebar";
 
 const DashboardLayout = () => {
   return (
-    <div className="h-screen w-full flex flex-col">
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#eef1f4" }}>
       <Navbar />
 
-      <div className="flex flex-1 flex-col md:flex-row overflow-hidden">
-        <aside className="w-full md:w-64 bg-slate-100 border-r-grey-200">
-          <Sidebar />
-        </aside>
+      <div style={{ display: "flex", flex: 1, minHeight: 0 }}>
+        <Sidebar />
 
-        <main className="flex-1 overflow-y-auto bg-gray-100">
-          <Outlet />
+        <main style={{ flex: 1, overflow: "auto", background: "#eff3f6" }}>
+          <div className="policy-screen-shell">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

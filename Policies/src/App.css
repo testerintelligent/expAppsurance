@@ -1,92 +1,165 @@
-/* .App {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  } */
-  .App {
-    text-align: center;
-    background-color: white;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 100vh; /* Use full viewport height */
-    width: 100%;
-    position: relative;
-  }
-  
-  .App::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.8; /* Apply opacity only to background */
-    z-index: -1; /* Ensure it stays behind the content */
-  }
-  
-  .App-logo {
-    height: 40vmin;
-    pointer-events: none;
-  }
-  
-  @media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-      animation: App-logo-spin infinite 20s linear;
-    }
-  }
-  
-  .App-header {
-    background-color: #282c34;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
-  }
-  
-  .App-link {
-    color: #61dafb;
-  }
-  
-  @keyframes App-logo-spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
-  th, td {
-    padding: 12px;
-    border: 1px solid #ddd;
-    text-align: left;
-  }
-  
-  th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-  }
-  
-  tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-  
-  tr:hover {
-    background-color: #f1f1f1;
-  }
-  /* Import additional CSS files */
-  @import '../src/component/insurance/insurance.css';
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #eef2f5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.App {
+  text-align: left;
+  background-color: white;
+  min-height: 100vh;
+  width: 100%;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px;
+}
+
+.policy-screen-shell {
+  min-height: 100%;
+  background: #eef2f5;
+  padding: 16px 18px 0;
+}
+
+.policy-screen-shell .MuiPaper-root,
+.policy-screen-shell .MuiBox-root,
+.policy-screen-shell .MuiTableContainer-root {
+  border: 1px solid #d7dbe2;
+  box-shadow: none;
+}
+
+.policy-screen-shell .MuiCard-root,
+.policy-screen-shell .MuiPaper-root {
+  background: #ffffff;
+}
+
+@import '../src/component/insurance/insurance.css';
+
+/* ─── GW ENTERPRISE COMPACT OVERRIDES ─────────────────────── */
+
+/* Form inputs */
+.policy-screen-shell .MuiInputBase-input,
+.policy-screen-shell .MuiSelect-select { font-size: 12px !important; }
+.policy-screen-shell .MuiInputLabel-root,
+.policy-screen-shell .MuiFormLabel-root { font-size: 12px !important; }
+.policy-screen-shell .MuiFormHelperText-root { font-size: 11px !important; }
+.policy-screen-shell .MuiMenuItem-root { font-size: 12px !important; min-height: 30px !important; }
+
+/* Typography */
+.policy-screen-shell .MuiTypography-h3,
+.policy-screen-shell .MuiTypography-h4 { font-size: 15px !important; font-weight: 700 !important; color: #2d3e52 !important; }
+.policy-screen-shell .MuiTypography-h5 { font-size: 14px !important; font-weight: 700 !important; color: #2d3e52 !important; }
+.policy-screen-shell .MuiTypography-h6 { font-size: 13px !important; font-weight: 600 !important; color: #2e3e4c !important; }
+.policy-screen-shell .MuiTypography-body1 { font-size: 12px !important; }
+.policy-screen-shell .MuiTypography-body2 { font-size: 11px !important; }
+.policy-screen-shell .MuiTypography-subtitle1,
+.policy-screen-shell .MuiTypography-subtitle2 { font-size: 12px !important; }
+
+/* Buttons */
+.policy-screen-shell .MuiButton-root {
+  font-size: 12px !important;
+  text-transform: none !important;
+  padding: 5px 14px !important;
+  box-shadow: none !important;
+  border-radius: 3px !important;
+  min-height: 28px !important;
+  line-height: 1.4 !important;
+}
+.policy-screen-shell .MuiButton-root:hover { box-shadow: none !important; }
+.policy-screen-shell .MuiButton-containedPrimary { background-color: #1f5fa6 !important; }
+.policy-screen-shell .MuiButton-containedPrimary:hover { background-color: #1a4f8c !important; }
+.policy-screen-shell .MuiButton-containedInfo { background-color: #1f5fa6 !important; }
+.policy-screen-shell .MuiButton-containedSuccess { background-color: #2e6e35 !important; }
+.policy-screen-shell .MuiButton-containedSuccess:hover { background-color: #255c2b !important; }
+.policy-screen-shell .MuiButton-outlined { border-color: #c5ccd5 !important; color: #4e5d6d !important; }
+
+/* Paper/Card — remove elevation */
+.policy-screen-shell .MuiPaper-elevation1,
+.policy-screen-shell .MuiPaper-elevation2,
+.policy-screen-shell .MuiPaper-elevation3,
+.policy-screen-shell .MuiPaper-elevation4,
+.policy-screen-shell .MuiPaper-elevation6,
+.policy-screen-shell .MuiPaper-elevation10 { box-shadow: none !important; }
+.policy-screen-shell .MuiCard-root { box-shadow: none !important; border: 1px solid #d7dbe2 !important; border-radius: 2px !important; overflow: hidden; }
+.policy-screen-shell .MuiCardHeader-root { padding: 7px 12px !important; background: #f3f6f9 !important; border-bottom: 1px solid #d7dbe2 !important; }
+.policy-screen-shell .MuiCardHeader-title { font-size: 12px !important; font-weight: 700 !important; color: #2e3e4c !important; }
+.policy-screen-shell .MuiCardHeader-avatar { margin-right: 8px !important; }
+.policy-screen-shell .MuiCardHeader-avatar .MuiSvgIcon-root { font-size: 16px !important; color: #4e6580 !important; }
+.policy-screen-shell .MuiCardContent-root { padding: 12px !important; }
+
+/* Tables */
+.policy-screen-shell .MuiTableCell-root {
+  font-size: 12px !important;
+  padding: 7px 10px !important;
+  border-color: #e3e8ee !important;
+  color: #3d5164 !important;
+}
+.policy-screen-shell .MuiTableCell-head {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  background-color: #f6f7f8 !important;
+  color: #31475f !important;
+  border-bottom: 2px solid #d7dbe2 !important;
+}
+.policy-screen-shell .MuiTableRow-root:nth-of-type(odd) .MuiTableCell-body { background-color: #f8fafb; }
+.policy-screen-shell .MuiTableRow-root:nth-of-type(even) .MuiTableCell-body { background-color: #ffffff; }
+.policy-screen-shell .MuiTableRow-root:hover .MuiTableCell-body { background-color: #edf4fb !important; cursor: pointer; }
+.policy-screen-shell .MuiTablePagination-root,
+.policy-screen-shell .MuiTablePagination-displayedRows,
+.policy-screen-shell .MuiTablePagination-selectLabel { font-size: 12px !important; }
+
+/* Tabs */
+.policy-screen-shell .MuiTabs-root { min-height: 34px !important; border-bottom: 1px solid #d7dbe2 !important; background: #f8fafb !important; }
+.policy-screen-shell .MuiTab-root { font-size: 12px !important; text-transform: none !important; min-height: 34px !important; padding: 5px 16px !important; color: #4e5d6d !important; font-weight: 500 !important; }
+.policy-screen-shell .MuiTab-root.Mui-selected { color: #1f5fa6 !important; font-weight: 600 !important; }
+.policy-screen-shell .MuiTabs-indicator { background-color: #1f5fa6 !important; height: 2px !important; }
+
+/* Alerts */
+.policy-screen-shell .MuiAlert-root { font-size: 12px !important; padding: 6px 14px !important; }
+.policy-screen-shell .MuiAlert-message { font-size: 12px !important; }
+.policy-screen-shell .MuiAlert-standardSuccess { background-color: #edf7ee !important; color: #1e5228 !important; }
+
+/* Chips */
+.policy-screen-shell .MuiChip-root { font-size: 11px !important; height: 20px !important; }
+.policy-screen-shell .MuiChip-label { padding: 0 8px !important; }
+
+/* Stepper */
+.policy-screen-shell .MuiStepper-root { padding: 10px 0 !important; background: transparent !important; border: none !important; box-shadow: none !important; }
+.policy-screen-shell .MuiStepLabel-label { font-size: 12px !important; }
+.policy-screen-shell .MuiStepIcon-root { font-size: 18px !important; }
+
+/* Accordion */
+.policy-screen-shell .MuiAccordion-root { box-shadow: none !important; border: 1px solid #d7dbe2 !important; border-radius: 2px !important; margin-bottom: 4px !important; }
+.policy-screen-shell .MuiAccordion-root::before { display: none !important; }
+.policy-screen-shell .MuiAccordionSummary-root { min-height: 34px !important; padding: 0 10px !important; background: #f8fafb !important; }
+.policy-screen-shell .MuiAccordionSummary-root.Mui-expanded { min-height: 34px !important; background: #edf4fb !important; }
+.policy-screen-shell .MuiAccordionDetails-root { padding: 8px 12px !important; font-size: 12px !important; border-top: 1px solid #e3e8ee !important; }
+.policy-screen-shell .MuiAccordionSummary-content { margin: 6px 0 !important; }
+
+/* Checkbox / Radio */
+.policy-screen-shell .MuiCheckbox-root { padding: 4px !important; }
+.policy-screen-shell .MuiRadio-root { padding: 4px 6px !important; }
+.policy-screen-shell .MuiFormControlLabel-label { font-size: 12px !important; }
+
+/* Divider */
+.policy-screen-shell .MuiDivider-root { border-color: #d7dbe2 !important; }
+
+/* Tooltip */
+.policy-screen-shell .MuiTooltip-tooltip { font-size: 11px !important; }
+
+/* Dialog (outside shell but should be consistent) */
+.MuiDialog-paper .MuiDialogTitle-root { font-size: 14px !important; padding: 14px 18px 10px !important; }
+.MuiDialog-paper .MuiDialogContent-root { font-size: 12px !important; }
+.MuiDialog-paper .MuiTypography-root { font-size: 12px !important; }
+.MuiDialog-paper .MuiButton-root { font-size: 12px !important; text-transform: none !important; }
+.MuiDialog-paper .MuiDialogActions-root { padding: 10px 14px !important; gap: 8px; }

@@ -1,36 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
-  Box,
-  Paper,
   TextField,
-  Button,
   CircularProgress,
-  Typography,
-  Grid,
-  Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TablePagination,
-  TableSortLabel
 } from '@mui/material';
 
-import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from 'react-router-dom';
-
-// Axios instance
-const api = axios.create({
-  baseURL:
-    process.env.REACT_APP_API_URL || "http://localhost:5000/api"
-});
-// const api = axios.create({
-//   baseURL: process.env.REACT_APP_API_URL || 'http://10.192.190.158:5000/api',
-//   headers: { 'Content-Type': 'application/json' },
-// });
 
 export default function PolicySearchPage() {
   const [policyNumber, setPolicyNumber] = useState('');
@@ -39,18 +14,18 @@ export default function PolicySearchPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [policies, setPolicies] = useState([]);
-  const [page, setPage] = useState(0); // MUI starts from 0
+  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [total, setTotal] = useState(0);
   const [sortBy, setsortBy] = useState("issuedAt");
   const [order, setOrder] = useState("desc");
 
-  // ✅ Store NORMALIZED policy object
+  // Store NORMALIZED policy object
   const [policyResponse, setPolicyResponse] = useState(null);
 
   const navigate = useNavigate();
 
-  const api = axios.create({
+  const apiInst = axios.create({
     baseURL:
       process.env.REACT_APP_API_URL || "http://localhost:5000/api",
   });
@@ -61,7 +36,7 @@ export default function PolicySearchPage() {
 
   const fetchData = async () => {
     try {
-      const res = await api.get("/policies/getPoliciesForClaims", {
+      const res = await apiInst.get("/policies/getPoliciesForClaims", {
         params: {
           page: page + 1,
           limit: rowsPerPage,
@@ -70,8 +45,6 @@ export default function PolicySearchPage() {
           policyNumber: policyNumber,
           policyType: policyType,
           insured: insured
-
-
         },
       })
       setPolicies(res.data.policies || []);
@@ -115,7 +88,7 @@ export default function PolicySearchPage() {
   ];
 
   /* =========================
-     🔍 SEARCH POLICY (API)
+     SEARCH POLICY (API)
      ========================= */
   const handleSelect = async (policyNumber) => {
     if (!policyNumber) {
@@ -128,7 +101,7 @@ export default function PolicySearchPage() {
     setPolicyResponse(null);
 
     try {
-      const res = await api.get(
+      const res = await apiInst.get(
         `/policies/getPolicyByNumber/${encodeURIComponent(policyNumber)}`
       );
 
@@ -155,7 +128,7 @@ export default function PolicySearchPage() {
       );
 
       navigate('/Claim/CreateClaim', {
-        state: { 
+        state: {
           policy: normalizedPolicy,
           ...normalizedPolicy,
         },
@@ -168,176 +141,152 @@ export default function PolicySearchPage() {
     } finally {
       setLoading(false);
     }
-  };  
+  };
+
+  const totalPages = Math.ceil(total / rowsPerPage);
 
   return (
-    <Box sx={{ width: "100%", maxWidth: 1200}}>
-      <Paper elevation={3} sx={{ p: 3, maxWidth: 1200, margin: "0 auto" }}>
-        <Typography variant="h5" gutterBottom>
-          Search Policy
-        </Typography>
+    <div style={{ padding: "16px 18px", background: "#eef2f5", minHeight: "100%", color: "#2d3e52" }}>
+      <div style={{ maxWidth: 1200 }}>
+        {/* Search panel */}
+        <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+          <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+            Search Policy
+          </div>
+          <div style={{ padding: "12px 16px" }}>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
+              <TextField
+                label="Policy number"
+                value={policyNumber}
+                onChange={(e) => setPolicyNumber(e.target.value)}
+                size="small"
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              />
+              <TextField
+                label="Insured"
+                value={insured}
+                onChange={(e) => setInsured(e.target.value)}
+                size="small"
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              />
+              <TextField
+                label="Policy Type"
+                value={policyType}
+                onChange={(e) => setPolicyType(e.target.value)}
+                size="small"
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              />
+              <button
+                onClick={handleReset}
+                disabled={loading}
+                style={{ border: "1px solid #d7dbe2", background: "#fff", padding: "5px 12px", fontSize: 12, cursor: "pointer", height: 36 }}
+              >
+                Reset
+              </button>
+              <button
+                onClick={handleSearch}
+                disabled={loading}
+                style={{ background: "#1f5fa6", color: "#fff", border: "none", padding: "5px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer", height: 36, display: "flex", alignItems: "center", gap: 6 }}
+              >
+                {loading ? <CircularProgress size={14} color="inherit" /> : null}
+                {loading ? "Searching..." : "Search"}
+              </button>
+            </div>
 
-        <Grid container spacing={2} alignItems="center" justifyContent="center" sx={{ mt: 1 }}>
-          <Grid item size={{ xs: 6, md: 3 }}>
-            <TextField
-              label="Policy number"
-              value={policyNumber}
-              onChange={(e) => setPolicyNumber(e.target.value)}
-              fullWidth
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            />
-          </Grid>
-          <Grid item size={{ xs: 6, md: 3 }}>
-            <TextField
-              label="Insured"
-              value={insured}
-              onChange={(e) => setInsured(e.target.value)}
-              fullWidth
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            />
-          </Grid>
-          <Grid item size={{ xs: 6, md: 3 }}>
-            <TextField
-              label="Policy Type"
-              value={policyType}
-              onChange={(e) => setPolicyType(e.target.value)}
-              fullWidth
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            />
-          </Grid>
-          <Grid item size={{ xs: 4, md: 1 }}>
-            <Button
-              variant="outlined"
-              onClick={handleReset}
-              disabled={loading}
-            >
-              Reset
-            </Button>
-          </Grid>
-          <Grid item size={{ xs: 4, md: 2 }}>
-            <Button
-              variant="contained"
-              startIcon={
-                loading ? <CircularProgress size={18} color="inherit" /> : <SearchIcon />
-              }
-              onClick={handleSearch}
-              disabled={loading}
+            {error && (
+              <div style={{ color: "#c62828", fontSize: 12, marginTop: 8 }}>{error}</div>
+            )}
+          </div>
+        </div>
 
-            >
-              {loading ? 'Searching...' : 'Search'}
-            </Button>
-          </Grid>
-        </Grid>
-
-        {error && (
-          <Typography color="error" sx={{ mt: 2 }}>
-            {error}
-          </Typography>
-        )}
-
-
-        <Box sx={{ mt: 2 }}>
-          <TableContainer component={Paper} sx={{ mb: 2 }}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 700, backgroundColor: "#f4f6f8" }} >Select</TableCell>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      sx={{ fontWeight: 700, backgroundColor: "#f4f6f8" }}                >
-                      {column.sort ? (<TableSortLabel
-                        active={sortBy === column.id}
-                        direction={sortBy === column.id ? order : "asc"}
-                        onClick={() => handleSort(column.id)}
+        {/* Results table */}
+        <div style={{ border: "1px solid #d7dbe2", background: "#fff", overflow: "auto", marginBottom: 8 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+            <thead>
+              <tr>
+                <th style={{ background: "#f6f7f8", color: "#31475f", fontSize: 11, fontWeight: 700, padding: "8px 10px", borderBottom: "2px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left" }}>
+                  Select
+                </th>
+                {columns.map((column) => (
+                  <th
+                    key={column.id}
+                    style={{ background: "#f6f7f8", color: "#31475f", fontSize: 11, fontWeight: 700, padding: "8px 10px", borderBottom: "2px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left", cursor: column.sort ? "pointer" : "default" }}
+                    onClick={() => column.sort && handleSort(column.id)}
+                  >
+                    {column.label}
+                    {column.sort && sortBy === column.id && (order === "asc" ? " ↑" : " ↓")}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {policies.length === 0 ? (
+                <tr>
+                  <td colSpan={9} style={{ textAlign: "center", padding: "32px", color: "#6b7c93", fontSize: 12 }}>
+                    No policies found.
+                  </td>
+                </tr>
+              ) : (
+                policies.map((p, index) => (
+                  <tr key={index} style={{ background: index % 2 === 0 ? "#f8fafb" : "#fff" }}>
+                    <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>
+                      <button
+                        onClick={() => handleSelect(p.policyNumber)}
+                        style={{ background: "#1f5fa6", color: "#fff", border: "none", padding: "3px 10px", fontSize: 11, fontWeight: 600, cursor: "pointer" }}
                       >
-                        {column.label}
-                      </TableSortLabel>) : (column.label)}
+                        Select
+                      </button>
+                    </td>
+                    <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>{p.policyNumber}</td>
+                    <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>
+                      {p.contact
+                        ? `${p.contact.firstName || ''} ${p.contact.lastName || ''}`.trim()
+                        : 'N/A'}
+                    </td>
+                    <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>
+                      {p.contact?.address || p.contact?.street || 'N/A'}
+                    </td>
+                    <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>{p.contact?.city || 'N/A'}</td>
+                    <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>{p.contact?.state || 'N/A'}</td>
+                    <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>{p.productType || 'N/A'}</td>
+                    <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>
+                      {p.effectiveDate ? new Date(p.effectiveDate).toLocaleDateString() : 'N/A'}
+                    </td>
+                    <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>
+                      {p.expiryDate ? new Date(p.expiryDate).toLocaleDateString() : 'N/A'}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-
-                {policies.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={8} align="center" sx={{ py: 6 }}>
-                      <Typography color="text.secondary">
-                        No policies found.
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                ) :
-                  (
-                    policies.map((p, index) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          <Button                           
-                            variant="contained"
-                            size="small"
-                            onClick={() => handleSelect(p.policyNumber)}
-                          >
-                            Select
-                          </Button></TableCell>
-                        <TableCell>{p.policyNumber}</TableCell>
-
-                        <TableCell>
-                          {p.contact
-                            ? `${p.contact.firstName || ''} ${p.contact.lastName || ''
-                              }`.trim()
-                            : 'N/A'}
-                        </TableCell>
-
-                        <TableCell>
-                          {p.contact?.address ||
-                            p.contact?.street ||
-                            'N/A'}
-                        </TableCell>
-
-                        <TableCell>{p.contact?.city || 'N/A'}</TableCell>
-                        <TableCell>{p.contact?.state || 'N/A'}</TableCell>
-
-                        <TableCell>{p.productType || 'N/A'}</TableCell>
-
-                        <TableCell>
-                          {p.effectiveDate
-                            ? new Date(
-                              p.effectiveDate
-                            ).toLocaleDateString()
-                            : 'N/A'}
-                        </TableCell>
-
-                        <TableCell>
-                          {p.expiryDate
-                            ? new Date(
-                              p.expiryDate
-                            ).toLocaleDateString()
-                            : 'N/A'}
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          {/* Pagination */}
-          <TablePagination
-            component="div"
-            count={total}
-            page={page}
-            onPageChange={(e, newPage) => setPage(newPage)}
-            rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={(e) => {
-              setRowsPerPage(parseInt(e.target.value, 10));
-              setPage(0);
-            }}
-            rowsPerPageOptions={[5, 10, 25, 50]}
-          />
-        </Box>
-      </Paper>
-    </Box>
+        {/* Pagination footer */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 8, padding: "8px 0", fontSize: 12, color: "#2d3e52" }}>
+          <span style={{ color: "#6b7c93" }}>Rows per page:</span>
+          <select
+            value={rowsPerPage}
+            onChange={(e) => { setRowsPerPage(parseInt(e.target.value, 10)); setPage(0); }}
+            style={{ border: "1px solid #d7dbe2", padding: "2px 6px", fontSize: 12, background: "#fff" }}
+          >
+            {[5, 10, 25, 50].map((n) => <option key={n} value={n}>{n}</option>)}
+          </select>
+          <span style={{ color: "#6b7c93", marginLeft: 8 }}>
+            {total === 0 ? "0" : page * rowsPerPage + 1}–{Math.min((page + 1) * rowsPerPage, total)} of {total}
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            disabled={page === 0}
+            style={{ border: "1px solid #d7dbe2", background: "#fff", padding: "2px 8px", fontSize: 12, cursor: page === 0 ? "default" : "pointer", color: page === 0 ? "#aaa" : "#2d3e52" }}
+          >&#8592;</button>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            disabled={page >= totalPages - 1}
+            style={{ border: "1px solid #d7dbe2", background: "#fff", padding: "2px 8px", fontSize: 12, cursor: page >= totalPages - 1 ? "default" : "pointer", color: page >= totalPages - 1 ? "#aaa" : "#2d3e52" }}
+          >&#8594;</button>
+        </div>
+      </div>
+    </div>
   );
 }

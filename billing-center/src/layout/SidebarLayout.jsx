@@ -133,14 +133,14 @@ const Sidebar = () => {
                     position: "relative",
 
                     // Background
-                    backgroundColor: isActive ? "#e1dfdd" : "transparent",
+                    backgroundColor: isActive ? "#e8f0fa" : "transparent",
                     color: "#333",
 
                     "&:hover": {
-                      backgroundColor: "#edebe9",
+                      backgroundColor: "#f0f4fb",
                     },
 
-                    // Right purple highlight bar
+                    // Left blue highlight bar
                     "&::after": isActive
                       ? {
                           content: '""',
@@ -150,7 +150,7 @@ const Sidebar = () => {
                           bottom: 8,
                           width: "4px",
                           borderRadius: "4px",
-                          backgroundColor: "#4f3597",
+                          backgroundColor: "#1f5fa6",
                         }
                       : {},
                   }}
@@ -162,7 +162,7 @@ const Sidebar = () => {
                       justifyContent: "center",
 
                       // Icon color logic
-                      color: isActive ? "#4f3597" : "#6b7280",
+                      color: isActive ? "#1f5fa6" : "#6b7280",
                     }}
                   >
                     {item.icon}

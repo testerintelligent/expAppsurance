@@ -1,21 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box,
-  Paper,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   TextField,
   Radio,
   RadioGroup,
   FormControlLabel,
   FormControl,
-  Button,
-  Divider,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -69,7 +58,7 @@ export default function CreateClaim() {
 
     navigate("/Claim/basicinfo", {
       state: {
-        policy, 
+        policy,
         lossDate,
         claimType,
         contact,
@@ -81,130 +70,117 @@ export default function CreateClaim() {
 
   if (!policy) {
     return (
-      <Box p={3}>
-        <Typography color="error">
-          No policy selected. Please go back.
-        </Typography>
-      </Box>
+      <div style={{ padding: 16 }}>
+        <span style={{ color: "red" }}>No policy selected. Please go back.</span>
+      </div>
     );
   }
 
   const contact = policy.contact;
 
   return (
-    <Box p={3}>
-      <Paper elevation={3} sx={{ p: 3, maxWidth: 1100, margin: "0 auto" }}>
-        <Typography variant="h5" gutterBottom>
+    <div style={{ padding: "16px 18px", background: "#eef2f5", minHeight: "100%", color: "#2d3e52" }}>
+      <div style={{ maxWidth: 1100, background: "#fff", border: "1px solid #d7dbe2" }}>
+        {/* Section header */}
+        <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
           New Claim
-        </Typography>
+        </div>
 
-        {/* ------------------- POLICY DETAILS TABLE ------------------- */}
-        <TableContainer component={Paper} sx={{ mb: 3 }}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>Policy #</TableCell>
-                <TableCell>Insured</TableCell>
-                <TableCell>Address</TableCell>
-                <TableCell>City</TableCell>
-                <TableCell>State</TableCell>
-                <TableCell>ZIP Code</TableCell>
-                <TableCell>Effective</TableCell>
-                <TableCell>Expires</TableCell>
-              </TableRow>
-            </TableHead>
+        <div style={{ padding: "14px 16px" }}>
+          {/* ------------------- POLICY DETAILS TABLE ------------------- */}
+          <div style={{ border: "1px solid #d7dbe2", marginBottom: 14, overflow: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+              <thead>
+                <tr>
+                  {["Policy #", "Insured", "Address", "City", "State", "ZIP Code", "Effective", "Expires"].map((h) => (
+                    <th key={h} style={{ background: "#f6f7f8", color: "#31475f", fontSize: 11, fontWeight: 700, padding: "8px 10px", borderBottom: "2px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left" }}>
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                <tr style={{ background: "#f8fafb" }}>
+                  <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>{policy.policyNumber}</td>
+                  <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>
+                    {contact ? `${contact.firstName || ""} ${contact.lastName || ""}`.trim() : "N/A"}
+                  </td>
+                  <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>
+                    {contact?.address || contact?.street || "N/A"}
+                  </td>
+                  <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>{contact?.city || "N/A"}</td>
+                  <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>{contact?.state || "N/A"}</td>
+                  <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>{contact?.zipCode || "N/A"}</td>
+                  <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>
+                    {policy.effectiveDate ? new Date(policy.effectiveDate).toLocaleDateString() : "N/A"}
+                  </td>
+                  <td style={{ padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>
+                    {policy.expiryDate ? new Date(policy.expiryDate).toLocaleDateString() : "N/A"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-            <TableBody>
-              <TableRow>
-                <TableCell>{policy.policyNumber}</TableCell>
+          <div style={{ borderTop: "1px solid #d7dbe2", margin: "16px 0" }} />
 
-                <TableCell>
-                  {contact
-                    ? `${contact.firstName || ""} ${contact.lastName || ""}`.trim()
-                    : "N/A"}
-                </TableCell>
+          {/* ------------------- LOSS DATE ------------------- */}
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#2d3e52", marginBottom: 8 }}>
+            Loss Date<span style={{ color: "red" }}> *</span>
+          </div>
 
-                <TableCell>
-                  {contact?.address || contact?.street || "N/A"}
-                </TableCell>
+          <TextField
+            type="date"
+            value={lossDate}
+            onChange={(e) => handleDateChange(e.target.value, policy)}
+            required
+            size="small"
+            error={!!error}
+            helperText={error}
+            inputProps={{
+              min: policy.effectiveDate.split("T")[0],
+              max: policy.expiryDate.split("T")[0],
+            }}
+            sx={{ width: 250, mb: 3 }}
+            InputLabelProps={{ shrink: true }}
+          />
 
-                <TableCell>{contact?.city || "N/A"}</TableCell>
-                <TableCell>{contact?.state || "N/A"}</TableCell>
-                <TableCell>{contact?.zipCode || "N/A"}</TableCell>
+          {/* ------------------- CLAIM TYPE ------------------- */}
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#2d3e52", marginBottom: 8 }}>
+            Type of Claim<span style={{ color: "red" }}> *</span>
+          </div>
 
-                <TableCell>
-                  {policy.effectiveDate
-                    ? new Date(policy.effectiveDate).toLocaleDateString()
-                    : "N/A"}
-                </TableCell>
+          <FormControl component="fieldset" sx={{ mb: 3 }}>
+            <RadioGroup
+              value={claimType}
+              defaultValue="Auto"
+              onChange={(e) => setClaimType(e.target.value)}
+            >
+              <FormControlLabel value="Auto" control={<Radio />} label="Auto" />
+              <FormControlLabel
+                value="Auto - Auto First and Final"
+                control={<Radio />}
+                label="Auto - Auto First and Final"
+              />
+              <FormControlLabel
+                value="Auto - Quick Claim Auto"
+                control={<Radio />}
+                label="Auto - Quick Claim Auto"
+              />
+            </RadioGroup>
+          </FormControl>
 
-                <TableCell>
-                  {policy.expiryDate
-                    ? new Date(policy.expiryDate).toLocaleDateString()
-                    : "N/A"}
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        <Divider sx={{ my: 3 }} />
-
-        {/* ------------------- LOSS DATE ------------------- */}
-        <Typography variant="h5">
-          Loss Date<span style={{ color: "red" }}> *</span>
-        </Typography>
-
-        <TextField
-          type="date"
-          value={lossDate}
-          onChange={(e) => handleDateChange(e.target.value, policy)}
-          required
-          error={!!error}
-          helperText={error}
-         inputProps={{
-            min: policy.effectiveDate.split("T")[0],
-            max: policy.expiryDate.split("T")[0],
-          }}
-          sx={{ width: 250, mb: 3 }}
-          InputLabelProps={{ shrink: true }}
-        />
-
-        {/* ------------------- CLAIM TYPE ------------------- */}
-        <Typography variant="h5">
-          Type of Claim<span style={{ color: "red" }}> *</span>
-        </Typography>
-
-        <FormControl component="fieldset" sx={{ mb: 3 }}>
-          <RadioGroup
-            value={claimType}
-            defaultValue="Auto"
-            onChange={(e) => setClaimType(e.target.value)}
-          >
-            <FormControlLabel value="Auto"  control={<Radio />} label="Auto" />
-            <FormControlLabel
-              value="Auto - Auto First and Final"
-              control={<Radio />}
-              label="Auto - Auto First and Final"
-            />
-            <FormControlLabel
-              value="Auto - Quick Claim Auto"
-              control={<Radio />}
-              label="Auto - Quick Claim Auto"
-            />
-          </RadioGroup>
-        </FormControl>
-
-        <Box display="flex" justifyContent="flex-end">
-          <Button
-            variant="contained"
-            disabled={!lossDate || !claimType || error}
-            onClick={handleNext}
-          >
-            Next →
-          </Button>
-        </Box>
-      </Paper>
-    </Box>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <button
+              disabled={!lossDate || !claimType || !!error}
+              onClick={handleNext}
+              style={{ background: !lossDate || !claimType || !!error ? "#c0c8d0" : "#1f5fa6", color: "#fff", border: "none", padding: "6px 16px", fontSize: 12, fontWeight: 600, cursor: !lossDate || !claimType || !!error ? "default" : "pointer" }}
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

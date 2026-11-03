@@ -1,20 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box,
-  Paper,
-  Typography,
-  Button,
   FormControl,
   Select,
   MenuItem,
   InputLabel,
-  TextField,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Grid,
   Checkbox,
-  Divider
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import PolicyTitleBar from "./PolicyTitleBar";
@@ -73,11 +63,9 @@ export default function BasicInformation() {
      =============================== */
   if (!policy) {
     return (
-      <Box p={3}>
-        <Typography color="error">
-          No policy context found. Please go back.
-        </Typography>
-      </Box>
+      <div style={{ padding: 16 }}>
+        <span style={{ color: "red" }}>No policy context found. Please go back.</span>
+      </div>
     );
   }
 
@@ -85,14 +73,12 @@ export default function BasicInformation() {
   const vehicles = policy.vehicle || [];
   const drivers = policy.driver || [];
 
-  const insuredFullName = `${contact?.firstName || ""} ${contact?.lastName || ""
-    }`.trim();
+  const insuredFullName = `${contact?.firstName || ""} ${contact?.lastName || ""}`.trim();
 
   const insuredAddress =
     contact?.address ||
     contact?.street ||
-    `${contact?.city || ""}, ${contact?.state || ""} ${contact?.zipCode || ""
-    }`;
+    `${contact?.city || ""}, ${contact?.state || ""} ${contact?.zipCode || ""}`;
 
   /* ===============================
      HANDLERS
@@ -123,7 +109,7 @@ export default function BasicInformation() {
         selectedVehicles,
         selectedDrivers,
         drivers,
-        vehicles,        
+        vehicles,
       },
     });
   };
@@ -132,135 +118,145 @@ export default function BasicInformation() {
      UI
      =============================== */
   return (
-    <Box p={3}>
-      <Paper elevation={3} sx={{ p: 3, maxWidth: 1200, margin: "0 auto" }}>
-        {/* HEADER */}
+    <div style={{ padding: "16px 18px", background: "#eef2f5", minHeight: "100%", color: "#2d3e52" }}>
+      <div style={{ maxWidth: 1200, background: "#fff", border: "1px solid #d7dbe2" }}>
+        <div style={{ padding: "14px 16px" }}>
+          {/* TITLE BAR */}
+          <PolicyTitleBar
+            policyNumber={policy?.policyNumber}
+            insured={insuredFullName}
+            lossDate={lossDate}
+            status="Draft"
+          />
 
+          {/* Action buttons */}
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16, marginTop: 8 }}>
+            <button style={{ border: "1px solid #c62828", background: "#fff", color: "#c62828", padding: "5px 14px", fontSize: 12, cursor: "pointer" }}>
+              Cancel
+            </button>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button onClick={() => navigate(-1)} style={{ border: "1px solid #d7dbe2", background: "#fff", color: "#2d3e52", padding: "5px 14px", fontSize: 12, cursor: "pointer" }}>
+                ← Back
+              </button>
+              <button onClick={handleNext} style={{ background: "#1f5fa6", color: "#fff", border: "none", padding: "5px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                Next →
+              </button>
+            </div>
+          </div>
 
-        <PolicyTitleBar 
-        policyNumber = {policy?.policyNumber}
-        insured = {insuredFullName}
-        lossDate = {lossDate}
-        status = 'Draft'
-        ></PolicyTitleBar>     
+          {/* ================= REPORTED BY ================= */}
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, background: "#f3f6f9", border: "1px solid #d7dbe2", borderLeft: "none", borderRight: "none", padding: "7px 12px", marginBottom: 10, marginTop: 16 }}>
+            Reported By
+          </div>
 
-        <Box display="flex" justifyContent="space-between" mb={3} mt={3}>
-          <Button variant="outlined" color="error">
-            Cancel
-          </Button>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, padding: "0 0 12px" }}>
+            <div>
+              <FormControl fullWidth size="small">
+                <InputLabel>How Reported</InputLabel>
+                <Select
+                  label="How Reported"
+                  value={howReported}
+                  onChange={(e) => setHowReported(e.target.value)}
+                >
+                  <MenuItem value="Phone">Phone</MenuItem>
+                  <MenuItem value="Email">Email</MenuItem>
+                  <MenuItem value="In Person">In Person</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
 
-          <Box>
-            <Button variant="outlined" sx={{ mr: 2 }} onClick={() => navigate(-1)}>
-              ← Back
-            </Button>
-            <Button variant="contained" onClick={handleNext}>
-              Next →
-            </Button>
-          </Box>
-        </Box>
+            <div>
+              <FormControl fullWidth size="small">
+                <InputLabel>Name</InputLabel>
+                <Select
+                  label="Name"
+                  value={reportedName}
+                  onChange={(e) => setReportedName(e.target.value)}
+                >
+                  <MenuItem value={insuredFullName}>{insuredFullName}</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
 
-        {/* ================= REPORTED BY ================= */}
-        <Typography variant="h6" align="left" sx={{ fontWeight: 600 }}>Reported By</Typography>
+            <div>
+              <FormControl fullWidth size="small">
+                <InputLabel>Relation</InputLabel>
+                <Select
+                  label="Relation"
+                  value={relation}
+                  onChange={(e) => setRelation(e.target.value)}
+                >
+                  <MenuItem value="Self">Self</MenuItem>
+                  <MenuItem value="Spouse">Spouse</MenuItem>
+                  <MenuItem value="Child">Child</MenuItem>
+                  <MenuItem value="Agent">Agent</MenuItem>
+                  <MenuItem value="Other">Other</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+          </div>
 
-        <Grid container spacing={4} mt={1}>
-          <Grid item size={{ xs: 12, md: 3, sm: 5 }}>
-            <FormControl fullWidth>
-              <InputLabel>How Reported</InputLabel>
-              <Select
-                label="How Reported"
-                value={howReported}
-                onChange={(e) => setHowReported(e.target.value)}
-              >
-                <MenuItem value="Phone">Phone</MenuItem>
-                <MenuItem value="Email">Email</MenuItem>
-                <MenuItem value="In Person">In Person</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
+          <div style={{ borderTop: "1px solid #d7dbe2", margin: "14px 0" }} />
 
-          <Grid item size={{ xs: 12, md: 4, sm: 5 }}>
-            <FormControl fullWidth>
-              <InputLabel>Name</InputLabel>
-              <Select
-                label="Name"
-                value={reportedName}
-                onChange={(e) => setReportedName(e.target.value)}
-              >
-                <MenuItem value={insuredFullName}>{insuredFullName}</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
+          {/* ================= INSURED ================= */}
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, background: "#f3f6f9", border: "1px solid #d7dbe2", borderLeft: "none", borderRight: "none", padding: "7px 12px", marginBottom: 10 }}>
+            Insured
+          </div>
+          <div style={{ padding: "12px 0", fontSize: 12, display: "flex", flexDirection: "column", gap: 4 }}>
+            <div><span style={{ color: "#6b7c93", minWidth: 80, display: "inline-block" }}>Name:</span> <span style={{ fontWeight: 600 }}>{insuredFullName}</span></div>
+            <div><span style={{ color: "#6b7c93", minWidth: 80, display: "inline-block" }}>Address:</span> <span style={{ fontWeight: 600 }}>{insuredAddress}</span></div>
+            <div><span style={{ color: "#6b7c93", minWidth: 80, display: "inline-block" }}>Phone:</span> <span style={{ fontWeight: 600 }}>{contact?.phone || "N/A"}</span></div>
+          </div>
 
-          <Grid item size={{ xs: 12, md: 3, sm: 5 }}>
-            <FormControl fullWidth>
-              <InputLabel>Relation</InputLabel>
-              <Select
-                label="Relation"
-                value={relation}
-                onChange={(e) => setRelation(e.target.value)}
-              >
-                <MenuItem value="Self">Self</MenuItem>
-                <MenuItem value="Spouse">Spouse</MenuItem>
-                <MenuItem value="Child">Child</MenuItem>
-                <MenuItem value="Agent">Agent</MenuItem>
-                <MenuItem value="Other">Other</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-        </Grid>
+          <div style={{ borderTop: "1px solid #d7dbe2", margin: "14px 0" }} />
 
-        <Divider sx={{ my: 3 }} />
+          {/* ================= VEHICLES ================= */}
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, background: "#f3f6f9", border: "1px solid #d7dbe2", borderLeft: "none", borderRight: "none", padding: "7px 12px", marginBottom: 10 }}>
+            Involved Vehicles
+          </div>
 
-        {/* ================= INSURED ================= */}
-        <Typography variant="h6" align="left" sx={{ fontWeight: 600 }}>Insured</Typography>
-        <div>
-          <Typography align="left">Name: {insuredFullName}</Typography>
-          <Typography align="left">Address: {insuredAddress}</Typography>
-          <Typography align="left">Phone: {contact?.phone || "N/A"}</Typography>
+          {vehicles.length > 0 ? (
+            vehicles.map((v) => (
+              <div key={v._id} style={{ display: "flex", alignItems: "center", fontSize: 12, marginBottom: 4 }}>
+                <Checkbox
+                  checked={selectedVehicles.includes(v._id)}
+                  onChange={() => toggleVehicle(v._id)}
+                  size="small"
+                />
+                <span>
+                  {v.year} {v.make} {v.model} ({v.licensePlate})
+                </span>
+              </div>
+            ))
+          ) : (
+            <div style={{ fontSize: 12, color: "#6b7c93", paddingBottom: 8 }}>No vehicles found.</div>
+          )}
+
+          <div style={{ borderTop: "1px solid #d7dbe2", margin: "14px 0" }} />
+
+          {/* ================= DRIVERS ================= */}
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, background: "#f3f6f9", border: "1px solid #d7dbe2", borderLeft: "none", borderRight: "none", padding: "7px 12px", marginBottom: 10 }}>
+            Drivers
+          </div>
+
+          {drivers.length > 0 ? (
+            drivers.map((d) => (
+              <div key={d._id} style={{ display: "flex", alignItems: "center", fontSize: 12, marginBottom: 4 }}>
+                <Checkbox
+                  checked={selectedDrivers.includes(d._id)}
+                  onChange={() => toggleDriver(d._id)}
+                  size="small"
+                />
+                <span>
+                  {d.firstName} {d.lastName}
+                </span>
+              </div>
+            ))
+          ) : (
+            <div style={{ fontSize: 12, color: "#6b7c93", paddingBottom: 8 }}>No drivers found.</div>
+          )}
         </div>
-
-        <Divider sx={{ my: 3 }} />
-
-        {/* ================= VEHICLES ================= */}
-        <Typography variant="h6" align="left" sx={{ fontWeight: 600 }}>Involved Vehicles</Typography>
-
-        {vehicles.length > 0 ? (
-          vehicles.map((v) => (
-            <Box key={v._id} display="flex" alignItems="center">
-              <Checkbox
-                checked={selectedVehicles.includes(v._id)}
-                onChange={() => toggleVehicle(v._id)}
-              />
-              <Typography>
-                {v.year} {v.make} {v.model} ({v.licensePlate})
-              </Typography>
-            </Box>
-          ))
-        ) : (
-          <Typography>No vehicles found.</Typography>
-        )}
-
-        <Divider sx={{ my: 3 }} />
-
-        {/* ================= DRIVERS ================= */}
-        <Typography variant="h6" align="left" sx={{ fontWeight: 600 }}>Drivers</Typography>
-
-        {drivers.length > 0 ? (
-          drivers.map((d) => (
-            <Box key={d._id} display="flex" alignItems="center">
-              <Checkbox
-                checked={selectedDrivers.includes(d._id)}
-                onChange={() => toggleDriver(d._id)}
-              />
-              <Typography>
-                {d.firstName} {d.lastName}
-              </Typography>
-            </Box>
-          ))
-        ) : (
-          <Typography>No drivers found.</Typography>
-        )}
-      </Paper>
-    </Box>
+      </div>
+    </div>
   );
 }

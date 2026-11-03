@@ -4,22 +4,24 @@ import { useLocation, useParams, useNavigate } from "react-router-dom";
 
 const styles = {
   container: {
-    padding: 24,
+    padding: 16,
     fontFamily: "Inter, Arial, sans-serif",
     color: "#1f2937",
     maxWidth: 1400,
+    background: "#eef2f5",
+    minHeight: "100%",
   },
 
   header: {
     display: "flex",
     alignItems: "center",
     gap: 16,
-    background: "#4b5563",
-    color: "#fff",
-    padding: "12px 18px",
-    borderRadius: 6,
-    marginBottom: 24,
-    fontSize: 14,
+    background: "#fff",
+    borderLeft: "4px solid #1f5fa6",
+    border: "1px solid #d7dbe2",
+    padding: "10px 16px",
+    marginBottom: 16,
+    fontSize: 12,
   },
 
   headerStrong: { fontWeight: 700 },
@@ -38,14 +40,21 @@ const styles = {
 
   section: {
     marginBottom: 24,
+    background: "#fff",
+    border: "1px solid #d7dbe2",
+    padding: "12px 16px",
   },
 
   sectionTitle: {
     fontWeight: 700,
-    fontSize: 15,
-    borderBottom: "1px solid #d1d5db",
-    paddingBottom: 6,
+    fontSize: 11,
+    background: "#f3f6f9",
+    borderBottom: "1px solid #d7dbe2",
+    padding: "5px 0",
     marginBottom: 10,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    color: "#2e3e4c",
   },
 
   row: {
@@ -167,13 +176,13 @@ const PolicySummary = () => {
 
       <div style={styles.header}>
         <div>
-          <div style={{ fontWeight: 700, fontSize: 18 }}>
+          <div style={{ fontWeight: 700, fontSize: 14, color: "#1f2d3d" }}>
             {policy.policyNumber || "—"}{" "}
-            <span style={{ color: "#d1d5db", fontWeight: 400 }}>
+            <span style={{ color: "#6b7c93", fontWeight: 400 }}>
               · {policy.productType || ""}
             </span>
           </div>
-          <div style={{ color: "#d1d5db", marginTop: 6 }}>
+          <div style={{ color: "#6b7c93", marginTop: 4, fontSize: 11 }}>
             Issued: {formatDate(policy.issuedAt)}
           </div>
         </div>
@@ -185,16 +194,15 @@ const PolicySummary = () => {
             alignItems: "center",
           }}
         >
-          <div
-            style={{
-              padding: "6px 10px",
-              borderRadius: 999,
-              background: policy.status === "In Force" ? "#10b981" : "#6b7280",
-              color: "#fff",
-            }}
-          >
+          <span style={{
+              background: policy.status === "In Force" ? "#e8f5e9" : "#f3f4f6",
+              color: policy.status === "In Force" ? "#2b7a3e" : "#6b7280",
+              padding: "2px 8px",
+              fontSize: 11,
+              fontWeight: 600,
+            }}>
             {policy.status || "Unknown"}
-          </div>
+          </span>
         </div>
       </div>
 
@@ -260,7 +268,7 @@ const PolicySummary = () => {
                       style={{
                         padding: 8,
                         background: "#f8fafc",
-                        borderRadius: 8,
+                        border: "1px solid #e3e8ee",
                         marginBottom: 8,
                       }}
                     >
@@ -281,7 +289,6 @@ const PolicySummary = () => {
               ...styles.section,
               padding: 12,
               background: "#fff",
-              borderRadius: 8,
             }}
           >
             <div style={{ fontWeight: 700, marginBottom: 6 }}>Customer</div>
@@ -307,7 +314,6 @@ const PolicySummary = () => {
               ...styles.section,
               padding: 12,
               background: "#fff",
-              borderRadius: 8,
               marginTop: 12,
             }}
           >
@@ -319,7 +325,7 @@ const PolicySummary = () => {
                     key={i}
                     style={{
                       padding: 8,
-                      borderRadius: 6,
+                      border: "1px solid #e3e8ee",
                       background: "#f8fafc",
                       marginBottom: 8,
                     }}
@@ -349,7 +355,6 @@ const PolicySummary = () => {
               ...styles.section,
               padding: 12,
               background: "#fff",
-              borderRadius: 8,
               marginTop: 12,
             }}
           >
@@ -361,11 +366,11 @@ const PolicySummary = () => {
                 disabled
                 style={{
                   padding: "8px 12px",
-                  borderRadius: 6,
                   background: "#e5e7eb",
                   color: "#9ca3af",
-                  border: "none",
+                  border: "1px solid #d7dbe2",
                   cursor: "not-allowed",
+                  fontSize: 12,
                 }}
               >
                 Make a Payment
@@ -374,11 +379,11 @@ const PolicySummary = () => {
                 disabled
                 style={{
                   padding: "8px 12px",
-                  borderRadius: 6,
-                  border: "1px solid #e5e7eb",
+                  border: "1px solid #d7dbe2",
                   background: "transparent",
                   color: "#9ca3af",
                   cursor: "not-allowed",
+                  fontSize: 12,
                 }}
               >
                 Email Policy
@@ -387,11 +392,11 @@ const PolicySummary = () => {
                 disabled
                 style={{
                   padding: "8px 12px",
-                  borderRadius: 6,
-                  border: "1px solid #e5e7eb",
+                  border: "1px solid #d7dbe2",
                   background: "transparent",
                   color: "#9ca3af",
                   cursor: "not-allowed",
+                  fontSize: 12,
                 }}
               >
                 Copy Policy Number
