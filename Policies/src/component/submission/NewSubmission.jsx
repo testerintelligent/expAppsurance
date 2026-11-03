@@ -117,132 +117,76 @@ export default function NewSubmission() {
   };
 
   return (
-    <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
-      <Typography variant="h4" fontWeight={700} sx={{ mb: 3 }}>
-        New Submissions
-      </Typography>
+    <Box sx={{ maxWidth: 1000, mx: 0 }}>
+      <div style={{ fontSize: 16, fontWeight: 700, color: "#2d3e52", marginBottom: 12 }}>New Submission</div>
 
-      <Paper sx={{ p: 4, borderRadius: 4 }}>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Grid container spacing={2}>
-              {/* Organization */}
-              <Grid item xs={12} sm={6} md={3}>
-                <TextField
-                  label="Organization"
-                  name="organization"
-                  value={form.organization}
-                  onChange={handleChange}
-                  fullWidth
-                  sx={{ mb: 2 }}
-                />
-              </Grid>
-              {/* Producer Code */}
-              <Grid item xs={12} sm={6} md={3}>
-                <TextField
-                  label="Producer Code"
-                  name="producerCode"
-                  value={form.producerCode}
-                  onChange={handleChange}
-                  fullWidth
-                  sx={{ mb: 2 }}
-                />
-              </Grid>
-              {/* Term Type */}
-              <Grid item xs={12} sm={6} md={2}>
-                <TextField
-                  select
-                  label="Term Type"
-                  name="termType"
-                  value={form.termType}
-                  onChange={handleChange}
-                  fullWidth
-                  SelectProps={{ native: true }}
-                  sx={{ mb: 2 }}
-                  required
-                >
-                  <option value="6 months">6 months</option>
-                  <option value="12 months">12 months</option>
-                </TextField>
-              </Grid>
-              {/* Effective Date */}
-              <Grid item xs={12} sm={6} md={2}>
-                <TextField
-                  label="Effective Date"
-                  name="effectiveDate"
-                  type="date"
-                  value={form.effectiveDate}
-                  onChange={handleChange}
-                  fullWidth
-                  sx={{ mb: 2 }}
-                  InputLabelProps={{ shrink: true }}
-                  required
-                />
-              </Grid>
-              {/* Expiration Date */}
-              <Grid item xs={12} sm={6} md={2}>
-                <TextField
-                  label="Expiration Date"
-                  name="expirationDate"
-                  type="date"
-                  value={form.expirationDate}
-                  onChange={handleChange}
-                  fullWidth
-                  sx={{ mb: 2 }}
-                  InputLabelProps={{ shrink: true }}
-                  required
-                />
-              </Grid>
-              {/* Written Date */}
-              <Grid item xs={12} sm={6} md={2}>
-                <TextField
-                  label="Written Date"
-                  name="writtenDate"
-                  type="date"
-                  value={form.writtenDate}
-                  onChange={handleChange}
-                  fullWidth
-                  sx={{ mb: 2 }}
-                  InputLabelProps={{ shrink: true }}
-                  required
-                />
-              </Grid>
+      {/* Submission details section */}
+      <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+        <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+          Submission Details
+        </div>
+        <div style={{ padding: "12px 14px" }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={2}>
+              <TextField size="small" label="Organization" name="organization" value={form.organization} onChange={handleChange} fullWidth />
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <TextField size="small" label="Producer Code" name="producerCode" value={form.producerCode} onChange={handleChange} fullWidth />
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <TextField size="small" select label="Term Type" name="termType" value={form.termType} onChange={handleChange} fullWidth SelectProps={{ native: true }} required>
+                <option value="6 months">6 months</option>
+                <option value="12 months">12 months</option>
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <TextField size="small" label="Effective Date" name="effectiveDate" type="date" value={form.effectiveDate} onChange={handleChange} fullWidth InputLabelProps={{ shrink: true }} required />
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <TextField size="small" label="Expiration Date" name="expirationDate" type="date" value={form.expirationDate} onChange={handleChange} fullWidth InputLabelProps={{ shrink: true }} required />
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <TextField size="small" label="Written Date" name="writtenDate" type="date" value={form.writtenDate} onChange={handleChange} fullWidth InputLabelProps={{ shrink: true }} required />
             </Grid>
           </Grid>
-        </Grid>
+        </div>
+      </div>
 
-        <Box sx={{ mt: 4 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell></TableCell>
-                <TableCell>Product Name</TableCell>
-                <TableCell>Product Description</TableCell>
-                <TableCell>Status</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {products.map((product, idx) => (
-                <TableRow key={idx}>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      color="info"
-                      size="small"
-                      onClick={() => handleProductSelect(product)}
-                    >
-                      Select
-                    </Button>
-                  </TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.description}</TableCell>
-                  <TableCell>{product.status}</TableCell>
-                </TableRow>
+      {/* Product selection section */}
+      <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
+        <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+          Select Product
+        </div>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+          <thead>
+            <tr>
+              {["", "Product Name", "Description", "Status"].map((col) => (
+                <th key={col} style={{ padding: "8px 12px", background: "#f6f7f8", borderBottom: "2px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left", fontWeight: 700, color: "#31475f", fontSize: 11 }}>
+                  {col}
+                </th>
               ))}
-            </TableBody>
-          </Table>
-        </Box>
-      </Paper>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product, idx) => (
+              <tr key={idx} style={{ background: idx % 2 === 0 ? "#f8fafb" : "#fff" }}>
+                <td style={{ padding: "8px 12px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>
+                  <Button variant="contained" size="small" onClick={() => handleProductSelect(product)}>
+                    Select
+                  </Button>
+                </td>
+                <td style={{ padding: "8px 12px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee", fontWeight: 600 }}>{product.name}</td>
+                <td style={{ padding: "8px 12px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{product.description}</td>
+                <td style={{ padding: "8px 12px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>
+                  <span style={{ display: "inline-block", padding: "2px 8px", borderRadius: 2, fontSize: 11, fontWeight: 600, background: "#e8f5e9", color: "#2b7a3e" }}>
+                    {product.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </Box>
   );
 }

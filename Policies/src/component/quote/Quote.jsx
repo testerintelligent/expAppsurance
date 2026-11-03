@@ -1,21 +1,13 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
-  Paper,
   Button,
   Divider,
-  Stack,
-  Chip,
   Tooltip,
   Grid,
-  Card,
-  CardContent,
-  CardHeader,
   Alert,
-  Container,
-  Paper as MuiPaper,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -25,6 +17,8 @@ import {
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import InfoBar from "../InfoBar";
 import { createQuote } from "./quoteAPI";
+import { COVERAGE_OPTIONS } from "../../constants/coverages";
+import { useWorkflowState } from "../../utils/workflowSession";
 import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
@@ -40,7 +34,7 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import VerifiedIcon from "@mui/icons-material/Verified";
 
 export default function Quote() {
-  const { state } = useLocation();
+  const state = useWorkflowState();
   const navigate = useNavigate();
   const contact = state?.contact || {};
   const vehicle = state?.vehicleData || {};
@@ -57,50 +51,11 @@ export default function Quote() {
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [errorSnackbar, setErrorSnackbar] = useState({ open: false, message: "" });
 
-  const coverageOptions = [
-    {
-      name: "Third-Party Liability",
-      description:
-        "Covers damages or injuries caused to a third party by your vehicle. Mandatory by law.",
-      premium: 120,
-    },
-    {
-      name: "Own Damage",
-      description:
-        "Covers repair or replacement costs for damage to your own vehicle.",
-      premium: 250,
-    },
-    {
-      name: "Comprehensive",
-      description:
-        "Provides combined protection including third-party liability and own damage.",
-      premium: 400,
-    },
-    {
-      name: "Personal Accident Cover",
-      description:
-        "Covers medical expenses or compensation in case of injury or death of the driver.",
-      premium: 80,
-    },
-    {
-      name: "Zero Depreciation",
-      description:
-        "Allows full claim without deducting depreciation on replaced parts.",
-      premium: 150,
-    },
-    {
-      name: "Vehicle theft",
-      description:
-        "Provides coverage if your vehicle is stolen or declared a total loss.",
-      premium: 110,
-    },
-  ];
-
   // Premium from API or default
   const basePremium = pricingData?.premium || 1500;
   
   // Calculate selected coverages total
-  const selectedCoveragesTotal = coverageOptions
+  const selectedCoveragesTotal = COVERAGE_OPTIONS
     .filter((c) => coverages.includes(c.name))
     .reduce((sum, c) => sum + c.premium, 0);
 
@@ -114,7 +69,7 @@ export default function Quote() {
   const finalTotal = totalBeforeTax + taxAmount;
 
   const getCoverageTooltip = (name) => {
-    const cov = coverageOptions.find((c) => c.name === name);
+    const cov = COVERAGE_OPTIONS.find((c) => c.name === name);
     return cov ? cov.description : "Coverage info not available";
   };
 
@@ -189,8 +144,7 @@ export default function Quote() {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)", minHeight: "100vh", py: 4 }}>
-      {/* Header */}
+    <div>
       <InfoBar
         accountNumber={accountNumber}
         product={productName}
@@ -200,353 +154,177 @@ export default function Quote() {
         expiryDate={expiryDate}
       />
 
-      {/* Title Section */}
-      <Stack spacing={1} sx={{ textAlign: "center", mb: 4, mt: 2 }}>
-        <Typography variant="h3" fontWeight={800} sx={{ color: "#1976d2" }}>
-          Your Quote is Ready ✓
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ fontSize: 16 }}>
-          Review your personalized insurance quote below
-        </Typography>
-      </Stack>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: "#2d3e52" }}>Quote Summary</div>
+        <div style={{ background: "#edf7ee", border: "1px solid #c3e6cb", borderRadius: 2, padding: "4px 12px", fontSize: 12, color: "#1e5228", fontWeight: 600 }}>
+          ✓ Valid for 7 days
+        </div>
+      </div>
 
-      {/* Success Alert */}
-      <Alert severity="success" sx={{ mb: 3, borderRadius: 2 }}>
-        <Typography fontWeight={600}>
-          🎉 Your quote is valid for 7 days. Complete your purchase to lock in this price.
-        </Typography>
-      </Alert>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 14 }}>
+        {/* LEFT column */}
+        <div>
+          {/* Policy Overview */}
+          <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+            <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+              Policy Overview
+            </div>
+            <div style={{ padding: "10px 14px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 10 }}>
+              {[
+                { label: "Effective Date", value: effectiveDate },
+                { label: "Expiry Date", value: expiryDate },
+                { label: "Policy Term", value: "12 Months" },
+                { label: "Submission", value: submissionId ? submissionId.substring(0, 15) + (submissionId.length > 15 ? "…" : "") : "-" },
+              ].map((item) => (
+                <div key={item.label} style={{ borderRight: "1px solid #e3e8ee", paddingRight: 10, paddingLeft: 4 }}>
+                  <div style={{ fontSize: 11, color: "#5a6a7a", marginBottom: 3 }}>{item.label}</div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#2d3e52" }}>{item.value}</div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-      <Grid container spacing={3}>
-        {/* Left Column - Details */}
-        <Grid item xs={12} lg={8}>
-          <Stack spacing={3}>
-            {/* Policy Overview Card */}
-            <Card sx={{ borderRadius: 3, boxShadow: 4, overflow: "hidden" }}>
-              <CardHeader
-                title="📋 Policy Overview"
-                titleTypographyProps={{ variant: "h6", fontWeight: 700 }}
-                sx={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", color: "white", p: 3 }}
-              />
-              <CardContent sx={{ p: 3 }}>
-                <Grid container spacing={2}>
-                  {[
-                    { label: "Effective Date", value: effectiveDate },
-                    { label: "Expiry Date", value: expiryDate },
-                    { label: "Policy Term", value: "12 Months" },
-                    { label: "Submission", value: submissionId },
-                  ].map((item) => (
-                    <Grid item xs={6} sm={3} key={item.label}>
-                      <Stack spacing={0.5} sx={{ textAlign: "center" }}>
-                        <Typography variant="body2" color="text.secondary">
-                          {item.label}
-                        </Typography>
-                        <Typography variant="h6" fontWeight={700}>
-                          {item.value}
-                        </Typography>
-                      </Stack>
-                    </Grid>
-                  ))}
-                </Grid>
-              </CardContent>
-            </Card>
+          {/* Vehicle Information */}
+          <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+            <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+              Vehicle Information
+            </div>
+            <div style={{ padding: "10px 14px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              {[
+                { label: "Vehicle", value: `${vehicle.year || ""} ${vehicle.make || ""} ${vehicle.model || ""}`.trim() || "-" },
+                { label: "License Plate", value: vehicle.licensePlate || "-" },
+                { label: "VIN", value: vehicle.vin || "-" },
+                { label: "Registered State", value: vehicle.stateRegistered || "-" },
+              ].map((item) => (
+                <div key={item.label} style={{ padding: "4px 0", borderBottom: "1px solid #f0f2f5" }}>
+                  <div style={{ fontSize: 11, color: "#5a6a7a" }}>{item.label}</div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#2d3e52" }}>{item.value}</div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-            {/* Vehicle Information Card */}
-            <Card sx={{ borderRadius: 3, boxShadow: 3, overflow: "hidden" }}>
-              <CardHeader
-                avatar={<DirectionsCarIcon sx={{ fontSize: 28, color: "white" }} />}
-                title="Vehicle Information"
-                titleTypographyProps={{ variant: "h6", fontWeight: 700 }}
-                sx={{ background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)", color: "white", p: 2.5 }}
-              />
-              <CardContent sx={{ p: 3 }}>
-                <Grid container spacing={2}>
-                  {[
-                    { icon: DirectionsCarIcon, label: "Vehicle Model", value: `${vehicle.year} ${vehicle.make} ${vehicle.model}` },
-                    { icon: ConfirmationNumberIcon, label: "License Plate", value: vehicle.licensePlate },
-                    { icon: FingerprintIcon, label: "VIN", value: vehicle.vin },
-                    { icon: MapIcon, label: "Registered State", value: vehicle.stateRegistered },
-                  ].map((item) => (
-                    <Grid item xs={12} sm={6} key={item.label}>
-                      <Stack direction="row" spacing={2}>
-                        <item.icon color="primary" sx={{ mt: 0.5, flexShrink: 0 }} />
-                        <Stack spacing={0.3}>
-                          <Typography variant="body2" color="text.secondary">
-                            {item.label}
-                          </Typography>
-                          <Typography variant="body1" fontWeight={600}>
-                            {item.value}
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                    </Grid>
-                  ))}
-                </Grid>
-              </CardContent>
-            </Card>
+          {/* Driver & Contact */}
+          <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+            <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+              Driver & Contact Details
+            </div>
+            <div style={{ padding: "10px 14px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              {[
+                { label: "Full Name", value: `${contact.firstName || ""} ${contact.lastName || ""}`.trim() || "-" },
+                { label: "License Type", value: contact.licenseType || "-" },
+                { label: "Email", value: contact.email || "-" },
+                { label: "Phone", value: contact.phone || "-" },
+                { label: "Address", value: contact.address || "-" },
+              ].map((item) => (
+                <div key={item.label} style={{ padding: "4px 0", borderBottom: "1px solid #f0f2f5" }}>
+                  <div style={{ fontSize: 11, color: "#5a6a7a" }}>{item.label}</div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#2d3e52" }}>{item.value}</div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-            {/* Driver & Contact Information Card */}
-            <Card sx={{ borderRadius: 3, boxShadow: 3, overflow: "hidden" }}>
-              <CardHeader
-                avatar={<PersonIcon sx={{ fontSize: 28, color: "white" }} />}
-                title="Driver & Contact Details"
-                titleTypographyProps={{ variant: "h6", fontWeight: 700 }}
-                sx={{ background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)", color: "white", p: 2.5 }}
-              />
-              <CardContent sx={{ p: 3 }}>
-                <Grid container spacing={2}>
-                  {[
-                    { icon: PersonIcon, label: "Full Name", value: `${contact.firstName} ${contact.lastName}`, isChip: false },
-                    { icon: BadgeIcon, label: "License Type", value: contact.licenseType, isChip: true },
-                    { icon: EmailIcon, label: "Email", value: contact.email, isChip: false },
-                    { icon: PhoneIcon, label: "Phone", value: contact.phone, isChip: false },
-                  ].map((item) => (
-                    <Grid item xs={12} sm={6} key={item.label}>
-                      <Stack direction="row" spacing={2}>
-                        <item.icon color="primary" sx={{ mt: 0.5, flexShrink: 0 }} />
-                        <Stack spacing={0.3} sx={{ flex: 1 }}>
-                          <Typography variant="body2" color="text.secondary">
-                            {item.label}
-                          </Typography>
-                          {item.isChip ? (
-                            <Chip label={item.value} color="primary" variant="outlined" size="small" />
-                          ) : (
-                            <Typography variant="body1" fontWeight={600}>
-                              {item.value}
-                            </Typography>
-                          )}
-                        </Stack>
-                      </Stack>
-                    </Grid>
-                  ))}
-                  <Grid item xs={12}>
-                    <Stack direction="row" spacing={2}>
-                      <HomeIcon color="primary" sx={{ mt: 0.5, flexShrink: 0 }} />
-                      <Stack spacing={0.3} sx={{ flex: 1 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Address
-                        </Typography>
-                        <Typography variant="body1" fontWeight={600}>
-                          {contact.address}
-                        </Typography>
-                      </Stack>
-                    </Stack>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
+          {/* Selected Coverages */}
+          <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
+            <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+              Selected Coverages
+            </div>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+              <thead>
+                <tr>
+                  <th style={{ padding: "7px 12px", background: "#f6f7f8", borderBottom: "1px solid #d7dbe2", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#31475f" }}>Coverage</th>
+                  <th style={{ padding: "7px 12px", background: "#f6f7f8", borderBottom: "1px solid #d7dbe2", textAlign: "right", fontSize: 11, fontWeight: 700, color: "#31475f", width: 100 }}>Premium</th>
+                </tr>
+              </thead>
+              <tbody>
+                {coverages.map((cov, idx) => {
+                  const coverage = COVERAGE_OPTIONS.find((c) => c.name === cov);
+                  return (
+                    <tr key={cov} style={{ background: idx % 2 === 0 ? "#f8fafb" : "#fff" }}>
+                      <td style={{ padding: "7px 12px", borderBottom: "1px solid #e3e8ee" }}>
+                        {cov}
+                        {cov === "Third-Party Liability" && (
+                          <span style={{ marginLeft: 6, fontSize: 10, color: "#c62828", fontWeight: 600 }}>MANDATORY</span>
+                        )}
+                      </td>
+                      <td style={{ padding: "7px 12px", borderBottom: "1px solid #e3e8ee", textAlign: "right", fontWeight: 600, color: "#2b7a3e" }}>
+                        ₹{coverage?.premium.toLocaleString("en-IN")}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-            {/* Coverages Selected Card */}
-            <Card sx={{ borderRadius: 3, boxShadow: 3, overflow: "hidden" }}>
-              <CardHeader
-                avatar={<CheckCircleIcon sx={{ fontSize: 28, color: "white" }} />}
-                title="Selected Coverages"
-                titleTypographyProps={{ variant: "h6", fontWeight: 700 }}
-                sx={{ background: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)", color: "white", p: 2.5 }}
-              />
-              <CardContent sx={{ p: 3 }}>
-                <Stack spacing={1.5}>
-                  {coverages.map((cov) => {
-                    const coverage = coverageOptions.find((c) => c.name === cov);
-                    return (
-                      <Paper
-                        key={cov}
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          p: 1.5,
-                          borderRadius: 1.5,
-                          backgroundColor: "#f0f9f7",
-                          border: "1px solid #e0f2f1",
-                        }}
-                      >
-                        <Stack direction="row" spacing={1} sx={{ alignItems: "center", flex: 1 }}>
-                          <VerifiedIcon sx={{ color: "#43e97b", fontSize: 20, flexShrink: 0 }} />
-                          <Stack spacing={0.3}>
-                            <Typography fontWeight={600} sx={{ fontSize: 14 }}>
-                              {cov}
-                            </Typography>
-                            {cov === "Third-Party Liability" && (
-                              <Typography variant="caption" color="error">
-                                ⚠ MANDATORY
-                              </Typography>
-                            )}
-                          </Stack>
-                        </Stack>
-                        <Typography fontWeight={700} color="primary" sx={{ fontSize: 15 }}>
-                          ₹{coverage?.premium.toLocaleString("en-IN")}
-                        </Typography>
-                      </Paper>
-                    );
-                  })}
-                </Stack>
-              </CardContent>
-            </Card>
-          </Stack>
-        </Grid>
+        {/* RIGHT column — Premium & Actions */}
+        <div>
+          {/* Premium Breakdown */}
+          <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+            <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+              Premium Breakdown
+            </div>
+            <div style={{ padding: "10px 14px" }}>
+              {[
+                { label: "Base Premium", value: `₹${basePremium.toLocaleString("en-IN")}` },
+                { label: "Coverages", value: `₹${selectedCoveragesTotal.toLocaleString("en-IN")}` },
+                { label: "Subtotal", value: `₹${totalBeforeTax.toLocaleString("en-IN")}` },
+                { label: "Tax (18% GST)", value: `₹${taxAmount.toLocaleString("en-IN")}` },
+              ].map((item) => (
+                <div key={item.label} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: "1px solid #f0f2f5", fontSize: 12 }}>
+                  <span style={{ color: "#5a6a7a" }}>{item.label}</span>
+                  <span style={{ fontWeight: 600, color: "#2d3e52" }}>{item.value}</span>
+                </div>
+              ))}
+              <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0 4px", borderTop: "2px solid #d7dbe2", marginTop: 4, fontSize: 13 }}>
+                <span style={{ fontWeight: 700, color: "#2d3e52" }}>Total Due</span>
+                <span style={{ fontWeight: 800, color: "#1f5fa6", fontSize: 15 }}>₹{finalTotal.toLocaleString("en-IN")}</span>
+              </div>
+            </div>
+          </div>
 
-        {/* Right Column - Premium Breakdown & CTA */}
-        <Grid item xs={12} lg={4}>
-          <Stack spacing={3}>
-            {/* Premium Breakdown Card */}
-            <Card sx={{ borderRadius: 3, boxShadow: 4, overflow: "hidden" }}>
-              <CardHeader
-                avatar={<LocalOfferIcon sx={{ fontSize: 28, color: "white" }} />}
-                title="Premium Breakdown"
-                titleTypographyProps={{ variant: "h6", fontWeight: 700 }}
-                sx={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", color: "white", p: 2.5 }}
-              />
-              <CardContent sx={{ p: 3 }}>
-                <Stack spacing={2}>
-                  <Stack direction="row" justifyContent="space-between" sx={{ pb: 1 }}>
-                    <Typography fontWeight={500} color="text.secondary">
-                      Base Premium
-                    </Typography>
-                    <Typography fontWeight={700}>₹{basePremium.toLocaleString("en-IN")}</Typography>
-                  </Stack>
+          {/* Action buttons */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <button onClick={handlePayment} disabled={loading || finalTotal === 0}
+              style={{ background: loading || finalTotal === 0 ? "#8aa8c8" : "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "8px 14px", fontSize: 13, fontWeight: 700, cursor: loading || finalTotal === 0 ? "default" : "pointer", width: "100%" }}>
+              {loading ? "Processing…" : "Buy Policy Now"}
+            </button>
+            <button onClick={handleEdit}
+              style={{ background: "#f4f6f8", border: "1px solid #c5ccd5", borderRadius: 2, padding: "7px 14px", fontSize: 12, color: "#4e5d6d", cursor: "pointer", width: "100%", fontWeight: 600 }}>
+              Edit Details
+            </button>
+          </div>
 
-                  <Stack direction="row" justifyContent="space-between" sx={{ pb: 1 }}>
-                    <Typography fontWeight={500} color="text.secondary">
-                      Coverages
-                    </Typography>
-                    <Typography fontWeight={700}>₹{selectedCoveragesTotal.toLocaleString("en-IN")}</Typography>
-                  </Stack>
+          {saveStatus && (
+            <div style={{ marginTop: 10, padding: "6px 10px", background: "#edf7ee", border: "1px solid #c3e6cb", borderRadius: 2, fontSize: 12, color: "#1e5228" }}>
+              {saveStatus}
+            </div>
+          )}
+        </div>
+      </div>
 
-                  <Divider />
-
-                  <Stack direction="row" justifyContent="space-between" sx={{ py: 1 }}>
-                    <Typography fontWeight={600}>Subtotal</Typography>
-                    <Typography fontWeight={700}>₹{totalBeforeTax.toLocaleString("en-IN")}</Typography>
-                  </Stack>
-
-                  <Stack direction="row" justifyContent="space-between" sx={{ py: 1 }}>
-                    <Typography fontWeight={500} color="text.secondary">
-                      Tax (18% GST)
-                    </Typography>
-                    <Typography fontWeight={700}>₹{taxAmount.toLocaleString("en-IN")}</Typography>
-                  </Stack>
-
-                  <Divider sx={{ borderWidth: 2 }} />
-
-                  <Paper
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      py: 2,
-                      px: 1.5,
-                      backgroundColor: "#f0f7ff",
-                      borderRadius: 1,
-                      border: "2px solid #667eea",
-                    }}
-                  >
-                    <Typography variant="h6" fontWeight={700}>
-                      Total Due
-                    </Typography>
-                    <Typography variant="h5" fontWeight={800} color="primary">
-                      ₹{finalTotal.toLocaleString("en-IN")}
-                    </Typography>
-                  </Paper>
-                </Stack>
-              </CardContent>
-            </Card>
-
-            {/* Action Buttons */}
-            <Stack spacing={2}>
-              <Button
-                variant="contained"
-                size="large"
-                fullWidth
-                onClick={handlePayment}
-                disabled={loading || finalTotal === 0}
-                sx={{
-                  py: 1.8,
-                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                  fontSize: 16,
-                  fontWeight: 700,
-                }}
-              >
-                {loading ? "Processing..." : "Buy Policy Now"}
-              </Button>
-              <Button
-                variant="outlined"
-                size="large"
-                fullWidth
-                onClick={handleEdit}
-                sx={{ py: 1.5, fontSize: 14, fontWeight: 600 }}
-              >
-                Edit Details
-              </Button>
-            </Stack>
-          </Stack>
-        </Grid>
-      </Grid>
-
-      {/* Confirmation Dialog for Edit Details */}
-      <Dialog
-        open={confirmDialogOpen}
-        onClose={handleCancelEdit}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          sx: { borderRadius: 2, boxShadow: 6 },
-        }}
-      >
-        <DialogTitle
-          sx={{
-            fontSize: 18,
-            fontWeight: 700,
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-            color: "white",
-            pb: 2,
-          }}
-        >
-          Confirm Edit Details
-        </DialogTitle>
-        <DialogContent sx={{ pt: 3 }}>
-          <Typography variant="body1" sx={{ mb: 2, fontWeight: 500 }}>
-            ⚠️ Are you sure you want to edit your details?
-          </Typography>
+      {/* Edit confirmation dialog */}
+      <Dialog open={confirmDialogOpen} onClose={handleCancelEdit} maxWidth="sm" fullWidth>
+        <DialogTitle>Confirm Edit Details</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>⚠️ Are you sure you want to edit your details?</Typography>
           <Typography variant="body2" color="text.secondary">
-            If you proceed, your current quote will be discarded and you'll be taken back to the vehicle details screen. You'll need to generate a new quote after making changes.
+            Your current quote will be discarded and you'll return to vehicle details. A new quote will be required.
           </Typography>
         </DialogContent>
-        <DialogActions sx={{ p: 2.5, gap: 1.5 }}>
-          <Button
-            onClick={handleCancelEdit}
-            variant="outlined"
-            sx={{ fontWeight: 600 }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleConfirmEdit}
-            variant="contained"
-            sx={{
-              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-              fontWeight: 600,
-            }}
-          >
-            Yes, Edit Details
-          </Button>
+        <DialogActions>
+          <Button onClick={handleCancelEdit} variant="outlined">Cancel</Button>
+          <Button onClick={handleConfirmEdit} variant="contained">Yes, Edit Details</Button>
         </DialogActions>
       </Dialog>
 
-      {/* Error Snackbar */}
-      <Snackbar
-        open={errorSnackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setErrorSnackbar({ open: false, message: "" })}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={() => setErrorSnackbar({ open: false, message: "" })}
-          severity="error"
-          sx={{ width: "100%" }}
-        >
+      <Snackbar open={errorSnackbar.open} autoHideDuration={6000} onClose={() => setErrorSnackbar({ open: false, message: "" })} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
+        <Alert onClose={() => setErrorSnackbar({ open: false, message: "" })} severity="error" sx={{ width: "100%" }}>
           {errorSnackbar.message}
         </Alert>
       </Snackbar>
-    </Container>
+    </div>
   );
 }

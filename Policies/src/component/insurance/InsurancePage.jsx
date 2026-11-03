@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 import { FaSearch } from "react-icons/fa";
 
 const InsurancePage = () => {
@@ -48,8 +48,8 @@ const InsurancePage = () => {
     ],
   };
   useEffect(() => {
-    axios
-      .get("http://10.192.190.158:5000/api/getContact")
+    api
+      .get("/api/getContact")
       .then((response) => {
         const contacts = response.data?.contacts || [];
         setContactData(contacts);
@@ -137,13 +137,12 @@ const InsurancePage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateFields()) return;
-    const method = apiMethod === "update" ? "put" : "post";
-    const url =
+    const request =
       apiMethod === "update"
-        ? `http://10.192.190.158:5000/api/updatePolicy/${initialData._id}`
-        : `http://10.192.190.158:5000/api/postPolicy`;
+        ? api.put(`/api/updatePolicy/${initialData._id}`, insuranceData)
+        : api.post("/api/postPolicy", insuranceData);
 
-    axios[method](url, insuranceData)
+    request
       .then((res) => {
         setMessage(res.data.message || "Success!");
         navigate("/");
@@ -154,208 +153,185 @@ const InsurancePage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <div className="bg-gray-900 bg-opacity-90 shadow-lg p-10 rounded-xl w-full max-w-2xl text-white">
-        <h2 className="text-3xl font-bold text-center mb-6">
-          Insurance Policy Details
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex flex-col space-y-2">
-          <label className="block text-left mb-1">Customer ID</label>
-            <div className="relative">
-              <input
-                type="text"
-                name="customerId"
-                value={customerId}
-                onChange={handleCustomerChange}
-                placeholder="Search Customer"
-                className="input-style"
-              />
-              <button
-                type="button"
-                onClick={handleSearch}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-2 rounded"
-              >
-                <FaSearch />
-              </button>
-            </div>
-            {errors.customerId && (
-              <p className="text-red-500">{errors.customerId}</p>
-            )}
-            {filteredContact.length > 0 && (
-              <>
-                <label className="block text-left mb-1">Customer Name</label>
-                <input
-                  type="text"
-                  disabled
-                  value={`${filteredContact[0].firstName} ${filteredContact[0].lastName}`}
-                  className="input-style"
-                />
-                <label className="block text-left mb-1">Email</label>
-                <input
-                  type="email"
-                  disabled
-                  value={filteredContact[0].email}
-                  className="input-style"
-                />
-                <label className="block text-left mb-1">Address</label>
-                <input
-                  type="text"
-                  disabled
-                  value={filteredContact[0].address}
-                  className="input-style"
-                />
-                <label className="block text-left mb-1">Date of Birth</label>
-                <input
-                  type="text"
-                  disabled
-                  value={filteredContact[0].dateOfBirth}
-                  className="input-style"
-                />
-              </>
-            )}
-            <label className="block text-left mb-1">Policy Type</label>
-            <select
-              value={insuranceData.policyType}
-              onChange={handlePolicySelectChange}
-              className="w-full p-3 rounded-lg bg-gray-700 border border-gray-500 text-white"
-            >
-              <option value="">-- Select Policy Type --</option>
-              {Object.keys(coverageMapping).map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-            {errors.policyType && (
-              <p className="text-red-500">{errors.policyType}</p>
-            )}
-            <label className="block text-left mb-1">Coverage</label>
-            <select
-              value={insuranceData.coverageDetails}
-              onChange={handleCoverageChange}
-              disabled={!coverageOptions.length}
-              className="w-full p-3 rounded-lg bg-gray-700 border border-gray-500 text-white"
-            >
-              <option value="">-- Select Coverage --</option>
-              {coverageOptions.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt}
-                </option>
-              ))}
-            </select>
-            {errors.coverageDetails && (
-              <p className="text-red-500">{errors.coverageDetails}</p>
-            )}
-            <label className="block text-left mb-1">Start Date</label>
-            <input
-              type="date"
-              name="startDate"
-              value={insuranceData.startDate?.split("T")[0]}
-              onChange={handleChange}
-              placeholder="Start Date"
-              className="input-style"
-            />
-            <label className="block text-left mb-1">End Date</label>
-            <input
-              type="date"
-              name="endDate"
-              value={insuranceData.endDate?.split("T")[0]}
-              onChange={handleChange}
-              placeholder="End Date"
-              className="input-style"
-            />
-            <label className="block text-left mb-1">Sum Insured</label>
-            <input
-              type="number"
-              name="sumInsured"
-              value={insuranceData.sumInsured}
-              onChange={handleChange}
-              placeholder="Sum Insured"
-              className="input-style"
-            />
-            {errors.sumInsured && (
-              <p className="text-red-500">{errors.sumInsured}</p>
-            )}
-            <label className="block text-left mb-1">Premium</label>
-            <input
-              type="number"
-              name="premium"
-              value={insuranceData.premium}
-              onChange={handleChange}
-              placeholder="Premium"
-              className="input-style"
-            />
-            {errors.premium && <p className="text-red-500">{errors.premium}</p>}
-            <label className="block text-left mb-1">Status</label>
-            <select
-              name="status"
-              value={insuranceData.status}
-              onChange={handleChange}
-              className="w-full p-3 rounded-lg bg-gray-700 border border-gray-500 text-white"
-            >
-              <option value="">-- Select Status --</option>
-              <option value="In Force">In Force</option>
-              <option value="Lapsed">Lapsed</option>
-              <option value="Grace Period">Grace Period</option>
-              <option value="Cancelled">Cancelled</option>
-              <option value="Under Review">Under Review</option>
-              <option value="Expired">Expired</option>
-              <option value="Suspended">Suspended</option>
-              <option value="Matured">Matured</option>
-            </select>
+    <div>
+      <div style={{ fontSize: 16, fontWeight: 700, color: "#2d3e52", marginBottom: 12 }}>
+        Insurance Policy Details
+      </div>
 
-            <div className="flex justify-between">
-              {apiMethod === "update" && (
-                <button type="submit" className="btn-primary">
-                  Update
-                </button>
-              )}
-
-              {apiMethod !== "update" && apiMethod !== "view" && (
-                <button type="submit" className="btn-primary">
-                  Submit
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={() => navigate("/")}
-                className="btn-secondary"
-              >
-                Cancel
-              </button>
-            </div>
-            {/* Modal for Suggestions */}
-            {showModal && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                <div className="bg-white text-black p-6 rounded-md max-w-md w-full">
-                  <h4 className="text-xl mb-4">Select Customer Name</h4>
-                  <div className="max-h-48 overflow-y-auto">
-                    {filteredOrgSuggestions.map((option) => (
-                      <div
-                        key={option}
-                        onClick={() => selectSuggestion(currentField, option)}
-                        className="cursor-pointer px-4 py-2 hover:bg-blue-500"
-                      >
-                        {option}
-                      </div>
-                    ))}
-                  </div>
+      <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+        <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+          Customer
+        </div>
+        <div style={{ padding: "12px 14px" }}>
+          <form onSubmit={handleSubmit}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 20px" }}>
+              {/* Customer ID */}
+              <div style={{ gridColumn: "1 / -1" }}>
+                <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Customer ID</label>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <input
+                    type="text"
+                    name="customerId"
+                    value={customerId}
+                    onChange={handleCustomerChange}
+                    placeholder="Search Customer"
+                    style={{ flex: 1, border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", outline: "none" }}
+                  />
                   <button
-                    onClick={() => setShowModal(false)}
-                    className="mt-4 w-full bg-red-500 text-white p-2 rounded"
+                    type="button"
+                    onClick={handleSearch}
+                    style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}
                   >
-                    Close
+                    Search
                   </button>
                 </div>
               </div>
-            )}
-          </div>
-        </form>
-        {message && (
-          <p className="mt-4 text-center text-green-500">{message}</p>
-        )}
+
+              {filteredContact.length > 0 && (
+                <>
+                  <div>
+                    <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Customer Name</label>
+                    <input type="text" disabled value={`${filteredContact[0].firstName} ${filteredContact[0].lastName}`}
+                      style={{ width: "100%", border: "1px solid #e3e8ee", borderRadius: 2, padding: "5px 8px", fontSize: 12, background: "#f8fafb", color: "#3d5164" }} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Email</label>
+                    <input type="email" disabled value={filteredContact[0].email}
+                      style={{ width: "100%", border: "1px solid #e3e8ee", borderRadius: 2, padding: "5px 8px", fontSize: 12, background: "#f8fafb", color: "#3d5164" }} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Address</label>
+                    <input type="text" disabled value={filteredContact[0].address}
+                      style={{ width: "100%", border: "1px solid #e3e8ee", borderRadius: 2, padding: "5px 8px", fontSize: 12, background: "#f8fafb", color: "#3d5164" }} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Date of Birth</label>
+                    <input type="text" disabled value={filteredContact[0].dateOfBirth}
+                      style={{ width: "100%", border: "1px solid #e3e8ee", borderRadius: 2, padding: "5px 8px", fontSize: 12, background: "#f8fafb", color: "#3d5164" }} />
+                  </div>
+                </>
+              )}
+            </div>
+          </form>
+        </div>
       </div>
+
+      <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+        <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+          Policy Details
+        </div>
+        <div style={{ padding: "12px 14px" }}>
+          <form onSubmit={handleSubmit}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px 20px" }}>
+              <div>
+                <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Policy Type *</label>
+                <select value={insuranceData.policyType} onChange={handlePolicySelectChange}
+                  style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
+                  <option value="">-- Select Policy Type --</option>
+                  {Object.keys(coverageMapping).map((type) => <option key={type} value={type}>{type}</option>)}
+                </select>
+                {errors.policyType && <div style={{ color: "#c62828", fontSize: 11, marginTop: 2 }}>{errors.policyType}</div>}
+              </div>
+
+              <div>
+                <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Coverage *</label>
+                <select value={insuranceData.coverageDetails} onChange={handleCoverageChange} disabled={!coverageOptions.length}
+                  style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: coverageOptions.length ? "#fff" : "#f8fafb" }}>
+                  <option value="">-- Select Coverage --</option>
+                  {coverageOptions.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+                </select>
+                {errors.coverageDetails && <div style={{ color: "#c62828", fontSize: 11, marginTop: 2 }}>{errors.coverageDetails}</div>}
+              </div>
+
+              <div>
+                <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Status</label>
+                <select name="status" value={insuranceData.status} onChange={handleChange}
+                  style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
+                  <option value="">-- Select Status --</option>
+                  <option value="In Force">In Force</option>
+                  <option value="Lapsed">Lapsed</option>
+                  <option value="Grace Period">Grace Period</option>
+                  <option value="Cancelled">Cancelled</option>
+                  <option value="Under Review">Under Review</option>
+                  <option value="Expired">Expired</option>
+                  <option value="Suspended">Suspended</option>
+                  <option value="Matured">Matured</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Start Date</label>
+                <input type="date" name="startDate" value={insuranceData.startDate?.split("T")[0]} onChange={handleChange}
+                  style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+              </div>
+
+              <div>
+                <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>End Date</label>
+                <input type="date" name="endDate" value={insuranceData.endDate?.split("T")[0]} onChange={handleChange}
+                  style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+              </div>
+
+              <div>
+                <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Sum Insured *</label>
+                <input type="number" name="sumInsured" value={insuranceData.sumInsured} onChange={handleChange} placeholder="0"
+                  style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                {errors.sumInsured && <div style={{ color: "#c62828", fontSize: 11, marginTop: 2 }}>{errors.sumInsured}</div>}
+              </div>
+
+              <div>
+                <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Premium *</label>
+                <input type="number" name="premium" value={insuranceData.premium} onChange={handleChange} placeholder="0"
+                  style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                {errors.premium && <div style={{ color: "#c62828", fontSize: 11, marginTop: 2 }}>{errors.premium}</div>}
+              </div>
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16, paddingTop: 12, borderTop: "1px solid #e3e8ee" }}>
+              <button type="button" onClick={() => navigate("/")}
+                style={{ background: "#f4f6f8", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 14px", fontSize: 12, color: "#4e5d6d", cursor: "pointer" }}>
+                Cancel
+              </button>
+              {apiMethod === "update" && (
+                <button type="submit"
+                  style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "5px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                  Update
+                </button>
+              )}
+              {apiMethod !== "update" && apiMethod !== "view" && (
+                <button type="submit"
+                  style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "5px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                  Submit
+                </button>
+              )}
+            </div>
+          </form>
+
+          {message && <div style={{ marginTop: 10, color: "#2b7a3e", fontSize: 12 }}>{message}</div>}
+        </div>
+      </div>
+
+      {/* Customer search modal */}
+      {showModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}>
+          <div style={{ background: "#fff", border: "1px solid #d7dbe2", borderRadius: 3, width: 420, maxWidth: "90%" }}>
+            <div style={{ background: "#f3f6f9", padding: "8px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 12, fontWeight: 700, color: "#2e3e4c", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span>SELECT CUSTOMER</span>
+              <button onClick={() => setShowModal(false)} style={{ background: "none", border: "none", fontSize: 16, cursor: "pointer", color: "#4e5d6d" }}>✕</button>
+            </div>
+            <div style={{ maxHeight: 240, overflowY: "auto" }}>
+              {filteredOrgSuggestions.map((option) => (
+                <div key={option} onClick={() => selectSuggestion(currentField, option)}
+                  style={{ padding: "7px 12px", fontSize: 12, cursor: "pointer", borderBottom: "1px solid #f0f0f0", color: "#3d5164" }}
+                  onMouseEnter={e => e.currentTarget.style.background = "#edf4fb"}
+                  onMouseLeave={e => e.currentTarget.style.background = ""}
+                >
+                  {option}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

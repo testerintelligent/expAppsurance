@@ -1,14 +1,11 @@
-import axios from "axios";
+import api from "../../utils/api";
 
-const API_BASE_URL = "http://10.192.190.158:5000/api/quotes";
-
-// ➕ Create a new Quote for a submission
+// ➕ Create a new Quote
 export const createQuote = async (quoteData) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/createQuote`, quoteData);
-    return response.data;
+    const res = await api.post("/api/quotes/createQuote", quoteData);
+    return res.data;
   } catch (err) {
-    console.error("Error creating quote:", err);
     throw err.response?.data || { message: "Error creating quote" };
   }
 };
@@ -16,10 +13,9 @@ export const createQuote = async (quoteData) => {
 // 🔍 Fetch all quotes for a submission
 export const getQuotesBySubmission = async (submissionId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/submission/${submissionId}`);
-    return response.data;
+    const res = await api.get(`/api/quotes/submission/${submissionId}`);
+    return res.data;
   } catch (err) {
-    console.error("Error fetching quotes:", err);
     throw err.response?.data || { message: "Error fetching quotes" };
   }
 };

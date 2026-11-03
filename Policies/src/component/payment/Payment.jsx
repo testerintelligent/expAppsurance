@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -15,12 +15,9 @@ import {
   TableCell,
   TableBody,
   Button,
-  Paper,
-  Chip,
   Stepper,
   Step,
   StepLabel,
-  Stack,
   Dialog,
   DialogTitle,
   DialogActions,
@@ -30,9 +27,11 @@ import { ArrowBack, Payment as PaymentIcon } from "@mui/icons-material";
 import { createPolicy } from "../policy/policyAPI";
 import { createInvoice } from "../policy/invoiceApi";
 import "./payment.css";
+import { COVERAGE_OPTIONS } from "../../constants/coverages";
+import { useWorkflowState } from "../../utils/workflowSession";
 
 export default function Payment() {
-  const { state } = useLocation();
+  const state = useWorkflowState();
   const navigate = useNavigate();
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -61,46 +60,6 @@ export default function Payment() {
     accountNo: "",
     accountHolder: "",
   });
-
-  // ------------------ COVERAGE OPTIONS & PREMIUM LOGIC ------------------
-  const coverageOptions = [
-    {
-      name: "Third-Party Liability",
-      description:
-        "Covers damages or injuries caused to a third party by your vehicle. Mandatory by law.",
-      premium: 120,
-    },
-    {
-      name: "Own Damage",
-      description:
-        "Covers repair or replacement costs for damage to your own vehicle.",
-      premium: 250,
-    },
-    {
-      name: "Comprehensive",
-      description:
-        "Provides combined protection including third-party liability and own damage.",
-      premium: 400,
-    },
-    {
-      name: "Personal Accident Cover",
-      description:
-        "Covers medical expenses or compensation in case of injury or death of the driver.",
-      premium: 80,
-    },
-    {
-      name: "Zero Depreciation",
-      description:
-        "Allows full claim without deducting depreciation on replaced parts.",
-      premium: 150,
-    },
-    {
-      name: "Vehicle theft",
-      description:
-        "Provides coverage if your vehicle is stolen or declared a total loss.",
-      premium: 110,
-    },
-  ];
 
   // Use premium values from Quote screen if available, otherwise calculate
   const base = basePremium || 1500;
@@ -195,372 +154,187 @@ export default function Payment() {
   };
 
   return (
-    <Box sx={{ maxWidth: 1250, mx: "auto", py: 4 }}>
-      {/* STEP PROGRESS */}
-      <Stepper activeStep={1} alternativeLabel sx={{ mb: 4 }}>
+    <div>
+      {/* Stepper */}
+      <Stepper activeStep={1} alternativeLabel sx={{ mb: 3, background: "transparent", border: "none", boxShadow: "none" }}>
         {["Quote", "Payment", "Confirmation"].map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
+          <Step key={label}><StepLabel>{label}</StepLabel></Step>
         ))}
       </Stepper>
 
-      {/* TOP INFO BAR */}
-      <Paper
-        elevation={0}
-        sx={{
-          p: 2,
-          mb: 4,
-          display: "flex",
-          justifyContent: "space-between",
-          background: "#eaf4ff",
-          borderRadius: 2,
-          border: "1px solid #d0e4ff",
-          fontSize: "14px",
-        }}
-      >
-        <Typography>
-          <b>Submission:</b> {submissionId}
-        </Typography>
-        <Typography>
-          <b>Account:</b> {accountNumber}
-        </Typography>
-        <Typography>
-          <b>Policyholder:</b> {policyHolder}
-        </Typography>
-        <Typography>
-          <b>Effective Date:</b> {effectiveDate}
-        </Typography>
-      </Paper>
+      <div style={{ fontSize: 16, fontWeight: 700, color: "#2d3e52", marginBottom: 12 }}>Payment & Billing</div>
 
-      {/* POLICY & PREMIUM SUMMARY PANEL */}
-      <Box
-        sx={{
-          width: "100%",
-          p: 4,
-          borderRadius: 4,
-          background: "rgba(255,255,255,0.75)",
-          backdropFilter: "blur(10px)",
-          border: "1px solid #e0e0e0",
-          mb: 4,
-        }}
-      >
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "1fr auto 1fr" },
-            columnGap: 6,
-            rowGap: 4,
-            alignItems: "start",
-          }}
-        >
-          {/* POLICY SUMMARY */}
-          <Box>
-            <Typography
-              variant="h6"
-              sx={{
-                mb: 3,
-                fontWeight: 700,
-                color: "#1565c0",
-                letterSpacing: 0.4,
-              }}
-            >
-              Policy Summary
-            </Typography>
-            <Box className="summary-row">
-              <span>Submission No</span>
-              <strong>{submissionId}</strong>
-            </Box>
-            <Box className="summary-row">
-              <span>Account No</span>
-              <strong>{accountNumber}</strong>
-            </Box>
-            <Box className="summary-row">
-              <span>Policyholder</span>
-              <strong>{policyHolder}</strong>
-            </Box>
-            <Box className="summary-row">
-              <span>Effective Date</span>
-              <strong>{effectiveDate}</strong>
-            </Box>
-            <Box className="summary-row">
-              <span>Expiry Date</span>
-              <strong>{expiryDate}</strong>
-            </Box>
-          </Box>
+      {/* Info bar */}
+      <div style={{ border: "1px solid #d7dbe2", background: "#f8fafb", marginBottom: 14, padding: "8px 14px", display: "flex", gap: 32, fontSize: 12, flexWrap: "wrap" }}>
+        <span><span style={{ color: "#5a6a7a" }}>Submission: </span><strong>{submissionId}</strong></span>
+        <span><span style={{ color: "#5a6a7a" }}>Account: </span><strong>{accountNumber}</strong></span>
+        <span><span style={{ color: "#5a6a7a" }}>Policyholder: </span><strong>{policyHolder}</strong></span>
+        <span><span style={{ color: "#5a6a7a" }}>Effective: </span><strong>{effectiveDate}</strong></span>
+      </div>
 
-          <Box
-            sx={{
-              width: "1px",
-              height: "100%",
-              backgroundColor: "#d0d0d0",
-              display: { xs: "none", md: "block" },
-            }}
-          />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+        {/* Left: Policy Summary */}
+        <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
+          <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+            Policy Summary
+          </div>
+          <div style={{ padding: "10px 14px" }}>
+            {[
+              { label: "Submission No", value: submissionId },
+              { label: "Account No", value: accountNumber },
+              { label: "Policyholder", value: policyHolder },
+              { label: "Effective Date", value: effectiveDate },
+              { label: "Expiry Date", value: expiryDate },
+            ].map((row) => (
+              <div key={row.label} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: "1px solid #f0f2f5", fontSize: 12 }}>
+                <span style={{ color: "#5a6a7a" }}>{row.label}</span>
+                <span style={{ fontWeight: 600, color: "#2d3e52" }}>{row.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
-          {/* PREMIUM SUMMARY */}
-          <Box>
-            <Typography
-              variant="h6"
-              sx={{
-                mb: 3,
-                fontWeight: 700,
-                color: "#2e7d32",
-                letterSpacing: 0.4,
-              }}
-            >
-              Premium Summary
-            </Typography>
-            <Box className="summary-row">
-              <span>Base Premium</span>
-              <strong>₹{base.toLocaleString("en-IN")}</strong>
-            </Box>
-            <Box className="summary-row">
-              <span>Coverages</span>
-              <strong>₹{coverageTotal.toLocaleString("en-IN")}</strong>
-            </Box>
-            <Box className="summary-row">
-              <span>Subtotal</span>
-              <strong>₹{totalBeforeTax.toLocaleString("en-IN")}</strong>
-            </Box>
-            <Box className="summary-row">
-              <span>Taxes (18%)</span>
-              <strong>₹{totalTax.toLocaleString("en-IN")}</strong>
-            </Box>
-            <Box className="summary-row" sx={{ borderTop: "2px solid #2e7d32", pt: 1.5, mt: 1.5 }}>
-              <span>Total Cost</span>
-              <strong style={{ fontSize: "1.1em", color: "#2e7d32" }}>₹{totalCost.toLocaleString("en-IN")}</strong>
-            </Box>
-            <Chip
-              label="Ready for Payment"
-              color="success"
-              variant="outlined"
-              sx={{ mt: 3, fontWeight: 600, px: 2 }}
-            />
-          </Box>
-        </Box>
-      </Box>
+        {/* Right: Premium Summary */}
+        <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
+          <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+            Premium Summary
+          </div>
+          <div style={{ padding: "10px 14px" }}>
+            {[
+              { label: "Base Premium", value: `₹${base.toLocaleString("en-IN")}` },
+              { label: "Coverages", value: `₹${coverageTotal.toLocaleString("en-IN")}` },
+              { label: "Subtotal", value: `₹${totalBeforeTax.toLocaleString("en-IN")}` },
+              { label: "Taxes (18%)", value: `₹${totalTax.toLocaleString("en-IN")}` },
+            ].map((row) => (
+              <div key={row.label} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: "1px solid #f0f2f5", fontSize: 12 }}>
+                <span style={{ color: "#5a6a7a" }}>{row.label}</span>
+                <span style={{ fontWeight: 600, color: "#2d3e52" }}>{row.value}</span>
+              </div>
+            ))}
+            <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0 4px", borderTop: "2px solid #d7dbe2", marginTop: 4, fontSize: 13 }}>
+              <span style={{ fontWeight: 700, color: "#2d3e52" }}>Total Cost</span>
+              <span style={{ fontWeight: 800, color: "#2b7a3e", fontSize: 15 }}>₹{totalCost.toLocaleString("en-IN")}</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      {/* SELECTED COVERAGES */}
-      <Paper sx={{ p: 2, mb: 3, background: "#f9f9f9", borderRadius: 2 }}>
-        <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1 }}>
+      {/* Coverages */}
+      <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginTop: 14 }}>
+        <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
           Selected Coverages
-        </Typography>
-        <Stack spacing={1}>
-          {coverages.map((cov) => {
-            const coverage = coverageOptions.find((c) => c.name === cov);
-            return (
-              <Box
-                key={cov}
-                sx={{ display: "flex", justifyContent: "space-between" }}
-              >
-                <Typography>{cov}</Typography>
-                <Typography>
-                  ₹{coverage?.premium.toLocaleString("en-IN")}
-                </Typography>
-              </Box>
-            );
-          })}
-        </Stack>
-      </Paper>
+        </div>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+          <thead>
+            <tr>
+              <th style={{ padding: "7px 12px", background: "#f6f7f8", borderBottom: "1px solid #d7dbe2", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#31475f" }}>Coverage</th>
+              <th style={{ padding: "7px 12px", background: "#f6f7f8", borderBottom: "1px solid #d7dbe2", textAlign: "right", fontSize: 11, fontWeight: 700, color: "#31475f", width: 120 }}>Premium</th>
+            </tr>
+          </thead>
+          <tbody>
+            {coverages.map((cov, idx) => {
+              const coverage = COVERAGE_OPTIONS.find((c) => c.name === cov);
+              return (
+                <tr key={cov} style={{ background: idx % 2 === 0 ? "#f8fafb" : "#fff" }}>
+                  <td style={{ padding: "6px 12px", borderBottom: "1px solid #e3e8ee" }}>{cov}</td>
+                  <td style={{ padding: "6px 12px", borderBottom: "1px solid #e3e8ee", textAlign: "right", color: "#2b7a3e", fontWeight: 600 }}>₹{coverage?.premium.toLocaleString("en-IN")}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
-      {/* BILLING PREFERENCES */}
-      <Box
-        sx={{
-          borderRadius: 4,
-          p: 4,
-          mb: 4,
-          background: "#ffffff",
-          border: "1px solid #e0e0e0",
-        }}
-      >
-        <Typography
-          variant="h6"
-          fontWeight={700}
-          sx={{ mb: 3, borderLeft: "4px solid #1565c0", pl: 1.5 }}
-        >
+      {/* Billing Preferences */}
+      <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginTop: 14 }}>
+        <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
           Billing Preferences
-        </Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <FormControl fullWidth>
+        </div>
+        <div style={{ padding: "12px 14px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 20px" }}>
+            <FormControl fullWidth size="small">
               <InputLabel>Billing Method</InputLabel>
-              <Select
-                value={billingMethod}
-                label="Billing Method"
-                onChange={(e) => setBillingMethod(e.target.value)}
-              >
+              <Select value={billingMethod} label="Billing Method" onChange={(e) => setBillingMethod(e.target.value)}>
                 <MenuItem value="Direct Bill">Direct Bill</MenuItem>
-                <MenuItem value="Direct Account Debit">
-                  Direct Account Debit
-                </MenuItem>
+                <MenuItem value="Direct Account Debit">Direct Account Debit</MenuItem>
               </Select>
             </FormControl>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <FormControl fullWidth>
+            <FormControl fullWidth size="small">
               <InputLabel>Payment Schedule</InputLabel>
-              <Select
-                value={paymentSchedule}
-                label="Payment Schedule"
-                onChange={(e) => setPaymentSchedule(e.target.value)}
-              >
+              <Select value={paymentSchedule} label="Payment Schedule" onChange={(e) => setPaymentSchedule(e.target.value)}>
                 <MenuItem value="Monthly">Monthly</MenuItem>
                 <MenuItem value="Quarterly">Quarterly</MenuItem>
                 <MenuItem value="Half Yearly">Half Yearly</MenuItem>
                 <MenuItem value="Yearly">Yearly</MenuItem>
               </Select>
             </FormControl>
-          </Grid>
+          </div>
 
           {billingMethod === "Direct Account Debit" && (
-            <Grid item xs={12}>
-              <Paper
-                elevation={0}
-                sx={{
-                  p: 3,
-                  mt: 2,
-                  background: "#fafbfd",
-                  border: "1px solid #dfe6ee",
-                  borderRadius: 2,
-                }}
-              >
-                <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
-                  Account Details
-                </Typography>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Bank Name"
-                      fullWidth
-                      value={accountDetails.bankName}
-                      onChange={(e) =>
-                        setAccountDetails({
-                          ...accountDetails,
-                          bankName: e.target.value,
-                        })
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Account No"
-                      fullWidth
-                      value={accountDetails.accountNo}
-                      onChange={(e) =>
-                        setAccountDetails({
-                          ...accountDetails,
-                          accountNo: e.target.value,
-                        })
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Account Holder"
-                      fullWidth
-                      value={accountDetails.accountHolder}
-                      onChange={(e) =>
-                        setAccountDetails({
-                          ...accountDetails,
-                          accountHolder: e.target.value,
-                        })
-                      }
-                    />
-                  </Grid>
-                </Grid>
-              </Paper>
-            </Grid>
+            <div style={{ marginTop: 14, padding: "10px 14px", border: "1px solid #d7dbe2", background: "#f8fafb" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#2e3e4c", marginBottom: 10, textTransform: "uppercase", letterSpacing: 0.5 }}>Account Details</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px 16px" }}>
+                <TextField size="small" label="Bank Name" fullWidth value={accountDetails.bankName}
+                  onChange={(e) => setAccountDetails({ ...accountDetails, bankName: e.target.value })} />
+                <TextField size="small" label="Account No" fullWidth value={accountDetails.accountNo}
+                  onChange={(e) => setAccountDetails({ ...accountDetails, accountNo: e.target.value })} />
+                <TextField size="small" label="Account Holder" fullWidth value={accountDetails.accountHolder}
+                  onChange={(e) => setAccountDetails({ ...accountDetails, accountHolder: e.target.value })} />
+              </div>
+            </div>
           )}
-        </Grid>
-      </Box>
+        </div>
+      </div>
 
-      {/* PAYMENT SCHEDULE TABLE */}
-      <Box
-        sx={{
-          borderRadius: 4,
-          p: 4,
-          background: "#ffffff",
-          border: "1px solid #e0e0e0",
-        }}
-      >
-        <Typography
-          variant="h6"
-          fontWeight={700}
-          sx={{ mb: 2, borderLeft: "4px solid #2e7d32", pl: 1.5 }}
-        >
+      {/* Payment Schedule Table */}
+      <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginTop: 14 }}>
+        <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
           Payment Schedule
-        </Typography>
-        <Table>
-          <TableHead>
-            <TableRow sx={{ background: "#f5f5f5" }}>
-              <TableCell>Period</TableCell>
-              <TableCell>Premium (₹)</TableCell>
-              <TableCell>Taxes (₹)</TableCell>
-              <TableCell>Total (₹)</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+        </div>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+          <thead>
+            <tr>
+              {["Period", "Premium (₹)", "Taxes (₹)", "Total (₹)"].map((col) => (
+                <th key={col} style={{ padding: "7px 12px", background: "#f6f7f8", borderBottom: "1px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#31475f" }}>
+                  {col}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
             {getScheduleRows().map((row) => (
-              <TableRow key={row.period}>
-                <TableCell>{row.period}</TableCell>
-                <TableCell>{row.premium}</TableCell>
-                <TableCell>{row.taxes}</TableCell>
-                <TableCell>{row.total}</TableCell>
-              </TableRow>
+              <tr key={row.period} style={{ background: row.period % 2 !== 0 ? "#f8fafb" : "#fff" }}>
+                <td style={{ padding: "6px 12px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{row.period}</td>
+                <td style={{ padding: "6px 12px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{row.premium}</td>
+                <td style={{ padding: "6px 12px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{row.taxes}</td>
+                <td style={{ padding: "6px 12px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee", fontWeight: 600 }}>{row.total}</td>
+              </tr>
             ))}
-          </TableBody>
-        </Table>
+          </tbody>
+        </table>
+        <div style={{ padding: "8px 14px", borderTop: "2px solid #d7dbe2", background: "#f8fafb", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13 }}>
+          <span style={{ color: "#4c5d72" }}>Total Amount Payable</span>
+          <strong style={{ color: "#2b7a3e", fontSize: 14 }}>₹{totalCost.toLocaleString("en-IN")}</strong>
+        </div>
+      </div>
 
-        <Box
-          sx={{
-            mt: 3,
-            p: 2,
-            textAlign: "center",
-            background: "#e8f5e9",
-            borderRadius: 2,
-          }}
-        >
-          <Typography variant="h6">
-            Total Amount Payable:{" "}
-            <strong style={{ color: "#2e7d32" }}>
-              ₹{totalCost.toLocaleString("en-IN")}
-            </strong>
-          </Typography>
-        </Box>
-      </Box>
-
-      {/* BOTTOM BUTTONS */}
-      <Box sx={{ mt: 5, display: "flex", justifyContent: "center", gap: 2 }}>
-        <Button
-          variant="outlined"
-          startIcon={<ArrowBack />}
-          onClick={() => navigate(-1)}
-        >
+      {/* Bottom Buttons */}
+      <div style={{ marginTop: 16, paddingBottom: 16, display: "flex", justifyContent: "flex-end", gap: 8 }}>
+        <Button variant="outlined" startIcon={<ArrowBack />} onClick={() => navigate(-1)} size="small">
           Back
         </Button>
-        <Button
-          variant="contained"
-          color="success"
-          onClick={() => setShowConfirm(true)}
-        >
+        <Button variant="contained" color="success" size="small" onClick={() => setShowConfirm(true)}>
           Bind Policy
         </Button>
-        <Dialog open={showConfirm} onClose={handleConfirmNo}>
-        <DialogTitle>
-          Are you sure you want to Issue a Policy?
-        </DialogTitle>
+      </div>
+
+      <Dialog open={showConfirm} onClose={handleConfirmNo}>
+        <DialogTitle>Confirm Policy Issuance</DialogTitle>
         <DialogActions>
-          <MuiButton onClick={handleConfirmNo} color="secondary">
-            No
-          </MuiButton>
-          <MuiButton onClick={handleConfirmYes} color="success" variant="contained">
-            Yes
-          </MuiButton>
+          <MuiButton onClick={handleConfirmNo} color="secondary" size="small">No</MuiButton>
+          <MuiButton onClick={handleConfirmYes} color="success" variant="contained" size="small">Yes, Issue Policy</MuiButton>
         </DialogActions>
       </Dialog>
-      </Box>
-    </Box>
-    
+    </div>
   );
 }

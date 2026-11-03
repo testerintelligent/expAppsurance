@@ -12,7 +12,9 @@ const DashboardLayout = () => {
         <Sidebar />
 
         <main style={{ flex: 1, overflow: "auto", background: "#eff3f6" }}>
-          <Outlet />
+          <div className="policy-screen-shell">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

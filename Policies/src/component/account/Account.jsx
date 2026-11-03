@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import {
   Box,
   Typography,
   TextField,
   Button,
-  Paper,
-  Grid,
   Table,
   TableHead,
   TableRow,
@@ -85,7 +83,7 @@ export default function Account() {
   useEffect(() => {
     const fetchPolicies = async () => {
       try {
-        const response = await axios.get("http://10.192.190.158:5000/api/Policies/getPoliciesForDashboard");
+        const response = await api.get("/api/Policies/getPoliciesForDashboard");
         console.log("response", response.data)
         setAccountDetails(response.data);
       } catch (error) {
@@ -135,327 +133,215 @@ export default function Account() {
   };
 
   return (
-    <Box sx={{ width: "100%", maxWidth: 1200}}>
+    <div style={{ width: "100%", maxWidth: 1200 }}>
 
+      {/* Search panel — shown when no contact passed and searchModel is true */}
       {!location.state?.contact && searchModel && (
-        <Paper sx={{ p: 3}}>
-          <Typography variant="h6" sx={{ fontWeight: "bold", fontSize: 16 }}>
-            Search Account
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Account ID"
-                name="accountNumber"
-                value={searchData.accountNumber}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="First Name"
-                name="firstName"
-                value={searchData.firstName}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Last Name"
-                name="lastName"
-                value={searchData.lastName}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                type="date"
-                fullWidth
-                label="DOB"
-                name="dateOfBirth"
-                InputLabelProps={{ shrink: true }}
-                value={searchData.dateOfBirth}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid className="flex items-start">
-              <Button
-                variant="contained"
-                onClick={handleSearch}
-                className="self-center"
-                sx={{}}
-              >
-                Search
-              </Button>
-            </Grid>
-          </Grid>
-          {/* Search Result Table */}
-          {accountDetails && accountDetails?.length > 0 && (
-            <TableContainer component={Paper} sx={{ mt: 3 }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Select</TableCell>
-                    <TableCell>Account ID</TableCell>
-                    <TableCell>Account Holder Name</TableCell>
-                    <TableCell>Policy Number</TableCell>
-                    <TableCell>Policy Type</TableCell>
-                    <TableCell>Status</TableCell>
-                    {/* <TableCell>Zipcode</TableCell>
-                      <TableCell>Address</TableCell> */}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredData
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((account, index) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          <Button
-                            variant="contained"
-                            size="small"
-                            onClick={() => searchAccountData(account)}
-                          >
+        <div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: "#2d3e52", marginBottom: 12 }}>My Accounts</div>
+
+          <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+            <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+              Search Account
+            </div>
+            <div style={{ padding: "12px 14px" }}>
+              <div style={{ display: "flex", gap: 12, alignItems: "flex-end", flexWrap: "wrap" }}>
+                <div style={{ flex: "1 1 160px" }}>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Account ID</label>
+                  <input type="text" name="accountNumber" value={searchData.accountNumber} onChange={handleChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", outline: "none" }} />
+                </div>
+                <div style={{ flex: "1 1 160px" }}>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>First Name</label>
+                  <input type="text" name="firstName" value={searchData.firstName} onChange={handleChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", outline: "none" }} />
+                </div>
+                <div style={{ flex: "1 1 160px" }}>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Last Name</label>
+                  <input type="text" name="lastName" value={searchData.lastName} onChange={handleChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", outline: "none" }} />
+                </div>
+                <div style={{ flex: "1 1 160px" }}>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Date of Birth</label>
+                  <input type="date" name="dateOfBirth" value={searchData.dateOfBirth} onChange={handleChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                </div>
+                <button onClick={handleSearch}
+                  style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "6px 18px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {accountDetails && accountDetails.length > 0 && (
+            <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
+              <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, display: "flex", justifyContent: "space-between" }}>
+                <span>Search Results</span>
+                <span style={{ fontWeight: 400, color: "#4c5d72", textTransform: "none" }}>{accountDetails.length} records</span>
+              </div>
+              <div style={{ overflow: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                  <thead>
+                    <tr>
+                      {["", "Account ID", "Account Holder Name", "Policy Number", "Policy Type", "Status"].map((col) => (
+                        <th key={col} style={{ padding: "8px 10px", background: "#f6f7f8", borderBottom: "2px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left", fontWeight: 700, color: "#31475f", fontSize: 11 }}>{col}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((account, index) => (
+                      <tr key={index} style={{ background: index % 2 === 0 ? "#f8fafb" : "#fff" }}>
+                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>
+                          <button onClick={() => searchAccountData(account)}
+                            style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "3px 10px", fontSize: 11, cursor: "pointer" }}>
                             Select
-                          </Button>
-                        </TableCell>
-                        <TableCell>{account.accountNumber}</TableCell>
-                        <TableCell>{account.accountHolderName}</TableCell>
-                        <TableCell>{account.policyNumber}</TableCell>
-                        <TableCell>{account.policyType}</TableCell>
-                        <TableCell>{account.status}</TableCell>
-                      </TableRow>
+                          </button>
+                        </td>
+                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{account.accountNumber}</td>
+                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{account.accountHolderName}</td>
+                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{account.policyNumber}</td>
+                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{account.policyType}</td>
+                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>
+                          <span style={{ display: "inline-block", padding: "2px 8px", borderRadius: 2, fontSize: 11, fontWeight: 600,
+                            background: account.status === "In Force" ? "#e8f5e9" : "#fff3e0",
+                            color: account.status === "In Force" ? "#2b7a3e" : "#b97d00" }}>
+                            {account.status}
+                          </span>
+                        </td>
+                      </tr>
                     ))}
-                </TableBody>
-              </Table>
-              {/* Pagination Controls */}
-              <TablePagination
-                component="div"
-                count={accountDetails?.length}
-                page={page}
-                onPageChange={handleChangePage}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                rowsPerPageOptions={[5, 10, 25]}
-              />
-            </TableContainer>
+                  </tbody>
+                </table>
+              </div>
+              {/* Pagination */}
+              <div style={{ padding: "8px 12px", borderTop: "1px solid #d7dbe2", background: "#f8fafb", display: "flex", justifyContent: "flex-end", alignItems: "center", fontSize: 12, color: "#4c5d72", gap: 8 }}>
+                <span>Rows:</span>
+                <select value={rowsPerPage} onChange={handleChangeRowsPerPage} style={{ border: "1px solid #c5ccd5", borderRadius: 2, padding: "2px 4px", fontSize: 12 }}>
+                  <option value={5}>5</option><option value={10}>10</option><option value={25}>25</option>
+                </select>
+                <button onClick={() => handleChangePage(null, page - 1)} disabled={page === 0}
+                  style={{ background: page === 0 ? "#f4f6f8" : "#fff", border: "1px solid #c5ccd5", borderRadius: 2, padding: "2px 8px", fontSize: 12, cursor: page === 0 ? "default" : "pointer", color: page === 0 ? "#a0aab4" : "#4e5d6d" }}>&#8249;</button>
+                <span>{page + 1} / {Math.max(1, Math.ceil(accountDetails.length / rowsPerPage))}</span>
+                <button onClick={() => handleChangePage(null, page + 1)} disabled={(page + 1) * rowsPerPage >= accountDetails.length}
+                  style={{ background: (page + 1) * rowsPerPage >= accountDetails.length ? "#f4f6f8" : "#fff", border: "1px solid #c5ccd5", borderRadius: 2, padding: "2px 8px", fontSize: 12, cursor: (page + 1) * rowsPerPage >= accountDetails.length ? "default" : "pointer", color: (page + 1) * rowsPerPage >= accountDetails.length ? "#a0aab4" : "#4e5d6d" }}>&#8250;</button>
+              </div>
+            </div>
           )}
-        </Paper>
+        </div>
       )}
 
-      {/* Account Details */}
+      {/* Account Details view */}
       {accountData && (
-        <Paper
-          sx={{
-            p: 4,
-            borderRadius: 4,
-            background: "linear-gradient(135deg, #f8fafc 60%, #e0e7ef 100%)",
-            boxShadow: 6,
-            position: "relative"
-          }}
-        >
-          {/* Close Button */}
-          <IconButton
-            onClick={() => handleClose()}
-            sx={{
-              position: "absolute",
-              top: 12,
-              right: 12,
-              color: "#555",
-              background: "#fff",
-              boxShadow: 1,
-              "&:hover": {
-                background: "#f5f5f5"
-              }
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "#2d3e52" }}>Account Information</div>
+            <button onClick={handleClose}
+              style={{ background: "#f4f6f8", border: "1px solid #c5ccd5", borderRadius: 2, padding: "4px 12px", fontSize: 12, color: "#4e5d6d", cursor: "pointer" }}>
+              &#10005; Close
+            </button>
+          </div>
 
-          <Typography
-            variant="h4"
-            fontWeight={700}
-            color="#1976d2"
-            gutterBottom
-          >
-            Account Information
-          </Typography>
-          <Grid container spacing={3}>
+          <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: 14 }}>
             {/* Contact Info */}
-            <Grid item xs={12} md={4}>
-              <Box
-                sx={{
-                  p: 3,
-                  borderRadius: 4,
-                  background:
-                    "linear-gradient(135deg, #e3f0ff 60%, #f9fafb 100%)",
-                  boxShadow: 3,
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  gap: 1.5,
-                }}
-              >
-                <Typography
-                  variant="h5"
-                  fontWeight={700}
-                  color="#1565c0"
-                  gutterBottom
-                  sx={{ mb: 2 }}
-                >
-                  Contact Information
-                </Typography>
+            <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
+              <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                Contact Information
+              </div>
+              <div style={{ padding: "10px 14px" }}>
                 {accountData.customerId ? (
                   <>
-                    <Typography>
-                      <b>Name:</b> {accountData.customerId.firstName}{" "}
-                      {accountData.customerId.lastName}
-                    </Typography>
-                    <Typography>
-                      <b>Email:</b> {accountData.customerId.email}
-                    </Typography>
-                    <Typography>
-                      <b>Phone:</b> {accountData.customerId.phone}
-                    </Typography>
-                    <Typography>
-                      <b>DOB:</b>{" "}
-                      {accountData.customerId.dateOfBirth?.slice(0, 10)}
-                    </Typography>
-                    <Typography>
-                      <b>City:</b> {accountData.customerId.city}
-                    </Typography>
-                    <Typography>
-                      <b>Zip Code:</b> {accountData.customerId.zipCode}
-                    </Typography>
-                    <Typography>
-                      <b>Address:</b> {accountData.customerId.address}
-                    </Typography>
-                    <Typography>
-                      <b>Organization:</b> {accountData.customerId.organization || "-"}
-                    </Typography>
-                    <Typography>
-                      <b>Producer Code:</b> {accountData.customerId.producerCode || "-"}
-                    </Typography>
+                    {[
+                      { label: "Name", value: `${accountData.customerId.firstName} ${accountData.customerId.lastName}` },
+                      { label: "Email", value: accountData.customerId.email },
+                      { label: "Phone", value: accountData.customerId.phone },
+                      { label: "DOB", value: accountData.customerId.dateOfBirth?.slice(0, 10) },
+                      { label: "City", value: accountData.customerId.city },
+                      { label: "Zip Code", value: accountData.customerId.zipCode },
+                      { label: "Address", value: accountData.customerId.address },
+                      { label: "Organization", value: accountData.customerId.organization || "-" },
+                      { label: "Producer Code", value: accountData.customerId.producerCode || "-" },
+                    ].map((item) => (
+                      <div key={item.label} style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", borderBottom: "1px solid #f0f2f5", fontSize: 12 }}>
+                        <span style={{ color: "#5a6a7a", minWidth: 90 }}>{item.label}</span>
+                        <span style={{ fontWeight: 600, color: "#2d3e52", textAlign: "right", wordBreak: "break-all" }}>{item.value}</span>
+                      </div>
+                    ))}
                   </>
                 ) : (
-                  <Typography>No contact information available.</Typography>
+                  <div style={{ fontSize: 12, color: "#4c5d72" }}>No contact information available.</div>
                 )}
-              </Box>
-            </Grid>
+              </div>
+            </div>
 
-            {/* Account Info and Policies */}
-            <Grid item xs={12} md={8}>
-              <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid item xs={12} sm={6} md={6}>
-                  <Box sx={{ bgcolor: "#e3f2fd", p: 2, borderRadius: 2 }}>
-                    <Typography variant="subtitle2">Account ID</Typography>
-                    <Typography fontWeight={600}>
-                      {accountData.accountId}
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={6} md={6}>
-                  <Box sx={{ bgcolor: "#e8f5e9", p: 2, borderRadius: 2 }}>
-                    <Typography variant="subtitle2">Status</Typography>
-                    <Typography fontWeight={600}>
-                      {accountData.status}
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={6} md={6}>
-                  <Box sx={{ bgcolor: "#fff3e0", p: 2, borderRadius: 2 }}>
-                    <Typography variant="subtitle2">Account Type</Typography>
-                    <Typography fontWeight={600}>
-                      {accountData.accountType}
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={6} md={6}>
-                  <Box sx={{ bgcolor: "#f3e5f5", p: 2, borderRadius: 2 }}>
-                    <Typography variant="subtitle2">Created At</Typography>
-                    <Typography fontWeight={600}>
-                      {new Date(accountData.createdAt).toLocaleString()}
-                    </Typography>
-                  </Box>
-                </Grid>
-              </Grid>
+            {/* Account Info + Policies */}
+            <div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 10, marginBottom: 14 }}>
+                {[
+                  { label: "Account ID", value: accountData.accountId, bg: "#f0f4ff" },
+                  { label: "Status", value: accountData.status, bg: "#f0fff4" },
+                  { label: "Account Type", value: accountData.accountType, bg: "#fff8f0" },
+                  { label: "Created At", value: new Date(accountData.createdAt).toLocaleDateString(), bg: "#fdf0ff" },
+                ].map((item) => (
+                  <div key={item.label} style={{ border: "1px solid #d7dbe2", background: item.bg, padding: "8px 12px" }}>
+                    <div style={{ fontSize: 11, color: "#5a6a7a", marginBottom: 2 }}>{item.label}</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "#2d3e52" }}>{item.value}</div>
+                  </div>
+                ))}
+              </div>
 
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 3, mb: 2 }}>
-                <Typography
-                  variant="h5"
-                  fontWeight={600}
-                  color="#2c3e50"
-                >
-                  Policies
-                </Typography>
-              </Box>
-
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Policy Number</TableCell>
-                    <TableCell>Submission</TableCell>
-                    <TableCell>Product Type</TableCell>
-                    <TableCell>Status</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {accountData.policies && accountData.policies.length > 0 ? (
-                    accountData.policies.map((policy) => (
-                      <TableRow key={policy._id}>
-                        <TableCell>
-                          <Button
-                            variant="text"
-                            onClick={() =>
-                              navigate(`/policy-summary/${policy.policyNumber}`, {
-                                state: { policy },
-                              })
-                            }
-                            disabled={!policy.policyNumber}
-                          >
-                            {policy.policyNumber || "-"}
-                          </Button>
-                        </TableCell>
-                        <TableCell>{policy.submissionId}</TableCell>
-                        <TableCell>{policy.productType}</TableCell>
-                        <TableCell>{policy.status}</TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={4} align="center">
-                        No policies found
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-
-              <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  sx={{ fontWeight: 600, borderRadius: 2, minWidth: 220 }}
-                  onClick={() =>
-                    navigate("/new-submission", {
-                      state: {
-                        account: accountData,
-                        contact: accountData.customerId,
-                      },
-                    })
-                  }
-                >
-                  Create New Submission
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-        </Paper>
+              <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
+                <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span>Policies</span>
+                  <button onClick={() => navigate("/new-submission", { state: { account: accountData, contact: accountData.customerId } })}
+                    style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "3px 12px", fontSize: 11, fontWeight: 600, cursor: "pointer", textTransform: "none" }}>
+                    + New Submission
+                  </button>
+                </div>
+                <div style={{ overflow: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                    <thead>
+                      <tr>
+                        {["Policy Number", "Submission", "Product Type", "Status"].map((col) => (
+                          <th key={col} style={{ padding: "8px 10px", background: "#f6f7f8", borderBottom: "2px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left", fontWeight: 700, color: "#31475f", fontSize: 11 }}>{col}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {accountData.policies && accountData.policies.length > 0 ? (
+                        accountData.policies.map((policy, idx) => (
+                          <tr key={policy._id} style={{ background: idx % 2 === 0 ? "#f8fafb" : "#fff" }}>
+                            <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>
+                              <button onClick={() => navigate(`/policy-summary/${policy.policyNumber}`, { state: { policy } })}
+                                disabled={!policy.policyNumber}
+                                style={{ background: "none", border: "none", color: policy.policyNumber ? "#1f5fa6" : "#a0aab4", cursor: policy.policyNumber ? "pointer" : "default", fontSize: 12, fontWeight: 600, padding: 0, textDecoration: "underline" }}>
+                                {policy.policyNumber || "-"}
+                              </button>
+                            </td>
+                            <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{policy.submissionId}</td>
+                            <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{policy.productType}</td>
+                            <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>
+                              <span style={{ display: "inline-block", padding: "2px 8px", borderRadius: 2, fontSize: 11, fontWeight: 600,
+                                background: policy.status === "In Force" ? "#e8f5e9" : "#fff3e0",
+                                color: policy.status === "In Force" ? "#2b7a3e" : "#b97d00" }}>
+                                {policy.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={4} style={{ padding: "14px 10px", textAlign: "center", fontSize: 12, color: "#4c5d72" }}>No policies found</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
-    </Box>
+    </div>
   );
 }

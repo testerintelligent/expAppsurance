@@ -1,33 +1,21 @@
 import React, { useState, useEffect } from "react";
 import InfoBar from "../InfoBar";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
-  Typography,
-  Paper,
-  Tabs,
-  Tab,
-  Grid,
   TextField,
   Button,
   Snackbar,
   Alert,
   MenuItem,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Checkbox,
-  FormControlLabel,
-  Tooltip,
-  IconButton,
 } from "@mui/material";
 
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { createVehicleForSubmission, calculatePremium } from "./vehicleAPI";
+import { COVERAGE_OPTIONS, DEFAULT_COVERAGES } from "../../constants/coverages";
+import { useWorkflowState } from "../../utils/workflowSession";
 
 export default function Vehicle() {
-  const { state } = useLocation();
+  const state = useWorkflowState();
   const navigate = useNavigate();
   const contact = state?.contact || {};
 
@@ -46,7 +34,8 @@ export default function Vehicle() {
     Hyundai: ["Elantra", "Tucson", "Santa Fe"],
   };
 
-  const yearOptions = Array.from({ length: 25 }, (_, i) => 2026 - i);
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 25 }, (_, i) => currentYear - i);
 
   const stateOptions = [
     "Tamil Nadu",
@@ -79,47 +68,8 @@ export default function Vehicle() {
     return stateCodeMap[stateInput] || stateInput;
   };
 
-  const coverageOptions = [
-    {
-      name: "Third-Party Liability",
-      description:
-        "Covers damages or injuries caused to a third party by your vehicle. Mandatory by law.",
-      premium: 120,
-    },
-    {
-      name: "Own Damage",
-      description:
-        "Covers repair or replacement costs for damage to your own vehicle.",
-      premium: 250,
-    },
-    {
-      name: "Comprehensive",
-      description:
-        "Provides combined protection including third-party liability and own damage.",
-      premium: 400,
-    },
-    {
-      name: "Personal Accident Cover",
-      description:
-        "Covers medical expenses or compensation in case of injury or death of the driver.",
-      premium: 80,
-    },
-    {
-      name: "Zero Depreciation",
-      description:
-        "Allows full claim without deducting depreciation on replaced parts.",
-      premium: 150,
-    },
-    {
-      name: "Vehicle theft",
-      description:
-        "Provides coverage if your vehicle is stolen or declared a total loss.",
-      premium: 110,
-    },
-  ];
-
   const [coverages, setCoverages] = useState(
-    state?.coverages || ["Third-Party Liability"]
+    state?.coverages || DEFAULT_COVERAGES
   );
 
   // Vehicle form data
@@ -207,7 +157,7 @@ export default function Vehicle() {
       console.log("State data:", state);
 
       // Calculate vehicle age from year (2025 = 1 year old, 2024 = 2 years old, etc.)
-      const currentYear = 2026;
+      const currentYear = new Date().getFullYear();
       const vehicleAge = currentYear - parseInt(vehicleData.year);
 
       // Map licenseType full name to abbreviation
@@ -261,334 +211,127 @@ export default function Vehicle() {
   };
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: "auto", mt: 4 }}>
+    <Box sx={{ maxWidth: 1100, mx: 0 }}>
       <InfoBar
         accountNumber={state?.accountNumber || "-"}
         product={state?.productName || "-"}
-        contactName={`${contact.firstName || ""} ${
-          contact.lastName || ""
-        }`.trim()}
+        contactName={`${contact.firstName || ""} ${contact.lastName || ""}`.trim()}
         submissionId={state?.submissionId || "-"}
         effectiveDate={state?.effectiveDate || "-"}
         expiryDate={state?.expiryDate || "-"}
       />
 
-      <Typography variant="h4" fontWeight={700} sx={{ mb: 3 }}>
-        Vehicle Details
-      </Typography>
+      <div style={{ fontSize: 16, fontWeight: 700, color: "#2d3e52", marginBottom: 10 }}>Vehicle Details</div>
 
-      <Paper sx={{ p: 4, borderRadius: 4 }}>
-        <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 3 }}>
-          <Tab label="Vehicle Information" />
-          <Tab label="Coverages" />
-        </Tabs>
+      {/* GW Tab bar */}
+      <div style={{ borderBottom: "1px solid #d7dbe2", background: "#f8fafb", display: "flex", marginBottom: 0 }}>
+        {["Vehicle Information", "Coverages"].map((label, idx) => (
+          <button key={idx} onClick={() => setTab(idx)}
+            style={{
+              padding: "7px 18px", fontSize: 12, fontWeight: tab === idx ? 700 : 500,
+              color: tab === idx ? "#1f5fa6" : "#4e5d6d",
+              background: "none", border: "none", borderBottom: tab === idx ? "2px solid #1f5fa6" : "2px solid transparent",
+              cursor: "pointer", marginBottom: -1
+            }}>
+            {label}
+          </button>
+        ))}
+      </div>
 
-        {/* Vehicle Information Tab */}
-        {/* ================= VEHICLE INFORMATION TAB ================= */}
-        {tab === 0 && (
-          <Box>
-            <Grid container spacing={4}>
-              {/* Vehicle Specifications */}
-              <Grid item xs={12} md={6}>
-                <Paper elevation={2} sx={{ p: 3, borderRadius: 3 }}>
-                  <Typography variant="h6" fontWeight={600} sx={{ mb: 3 }}>
-                    Vehicle Specifications
-                  </Typography>
+      {/* Vehicle Information Tab */}
+      {tab === 0 && (
+        <div style={{ border: "1px solid #d7dbe2", borderTop: "none", background: "#fff" }}>
+          <div style={{ padding: "12px 14px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 28px" }}>
+            {/* Vehicle Specs */}
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #e3e8ee" }}>Vehicle Specifications</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <TextField size="small" select label="Make" fullWidth value={vehicleData.make}
+                  onChange={(e) => setVehicleData({ ...vehicleData, make: e.target.value, model: "" })}>
+                  {makeOptions.map((make) => <MenuItem key={make} value={make}>{make}</MenuItem>)}
+                </TextField>
+                <TextField size="small" select label="Model" fullWidth value={vehicleData.model} disabled={!vehicleData.make}
+                  onChange={(e) => setVehicleData({ ...vehicleData, model: e.target.value })}>
+                  {(modelOptions[vehicleData.make] || []).map((model) => <MenuItem key={model} value={model}>{model}</MenuItem>)}
+                </TextField>
+                <TextField size="small" select label="Year" fullWidth value={vehicleData.year}
+                  onChange={(e) => setVehicleData({ ...vehicleData, year: e.target.value })}>
+                  {yearOptions.map((year) => <MenuItem key={year} value={year}>{year}</MenuItem>)}
+                </TextField>
+              </div>
+            </div>
 
-                  {/* Make */}
-                  <TextField
-                    select
-                    label="Make"
-                    fullWidth
-                    sx={{ mb: 3 }}
-                    value={vehicleData.make}
-                    onChange={(e) =>
-                      setVehicleData({
-                        ...vehicleData,
-                        make: e.target.value,
-                        model: "",
-                      })
-                    }
-                  >
-                    {makeOptions.map((make) => (
-                      <MenuItem key={make} value={make}>
-                        {make}
-                      </MenuItem>
-                    ))}
-                  </TextField>
+            {/* Registration */}
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #e3e8ee" }}>Registration Details</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <TextField size="small" label="VIN" fullWidth value={vehicleData.vin}
+                  onChange={(e) => setVehicleData({ ...vehicleData, vin: e.target.value })} />
+                <TextField size="small" label="License Plate" fullWidth value={vehicleData.licensePlate}
+                  onChange={(e) => setVehicleData({ ...vehicleData, licensePlate: e.target.value })} />
+                <TextField size="small" select label="State Registered" fullWidth value={vehicleData.stateRegistered}
+                  onChange={(e) => setVehicleData({ ...vehicleData, stateRegistered: e.target.value })}>
+                  {stateOptions.map((state) => <MenuItem key={state} value={state}>{state}</MenuItem>)}
+                </TextField>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
-                  {/* Model */}
-                  <TextField
-                    select
-                    label="Model"
-                    fullWidth
-                    sx={{ mb: 3 }}
-                    value={vehicleData.model}
-                    onChange={(e) =>
-                      setVehicleData({
-                        ...vehicleData,
-                        model: e.target.value,
-                      })
-                    }
-                    disabled={!vehicleData.make}
-                  >
-                    {(modelOptions[vehicleData.make] || []).map((model) => (
-                      <MenuItem key={model} value={model}>
-                        {model}
-                      </MenuItem>
-                    ))}
-                  </TextField>
+      {/* Coverages Tab */}
+      {tab === 1 && (
+        <div style={{ border: "1px solid #d7dbe2", borderTop: "none", background: "#fff" }}>
+          <div style={{ padding: "12px 14px" }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #e3e8ee" }}>Select Coverages</div>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+              <thead>
+                <tr>
+                  <th style={{ padding: "7px 10px", background: "#f6f7f8", borderBottom: "2px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#31475f", width: 36 }}></th>
+                  <th style={{ padding: "7px 10px", background: "#f6f7f8", borderBottom: "2px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#31475f" }}>Coverage</th>
+                  <th style={{ padding: "7px 10px", background: "#f6f7f8", borderBottom: "2px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#31475f" }}>Description</th>
+                  <th style={{ padding: "7px 10px", background: "#f6f7f8", borderBottom: "2px solid #d7dbe2", textAlign: "right", fontSize: 11, fontWeight: 700, color: "#31475f", width: 100 }}>Premium / yr</th>
+                </tr>
+              </thead>
+              <tbody>
+                {COVERAGE_OPTIONS.map((cov, idx) => {
+                  const isSelected = coverages.includes(cov.name);
+                  const isMandatory = cov.name === "Third-Party Liability";
+                  return (
+                    <tr key={cov.name} style={{ background: isSelected ? "#edf4fb" : idx % 2 === 0 ? "#f8fafb" : "#fff", cursor: isMandatory ? "default" : "pointer" }}
+                      onClick={() => !isMandatory && handleCoverageChange(cov.name)}>
+                      <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee", textAlign: "center" }}>
+                        <input type="checkbox" checked={isSelected} disabled={isMandatory} readOnly
+                          style={{ cursor: isMandatory ? "default" : "pointer", accentColor: "#1f5fa6" }} />
+                      </td>
+                      <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee", fontWeight: 600, color: isSelected ? "#1f5fa6" : "#2d3e52" }}>
+                        {cov.name}
+                        {isMandatory && <span style={{ marginLeft: 6, fontSize: 10, color: "#c62828", fontWeight: 600 }}>MANDATORY</span>}
+                      </td>
+                      <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee", color: "#4c5d72" }}>{cov.description}</td>
+                      <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", textAlign: "right", fontWeight: 600, color: "#2b7a3e" }}>&#8377;{cov.premium.toLocaleString("en-IN")}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
-                  {/* Year */}
-                  <TextField
-                    select
-                    label="Year"
-                    fullWidth
-                    value={vehicleData.year}
-                    onChange={(e) =>
-                      setVehicleData({
-                        ...vehicleData,
-                        year: e.target.value,
-                      })
-                    }
-                  >
-                    {yearOptions.map((year) => (
-                      <MenuItem key={year} value={year}>
-                        {year}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Paper>
-              </Grid>
+      {/* Navigation */}
+      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2, pb: 2 }}>
+        <Button variant="outlined" size="small"
+          onClick={() => navigate("/driver", { state: { ...state, vehicleData, coverages } })}>
+          Back
+        </Button>
+        <Button variant="contained" size="small" onClick={handleNext}>
+          Quote
+        </Button>
+      </Box>
 
-              {/* Registration Details */}
-              <Grid item xs={12} md={6}>
-                <Paper elevation={2} sx={{ p: 3, borderRadius: 3 }}>
-                  <Typography variant="h6" fontWeight={600} sx={{ mb: 3 }}>
-                    Registration Details
-                  </Typography>
-
-                  {/* VIN */}
-                  <TextField
-                    label="VIN"
-                    fullWidth
-                    sx={{ mb: 3 }}
-                    value={vehicleData.vin}
-                    onChange={(e) =>
-                      setVehicleData({
-                        ...vehicleData,
-                        vin: e.target.value,
-                      })
-                    }
-                  />
-
-                  {/* License Plate */}
-                  <TextField
-                    label="License Plate"
-                    fullWidth
-                    sx={{ mb: 3 }}
-                    value={vehicleData.licensePlate}
-                    onChange={(e) =>
-                      setVehicleData({
-                        ...vehicleData,
-                        licensePlate: e.target.value,
-                      })
-                    }
-                  />
-
-                  {/* State Registered */}
-                  <TextField
-                    select
-                    label="State Registered"
-                    fullWidth
-                    value={vehicleData.stateRegistered}
-                    onChange={(e) =>
-                      setVehicleData({
-                        ...vehicleData,
-                        stateRegistered: e.target.value,
-                      })
-                    }
-                  >
-                    {stateOptions.map((state) => (
-                      <MenuItem key={state} value={state}>
-                        {state}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Paper>
-              </Grid>
-            </Grid>
-          </Box>
-        )}
-
-        {/* Coverages Tab */}
-        {tab === 1 && (
-          <Box>
-            <Typography variant="h6" fontWeight={600} sx={{ mb: 3 }}>
-              Select Coverages
-            </Typography>
-
-            {coverageOptions.map((cov) => {
-              const isSelected = coverages.includes(cov.name);
-              const isMandatory = cov.name === "Third-Party Liability";
-
-              return (
-                <Accordion
-                  key={cov.name}
-                  defaultExpanded={isMandatory}
-                  sx={{
-                    mb: 2,
-                    borderRadius: 2,
-                    border: isSelected
-                      ? "2px solid #1976d2"
-                      : "1px solid #e0e0e0",
-                    transition: "all 0.3s ease",
-                    boxShadow: isSelected
-                      ? "0 0 15px rgba(25, 118, 210, 0.4)"
-                      : "none",
-                    "&:before": { display: "none" },
-                  }}
-                >
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        width: "100%",
-                      }}
-                    >
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={isSelected}
-                            onChange={() => handleCoverageChange(cov.name)}
-                            disabled={isMandatory}
-                          />
-                        }
-                        label={
-                          <Box>
-                            <Typography fontWeight={600}>
-                              {cov.name}
-                              {isMandatory && (
-                                <Typography
-                                  component="span"
-                                  color="error"
-                                  sx={{ ml: 1, fontSize: 12 }}
-                                >
-                                  (Mandatory)
-                                </Typography>
-                              )}
-                            </Typography>
-
-                            <Typography variant="body2" color="text.secondary">
-                              ₹{cov.premium} / year
-                            </Typography>
-                          </Box>
-                        }
-                      />
-
-                      <Tooltip title={cov.description} arrow>
-                        <IconButton size="small">
-                          <InfoOutlinedIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                  </AccordionSummary>
-
-                  <AccordionDetails>
-                    <Typography variant="body2" color="text.secondary">
-                      {cov.description}
-                    </Typography>
-                  </AccordionDetails>
-                </Accordion>
-              );
-            })}
-
-            
-          </Box>
-        )}
-        {/* <Tooltip title={cov.description} arrow>
-                <IconButton size="small">
-                  <InfoOutlinedIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          </AccordionSummary>
-
-          <AccordionDetails>
-            <Typography variant="body2" color="text.secondary">
-              {cov.description}
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
-      );
-    })} */}
-
-        {/* Premium Summary Card */}
-        {/*<Paper
-      elevation={3}
-      sx={{
-        mt: 4,
-        p: 3,
-        borderRadius: 3,
-        background: "linear-gradient(135deg, #1976d2, #42a5f5)",
-        color: "white",
-        transition: "all 0.3s ease",
-      }}
-    >
-      <Typography variant="h6" fontWeight={600}>
-        Total Premium
-      </Typography>
-
-      <Typography variant="h4" fontWeight={700} sx={{ mt: 1 }}>
-        ₹{totalPremium.toLocaleString("en-IN")}
-      </Typography>
-
-      <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
-        Based on selected coverages
-      </Typography>
-    </Paper> */}
-        {/* </Box>
-)} */}
-        {/* Navigation */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() =>
-              navigate("/driver", {
-                state: {
-                  ...state,
-                  vehicleData,
-                  coverages,
-                },
-              })
-            }
-          >
-            Back
-          </Button>
-
-          <Button variant="contained" color="primary" onClick={handleNext}>
-            Quote
-          </Button>
-        </Box>
-      </Paper>
-
-      {/* Snackbar */}
-      <Snackbar
-        open={errorOpen}
-        autoHideDuration={4000}
-        onClose={() => setErrorOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
-          onClose={() => setErrorOpen(false)}
-          severity="error"
-          sx={{ width: "100%" }}
-        >
-          {errorMsg}
-        </Alert>
+      <Snackbar open={errorOpen} autoHideDuration={4000} onClose={() => setErrorOpen(false)} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
+        <Alert onClose={() => setErrorOpen(false)} severity="error" sx={{ width: "100%" }}>{errorMsg}</Alert>
       </Snackbar>
     </Box>
   );

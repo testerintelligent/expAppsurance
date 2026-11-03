@@ -1,14 +1,3 @@
-import {
-    Typography,
-    Box,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    TableContainer,
-} from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -20,7 +9,7 @@ const PaymentSchedule = () => {
     const [totalCost, setTotalCost] = useState(0);
     const API_BASE_URL = "http://10.192.190.158:5000";
 
-    const { policyNumber } = useParams(); // ✅ get from URL
+    const { policyNumber } = useParams(); // get from URL
 
     useEffect(() => {
         const getPolicyByNumber = async () => {
@@ -43,8 +32,6 @@ const PaymentSchedule = () => {
         }
     }, [policyNumber]);
 
-
-
     const getScheduleRows = () => {
         let periods = 1;
         if (paymentSchedule === "Monthly") periods = 12;
@@ -62,144 +49,59 @@ const PaymentSchedule = () => {
     };
 
     return (
-        <Box sx={{ maxWidth: 1250, mx: "auto", p: 4 }}>
+        <div style={{ padding: "16px 18px", background: "#eef2f5", minHeight: "100%" }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "#2d3e52", marginBottom: 12 }}>Payment Schedule</div>
 
-            <Paper
-                className="grid grid-cols-2 gap-8"
-                sx={{
-                    p: 3,
-                    background: "#f5f0ff", // light purple background
-                    borderRadius: 2,
-                    border: "1px solid #d6ccff", // light purple border
-                }}
-            >
-                {/* Left Section */}
-                <div className="space-y-3 border-r pr-6 border-purple-200">
-                    <div className="flex items-center">
-                        <Typography fontWeight="bold" className="w-44">
-                            Policy Number
-                        </Typography>
-                        <Typography className="mx-2">:</Typography>
-                        <Typography>{policyData?.policyNumber}</Typography>
-                    </div>
-
-                    <div className="flex items-center">
-                        <Typography fontWeight="bold" className="w-44">
-                            Product Type
-                        </Typography>
-                        <Typography className="mx-2">:</Typography>
-                        <Typography>{policyData?.productType}</Typography>
-                    </div>
-
-                    <div className="flex items-center">
-                        <Typography fontWeight="bold" className="w-44">
-                            Billing Method
-                        </Typography>
-                        <Typography className="mx-2">:</Typography>
-                        <Typography>{policyData?.billingMethod}</Typography>
-                    </div>
-
-                    <div className="flex items-center">
-                        <Typography fontWeight="bold" className="w-44">
-                            Payment Schedule
-                        </Typography>
-                        <Typography className="mx-2">:</Typography>
-                        <Typography>{policyData?.paymentSchedule}</Typography>
-                    </div>
+            {/* Policy Info */}
+            <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+                <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>Policy Information</div>
+                <div style={{ padding: "12px 16px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 32px", fontSize: 12 }}>
+                    {[
+                        ["Policy Number", policyData?.policyNumber],
+                        ["Product Type", policyData?.productType],
+                        ["Billing Method", policyData?.billingMethod],
+                        ["Payment Schedule", policyData?.paymentSchedule],
+                        ["Total Premium", `₹ ${policyData?.totalPremium?.toFixed(2) || "—"}`],
+                        ["Status", policyData?.status],
+                        ["Payment Reference", policyData?.paymentRef],
+                    ].map(([label, val]) => (
+                        <div key={label} style={{ display: "flex", gap: 8, padding: "3px 0", borderBottom: "1px solid #f0f0f0" }}>
+                            <span style={{ color: "#6b7c93", minWidth: 160 }}>{label}</span>
+                            <span style={{ fontWeight: 600, color: "#1f2d3d" }}>{val || "—"}</span>
+                        </div>
+                    ))}
                 </div>
+            </div>
 
-                {/* Right Section */}
-                <div className="space-y-3 pl-6">
-                    <div className="flex items-center">
-                        <Typography fontWeight="bold" className="w-44">
-                            Total Premium
-                        </Typography>
-                        <Typography className="mx-2">:</Typography>
-                        <Typography>₹ {policyData?.totalPremium?.toFixed(2)}</Typography>
-                    </div>
-
-                    <div className="flex items-center">
-                        <Typography fontWeight="bold" className="w-44">
-                            Status
-                        </Typography>
-                        <Typography className="mx-2">:</Typography>
-                        <Typography>{policyData?.status}</Typography>
-                    </div>
-
-                    <div className="flex items-center">
-                        <Typography fontWeight="bold" className="w-44">
-                            Payment Reference
-                        </Typography>
-                        <Typography className="mx-2">:</Typography>
-                        <Typography>{policyData?.paymentRef}</Typography>
-                    </div>
-
-                    <div className="flex items-center">
-                        <Typography fontWeight="bold" className="w-44">
-                            Policy ID
-                        </Typography>
-                        <Typography className="mx-2">:</Typography>
-                        <Typography>{policyData?.policyId}</Typography>
-                    </div>
-                </div>
-            </Paper>
-            {/* PAYMENT SCHEDULE TABLE */}
-            <Paper sx={{ mt: 3, border: "1px solid #e9d5ff" }}>
-                <Box
-                    sx={{
-                        p: 4,
-                        background: "#ffffff",
-                        border: "1px solid #e0e0e0",
-                    }}
-                >
-                    <Typography
-                        variant="h6"
-                        fontWeight={700}
-                        sx={{ mb: 2, borderLeft: "4px solid #2e7d32", pl: 1.5 }}
-                    >
-                        Payment Schedule
-                    </Typography>
-                    <Table>
-                        <TableHead>
-                            <TableRow sx={{ background: "#f5f5f5" }}>
-                                <TableCell>Period</TableCell>
-                                <TableCell>Premium (₹)</TableCell>
-                                <TableCell>Taxes (₹)</TableCell>
-                                <TableCell>Total (₹)</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {getScheduleRows().map((row) => (
-                                <TableRow key={row.period}>
-                                    <TableCell>{row.period}</TableCell>
-                                    <TableCell>{row.premium}</TableCell>
-                                    <TableCell>{row.taxes}</TableCell>
-                                    <TableCell>{row.total}</TableCell>
-                                </TableRow>
+            {/* Schedule Table */}
+            <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
+                <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>Payment Schedule</div>
+                <div style={{ overflow: "auto" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                        <thead>
+                            <tr>
+                                {["Period", "Premium (₹)", "Taxes (₹)", "Total (₹)"].map(h => (
+                                    <th key={h} style={{ padding: "8px 12px", background: "#f6f7f8", borderBottom: "2px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#31475f" }}>{h}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {getScheduleRows().map((row, idx) => (
+                                <tr key={row.period} style={{ background: idx % 2 === 0 ? "#f8fafb" : "#fff" }}>
+                                    <td style={{ padding: "7px 12px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{row.period}</td>
+                                    <td style={{ padding: "7px 12px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{row.premium}</td>
+                                    <td style={{ padding: "7px 12px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{row.taxes}</td>
+                                    <td style={{ padding: "7px 12px", borderBottom: "1px solid #e3e8ee", fontWeight: 600, color: "#2b7a3e" }}>{row.total}</td>
+                                </tr>
                             ))}
-                        </TableBody>
-                    </Table>
-
-                    <Box
-                        sx={{
-                            mt: 3,
-                            p: 2,
-                            textAlign: "center",
-                            background: "#e8f5e9",
-                            borderRadius: 2,
-                        }}
-                    >
-                        <Typography variant="h6">
-                            Total Amount Payable:{" "}
-                            <strong style={{ color: "#2e7d32" }}>
-                                ₹{totalCost.toLocaleString("en-IN")}
-                            </strong>
-                        </Typography>
-                    </Box>
-                </Box>
-            </Paper>
-
-        </Box>
+                        </tbody>
+                    </table>
+                </div>
+                <div style={{ padding: "10px 16px", borderTop: "1px solid #d7dbe2", textAlign: "right", fontSize: 13, fontWeight: 700, color: "#1f2d3d" }}>
+                    Total Amount Payable: <span style={{ color: "#2b7a3e" }}>₹{totalCost.toLocaleString("en-IN")}</span>
+                </div>
+            </div>
+        </div>
     );
 };
 

@@ -1,13 +1,11 @@
-import axios from "axios";
-
-// const API_BASE_URL = "http://localhost:5000/api/billing";
-const API_BASE_URL = "http://10.192.190.158:5000/api/billing";
+import api from "../../utils/api";
 
 export const createInvoice = async (invoiceData) => {
   try {
-    const res = await axios.post(`${API_BASE_URL}/createInvoice`, invoiceData);
+    const res = await api.post("/api/billing/createInvoice", invoiceData);
     return res.data;
   } catch (error) {
-    console.error("Error:", error.response?.data || error.message);
+    console.error("Error creating invoice:", error.response?.data || error.message);
+    throw error;
   }
 };

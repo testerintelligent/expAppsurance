@@ -1,124 +1,127 @@
 import React from "react";
-import { Box, Typography, Grid } from "@mui/material";
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+
+// ─── GW PolicyCenter-style workflow context bar ───────────────────────────────
+// Shown at the top of every workflow screen (Driver → Vehicle → Quote → Payment).
+// Replaces the old dark #212121 box with a flat, light, GW-consistent band.
 
 export default function InfoBar({
-    accountNumber, 
-    policyNumber, 
-    expiryDate, 
-    product, 
-    contactName, 
-    submissionId, 
-    effectiveDate 
+  accountNumber,
+  policyNumber,
+  expiryDate,
+  product,
+  contactName,
+  submissionId,
+  effectiveDate,
 }) {
-    // Helper to format dates for better display (e.g., D-M-Y) if needed, 
-    // but we'll stick to the raw ISO string for now for consistency.
-    const cleanId = (id) => id ? id.substring(0, 15) + '...' : 'N/A';
-
-    return (
-        <Box 
-            sx={{ 
-                background: "#212121", 
-                color: "#E0E0E0", 
-                p: 2.5,
-                borderRadius: 3, 
-                mb: 3, 
-                boxShadow: '0 6px 15px rgba(0, 0, 0, 0.5)',
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "stretch",
+        background: "#fff",
+        border: "1px solid #d7dbe2",
+        borderLeft: "4px solid #1f5fa6",
+        marginBottom: 16,
+        fontSize: 12,
+        color: "#2d3e52",
+        minHeight: 52,
+        flexWrap: "wrap",
+      }}
+    >
+      {/* ── Product + Client ─────────────────────────────────────── */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          padding: "8px 16px",
+          borderRight: "1px solid #d7dbe2",
+          minWidth: 200,
+        }}
+      >
+        <DirectionsCarIcon style={{ fontSize: 20, color: "#1f5fa6" }} />
+        <div>
+          <div
+            style={{
+              fontWeight: 700,
+              fontSize: 13,
+              color: "#1f2d3d",
+              lineHeight: 1.3,
             }}
-        >
-            <Grid container spacing={2} alignItems="center">
-                
-                {/* 1. Product & Client - Primary Focus (Top Left) */}
-                <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center', borderRight: { sm: '1px solid rgba(255, 255, 255, 0.1)' } }}>
-                    
-                    <DirectionsCarIcon sx={{ fontSize: 32, mr: 1.5, color: '#FFC107' }} />
-                    
-                    {/* Product Name (Largest Font) */}
-                    <Box>
-                        <Typography 
-                            variant="h5" // Increased font size for product
-                            sx={{ fontWeight: 700, color: '#FFFFFF', lineHeight: 1.2 }}
-                        >
-                            {product || "N/A"}
-                        </Typography>
-                        {/* Client Name (Directly below product) */}
-                        <Typography 
-                            variant="subtitle1" 
-                            sx={{ fontWeight: 500, color: '#FFC107' }} // Use accent color
-                        >
-                            Client: {contactName || "N/A"}
-                        </Typography>
-                    </Box>
-                </Grid>
+          >
+            {product || "—"}
+          </div>
+          <div style={{ color: "#6b7c93", fontSize: 11, lineHeight: 1.3 }}>
+            Client:{" "}
+            <span style={{ color: "#2d3e52", fontWeight: 600 }}>
+              {contactName || "—"}
+            </span>
+          </div>
+        </div>
+      </div>
 
-                {/* 2. Key Identifiers - Grouped (Top Right) */}
-                <Grid item xs={12} sm={6}>
-                    <Grid container spacing={1} direction="column">
-                        
-                        {/* Submission ID */}
-                        <Grid item>
-                            <Typography variant="body2" sx={{ color: '#BDBDBD' }}>
-                                SUBMISSION # 
-                                <span style={{ fontWeight: 600, color: '#81D4FA', marginLeft: 8 }}>
-                                    {submissionId || "N/A"}
-                                </span>
-                            </Typography>
-                        </Grid>
-                        
-                        {/* Account Number */}
-                        <Grid item>
-                            <Typography variant="body2" sx={{ color: '#BDBDBD' }}>
-                                ACCOUNT # 
-                                <span style={{ fontWeight: 600, color: '#81D4FA', marginLeft: 16 }}>
-                                    {accountNumber || "N/A"}
-                                </span>
-                            </Typography>
-                        </Grid>
+      {/* ── Submission # + Account # (+ optional Policy #) ────────── */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          padding: "8px 16px",
+          borderRight: "1px solid #d7dbe2",
+          gap: 3,
+        }}
+      >
+        <div style={{ color: "#6b7c93" }}>
+          SUBMISSION #{" "}
+          <span style={{ color: "#1f5fa6", fontWeight: 600 }}>
+            {submissionId || "—"}
+          </span>
+        </div>
+        <div style={{ color: "#6b7c93" }}>
+          ACCOUNT #{" "}
+          <span style={{ color: "#1f5fa6", fontWeight: 600 }}>
+            {accountNumber || "—"}
+          </span>
+        </div>
+        {policyNumber && policyNumber !== "-" && (
+          <div style={{ color: "#6b7c93" }}>
+            POLICY #{" "}
+            <span style={{ color: "#1f5fa6", fontWeight: 600 }}>
+              {policyNumber}
+            </span>
+          </div>
+        )}
+      </div>
 
-                        {/* Optional Policy Number */}
-                        {policyNumber && policyNumber !== '-' && (
-                            <Grid item>
-                                <Typography variant="body2" sx={{ color: '#BDBDBD' }}>
-                                    POLICY # 
-                                    <span style={{ fontWeight: 600, color: '#F48FB1', marginLeft: 22 }}>
-                                        {policyNumber}
-                                    </span>
-                                </Typography>
-                            </Grid>
-                        )}
-                    </Grid>
-                </Grid>
-                
-                {/* 3. Effective Dates - Separated and Emphasized (Bottom Full Width) */}
-                <Grid item xs={12}>
-                    <Box sx={{ 
-                        pt: 1, 
-                        borderTop: '1px dashed rgba(255, 255, 255, 0.15)', // Dotted line separator
-                        display: 'flex', 
-                        justifyContent: 'space-between',
-                        flexWrap: 'wrap'
-                    }}>
-                        
-                        {/* Effective Date (Green/Positive) */}
-                        <Typography variant="body1" sx={{ fontWeight: 500, mr: 3 }}>
-                            Effective: 
-                            <span style={{ fontWeight: 700, color: '#A5D6A7', marginLeft: 4 }}>
-                                {effectiveDate || "N/A"}
-                            </span>
-                        </Typography>
-                        
-                        {/* Expiry Date (Red/Caution) */}
-                        {expiryDate && (
-                            <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                                Expiration: 
-                                <span style={{ fontWeight: 700, color: '#EF9A9A', marginLeft: 4 }}>
-                                    {expiryDate}
-                                </span>
-                            </Typography>
-                        )}
-                    </Box>
-                </Grid>
-            </Grid>
-        </Box>
-    );
+      {/* ── Effective / Expiry dates — right-aligned ─────────────── */}
+      <div
+        style={{
+          marginLeft: "auto",
+          display: "flex",
+          alignItems: "center",
+          gap: 24,
+          padding: "8px 20px",
+          background: "#f8fafb",
+          borderLeft: "1px solid #d7dbe2",
+          flexShrink: 0,
+        }}
+      >
+        <span>
+          Effective:{" "}
+          <span style={{ fontWeight: 700, color: "#2b7a3e" }}>
+            {effectiveDate || "—"}
+          </span>
+        </span>
+        {expiryDate && (
+          <span>
+            Expiration:{" "}
+            <span style={{ fontWeight: 700, color: "#c62828" }}>
+              {expiryDate}
+            </span>
+          </span>
+        )}
+      </div>
+    </div>
+  );
 }

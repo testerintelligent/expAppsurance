@@ -1,233 +1,107 @@
 import React from "react";
-import {
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  TextField,
-  Button,
-  Tabs,
-  Tab,
-  Divider,
-  Checkbox,
-  FormControlLabel,
-} from "@mui/material";
 
 export default function PaymentPage() {
   const [tab, setTab] = React.useState(0);
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        p: 4,
-        backgroundColor: "#f5f6fa",
-        backgroundImage: `url("https://png.pngtree.com/background/20230622/original/pngtree-illustration-of-3d-personal-bank-account-and-credit-card-with-money-picture-image_3950197.jpg")`,
-        backgroundRepeat: "repeat",
-        position: "relative",
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(135deg, rgba(94,53,177,0.15), rgba(103,58,183,0.15))',
-          zIndex: 0
-        }
-      }}
-    >
-      <Box sx={{ position: 'relative', zIndex: 1 }}>
-      <Grid container spacing={4} justifyContent={"center"} mt={5}>
-        {/* LEFT PANEL */}
-        <Grid item xs={12} md={5}>
-          <Card
-            sx={{
-              height: "100%",
-              borderRadius: 4,
-              overflow: "hidden",
-            }}
-          >
-            <Box
-              sx={{
-                background: "linear-gradient(135deg, #5e35b1, #673ab7)",
-                color: "white",
-                p: 4,
-              }}
-            >
-              <Typography variant="h5" fontWeight="bold">
-                Expleosurance Payment Portal
-              </Typography>
-              <Typography variant="body1" mt={2}>
-                Securely pay your insurance premium and manage your policy with ease.
-              </Typography>
-            </Box>
+    <div style={{ padding: "16px 18px", background: "#eef2f5", minHeight: "100%" }}>
+      <div style={{ fontSize: 16, fontWeight: 700, color: "#2d3e52", marginBottom: 16 }}>Payment Portal</div>
 
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Policy Summary
-              </Typography>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: 16 }}>
+        {/* LEFT: Policy Summary */}
+        <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
+          <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>Policy Summary</div>
+          <div style={{ padding: "12px 16px", fontSize: 12 }}>
+            {[
+              ["Policy Number", "GW-PL-10234"],
+              ["Insured Name", "Shilpa Kannan"],
+              ["Premium Amount", "₹400.00"],
+              ["Service Fee", "₹50.00"],
+            ].map(([label, val]) => (
+              <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #f0f0f0" }}>
+                <span style={{ color: "#6b7c93" }}>{label}</span>
+                <span style={{ fontWeight: 600, color: "#1f2d3d" }}>{val}</span>
+              </div>
+            ))}
+            <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0 0", fontSize: 14, fontWeight: 700 }}>
+              <span>Total</span>
+              <span style={{ color: "#2b7a3e" }}>₹450.00</span>
+            </div>
+          </div>
+          <div style={{ padding: "10px 16px", borderTop: "1px solid #d7dbe2", fontSize: 11, color: "#6b7c93", lineHeight: 1.7 }}>
+            • Payments processed securely via Expleosurance BillingCenter<br />
+            • Accepted: Credit Card, Debit Card, Bank Transfer<br />
+            • Data encrypted, PCI-DSS compliant
+          </div>
+        </div>
 
-              <Box display="flex" justifyContent="space-between" mb={1}>
-                <Typography>Policy Number</Typography>
-                <Typography fontWeight="bold">GW-PL-10234</Typography>
-              </Box>
+        {/* RIGHT: Payment Form */}
+        <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
+          <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>Payment Details</div>
 
-              <Box display="flex" justifyContent="space-between" mb={1}>
-                <Typography>Insured Name</Typography>
-                <Typography fontWeight="bold">Shilpa Kannan</Typography>
-              </Box>
+          {/* Tab bar */}
+          <div style={{ display: "flex", borderBottom: "1px solid #d7dbe2" }}>
+            {["Credit / Debit Card", "Bank Transfer"].map((label, idx) => (
+              <button key={idx} onClick={() => setTab(idx)}
+                style={{ padding: "7px 18px", fontSize: 12, fontWeight: tab === idx ? 700 : 500, color: tab === idx ? "#1f5fa6" : "#4e5d6d", background: "none", border: "none", borderBottom: tab === idx ? "2px solid #1f5fa6" : "2px solid transparent", cursor: "pointer" }}>
+                {label}
+              </button>
+            ))}
+          </div>
 
-              <Box display="flex" justifyContent="space-between" mb={1}>
-                <Typography>Premium Amount</Typography>
-                <Typography>$400.00</Typography>
-              </Box>
-
-              <Box display="flex" justifyContent="space-between" mb={1}>
-                <Typography>Service Fee</Typography>
-                <Typography>$50.00</Typography>
-              </Box>
-
-              <Divider sx={{ my: 2 }} />
-
-              <Box display="flex" justifyContent="space-between">
-                <Typography variant="h6">Total</Typography>
-                <Typography variant="h6" fontWeight="bold">
-                  $450.00
-                </Typography>
-              </Box>
-
-              <Divider sx={{ my: 3 }} />
-
-              <Typography variant="body2" color="text.secondary">
-                • Payments are processed securely via Expleosurance BillingCenter.
-                <br />• Accepted methods: Credit Card, Debit Card, Bank Transfer.
-                <br />• Your data is encrypted and compliant with PCI-DSS standards.
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* RIGHT PANEL */}
-        <Grid item xs={12} md={7}>
-          <Card sx={{ borderRadius: 4 }}>
-            <CardContent>
-              <Typography variant="h5" fontWeight="bold" mb={2}>
-                Payment Details
-              </Typography>
-
-              <Tabs
-                value={tab}
-                onChange={(e, v) => setTab(v)}
-                sx={{ mb: 3 }}
-              >
-                <Tab label="Credit / Debit Card" />
-                <Tab label="Bank Transfer" />
-              </Tabs>
-
-              {tab === 0 && (
-                <Box>
-                  <TextField
-                    fullWidth
-                    label="Cardholder Name"
-                    margin="normal"
-                  />
-
-                  <TextField
-                    fullWidth
-                    label="Card Number"
-                    margin="normal"
-                    placeholder="XXXX XXXX XXXX XXXX"
-                  />
-
-                  <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Expiry"
-                        placeholder="MM/YY"
-                        margin="normal"
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="CVC"
-                        margin="normal"
-                        type="password"
-                      />
-                    </Grid>
-                  </Grid>
-
-                  <FormControlLabel
-                    control={<Checkbox />}
-                    label="Remember this card"
-                  />
-
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    sx={{
-                      mt: 3,
-                      py: 1.5,
-                      borderRadius: 3,
-                      background:
-                        "linear-gradient(135deg, #5e35b1, #673ab7)",
-                    }}
-                  >
-                    Pay Now
-                  </Button>
-                </Box>
-              )}
-
-              {tab === 1 && (
-                <Box>
-                  <TextField
-                    fullWidth
-                    label="Account Holder Name"
-                    margin="normal"
-                  />
-
-                  <TextField
-                    fullWidth
-                    label="Bank Account Number"
-                    margin="normal"
-                    placeholder="XXXX XXXX XXXX"
-                  />
-
-                  <Grid container spacing={2}>
-                    <Grid item size = {{xs:12, md:12, xl:12}}>
-                      <TextField
-                        fullWidth
-                        label="IFSC / Routing Code"
-                        margin="normal"
-                      />
-                    </Grid>                   
-                  </Grid>
-
-                  <FormControlLabel
-                    control={<Checkbox />}
-                    label="Remember this bank account"
-                  />
-
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    sx={{
-                      mt: 3,
-                      py: 1.5,
-                      borderRadius: 3,
-                      background:
-                        "linear-gradient(135deg, #5e35b1, #673ab7)",
-                    }}
-                  >
-                    Proceed to Pay
-                  </Button>
-                </Box>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-      </Box>
-    </Box>
+          <div style={{ padding: "14px 16px" }}>
+            {tab === 0 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {[
+                  { label: "Cardholder Name", placeholder: "" },
+                  { label: "Card Number", placeholder: "XXXX XXXX XXXX XXXX" },
+                ].map(({ label, placeholder }) => (
+                  <div key={label} style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    <label style={{ fontSize: 11, color: "#6b7c93" }}>{label}</label>
+                    <input placeholder={placeholder} style={{ border: "1px solid #d7dbe2", padding: "5px 8px", fontSize: 12 }} />
+                  </div>
+                ))}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    <label style={{ fontSize: 11, color: "#6b7c93" }}>Expiry</label>
+                    <input placeholder="MM/YY" style={{ border: "1px solid #d7dbe2", padding: "5px 8px", fontSize: 12 }} />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    <label style={{ fontSize: 11, color: "#6b7c93" }}>CVC</label>
+                    <input type="password" style={{ border: "1px solid #d7dbe2", padding: "5px 8px", fontSize: 12 }} />
+                  </div>
+                </div>
+                <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#4e5d6d" }}>
+                  <input type="checkbox" /> Remember this card
+                </label>
+                <button style={{ background: "#1f5fa6", color: "#fff", border: "none", padding: "8px 0", fontSize: 13, fontWeight: 600, cursor: "pointer", marginTop: 4 }}>
+                  Pay Now
+                </button>
+              </div>
+            )}
+            {tab === 1 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {[
+                  { label: "Account Holder Name", placeholder: "" },
+                  { label: "Bank Account Number", placeholder: "XXXX XXXX XXXX" },
+                  { label: "IFSC / Routing Code", placeholder: "" },
+                ].map(({ label, placeholder }) => (
+                  <div key={label} style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    <label style={{ fontSize: 11, color: "#6b7c93" }}>{label}</label>
+                    <input placeholder={placeholder} style={{ border: "1px solid #d7dbe2", padding: "5px 8px", fontSize: 12 }} />
+                  </div>
+                ))}
+                <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#4e5d6d" }}>
+                  <input type="checkbox" /> Remember this bank account
+                </label>
+                <button style={{ background: "#1f5fa6", color: "#fff", border: "none", padding: "8px 0", fontSize: 13, fontWeight: 600, cursor: "pointer", marginTop: 4 }}>
+                  Proceed to Pay
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

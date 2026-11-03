@@ -1,27 +1,24 @@
-import axios from "axios";
-
-const API_BASE_URL = "http://10.192.190.158:5000/api/accounts";
+import api from "../../utils/api";
 
 // ➕ Create account for a contact
-export const createAccountForContact = async (contact, accountType = 'Individual') => {
-  // Backend expects customerId and accountType
-  const res = await axios.post(`${API_BASE_URL}/createAccount`, {
+export const createAccountForContact = async (contact, accountType = "Individual") => {
+  const res = await api.post("/api/accounts/createAccount", {
     customerId: contact._id,
-    accountType
+    accountType,
   });
-  return res.data.account || res.data; // handle both {account: ...} and direct object
+  return res.data.account || res.data;
 };
 
-// 🔍 Fetch account using contactId (Contact → Account flow)
+// 🔍 Fetch account using contactId
 export const searchAccountByContact = async (contactId) => {
-  const res = await axios.get(`${API_BASE_URL}/byContact/${contactId}`);
+  const res = await api.get(`/api/accounts/byContact/${contactId}`);
   return res.data;
 };
 
-// 🔎 Search account via Account No, First Name, or Last Name (Dashboard flow)
+// 🔎 Search account by fields
 export const searchAccount = async ({ accountNumber, firstName, lastName, dateOfBirth }) => {
-  const res = await axios.get(`${API_BASE_URL}`, {
-    params: { accountNumber, firstName, lastName, dateOfBirth }
+  const res = await api.get("/api/accounts", {
+    params: { accountNumber, firstName, lastName, dateOfBirth },
   });
   return res.data;
 };

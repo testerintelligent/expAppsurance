@@ -10,131 +10,31 @@ import {
   Typography,
   Chip
 } from "@mui/material";
-import axios from 'axios';
+import api from '../../utils/api';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 
 const styles = {
-  container: {
-    padding: 24,
-    fontFamily: 'Inter, Arial, sans-serif',
-    color: '#1f2937',
-    maxWidth: 1400,
-    margin: '0 auto',
-  },
-
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 16,
-    background: 'linear-gradient(90deg, #3b82f6, #2563eb)',
-    color: '#fff',
-    padding: '16px 24px',
-    borderRadius: 8,
-    marginBottom: 32,
-    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-  },
-
-  headerText: { fontWeight: 700, fontSize: 20 },
-  headerSubText: { fontWeight: 400, color: 'rgba(255,255,255,0.8)', fontSize: 14 },
-  statusBadge: {
-    padding: '6px 14px',
-    borderRadius: 999,
-    color: '#fff',
-    fontWeight: 600,
-    fontSize: 12,
-  },
-
-  summaryTitle: {
-    fontSize: 24,
-    fontWeight: 700,
-    marginBottom: 20,
-    color: '#1e3a8a',
-  },
-
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: '2fr 1fr',
-    gap: 32,
-  },
-
-  section: {
-    marginBottom: 32,
-    background: '#ffffff',
-    borderRadius: 12,
-    padding: 20,
-    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-  },
-
-  sectionTitle: {
-    fontWeight: 700,
-    fontSize: 16,
-    borderBottom: '2px solid #e5e7eb',
-    paddingBottom: 8,
-    marginBottom: 16,
-    color: '#1e3a8a',
-  },
-
-  row: {
-    display: 'grid',
-    gridTemplateColumns: '180px 1fr',
-    padding: '6px 0',
-    fontSize: 14,
-    alignItems: 'center',
-  },
-
-  label: { color: '#6b7280', fontSize: 14 },
-  value: { fontWeight: 600, fontSize: 14 },
-
-  link: {
-    color: '#2563eb',
-    cursor: 'pointer',
-    textDecoration: 'underline',
-  },
-
-  money: {
-    textAlign: 'right',
-    fontWeight: 600,
-    color: '#059669',
-  },
-
-  emphasizedMoney: {
-    textAlign: 'right',
-    fontWeight: 800,
-    fontSize: 16,
-    color: '#047857',
-  },
-
-  card: {
-    background: '#f9fafb',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 12,
-    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-  },
-
-  aside: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 20,
-  },
-
-  asideCard: {
-    background: '#ffffff',
-    borderRadius: 12,
-    padding: 16,
-    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-  },
-
-  button: {
-    padding: '10px 16px',
-    borderRadius: 8,
-    fontWeight: 600,
-    cursor: 'pointer',
-    border: 'none',
-  },
-
-  primaryBtn: { background: '#2563eb', color: '#fff' },
-  secondaryBtn: { background: '#f3f4f6', color: '#6b7280' },
+  container: { padding: 0, fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif', color: "#1f2937", maxWidth: 1400, margin: "0 auto" },
+  header: { display: "flex", alignItems: "center", gap: 16, background: "#f3f6f9", color: "#2e3e4c", padding: "10px 14px", borderBottom: "1px solid #d7dbe2", marginBottom: 16, border: "1px solid #d7dbe2" },
+  headerText: { fontWeight: 700, fontSize: 14, color: "#2d3e52" },
+  headerSubText: { fontWeight: 400, color: "#4c5d72", fontSize: 12 },
+  statusBadge: { padding: "3px 10px", borderRadius: 2, fontWeight: 600, fontSize: 11 },
+  summaryTitle: { fontSize: 15, fontWeight: 700, marginBottom: 12, color: "#2d3e52" },
+  grid: { display: "grid", gridTemplateColumns: "2fr 1fr", gap: 14 },
+  section: { marginBottom: 14, background: "#ffffff", border: "1px solid #d7dbe2" },
+  sectionTitle: { fontWeight: 700, fontSize: 11, borderBottom: "1px solid #d7dbe2", padding: "7px 12px", color: "#2e3e4c", background: "#f3f6f9", textTransform: "uppercase", letterSpacing: 0.5 },
+  row: { display: "flex", justifyContent: "space-between", padding: "5px 12px", borderBottom: "1px solid #f0f2f5", fontSize: 12, alignItems: "center" },
+  label: { color: "#5a6a7a", fontSize: 12 },
+  value: { fontWeight: 600, fontSize: 12, color: "#2d3e52" },
+  link: { color: "#1f5fa6", cursor: "pointer", textDecoration: "underline", fontSize: 12 },
+  money: { textAlign: "right", fontWeight: 600, color: "#2b7a3e", fontSize: 12 },
+  emphasizedMoney: { textAlign: "right", fontWeight: 800, fontSize: 14, color: "#1f5fa6" },
+  card: { background: "#f8fafb", border: "1px solid #e3e8ee", padding: "6px 10px", marginBottom: 4, fontSize: 12, color: "#3d5164" },
+  aside: { display: "flex", flexDirection: "column", gap: 14 },
+  asideCard: { background: "#ffffff", border: "1px solid #d7dbe2", padding: "10px 12px" },
+  button: { padding: "5px 14px", borderRadius: 2, fontWeight: 600, cursor: "pointer", border: "none", fontSize: 12 },
+  primaryBtn: { background: "#1f5fa6", color: "#fff" },
+  secondaryBtn: { background: "#f4f6f8", color: "#6b7280", border: "1px solid #c5ccd5" },
 };
 
 const formatCurrency = (v) => {
@@ -173,8 +73,7 @@ const PolicySummary = () => {
     const fetchPolicy = async () => {
       setLoading(true);
       try {
-        const base = process.env.REACT_APP_API_URL || 'http://10.192.190.158:5000';
-        const res = await axios.get(`${base}/api/policies/getPolicyByNumber/${policyNumber}`);
+        const res = await api.get(`/api/policies/getPolicyByNumber/${policyNumber}`);
         setPolicy(res.data.policy || res.data);
       } catch (err) {
         setError('Unable to fetch policy details');
@@ -204,7 +103,8 @@ const PolicySummary = () => {
           <span
             style={{
               ...styles.statusBadge,
-              background: policy.status === 'In Force' ? '#10b981' : '#6b7280',
+              background: policy.status === "In Force" ? "#2b7a3e" : "#6b7280",
+              color: '#fff',
             }}
           >
             {policy.status || 'Unknown'}
@@ -219,7 +119,7 @@ const PolicySummary = () => {
         <div>
           {/* Policy Dates & Term */}
           <div style={styles.section}>
-            <div style={styles.sectionTitle}>Policy Dates & Term</div>
+            <div style={styles.sectionTitle}>Policy Dates &amp; Term</div>
             <div style={styles.row}><div style={styles.label}>Effective</div><div style={styles.value}>{formatDate(policy.effectiveDate)}</div></div>
             <div style={styles.row}><div style={styles.label}>Expiry</div><div style={styles.value}>{formatDate(policy.expiryDate)}</div></div>
             <div style={styles.row}><div style={styles.label}>Payment Schedule</div><div style={styles.value}>{policy.paymentSchedule || '-'}</div></div>
@@ -227,7 +127,7 @@ const PolicySummary = () => {
 
           {/* Premium & Charges */}
           <div style={styles.section}>
-            <div style={styles.sectionTitle}>Premium & Charges</div>
+            <div style={styles.sectionTitle}>Premium &amp; Charges</div>
             <div style={styles.row}><div style={styles.label}>Base Premium</div><div style={styles.money}>{formatCurrency(policy.basePremium || policy.totalPremium || 0)}</div></div>
             <div style={styles.row}><div style={styles.label}>Coverages</div><div style={styles.money}>{formatCurrency(policy.selectedCoveragesTotal || 0)}</div></div>
             <div style={styles.row}><div style={styles.label}>Subtotal</div><div style={styles.money}>{formatCurrency((policy.basePremium || policy.totalPremium || 0) + (policy.selectedCoveragesTotal || 0))}</div></div>
@@ -239,13 +139,15 @@ const PolicySummary = () => {
           {/* Coverages */}
           <div style={styles.section}>
             <div style={styles.sectionTitle}>Coverages Included</div>
-            {Array.isArray(policy.coverages) && policy.coverages.length > 0 ? (
-              policy.coverages.map((c, i) => (
-                <div key={i} style={styles.card}>{c}</div>
-              ))
-            ) : (
-              <div style={{ color: '#6b7280' }}>No coverages listed</div>
-            )}
+            <div style={{ padding: "8px 12px" }}>
+              {Array.isArray(policy.coverages) && policy.coverages.length > 0 ? (
+                policy.coverages.map((c, i) => (
+                  <div key={i} style={styles.card}>{c}</div>
+                ))
+              ) : (
+                <div style={{ color: '#6b7280', fontSize: 12 }}>No coverages listed</div>
+              )}
+            </div>
           </div>
 
           {/* Claims */}
@@ -258,9 +160,7 @@ const PolicySummary = () => {
                     {columns.map((column) => (
                       <TableCell
                         key={column.id}
-                        sx={{ fontWeight: 700, backgroundColor: "#f4f6f8" }}>
-
-
+                        sx={{ fontWeight: 700, backgroundColor: "#f6f7f8", fontSize: 11, color: "#31475f", padding: "8px 10px" }}>
                         {column.label}
                       </TableCell>
                     ))}
@@ -282,17 +182,17 @@ const PolicySummary = () => {
                         key={c._id}
                         hover
                       >
-                        <TableCell>
-                          <Typography>
+                        <TableCell sx={{ fontSize: 12, padding: "7px 10px" }}>
+                          <Typography sx={{ fontSize: 12 }}>
                             <b>{c.claimNumber}</b>
                           </Typography>
                         </TableCell>
-                        <TableCell>{c.policyNumber}</TableCell>
-                        <TableCell>{c.insured?.name}</TableCell>
-                        <TableCell>
+                        <TableCell sx={{ fontSize: 12, padding: "7px 10px" }}>{c.policyNumber}</TableCell>
+                        <TableCell sx={{ fontSize: 12, padding: "7px 10px" }}>{c.insured?.name}</TableCell>
+                        <TableCell sx={{ fontSize: 12, padding: "7px 10px" }}>
                           {new Date(c.lossDate).toLocaleDateString("en-GB")}
                         </TableCell>
-                        <TableCell>
+                        <TableCell sx={{ fontSize: 12, padding: "7px 10px" }}>
                           <Chip
                             label={c.status}
                             size="small"
@@ -324,34 +224,34 @@ const PolicySummary = () => {
         <aside style={styles.aside}>
           {/* Customer Info */}
           <div style={styles.asideCard}>
-            <div style={{ fontWeight: 700, marginBottom: 6 }}>Customer Info</div>
-            <div style={{ color: '#6b7280' }}>Name</div>
-            <div style={{ fontWeight: 600 }}>{policy.accountId?.accountHolderName || policy.accountHolderName || 'N/A'}</div>
-            <div style={{ color: '#6b7280', marginTop: 8 }}>Account</div>
-            <div style={{ fontWeight: 600 }}>{policy.accountId?.accountId || policy.accountNumber || 'N/A'}</div>
-            <div style={{ color: '#6b7280', marginTop: 8 }}>Contact</div>
-            <div style={{ fontWeight: 600 }}>{policy.contactId?.email || policy.contactId?.phone || 'N/A'}</div>
+            <div style={{ fontWeight: 700, marginBottom: 6, fontSize: 12, color: "#2d3e52" }}>Customer Info</div>
+            <div style={{ color: '#5a6a7a', fontSize: 12 }}>Name</div>
+            <div style={{ fontWeight: 600, fontSize: 12, color: "#2d3e52" }}>{policy.accountId?.accountHolderName || policy.accountHolderName || 'N/A'}</div>
+            <div style={{ color: '#5a6a7a', marginTop: 8, fontSize: 12 }}>Account</div>
+            <div style={{ fontWeight: 600, fontSize: 12, color: "#2d3e52" }}>{policy.accountId?.accountId || policy.accountNumber || 'N/A'}</div>
+            <div style={{ color: '#5a6a7a', marginTop: 8, fontSize: 12 }}>Contact</div>
+            <div style={{ fontWeight: 600, fontSize: 12, color: "#2d3e52" }}>{policy.contactId?.email || policy.contactId?.phone || 'N/A'}</div>
           </div>
 
           {/* Vehicles */}
           <div style={styles.asideCard}>
-            <div style={{ fontWeight: 700, marginBottom: 8 }}>Vehicle(s)</div>
+            <div style={{ fontWeight: 700, marginBottom: 8, fontSize: 12, color: "#2d3e52" }}>Vehicle(s)</div>
             {Array.isArray(policy.vehicle) && policy.vehicle.length > 0 ? (
               <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                 {policy.vehicle.map((v, i) => (
                   <li key={i} style={styles.card}>
                     <div style={{ fontWeight: 700 }}>{v.make} {v.model} <span style={{ color: '#6b7280', fontWeight: 500 }}>• {v.year}</span></div>
-                    <div style={{ color: '#6b7280', fontSize: 13 }}>VIN: {v.vin}</div>
-                    <div style={{ color: '#6b7280', fontSize: 13 }}>Reg: {v.licensePlate || 'N/A'}</div>
+                    <div style={{ color: '#6b7280', fontSize: 12 }}>VIN: {v.vin}</div>
+                    <div style={{ color: '#6b7280', fontSize: 12 }}>Reg: {v.licensePlate || 'N/A'}</div>
                   </li>
                 ))}
               </ul>
-            ) : <div style={{ color: '#6b7280' }}>No vehicles recorded</div>}
+            ) : <div style={{ color: '#6b7280', fontSize: 12 }}>No vehicles recorded</div>}
           </div>
 
           {/* Quick Actions */}
           <div style={styles.asideCard}>
-            <div style={{ fontWeight: 700, marginBottom: 8 }}>Quick Actions</div>
+            <div style={{ fontWeight: 700, marginBottom: 8, fontSize: 12, color: "#2d3e52" }}>Quick Actions</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <button style={{ ...styles.button, ...styles.secondaryBtn }} disabled>Make a Payment</button>
               <button style={{ ...styles.button, ...styles.secondaryBtn }} disabled>Email Policy</button>

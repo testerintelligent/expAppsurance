@@ -1,79 +1,5 @@
-// import React, { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { Box, Paper, Typography, TextField, Button, Grid } from "@mui/material";
-// import { searchPolicy } from "./PolicyApi";
-
-// const PolicyDashboard = () => {
-//   const [policyNumber, setPolicyNumber] = useState("");
-
-//   const [error, setError] = useState(null);
-//   const navigate = useNavigate();
-
-//   const handleSearch = async () => {
-//     if (!policyNumber) {
-//       alert("Please enter a Policy Number");
-//       return;
-//     }
-
-//     setError(null);
-
-//     try {
-//       const result = await searchPolicy(policyNumber);
-//       navigate(`/policy-summary/${result.policy.policyNumber}`, {
-//         state: { policy: result.policy },
-//       });
-
-//       console.log("reusltPolicy", result); // now accountId is used
-//     } catch (err) {
-//       setError("Failed to fetch policy details");
-//     }
-//   };
-
-//   const handleChange = (e) => {
-//     const { value } = e.target;
-//     setPolicyNumber(value.trim());
-//   };
-
-//   return (
-//     <Box sx={{ width: "100%", maxWidth: 1200, mx: "auto", mt: 2 }}>
-//       <Paper sx={{ p: 3, mb: 3 }}>
-//         <Typography
-//           variant="h6"
-//           sx={{ fontWeight: "bold", fontSize: 16, pb: 2 }}
-//         >
-//           Search Policy
-//         </Typography>
-//         <Grid container spacing={2}>
-//           <Grid item xs={12} sm={6}>
-//             <TextField
-//               fullWidth
-//               label="Policy No"
-//               name="policyNo"
-//               value={policyNumber}
-//               onChange={handleChange}
-//             />
-//           </Grid>
-//           <Grid className="flex items-start">
-//             <Button
-//               variant="contained"
-//               color="primary"
-//               onClick={handleSearch}
-//               className="self-center"
-//             >
-//               Search
-//             </Button>
-//           </Grid>
-//         </Grid>
-//       </Paper>
-//     </Box>
-//   );
-// };
-
-// export default PolicyDashboard;
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Paper, Typography, TextField, Button, Grid } from "@mui/material";
 import { searchPolicy } from "./PolicyApi";
 
 const PolicyDashboard = () => {
@@ -109,39 +35,26 @@ const PolicyDashboard = () => {
   };
 
   return (
-    <Box sx={{ width: "100%", maxWidth: 1200, mx: "auto", mt: 2 }}>
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography
-          variant="h6"
-          sx={{ fontWeight: "bold", fontSize: 16, pb: 2 }}
-        >
-          Search Policy
-        </Typography>
-
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Policy No"
+    <div style={{ padding: "16px 18px", background: "#eef2f5", minHeight: "100%" }}>
+      <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 16 }}>
+        <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>Search Policy</div>
+        <div style={{ padding: "12px 14px", display: "flex", gap: 10, alignItems: "flex-end", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <label style={{ fontSize: 11, color: "#6b7c93" }}>Policy Number</label>
+            <input
               value={policyNumber}
               onChange={handleChange}
+              placeholder="Enter policy number"
+              style={{ border: "1px solid #d7dbe2", padding: "5px 8px", fontSize: 12, width: 220 }}
             />
-          </Grid>
-
-          <Grid item>
-            <Button variant="contained" color="primary" onClick={handleSearch}>
-              Search
-            </Button>
-          </Grid>
-        </Grid>
-
-        {error && (
-          <Typography color="error" sx={{ mt: 2 }}>
-            {error}
-          </Typography>
-        )}
-      </Paper>
-    </Box>
+          </div>
+          <button onClick={handleSearch} style={{ background: "#1f5fa6", color: "#fff", border: "none", padding: "6px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+            Search
+          </button>
+        </div>
+        {error && <div style={{ padding: "0 14px 10px", fontSize: 12, color: "#c62828" }}>{error}</div>}
+      </div>
+    </div>
   );
 };
 

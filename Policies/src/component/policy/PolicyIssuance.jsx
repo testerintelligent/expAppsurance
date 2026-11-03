@@ -15,10 +15,12 @@ import {
   ArrowBack,
   Home as HomeIcon,
 } from "@mui/icons-material";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { COVERAGE_OPTIONS } from "../../constants/coverages";
+import { useWorkflowState, clearWorkflowState } from "../../utils/workflowSession";
 
 export default function PolicyIssuance() {
-  const { state } = useLocation();
+  const state = useWorkflowState();
   const navigate = useNavigate();
 
   // --- Prevent back navigation after policy issuance ---
@@ -32,16 +34,6 @@ export default function PolicyIssuance() {
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, [navigate]);
-
-  // ---------------- COVERAGE OPTIONS ----------------
-  const coverageOptions = [
-    { name: "Third-Party Liability", premium: 120 },
-    { name: "Own Damage", premium: 250 },
-    { name: "Comprehensive", premium: 400 },
-    { name: "Personal Accident Cover", premium: 80 },
-    { name: "Zero Depreciation", premium: 150 },
-    { name: "Vehicle theft", premium: 110 },
-  ];
 
   // --- Extract info ---
   const policy = state?.policy || {};
@@ -91,123 +83,95 @@ export default function PolicyIssuance() {
 
   // Reusable info row
   const InfoRow = ({ label, value }) => (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        mb: 1.5,
-        px: 1,
-      }}
-    >
-      <Typography color="text.secondary">{label}</Typography>
-      <Typography fontWeight={700}>{value}</Typography>
-    </Box>
+    <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: "1px solid #f0f2f5", fontSize: 12 }}>
+      <span style={{ color: "#5a6a7a" }}>{label}</span>
+      <span style={{ fontWeight: 600, color: "#2d3e52" }}>{value}</span>
+    </div>
   );
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: "auto", my: 4, px: 2 }}>
-      {/* SUCCESS BANNER */}
-      <Alert
-        icon={<CheckCircle />}
-        severity="success"
-        sx={{
-          mb: 4,
-          borderRadius: 2,
-          fontWeight: 600,
-          backgroundColor: "#eaf7ea",
-          color: "#155724",
-          border: "1px solid #d4f2d8",
-        }}
-      >
+    <div>
+      {/* Success alert */}
+      <div style={{ border: "1px solid #c3e6cb", background: "#edf7ee", borderRadius: 2, padding: "8px 14px", marginBottom: 14, display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#1e5228", fontWeight: 600 }}>
+        <CheckCircle style={{ fontSize: 16, color: "#2b7a3e" }} />
         Policy Issued Successfully — confirmation sent to registered email.
-      </Alert>
+      </div>
 
+      <div style={{ fontSize: 16, fontWeight: 700, color: "#2d3e52", marginBottom: 12 }}>Policy Issuance Confirmation</div>
 
-      {/* HEADER / POLICY SUMMARY */}
-      <Paper sx={{ p: 3, mb: 4, borderRadius: 2, background: "#f0f8ff" }}>
-        <Typography variant="h5" fontWeight={700} sx={{ mb: 2 }}>
-          Policy Summary
-        </Typography>
-        <Divider sx={{ mb: 2 }} />
-
-        <Grid container spacing={48}>
-          <Grid item xs={12} md={6}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+        {/* Policy Details */}
+        <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
+          <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+            Policy Details
+          </div>
+          <div style={{ padding: "10px 14px" }}>
             <InfoRow label="Policy Number" value={policyNumber} />
             <InfoRow label="Submission ID" value={submissionId} />
             <InfoRow label="Account Number" value={accountNumber} />
             <InfoRow label="Policyholder" value={policyHolder} />
-          </Grid>
-          <Grid item xs={12} md={6}>
             <InfoRow label="Effective Date" value={effectiveDate} />
             <InfoRow label="Expiry Date" value={expiryDate} />
             <InfoRow label="Payment Schedule" value={paymentSchedule} />
             <InfoRow label="Billing Method" value={billingMethod} />
             <InfoRow label="Payment Ref" value={paymentRef} />
-          </Grid>
-        </Grid>
-      </Paper>
+          </div>
+        </div>
 
-      {/* PREMIUM SUMMARY */}
-      <Paper sx={{ p: 3, mb: 4, borderRadius: 2, background: "#f0fff4" }}>
-        <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
-          Premium Summary
-        </Typography>
-        <Divider sx={{ mb: 2 }} />
-        <InfoRow label="Base Premium" value={`₹ ${basePremium.toLocaleString("en-IN")}`} />
-        <InfoRow label="Coverages" value={`₹ ${selectedCoveragesTotal.toLocaleString("en-IN")}`} />
-        <InfoRow label="Subtotal" value={`₹ ${totalBeforeTax.toLocaleString("en-IN")}`} />
-        <InfoRow label="Taxes (18%)" value={`₹ ${totalTax.toLocaleString("en-IN")}`} />
-        <Divider sx={{ my: 1.5 }} />
-        <InfoRow label="Total Amount Payable" value={`₹ ${totalCost.toLocaleString("en-IN")}`} />
-      </Paper>
+        {/* Premium Summary */}
+        <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
+          <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+            Premium Summary
+          </div>
+          <div style={{ padding: "10px 14px" }}>
+            <InfoRow label="Base Premium" value={`₹ ${basePremium.toLocaleString("en-IN")}`} />
+            <InfoRow label="Coverages" value={`₹ ${selectedCoveragesTotal.toLocaleString("en-IN")}`} />
+            <InfoRow label="Subtotal" value={`₹ ${totalBeforeTax.toLocaleString("en-IN")}`} />
+            <InfoRow label="Taxes (18%)" value={`₹ ${totalTax.toLocaleString("en-IN")}`} />
+            <div style={{ borderTop: "2px solid #d7dbe2", marginTop: 6, paddingTop: 8, display: "flex", justifyContent: "space-between", fontSize: 13 }}>
+              <span style={{ fontWeight: 700, color: "#2d3e52" }}>Total Amount Payable</span>
+              <span style={{ fontWeight: 800, color: "#2b7a3e", fontSize: 15 }}>₹ {totalCost.toLocaleString("en-IN")}</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      {/* COVERAGES */}
-      <Paper sx={{ p: 3, mb: 4, borderRadius: 2, background: "#fff0f5" }}>
-        <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+      {/* Coverages */}
+      <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginTop: 14 }}>
+        <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
           Coverages Included
-        </Typography>
-        <Grid container spacing={2}>
-          {coverages.length > 0 ? (
-            coverages.map((cov, idx) => {
-              const coverage = coverageOptions.find((c) => c.name === cov);
-              return (
-                <Grid key={idx} item xs={12} sm={6} md={4}>
-                  <Paper
-                    elevation={1}
-                    sx={{
-                      p: 2,
-                      borderRadius: 2,
-                      background: "#fff",
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Typography>{cov}</Typography>
-                    <Typography fontWeight={600}>
-                      ₹{coverage?.premium.toLocaleString("en-IN")}
-                    </Typography>
-                  </Paper>
-                </Grid>
-              );
-            })
-          ) : (
-            <Typography color="text.secondary">No coverages selected</Typography>
-          )}
-        </Grid>
-      </Paper>
+        </div>
+        {coverages.length > 0 ? (
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+            <thead>
+              <tr>
+                <th style={{ padding: "7px 12px", background: "#f6f7f8", borderBottom: "1px solid #d7dbe2", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#31475f" }}>Coverage</th>
+                <th style={{ padding: "7px 12px", background: "#f6f7f8", borderBottom: "1px solid #d7dbe2", textAlign: "right", fontSize: 11, fontWeight: 700, color: "#31475f", width: 120 }}>Premium</th>
+              </tr>
+            </thead>
+            <tbody>
+              {coverages.map((cov, idx) => {
+                const coverage = COVERAGE_OPTIONS.find((c) => c.name === cov);
+                return (
+                  <tr key={idx} style={{ background: idx % 2 === 0 ? "#f8fafb" : "#fff" }}>
+                    <td style={{ padding: "6px 12px", borderBottom: "1px solid #e3e8ee" }}>{cov}</td>
+                    <td style={{ padding: "6px 12px", borderBottom: "1px solid #e3e8ee", textAlign: "right", fontWeight: 600, color: "#2b7a3e" }}>₹{coverage?.premium.toLocaleString("en-IN")}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        ) : (
+          <div style={{ padding: "10px 14px", fontSize: 12, color: "#4c5d72" }}>No coverages selected</div>
+        )}
+      </div>
 
-      {/* ACTION BUTTONS */}
-      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, flexWrap: "wrap" }}>
-        <Button
-          variant="contained"
-          color="success"
-          startIcon={<HomeIcon />}
-          onClick={() => navigate("/", { replace: true })}
-          sx={{ textTransform: "none" }}
-        >
+      {/* Actions */}
+      <div style={{ marginTop: 16, paddingBottom: 16, display: "flex", justifyContent: "flex-end" }}>
+        <Button variant="contained" color="success" startIcon={<HomeIcon />} onClick={() => { clearWorkflowState(); navigate("/", { replace: true }); }} size="small" sx={{ textTransform: "none" }}>
           Confirm & Close
         </Button>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }

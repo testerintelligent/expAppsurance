@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 
 const demoActivityRows = [
@@ -117,14 +117,14 @@ const demoActivityRows = [
 
 const PolicyDashboard = () => {
   const [insuranceData, setInsuranceData] = useState([]);
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPolicies = async () => {
       try {
-        const response = await axios.get(
-          "http://10.192.190.158:5000/api/Policies/getPoliciesForDashboard"
-        );
+        const response = await api.get("/api/Policies/getPoliciesForDashboard");
         setInsuranceData(response.data || []);
       } catch (error) {
         console.error("Error fetching policies:", error);
@@ -148,6 +148,9 @@ const PolicyDashboard = () => {
       }))
     : demoActivityRows;
 
+  const totalPages = Math.max(1, Math.ceil(mappedRows.length / rowsPerPage));
+  const pageRows = mappedRows.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+
   return (
     <div style={{ padding: "16px 18px 0", background: "#eef2f5", minHeight: "100%" }}>
       <div
@@ -164,19 +167,6 @@ const PolicyDashboard = () => {
 
       <div
         style={{
-          background: "#edf6ff",
-          border: "1px solid #d5e5f6",
-          color: "#375d81",
-          fontSize: 12,
-          padding: "8px 12px",
-          marginBottom: 10,
-        }}
-      >
-        Some activities were cancelled. <span style={{ color: "#1a70c2", cursor: "pointer" }}>Click here</span> to see the cancelled activities.
-      </div>
-
-      <div
-        style={{
           display: "flex",
           alignItems: "center",
           gap: 8,
@@ -188,42 +178,22 @@ const PolicyDashboard = () => {
           color: "#4c5d72",
         }}
       >
-        <button
-          style={{
-            background: "#fff",
-            border: "1px solid #d5d9df",
-            borderRadius: 3,
-            padding: "4px 10px",
-            cursor: "pointer",
-          }}
-        >
-          All open
-        </button>
-        <button
-          style={{
-            background: "#f8f9fb",
-            border: "1px solid #d5d9df",
-            borderRadius: 3,
-            padding: "4px 10px",
-            cursor: "pointer",
-          }}
-        >
-          All
-        </button>
-        <button
-          style={{
-            background: "#f8f9fb",
-            border: "1px solid #d5d9df",
-            borderRadius: 3,
-            padding: "4px 10px",
-            cursor: "pointer",
-          }}
-        >
-          Group
-        </button>
         <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }}>
-          <span>Page 1</span>
-          <span>of 184</span>
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            style={{ border: "1px solid #d7dbe2", background: "#fff", padding: "2px 8px", cursor: "pointer", fontSize: 12 }}
+          >
+            ‹
+          </button>
+          <span style={{ padding: "0 6px" }}>Page {page} of {totalPages}</span>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            style={{ border: "1px solid #d7dbe2", background: "#fff", padding: "2px 8px", cursor: "pointer", fontSize: 12 }}
+          >
+            ›
+          </button>
         </div>
       </div>
 
@@ -241,7 +211,7 @@ const PolicyDashboard = () => {
                 "Account Hol.",
                 "Product",
                 "Assigned By",
-                "State",
+                
               ].map((column) => (
                 <th
                   key={column}
@@ -260,7 +230,7 @@ const PolicyDashboard = () => {
           </thead>
 
           <tbody>
-            {mappedRows.map((row, index) => (
+            {pageRows.map((row, index) => (
               <tr
                 key={`${row.id}-${index}`}
                 onClick={() => navigate(`/policy-summary/${row.id}`)}
@@ -284,7 +254,7 @@ const PolicyDashboard = () => {
                 <td style={{ padding: "8px 8px", borderRight: "1px solid #e3e8ee" }}>{row.accountHolder}</td>
                 <td style={{ padding: "8px 8px", borderRight: "1px solid #e3e8ee" }}>{row.product}</td>
                 <td style={{ padding: "8px 8px", borderRight: "1px solid #e3e8ee" }}>{row.assignedBy}</td>
-                <td style={{ padding: "8px 8px" }}>{row.state}</td>
+
               </tr>
             ))}
           </tbody>

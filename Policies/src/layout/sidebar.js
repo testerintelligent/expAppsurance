@@ -5,12 +5,11 @@ const Sidebar = () => {
   const location = useLocation();
 
   const menuItems = [
-    { label: "My Activities", path: "/" },
-    { label: "My Accounts", path: "/account" },
-    { label: "My Submissions", path: "/new-submission" },
-    { label: "My Renewals", path: "/renewals" },
-    { label: "My Other Policy Transactions", path: "/transactions" },
-    { label: "My Queues", path: "/queues" },
+    { label: "Activities", path: "/" },
+    { label: "Accounts", path: "/account" },
+    { label: "Submissions", path: "/new-submission" },
+    { label: "Renewals", path: "/renewals" },
+    { label: "Other Policy Transactions", path: "/transactions" },
   ];
 
   const policySummaryMenu = [
@@ -45,21 +44,7 @@ const Sidebar = () => {
           color: "#2e3e4c",
         }}
       >
-        <span>Actions</span>
-        <button
-          style={{
-            border: "1px solid #c5ccd5",
-            background: "#f4f6f8",
-            borderRadius: 3,
-            width: 20,
-            height: 20,
-            cursor: "pointer",
-            fontSize: 14,
-            color: "#586877",
-          }}
-        >
-          ▾
-        </button>
+        
       </div>
 
       <div style={{ padding: "8px 0 0" }}>

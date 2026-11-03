@@ -17,7 +17,6 @@ export default function Navbar() {
     { label: "Policy", to: "/policy" },
     { label: "Contact", to: "/contact" },
     { label: "Search", to: "/policy" },
-    { label: "Team", to: "/" },
     { label: "Administration", to: "/admin" },
   ];
 
@@ -61,13 +60,13 @@ export default function Navbar() {
               fontWeight: 700,
             }}
           >
-            G
+            E
           </div>
           <span
             style={{ fontSize: 13, cursor: "pointer" }}
             onClick={() => navigate("/")}
           >
-            GUIDEWIRE PolicyCenter
+            ExpleoSurance Policy
           </span>
         </div>
 
@@ -102,19 +101,6 @@ export default function Navbar() {
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: 16 }}>
-        <button
-          style={{
-            background: "#f9fafb",
-            border: "1px solid #d7dbe1",
-            borderRadius: 4,
-            fontSize: 12,
-            color: "#3d5367",
-            padding: "5px 10px",
-            cursor: "pointer",
-          }}
-        >
-          Go to (Alt+)
-        </button>
         <div
           style={{
             width: 20,

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TextField, Button, Paper, Typography } from "@mui/material";
-import axios from "axios";
+import api from "../../utils/api";
 import PublicLayout from "../../layout/PublicLayout";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -62,10 +62,7 @@ export default function SignupPage() {
     e.preventDefault();
     if (!validateForm()) return;
     try {
-      const res = await axios.post(
-        "http://10.192.190.158:5000/api/register/signup",
-        formData
-      );
+      const res = await api.post("/api/register/signup", formData);
       const token = res.headers["x-auth-token"];
       localStorage.setItem("token", token);
       navigate("/");
