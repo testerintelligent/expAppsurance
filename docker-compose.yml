@@ -6,6 +6,8 @@ services:
     build:
       context: ./Policies
       dockerfile: Dockerfile.policy
+      args:
+        REACT_APP_API_URL: http://10.192.190.158:5000
     ports:
       - "3001:3001"
     depends_on:
@@ -19,6 +21,8 @@ services:
     build:
       context: ./Claims
       dockerfile: Dockerfile.claim
+      args:
+        REACT_APP_API_URL: http://10.192.190.158:5000
     ports:
       - "3003:3003"
     depends_on:
