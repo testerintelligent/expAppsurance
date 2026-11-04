@@ -152,7 +152,9 @@ const PolicyDashboard = () => {
   const mappedRows = insuranceData.length
     ? insuranceData.map((policy, index) => ({
         id: policy.policyNumber || `POL-${index + 1}`,
-        dueDate: policy.endDate || "Today",
+        dueDate: policy.endDate
+            ? new Date(policy.endDate).toLocaleDateString("en-GB").replace(/\//g, "-")
+            : "Today",
         priority: "High",
         status: policy.status || "Open",
         subject: `Contact ${policy.accountHolderName || "Account"} was changed`,

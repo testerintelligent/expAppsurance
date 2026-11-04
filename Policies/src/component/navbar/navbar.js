@@ -12,7 +12,7 @@ export default function Navbar() {
   };
 
   const navItems = [
-    { label: "Desktop", to: "/" },
+    { label: "Dashboard", to: "/" },
     { label: "Account", to: "/account" },
     { label: "Policy", to: "/policy" },
     { label: "Contact", to: "/contact" },
