@@ -89,7 +89,7 @@ services:
 
   # Mongo Database
   mongo:
-    image: mongo:latest
+    image: mongo:7.0
     ports:
       - "27019:27017"
     volumes:
