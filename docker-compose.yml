@@ -63,7 +63,7 @@ services:
       context: ./Server
       dockerfile: Dockerfile.server
     ports:
-      - "5000:5000"
+      - "5001:5000" #Change the postnumber from 5000 to 5001 to avoid conflict with micro-service
     environment:
       MONGO_URI: mongodb://mongo:27017/registeredUser
     depends_on:
