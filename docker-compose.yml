@@ -69,7 +69,7 @@ services:
       args:
         APP_ENV: ${APP_ENV:-production}
     ports:
-      - "5003:5003" #Change the postnumber from 5000 to 5001 to avoid conflict with micro-service
+      - "5000:5000" #Change the postnumber from 5000 to 5001 to avoid conflict with micro-service
     environment:
       MONGO_URI: mongodb://mongo:27017/registeredUser
     depends_on:

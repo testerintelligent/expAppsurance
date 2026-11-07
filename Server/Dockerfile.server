@@ -20,7 +20,7 @@ ARG APP_ENV=production
 COPY .env.${APP_ENV} ./.env
 
 # Expose the port the app runs on
-EXPOSE 5003
+EXPOSE 5000
 
 # Run the server
 CMD ["node", "server.js"]
