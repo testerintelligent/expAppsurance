@@ -124,7 +124,7 @@ const PolicySummary = () => {
     const fetchPolicy = async () => {
       setLoading(true);
       try {
-        const base = "http://10.192.190.158:5000";
+        const base = import.meta.env.VITE_API_URL;
 
         const res = await axios.get(
           `${base}/api/policies/getPolicyByNumber/${policyNumber}`

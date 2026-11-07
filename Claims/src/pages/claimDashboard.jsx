@@ -19,7 +19,7 @@ const ClaimDashboard = () => {
     const fetchClaims = async () => {
       try {
         const response = await axios.get(
-          "http://10.192.190.158:5000/api/claims/list"
+          `${process.env.REACT_APP_API_URL}/api/claims/list`
         );
         console.log("response", response);
         setClaimData(response.data.claims);

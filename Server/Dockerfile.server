@@ -15,8 +15,12 @@ RUN npm install --force
 # Copy the rest of the application files
 COPY . .
 
+# Environment config (loaded by dotenv at runtime); choose with --build-arg APP_ENV=development
+ARG APP_ENV=production
+COPY .env.${APP_ENV} ./.env
+
 # Expose the port the app runs on
-EXPOSE 5000
+EXPOSE 5003
 
 # Run the server
 CMD ["node", "server.js"]

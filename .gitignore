@@ -21,6 +21,16 @@ node_modules/
 .env
 .env.*
 !.env.example        # allow a safe template file
+!Policies/.env.development
+!Policies/.env.production
+!Claims/.env.development
+!Claims/.env.production
+!billing-center/.env.development
+!billing-center/.env.production
+!pricing_app/.env.development
+!pricing_app/.env.production
+!Server/.env.development
+!Server/.env.production
 
 
 # ──────────────────────────────────────────────

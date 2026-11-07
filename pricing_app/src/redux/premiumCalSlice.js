@@ -5,7 +5,7 @@ export const calculatePremium = createAsyncThunk(
   "motor/calculatePremium",
   async (formData, { rejectWithValue }) => {
     try {
-      const base = "http://10.192.190.158:5001";
+      const base = import.meta.env.VITE_PRICING_API_URL;
 
       const res = await axios.post(`${base}/api/pricing/calculate`, {
         product: formData.product,

@@ -63,7 +63,7 @@ export default function SignupPage() {
     if (!validateForm()) return;
     try {
       const res = await axios.post(
-        "http://10.192.190.158:5000/api/register/signup",
+        `${process.env.REACT_APP_API_URL}/api/register/signup`,
         formData
       );
       const token = res.headers["x-auth-token"];
