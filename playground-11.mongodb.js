@@ -2,7 +2,7 @@ use("registeredUser");
 
 db.getCollection("ratebooks").insertMany([
   {
-    product: "AUTO",
+    product: "Personal Auto",
     status: "ACTIVE",
     effectiveStartDate: new Date("2026-01-01"),
     effectiveEndDate: new Date("2026-12-31"),
@@ -10,7 +10,7 @@ db.getCollection("ratebooks").insertMany([
     rateRoutines: ["BASE_PREMIUM_CALC", "LOCATION_FACTOR_CALC", "DRIVER_FACTOR_CALC"]
   },
   {
-    product: "AUTO",
+    product: "Personal Auto",
     status: "INACTIVE",
     effectiveStartDate: new Date("2025-01-01"),
     effectiveEndDate: new Date("2025-12-31"),
@@ -22,7 +22,7 @@ db.getCollection("ratebooks").insertMany([
 // ---- Rate tables (upsert by name so re-running doesn't duplicate) ----
 const rateTables = [
   { name: "RT_BASE_PREMIUM", type: "LOOKUP", data: [
-    { key: "AUTO", baseRate: 500 }, { key: "HOME", baseRate: 400 }, { key: "LIFE", baseRate: 300 } ] },
+    { key: "Personal Auto", baseRate: 500 }, { key: "HOME", baseRate: 400 }, { key: "LIFE", baseRate: 300 } ] },
   { name: "RT_COUNTRY", type: "LOOKUP", data: [
     { key: "India", factor: 1.0 }, { key: "USA", factor: 1.5 }, { key: "UK", factor: 1.3 } ] },
   { name: "RT_STATE", type: "LOOKUP", data: [
@@ -52,3 +52,13 @@ const rateRoutines = [
   { name: "DRIVER_FACTOR_CALC", formula: "premium * licenseFactor * drivingExpFactor * claimFactor * vehicleFactor" }
 ];
 rateRoutines.forEach(r => db.getCollection("rateroutines").replaceOne({ name: r.name }, r, { upsert: true }));
+
+
+// ---- RT_LOCATION: used by the pricing app (http://localhost:3004) to list rows ----
+db.getCollection("ratetables").replaceOne(
+  { name: "RT_LOCATION" },
+  { name: "RT_LOCATION", type: "LOOKUP", data: [
+    { key: "Chennai", factor: 1.1 }, { key: "Coimbatore", factor: 0.95 }, { key: "Bangalore", factor: 1.15 },
+    { key: "Mumbai", factor: 1.25 }, { key: "Los Angeles", factor: 1.3 } ] },
+  { upsert: true }
+);
