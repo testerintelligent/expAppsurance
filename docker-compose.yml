@@ -7,7 +7,7 @@ services:
       context: ./Policies
       dockerfile: Dockerfile.policy
       args:
-        APP_ENV: ${APP_ENV:-production}
+        REACT_APP_API_URL: http://10.192.190.158:5000
     ports:
       - "3001:3001"
     depends_on:
@@ -22,7 +22,7 @@ services:
       context: ./Claims
       dockerfile: Dockerfile.claim
       args:
-        APP_ENV: ${APP_ENV:-production}
+        REACT_APP_API_URL: http://10.192.190.158:5000/api
     ports:
       - "3003:3003"
     depends_on:
