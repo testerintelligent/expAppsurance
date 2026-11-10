@@ -42,7 +42,7 @@ const RateTable = () => {
 
   useEffect(() => {
     const callRateTable = async () => {
-      const res = await axios.get("http://10.192.190.158:5001/api/ratetable/");
+      const res = await axios.get(`${import.meta.env.VITE_PRICING_API_URL}/api/ratetable/`);
       const apiData = res.data.data;
 
       const locationData = apiData.find((item) => item.name === "RT_LOCATION");

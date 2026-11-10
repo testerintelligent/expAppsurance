@@ -1,7 +1,14 @@
 pipeline {
     agent { label 'LinuxAgent' }
 
+    parameters {
+        choice(name: 'ENVIRONMENT', choices: ['Prod', 'Dev'], description: 'Dev = all URLs point to localhost (.env.development), Prod = URLs from .env.production')
+    }
+
     environment {
+        // Maps the Dev/Prod choice to the .env.<name> file used by the Docker builds
+        APP_ENV = "${params.ENVIRONMENT == 'Dev' ? 'development' : 'production'}"
+
         GIT_REPO_URL = 'https://github.com/testerintelligent/expAppsurance.git'
     }
 
@@ -27,7 +34,7 @@ pipeline {
                 echo "Removing stopped containers..."
                 docker container prune -f || true
 
-                echo "Building and starting containers..."
+                echo "Building and starting containers for APP_ENV=$APP_ENV..."
                 docker compose up -d --build
                 '''
             }
@@ -35,7 +42,10 @@ pipeline {
 
         stage('Display URL') {
             steps {
-                echo "Application is running at http://10.192.190.158:3000"
+                script {
+                    def host = (params.ENVIRONMENT == 'Dev') ? 'localhost' : '10.192.190.158'
+                    echo "Application (${params.ENVIRONMENT}) is running at http://${host}:3000"
+                }
             }
         }
     }

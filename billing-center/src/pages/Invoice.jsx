@@ -10,7 +10,7 @@ const Invoice = () => {
   const [totalCost, setTotalCost] = useState(0);
   const [rows, setRows] = useState([]);
 
-  const API_BASE_URL = "http://10.192.190.158:5000";
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
 
   const { policyNumber } = useParams(); // get from URL
 

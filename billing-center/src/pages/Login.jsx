@@ -44,7 +44,7 @@ export default function LoginPage() {
     if (!validateForm()) return; // stop if invalid
     try {
       const res = await axios.post(
-        "http://10.192.190.158:5000/api/register/login",
+        `${import.meta.env.VITE_API_URL}/api/register/login`,
         formData
       );
       const token = res.data;

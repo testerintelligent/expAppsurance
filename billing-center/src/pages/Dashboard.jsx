@@ -21,7 +21,7 @@ const BillingDashboard = () => {
     const fetchPolicies = async () => {
       try {
         const response = await axios.get(
-          "http://10.192.190.158:5000/api/Policies/getPoliciesForDashboard",
+          `${import.meta.env.VITE_API_URL}/api/Policies/getPoliciesForDashboard`,
         );
         // Sort latest created first (server also sorts by _id desc, this is a client-side guarantee)
         const sorted = [...response.data].sort(

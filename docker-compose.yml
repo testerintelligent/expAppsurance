@@ -1,4 +1,4 @@
-version: '3.8'
+#version: '3.8'
 
 services:
   # Policies Centre
@@ -7,7 +7,7 @@ services:
       context: ./Policies
       dockerfile: Dockerfile.policy
       args:
-        REACT_APP_API_URL: http://10.192.190.158:5000
+        APP_ENV: ${APP_ENV:-production}
     ports:
       - "3001:3001"
     depends_on:
@@ -22,7 +22,7 @@ services:
       context: ./Claims
       dockerfile: Dockerfile.claim
       args:
-        REACT_APP_API_URL: http://10.192.190.158:5000/api
+        APP_ENV: ${APP_ENV:-production}
     ports:
       - "3003:3003"
     depends_on:
@@ -36,6 +36,8 @@ services:
     build:
       context: ./billing-center
       dockerfile: Dockerfile.billing
+      args:
+        APP_ENV: ${APP_ENV:-production}
     ports:
       - "3002:80"
     depends_on:
@@ -49,6 +51,8 @@ services:
     build:
       context: ./pricing_app
       dockerfile: Dockerfile.pricing
+      args:
+        APP_ENV: ${APP_ENV:-production}
     ports:
       - "3004:80"
     depends_on:
@@ -62,8 +66,10 @@ services:
     build:
       context: ./Server
       dockerfile: Dockerfile.server
+      args:
+        APP_ENV: ${APP_ENV:-production}
     ports:
-      - "5000:5000"
+      - "5000:5000" #Change the postnumber from 5000 to 5001 to avoid conflict with micro-service
     environment:
       MONGO_URI: mongodb://mongo:27017/registeredUser
     depends_on:
@@ -89,9 +95,9 @@ services:
 
   # Mongo Database
   mongo:
-    image: mongo:latest
+    image: mongo:8.2.3
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - mongo_data:/data/db
     networks:
