@@ -95,7 +95,7 @@ services:
 
   # Mongo Database
   mongo:
-    image: mongo:8.0
+    image: mongo:9.0
     ports:
       - "27018:27017"
     volumes:
