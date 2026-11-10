@@ -37,7 +37,7 @@ services:
       context: ./billing-center
       dockerfile: Dockerfile.billing
       args:
-        VITE_API_URL: http://10.192.190.158:5000
+        VITE_API_URL: http://localhost:5000
     ports:
       - "3002:80"
     depends_on:
@@ -52,7 +52,7 @@ services:
       context: ./pricing_app
       dockerfile: Dockerfile.pricing
       args:
-        VITE_PRICING_API_URL: http://10.192.190.158:5001
+        VITE_PRICING_API_URL: http://localhost:5001
     ports:
       - "3004:80"
     depends_on:
