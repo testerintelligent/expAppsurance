@@ -64,19 +64,48 @@ const Sidebar = () => {
 
   const policySummaryMenu = [
     {
-      label: "Change Policy",
-      path: "/policy-summary/change",
-      icon: <ChangePolicyIcon />,
+      label: "Summary",
+      path: `/policy-summary/${policyNumber}`,
     },
     {
-      label: "Reinstate Policy",
-      path: "/policy-summary/reinstate",
-      icon: <ReinstateIcon />,
+      label: "Details",
+      path: `/policy-summary/${policyNumber}/details`,
     },
     {
-      label: "Cancel Policy",
-      path: "/policy-summary/cancel",
-      icon: <CancelIcon />,
+      label: "Contacts",
+      path: `/policy-summary/${policyNumber}/contacts`,
+    },
+    {
+      label: "Transactions",
+      path: `/policy-summary/${policyNumber}/transactions`,
+    },
+    {
+      label: "Charges",
+      path: `/policy-summary/${policyNumber}/charges`,
+    },
+    {
+      label: "Payment Schedule",
+      path: `/payment-schedule/${policyNumber}`,
+    },
+    {
+      label: "Commissions",
+      path: `/policy-summary/${policyNumber}/commissions`,
+    },
+    {
+      label: "History",
+      path: `/policy-summary/${policyNumber}/history`,
+    },
+    {
+      label: "Trouble Tickets",
+      path: `/policy-summary/${policyNumber}/trouble-tickets`,
+    },
+    {
+      label: "Documents",
+      path: `/policy-summary/${policyNumber}/documents`,
+    },
+    {
+      label: "Policy Notes",
+      path: `/policy-summary/${policyNumber}/policy-notes`,
     },
   ];
 

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import {
   TextField,
   CircularProgress,
 } from '@mui/material';
-
 import { useNavigate } from 'react-router-dom';
+import api from '../utils/api';
 
 export default function PolicySearchPage() {
   const [policyNumber, setPolicyNumber] = useState('');
@@ -25,18 +24,13 @@ export default function PolicySearchPage() {
 
   const navigate = useNavigate();
 
-  const apiInst = axios.create({
-    baseURL:
-      process.env.REACT_APP_API_URL || "http://localhost:5000/api",
-  });
-
   /* =========================
      LIST POLICIES (API)
     ========================= */
 
   const fetchData = async () => {
     try {
-      const res = await apiInst.get("/policies/getPoliciesForClaims", {
+      const res = await api.get("/policies/getPoliciesForClaims", {
         params: {
           page: page + 1,
           limit: rowsPerPage,
@@ -101,7 +95,7 @@ export default function PolicySearchPage() {
     setPolicyResponse(null);
 
     try {
-      const res = await apiInst.get(
+      const res = await api.get(
         `/policies/getPolicyByNumber/${encodeURIComponent(policyNumber)}`
       );
 

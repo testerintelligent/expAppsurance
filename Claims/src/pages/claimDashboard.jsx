@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
@@ -9,8 +9,8 @@ const ClaimDashboard = () => {
   const [claimData, setClaimData] = useState([]);
   const [claimTotal, setClaimTotal] = useState([0]);
   const [filteredData, setFilteredData] = useState([]);
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [sortedColumn, setSortedColumn] = useState("CurrentDate");
+  const [sortOrder, setSortOrder] = useState("desc");
+  const [sortedColumn, setSortedColumn] = useState("createdAt");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [summary, setSummary] = useState(null);
@@ -18,13 +18,15 @@ const ClaimDashboard = () => {
   useEffect(() => {
     const fetchClaims = async () => {
       try {
-        const response = await axios.get(
-          "http://10.192.190.158:5000/api/claims/list"
-        );
+        const response = await api.get("/claims/list");
         console.log("response", response);
-        setClaimData(response.data.claims);
+        // Sort latest created first (API defaults to createdAt desc, this is a client-side guarantee)
+        const sorted = [...(response.data.claims || [])].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+        );
+        setClaimData(sorted);
         setClaimTotal(response.data.count);
-        setFilteredData(response.data.claims);
+        setFilteredData(sorted);
       } catch (error) {
         console.error("Error fetching policies:", error);
       }

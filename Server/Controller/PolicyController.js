@@ -128,6 +128,7 @@ exports.getPoliciesForDashboard = async (req, res) => {
       })
       .populate('claims')
       .select("policyNumber productType effectiveDate expiryDate status")
+      .sort({ _id: -1 })
       .exec();
 
     const policyDashboardData = policies.map((policy) => ({
