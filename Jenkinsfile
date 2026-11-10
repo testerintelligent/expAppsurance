@@ -2,7 +2,7 @@ pipeline {
     agent { label 'LinuxAgent' }
 
     parameters {
-        choice(name: 'ENVIRONMENT', choices: ['Prod', 'Dev'], description: 'Dev = all URLs point to localhost (.env.development), Prod = URLs from .env.production')
+        choice(name: 'ENVIRONMENT', choices: ['Dev', 'Prod'], description: 'Dev = all URLs point to localhost (.env.development), Prod = URLs from .env.production')
     }
 
     environment {
