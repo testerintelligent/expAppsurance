@@ -6,13 +6,12 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
+# Pass backend URL at build time (Vite bakes VITE_* env vars into the bundle)
+ARG VITE_API_URL=http://10.192.190.158:5000
+ENV VITE_API_URL=$VITE_API_URL
+
 # Build app
 COPY . .
-# Pick the env file for the build (production | development) and use it as the build-mode file.
-# The bundler bakes VITE_* vars into the bundle.
-ARG APP_ENV=production
-RUN if [ "$APP_ENV" != "production" ]; then cp ".env.${APP_ENV}" .env.production; fi
-
 RUN npm run build
 
 # Production stage
