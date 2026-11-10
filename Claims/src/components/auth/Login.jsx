@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TextField, Button, Paper, Typography } from "@mui/material";
-import axios from "axios";
+import api from "../../utils/api";
 import PublicLayout from "../../layout/PublicLayout";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -43,10 +43,7 @@ export default function LoginPage() {
     e.preventDefault();
     if (!validateForm()) return; // stop if invalid
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/register/login`,
-        formData
-      );
+      const res = await api.post("/register/login", formData);
       const token = res.data;
       localStorage.setItem("token", token);
       navigate("/");

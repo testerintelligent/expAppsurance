@@ -9,8 +9,8 @@ const BillingDashboard = () => {
   );
   const [insuranceData, setInsuranceData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [sortedColumn, setSortedColumn] = useState("CurrentDate");
+  const [sortOrder, setSortOrder] = useState("desc");
+  const [sortedColumn, setSortedColumn] = useState("startDate");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -23,8 +23,12 @@ const BillingDashboard = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/Policies/getPoliciesForDashboard`,
         );
-        setInsuranceData(response.data);
-        setFilteredData(response.data);
+        // Sort latest created first (server also sorts by _id desc, this is a client-side guarantee)
+        const sorted = [...response.data].sort(
+          (a, b) => new Date(b.startDate) - new Date(a.startDate),
+        );
+        setInsuranceData(sorted);
+        setFilteredData(sorted);
       } catch (error) {
         console.error("Error fetching policies:", error);
       }

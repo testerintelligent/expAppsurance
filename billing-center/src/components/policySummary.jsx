@@ -162,16 +162,6 @@ const PolicySummary = () => {
         <button onClick={() => navigate(-1)} style={{ marginRight: 12 }}>
           Back
         </button>
-        <button onClick={() => window.print()} style={{ marginRight: 8 }}>
-          Print
-        </button>
-        <button
-          onClick={() =>
-            alert("Download PDF - implement server-side PDF generation")
-          }
-        >
-          Download PDF
-        </button>
       </div>
 
       <div style={styles.header}>

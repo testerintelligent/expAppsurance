@@ -140,7 +140,11 @@ const PolicyDashboard = () => {
     const fetchPolicies = async () => {
       try {
         const response = await api.get("/api/Policies/getPoliciesForDashboard");
-        setInsuranceData(response.data || []);
+        // Sort latest created first (server also sorts by _id desc, this is a client-side guarantee)
+        const sorted = [...(response.data || [])].sort(
+          (a, b) => new Date(b.startDate) - new Date(a.startDate),
+        );
+        setInsuranceData(sorted);
       } catch (error) {
         console.error("Error fetching policies:", error);
       }

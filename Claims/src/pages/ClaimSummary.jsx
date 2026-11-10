@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
-import {
-  CircularProgress,
-} from "@mui/material";
+import { CircularProgress } from "@mui/material";
+import api from "../utils/api";
 
 import PolicyTitleBar from "./PolicyTitleBar";
 
@@ -29,11 +27,6 @@ export default function ClaimSummary() {
   const [claim, setClaim] = useState(null);
   const [error, setError] = useState(null);
 
-
-  const api = axios.create({
-    baseURL:
-      `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api`
-  });
 
   useEffect(() => {
     let mounted = true;
