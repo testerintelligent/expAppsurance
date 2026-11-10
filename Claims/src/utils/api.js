@@ -4,7 +4,7 @@ import axios from "axios";
 // For CRA the value is baked in at build time.
 // The URL must include /api — e.g. http://10.192.190.158:5000/api
 const BASE_URL =
-  process.env.REACT_APP_API_URL || "http://10.192.190.158:5000/api";
+  process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 const api = axios.create({ baseURL: BASE_URL });
 

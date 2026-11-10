@@ -5,7 +5,7 @@ import axios from "axios";
 // The base URL is read from .env so a single change updates the entire app.
 
 const BASE_URL =
-  process.env.REACT_APP_API_URL || "http://10.192.190.158:5000";
+  process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 const api = axios.create({ baseURL: BASE_URL });
 
@@ -31,6 +31,6 @@ api.interceptors.response.use(
 );
 
 export const PRICING_BASE_URL =
-  process.env.REACT_APP_PRICING_URL || "http://10.192.190.158:5001";
+  process.env.REACT_APP_PRICING_URL || "http://localhost:5001";
 
 export default api;
