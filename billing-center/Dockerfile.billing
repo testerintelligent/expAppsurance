@@ -6,12 +6,12 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
-# Pass backend URL at build time (Vite bakes VITE_* env vars into the bundle)
-ARG VITE_API_URL=http://localhost:5000
-ENV VITE_API_URL=$VITE_API_URL
+# Pick env file by APP_ENV (development|production); .env.production.local overrides all other .env files at build time
+ARG APP_ENV=production
 
 # Build app
 COPY . .
+RUN cp .env.${APP_ENV} .env.production.local
 RUN npm run build
 
 # Production stage
