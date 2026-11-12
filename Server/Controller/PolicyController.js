@@ -229,7 +229,7 @@ exports.getPoliciesForClaim = async (req, res) => {
 
   const baseMatch = {
     ...(policyNumber && { policyNumber: { $regex: policyNumber, $options: "i" } }),
-    ...(policyType && { policyType })
+    ...(policyType && { productType: policyType })   // model field is productType, not policyType
   };
 
   const contactMatch = insured
@@ -248,7 +248,10 @@ exports.getPoliciesForClaim = async (req, res) => {
       }
     },
 
-    { $unwind: "$contact" },
+    // preserveNullAndEmptyArrays keeps policies where contactId is null or
+    // no matching contact document exists — without this, $unwind silently
+    // drops those policies and the endpoint returns empty results.
+    { $unwind: { path: "$contact", preserveNullAndEmptyArrays: true } },
 
     ...(insured ? [{ $match: contactMatch }] : []),
 

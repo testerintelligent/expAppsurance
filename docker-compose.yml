@@ -7,7 +7,7 @@ services:
       context: ./Policies
       dockerfile: Dockerfile.policy
       args:
-        REACT_APP_API_URL: http://localhost:5000
+        APP_ENV: ${APP_ENV:-production}
     ports:
       - "3001:3001"
     depends_on:
@@ -22,7 +22,7 @@ services:
       context: ./Claims
       dockerfile: Dockerfile.claim
       args:
-        REACT_APP_API_URL: http://localhost:5000/api
+        APP_ENV: ${APP_ENV:-production}
     ports:
       - "3003:3003"
     depends_on:
@@ -37,7 +37,7 @@ services:
       context: ./billing-center
       dockerfile: Dockerfile.billing
       args:
-        VITE_API_URL: http://localhost:5000
+        APP_ENV: ${APP_ENV:-production}
     ports:
       - "3002:80"
     depends_on:
@@ -52,7 +52,7 @@ services:
       context: ./pricing_app
       dockerfile: Dockerfile.pricing
       args:
-        VITE_PRICING_API_URL: http://localhost:5001
+        APP_ENV: ${APP_ENV:-production}
     ports:
       - "3004:80"
     depends_on:
