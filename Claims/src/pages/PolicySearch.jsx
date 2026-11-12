@@ -75,7 +75,7 @@ export default function PolicySearchPage() {
     { id: "insured", label: "Insured Name", sort: true },
     { id: "contact.address", label: "Address", sort: true },
     { id: "contact.city", label: "City", sort: true },
-    { id: "contact.street", label: "State", sort: true },
+    { id: "contact.state", label: "State", sort: true },
     { id: "productType", label: "Product Type", sort: true },
     { id: "effectiveDate", label: "Effective Date", sort: false },
     { id: "expiryDate", label: "Expiry Date", sort: false }

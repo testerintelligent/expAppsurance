@@ -31,7 +31,13 @@ exports.createPolicy = async (req, res) => {
     }
 
     // --- Sanitize contactId (convert empty string to null) ---
-    const sanitizedContactId = contactId && contactId.trim() !== "" ? contactId : null;
+    let sanitizedContactId = contactId && contactId.trim() !== "" ? contactId : null;
+
+    // Fall back to the account holder so the policy is always linked to its insured
+    if (!sanitizedContactId) {
+      const owner = await Account.findById(accountId).select("customerId").lean();
+      sanitizedContactId = owner?.customerId || null;
+    }
 
     // Generate unique policy number (POL + timestamp, no hyphen)
     const policyNumber = "POL" + Date.now();
@@ -170,9 +176,14 @@ exports.getPolicyByNumber = async (req, res) => {
     submissionId: policy.submissionId,
   });
 
+  // Policies saved without a contactId fall back to the account holder
+  const contact =
+    policy.contactId ||
+    (policy.accountId?.customerId ? await Contact.findById(policy.accountId.customerId) : null);
+
   res.json({
     policy,
-    contact: policy.contactId,
+    contact,
     account: policy.accountId,
     vehicle: vehicles,
     driver: drivers
@@ -239,10 +250,28 @@ exports.getPoliciesForClaim = async (req, res) => {
   const pipeline = [
     { $match: baseMatch },
 
+    // Many policies were saved without a contactId, so fall back to the
+    // account holder (account.customerId) to resolve the insured.
+    {
+      $lookup: {
+        from: "accountdetails",
+        localField: "accountId",
+        foreignField: "_id",
+        as: "account"
+      }
+    },
+    {
+      $addFields: {
+        insuredContactId: {
+          $ifNull: ["$contactId", { $arrayElemAt: ["$account.customerId", 0] }]
+        }
+      }
+    },
+
     {
       $lookup: {
         from: "contactdetails",   // collection name
-        localField: "contactId",
+        localField: "insuredContactId",
         foreignField: "_id",
         as: "contact"
       }
