@@ -35,6 +35,7 @@ const contactSchema = new mongoose.Schema({
   city: { type: String, trim: true, index: true }, // indexed for location queries
   state: { type: String, trim: true, index: true },
   zipCode: { type: String, trim: true, index: true },
+  country: { type: String, trim: true },
   organization: { type: String, trim: true },
   producerCode: { type: String, trim: true },
   createdAt: { type: Date, default: Date.now, index: true },
