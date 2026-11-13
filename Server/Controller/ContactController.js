@@ -142,17 +142,23 @@ const getAllContact = async (req, res) => {
  */
 const searchContact = async (req, res) => {
   try {
-    const { firstName, lastName, dateOfBirth } = req.query;
+    const { firstName, lastName, dateOfBirth, organization, city, state, zipCode, country } = req.query;
 
-    if (!firstName && !lastName && !dateOfBirth) {
+    const hasParam = firstName || lastName || dateOfBirth || organization || city || state || zipCode || country;
+    if (!hasParam) {
       return res.status(400).json({
-        error: "Please provide at least one search parameter: firstName, lastName, or dateOfBirth."
+        error: "Please provide at least one search parameter."
       });
     }
 
     const filter = {};
-    if (firstName) filter.firstName = { $regex: new RegExp(firstName, "i") };
-    if (lastName) filter.lastName = { $regex: new RegExp(lastName, "i") };
+    if (firstName)    filter.firstName    = { $regex: new RegExp(firstName,    "i") };
+    if (lastName)     filter.lastName     = { $regex: new RegExp(lastName,     "i") };
+    if (organization) filter.organization = { $regex: new RegExp(organization, "i") };
+    if (city)         filter.city         = { $regex: new RegExp(city,         "i") };
+    if (state)        filter.state        = { $regex: new RegExp(state,        "i") };
+    if (zipCode)      filter.zipCode      = { $regex: new RegExp(zipCode,      "i") };
+    if (country)      filter.country      = { $regex: new RegExp(country,      "i") };
     if (dateOfBirth) {
       const start = new Date(dateOfBirth);
       start.setUTCHours(0, 0, 0, 0);

@@ -246,15 +246,15 @@ export default function Vehicle() {
             <div>
               <div style={{ fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #e3e8ee" }}>Vehicle Specifications</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <TextField size="small" select label="Make" fullWidth value={vehicleData.make}
+                <TextField size="small" select label="Make" fullWidth required value={vehicleData.make}
                   onChange={(e) => setVehicleData({ ...vehicleData, make: e.target.value, model: "" })}>
                   {makeOptions.map((make) => <MenuItem key={make} value={make}>{make}</MenuItem>)}
                 </TextField>
-                <TextField size="small" select label="Model" fullWidth value={vehicleData.model} disabled={!vehicleData.make}
+                <TextField size="small" select label="Model" fullWidth required value={vehicleData.model} disabled={!vehicleData.make}
                   onChange={(e) => setVehicleData({ ...vehicleData, model: e.target.value })}>
                   {(modelOptions[vehicleData.make] || []).map((model) => <MenuItem key={model} value={model}>{model}</MenuItem>)}
                 </TextField>
-                <TextField size="small" select label="Year" fullWidth value={vehicleData.year}
+                <TextField size="small" select label="Year" fullWidth required value={vehicleData.year}
                   onChange={(e) => setVehicleData({ ...vehicleData, year: e.target.value })}>
                   {yearOptions.map((year) => <MenuItem key={year} value={year}>{year}</MenuItem>)}
                 </TextField>
@@ -265,11 +265,11 @@ export default function Vehicle() {
             <div>
               <div style={{ fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #e3e8ee" }}>Registration Details</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <TextField size="small" label="VIN" fullWidth value={vehicleData.vin}
+                <TextField size="small" label="VIN" fullWidth required value={vehicleData.vin}
                   onChange={(e) => setVehicleData({ ...vehicleData, vin: e.target.value })} />
-                <TextField size="small" label="License Plate" fullWidth value={vehicleData.licensePlate}
+                <TextField size="small" label="License Plate" fullWidth required value={vehicleData.licensePlate}
                   onChange={(e) => setVehicleData({ ...vehicleData, licensePlate: e.target.value })} />
-                <TextField size="small" select label="State Registered" fullWidth value={vehicleData.stateRegistered}
+                <TextField size="small" select label="State Registered" fullWidth required value={vehicleData.stateRegistered}
                   onChange={(e) => setVehicleData({ ...vehicleData, stateRegistered: e.target.value })}>
                   {stateOptions.map((state) => <MenuItem key={state} value={state}>{state}</MenuItem>)}
                 </TextField>

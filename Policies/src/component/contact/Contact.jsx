@@ -56,9 +56,15 @@ const formatDateForInput = (dateValue) => {
 export default function Contact() {
   const [tabValue, setTabValue] = useState(0);
   const [searchData, setSearchData] = useState({
+    contactType: "Person", // "Person" | "Company"
     firstName: "",
     lastName: "",
     dateOfBirth: "",
+    organization: "",     // used as "Company Name" when contactType === "Company"
+    country: "",
+    city: "",
+    state: "",
+    zipCode: "",
   });
   const [formData, setFormData] = useState({
     firstName: "",
@@ -222,6 +228,38 @@ export default function Contact() {
   const handleSearchChange = (e) => {
     setSearchData({ ...searchData, [e.target.name]: e.target.value });
   };
+
+  const handleTypeChange = (newType) => {
+    setSearchData({
+      contactType: newType,
+      firstName: "",
+      lastName: "",
+      dateOfBirth: "",
+      organization: "",
+      country: "",
+      city: "",
+      state: "",
+      zipCode: "",
+    });
+    setSearchResult([]);
+    setPage(0);
+  };
+
+  const handleReset = () => {
+    setSearchData({
+      contactType: searchData.contactType,
+      firstName: "",
+      lastName: "",
+      dateOfBirth: "",
+      organization: "",
+      country: "",
+      city: "",
+      state: "",
+      zipCode: "",
+    });
+    setSearchResult([]);
+    setPage(0);
+  };
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -251,18 +289,26 @@ export default function Contact() {
         ).padStart(2, "0")}/${date.getFullYear()}`;
   };
   
-  //Filter the search data
+  // Client-side filter used when browsing contactDetails (all contacts list).
+  // Mirrors the server-side regex logic so the table stays consistent.
   const filteredData = contactDetails.filter((item) => {
+    if (searchData.contactType === "Company") {
+      return (
+        (!searchData.organization || item.organization?.toLowerCase().includes(searchData.organization.toLowerCase())) &&
+        (!searchData.city         || item.city?.toLowerCase().includes(searchData.city.toLowerCase())) &&
+        (!searchData.state        || item.state?.toLowerCase().includes(searchData.state.toLowerCase())) &&
+        (!searchData.zipCode      || item.zipCode?.toLowerCase().includes(searchData.zipCode.toLowerCase())) &&
+        (!searchData.country      || item.country?.toLowerCase().includes(searchData.country.toLowerCase()))
+      );
+    }
     return (
-      item.firstName
-        ?.toLowerCase()
-        .includes(searchData.firstName.toLowerCase()) &&
-      item.lastName
-        ?.toLowerCase()
-        .includes(searchData.lastName.toLowerCase()) &&
-      item.dateOfBirth
-        ?.toLowerCase()
-        .includes(searchData.dateOfBirth.toLowerCase())
+      (!searchData.firstName   || item.firstName?.toLowerCase().includes(searchData.firstName.toLowerCase())) &&
+      (!searchData.lastName    || item.lastName?.toLowerCase().includes(searchData.lastName.toLowerCase())) &&
+      (!searchData.dateOfBirth || (item.dateOfBirth || "").toLowerCase().includes(searchData.dateOfBirth.toLowerCase())) &&
+      (!searchData.city        || item.city?.toLowerCase().includes(searchData.city.toLowerCase())) &&
+      (!searchData.state       || item.state?.toLowerCase().includes(searchData.state.toLowerCase())) &&
+      (!searchData.zipCode     || item.zipCode?.toLowerCase().includes(searchData.zipCode.toLowerCase())) &&
+      (!searchData.country     || item.country?.toLowerCase().includes(searchData.country.toLowerCase()))
     );
   });
 
@@ -306,22 +352,31 @@ export default function Contact() {
   // API Calls
   const handleSearch = async () => {
     try {
-      // Build query object only with filled values
       const query = {};
-      if (searchData.firstName) query.firstName = searchData.firstName;
-      if (searchData.lastName) query.lastName = searchData.lastName;
-      if (searchData.dateOfBirth) query.dateOfBirth = searchData.dateOfBirth;
+
+      if (searchData.contactType === "Company") {
+        if (searchData.organization) query.organization = searchData.organization;
+      } else {
+        if (searchData.firstName)   query.firstName   = searchData.firstName;
+        if (searchData.lastName)    query.lastName    = searchData.lastName;
+        if (searchData.dateOfBirth) query.dateOfBirth = searchData.dateOfBirth;
+      }
+      // Location fields — common to both types
+      if (searchData.country) query.country = searchData.country;
+      if (searchData.city)    query.city    = searchData.city;
+      if (searchData.state)   query.state   = searchData.state;
+      if (searchData.zipCode) query.zipCode = searchData.zipCode;
 
       if (Object.keys(query).length === 0) {
         alert("Please provide at least one search field");
         return;
       }
 
-      // Call API with only provided fields
       const result = await searchContact(query);
       setSearchResult(Array.isArray(result) ? result : [result]);
+      setPage(0);
     } catch (err) {
-      alert(err.response?.data?.message || "Contact not found");
+      alert(err.response?.data?.message || err.response?.data?.error || "Contact not found");
       setSearchResult([]);
     }
   };
@@ -419,87 +474,165 @@ export default function Contact() {
               Search Contact
             </div>
             <div style={{ padding: "12px 14px" }}>
-              <div style={{ display: "flex", gap: 12, alignItems: "flex-end", flexWrap: "wrap" }}>
-                <div style={{ flex: "1 1 160px" }}>
-                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>First Name</label>
-                  <input type="text" name="firstName" value={searchData.firstName} onChange={handleSearchChange}
-                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", outline: "none" }} />
+              {/* Row 1 — Type selector */}
+              <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 12 }}>
+                <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, whiteSpace: "nowrap" }}>Type</label>
+                {["Person", "Company"].map((type) => (
+                  <button key={type} onClick={() => handleTypeChange(type)}
+                    style={{
+                      padding: "4px 16px", fontSize: 12, fontWeight: 600, borderRadius: 2,
+                      border: "1px solid #c5ccd5", cursor: "pointer",
+                      background: searchData.contactType === type ? "#1f5fa6" : "#fff",
+                      color: searchData.contactType === type ? "#fff" : "#4e5d6d",
+                    }}>
+                    {type}
+                  </button>
+                ))}
+              </div>
+
+              {/* Row 2 — Type-specific fields */}
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 10 }}>
+                {searchData.contactType === "Person" ? (
+                  <>
+                    <div style={{ flex: "1 1 150px" }}>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>First Name</label>
+                      <input type="text" name="firstName" value={searchData.firstName} onChange={handleSearchChange}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", outline: "none", boxSizing: "border-box" }} />
+                    </div>
+                    <div style={{ flex: "1 1 150px" }}>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Last Name</label>
+                      <input type="text" name="lastName" value={searchData.lastName} onChange={handleSearchChange}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", outline: "none", boxSizing: "border-box" }} />
+                    </div>
+                    <div style={{ flex: "1 1 150px" }}>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Date of Birth</label>
+                      <input type="date" name="dateOfBirth" value={searchData.dateOfBirth} onChange={handleSearchChange}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", boxSizing: "border-box" }} />
+                    </div>
+                  </>
+                ) : (
+                  <div style={{ flex: "1 1 300px", maxWidth: 320 }}>
+                    <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Company Name</label>
+                    <input type="text" name="organization" value={searchData.organization} onChange={handleSearchChange}
+                      style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", outline: "none", boxSizing: "border-box" }} />
+                  </div>
+                )}
+              </div>
+
+              {/* Row 3 — Location fields (common to both types) */}
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 12 }}>
+                <div style={{ flex: "1 1 130px" }}>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Country</label>
+                  <input type="text" name="country" value={searchData.country} onChange={handleSearchChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", outline: "none", boxSizing: "border-box" }} />
                 </div>
-                <div style={{ flex: "1 1 160px" }}>
-                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Last Name</label>
-                  <input type="text" name="lastName" value={searchData.lastName} onChange={handleSearchChange}
-                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", outline: "none" }} />
+                <div style={{ flex: "1 1 130px" }}>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>City</label>
+                  <input type="text" name="city" value={searchData.city} onChange={handleSearchChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", outline: "none", boxSizing: "border-box" }} />
                 </div>
-                <div style={{ flex: "1 1 160px" }}>
-                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Date of Birth</label>
-                  <input type="date" name="dateOfBirth" value={searchData.dateOfBirth} onChange={handleSearchChange}
-                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                <div style={{ flex: "1 1 130px" }}>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>State</label>
+                  <input type="text" name="state" value={searchData.state} onChange={handleSearchChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", outline: "none", boxSizing: "border-box" }} />
                 </div>
+                <div style={{ flex: "1 1 110px" }}>
+                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Zip Code</label>
+                  <input type="text" name="zipCode" value={searchData.zipCode} onChange={handleSearchChange}
+                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", outline: "none", boxSizing: "border-box" }} />
+                </div>
+              </div>
+
+              {/* Row 4 — Action buttons */}
+              <div style={{ display: "flex", gap: 8 }}>
                 <button onClick={handleSearch}
-                  style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "6px 18px", fontSize: 12, fontWeight: 600, cursor: "pointer", alignSelf: "flex-end", marginBottom: 0 }}>
+                  style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "6px 20px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
                   Search
+                </button>
+                <button onClick={handleReset}
+                  style={{ background: "#fff", color: "#4e5d6d", border: "1px solid #c5ccd5", borderRadius: 2, padding: "6px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                  Reset
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Results table */}
-          {contactDetails && contactDetails.length > 0 && (
-            <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
-              <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span>Contacts</span>
-                <span style={{ fontWeight: 400, color: "#4c5d72", textTransform: "none" }}>{contactDetails.length} records</span>
-              </div>
-              <div style={{ overflow: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-                  <thead>
-                    <tr>
-                      {["", "Name", "Email", "Phone", "DOB", "Gender", "View"].map((col) => (
-                        <th key={col} style={{ padding: "8px 10px", background: "#f6f7f8", borderBottom: "2px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left", fontWeight: 700, color: "#31475f", fontSize: 11 }}>
-                          {col}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((contact, index) => (
-                      <tr key={index} style={{ background: index % 2 === 0 ? "#f8fafb" : "#fff" }}>
-                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>
-                          <button onClick={() => accountSearch(contact)}
-                            style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "3px 10px", fontSize: 11, cursor: "pointer" }}>
-                            Select
-                          </button>
-                        </td>
-                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{contact.firstName} {contact.lastName}</td>
-                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{contact.email}</td>
-                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{contact.phone}</td>
-                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{formatDate(contact.dateOfBirth)}</td>
-                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{contact.gender}</td>
-                        <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee", textAlign: "center" }}>
-                          <VisibilityIcon onClick={() => handleView(contact)} style={{ cursor: "pointer", fontSize: 16, color: "#1f5fa6" }} />
-                        </td>
+          {/* Results table — shows API search results when Search was clicked,
+               otherwise shows all contacts filtered client-side */}
+          {(() => {
+            // Use API results when available, otherwise fall back to client-side filter
+            const displayData = searchResult.length > 0 ? searchResult : filteredData;
+            const totalCount  = displayData.length;
+            if (!contactDetails || (contactDetails.length === 0 && searchResult.length === 0)) return null;
+            return (
+              <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
+                <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span>Contacts</span>
+                  <span style={{ fontWeight: 400, color: "#4c5d72", textTransform: "none" }}>
+                    {totalCount} record{totalCount !== 1 ? "s" : ""}
+                    {searchResult.length > 0 && " (search results)"}
+                  </span>
+                </div>
+                <div style={{ overflow: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                    <thead>
+                      <tr>
+                        {["", "Name", "Email", "Phone", "DOB", "Gender", "View"].map((col) => (
+                          <th key={col} style={{ padding: "8px 10px", background: "#f6f7f8", borderBottom: "2px solid #d7dbe2", borderRight: "1px solid #e3e8ee", textAlign: "left", fontWeight: 700, color: "#31475f", fontSize: 11 }}>
+                            {col}
+                          </th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div style={{ padding: "8px 12px", borderTop: "1px solid #d7dbe2", background: "#f8fafb", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, color: "#4c5d72" }}>
-                <span>{contactDetails.length} total</span>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span>Rows:</span>
-                  <select value={rowsPerPage} onChange={handleChangeRowsPerPage}
-                    style={{ border: "1px solid #c5ccd5", borderRadius: 2, padding: "2px 4px", fontSize: 12 }}>
-                    <option value={5}>5</option><option value={10}>10</option><option value={25}>25</option>
-                  </select>
-                  <button onClick={() => handleChangePage(null, page - 1)} disabled={page === 0}
-                    style={{ background: page === 0 ? "#f4f6f8" : "#fff", border: "1px solid #c5ccd5", borderRadius: 2, padding: "2px 8px", fontSize: 12, cursor: page === 0 ? "default" : "pointer" }}>‹</button>
-                  <span>{page + 1} / {Math.max(1, Math.ceil(contactDetails.length / rowsPerPage))}</span>
-                  <button onClick={() => handleChangePage(null, page + 1)} disabled={(page + 1) * rowsPerPage >= contactDetails.length}
-                    style={{ background: (page + 1) * rowsPerPage >= contactDetails.length ? "#f4f6f8" : "#fff", border: "1px solid #c5ccd5", borderRadius: 2, padding: "2px 8px", fontSize: 12, cursor: (page + 1) * rowsPerPage >= contactDetails.length ? "default" : "pointer" }}>›</button>
+                    </thead>
+                    <tbody>
+                      {displayData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((contact, index) => (
+                        <tr key={contact._id || index} style={{ background: index % 2 === 0 ? "#f8fafb" : "#fff" }}>
+                          <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>
+                            <button onClick={() => accountSearch(contact)}
+                              style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "3px 10px", fontSize: 11, cursor: "pointer" }}>
+                              Select
+                            </button>
+                          </td>
+                          <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>
+                            {contact.firstName || contact.organization || "—"} {contact.lastName || ""}
+                          </td>
+                          <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{contact.email}</td>
+                          <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{contact.phone}</td>
+                          <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{formatDate(contact.dateOfBirth)}</td>
+                          <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee" }}>{contact.gender}</td>
+                          <td style={{ padding: "7px 10px", borderBottom: "1px solid #e3e8ee", borderRight: "1px solid #e3e8ee", textAlign: "center" }}>
+                            <VisibilityIcon onClick={() => handleView(contact)} style={{ cursor: "pointer", fontSize: 16, color: "#1f5fa6" }} />
+                          </td>
+                        </tr>
+                      ))}
+                      {displayData.length === 0 && (
+                        <tr>
+                          <td colSpan={7} style={{ padding: "16px 10px", textAlign: "center", color: "#7a8a9a", fontSize: 12 }}>
+                            No contacts found.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                <div style={{ padding: "8px 12px", borderTop: "1px solid #d7dbe2", background: "#f8fafb", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, color: "#4c5d72" }}>
+                  <span>{totalCount} total</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span>Rows:</span>
+                    <select value={rowsPerPage} onChange={handleChangeRowsPerPage}
+                      style={{ border: "1px solid #c5ccd5", borderRadius: 2, padding: "2px 4px", fontSize: 12 }}>
+                      <option value={5}>5</option><option value={10}>10</option><option value={25}>25</option>
+                    </select>
+                    <button onClick={() => handleChangePage(null, page - 1)} disabled={page === 0}
+                      style={{ background: page === 0 ? "#f4f6f8" : "#fff", border: "1px solid #c5ccd5", borderRadius: 2, padding: "2px 8px", fontSize: 12, cursor: page === 0 ? "default" : "pointer" }}>‹</button>
+                    <span>{page + 1} / {Math.max(1, Math.ceil(totalCount / rowsPerPage))}</span>
+                    <button onClick={() => handleChangePage(null, page + 1)} disabled={(page + 1) * rowsPerPage >= totalCount}
+                      style={{ background: (page + 1) * rowsPerPage >= totalCount ? "#f4f6f8" : "#fff", border: "1px solid #c5ccd5", borderRadius: 2, padding: "2px 8px", fontSize: 12, cursor: (page + 1) * rowsPerPage >= totalCount ? "default" : "pointer" }}>›</button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
       )}
 
@@ -673,54 +806,94 @@ export default function Contact() {
                     />
                   </Grid>
                 ))}
+                {/* ── In VIEW mode render plain readOnly inputs so any stored value
+                    (including free-text values from older records) is always
+                    visible. In EDIT mode render the constrained select dropdowns. ── */}
                 <Grid size={4}>
-                  <TextField select size="small" fullWidth label="Gender" name="gender"
-                    value={selectedContact.gender || ""} onChange={handleContactChange} disabled={!isEditMode} InputLabelProps={{ shrink: true }}>
-                    <MenuItem value="">Select</MenuItem>
-                    <MenuItem value="Male">Male</MenuItem>
-                    <MenuItem value="Female">Female</MenuItem>
-                  </TextField>
+                  {isEditMode ? (
+                    <TextField select size="small" fullWidth label="Gender" name="gender"
+                      value={selectedContact.gender || ""} onChange={handleContactChange} InputLabelProps={{ shrink: true }}>
+                      <MenuItem value="">Select</MenuItem>
+                      <MenuItem value="Male">Male</MenuItem>
+                      <MenuItem value="Female">Female</MenuItem>
+                    </TextField>
+                  ) : (
+                    <TextField size="small" fullWidth label="Gender" name="gender"
+                      value={selectedContact.gender || ""} InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+                  )}
                 </Grid>
                 <Grid size={4}>
-                  <TextField select size="small" fullWidth label="Country" name="country"
-                    value={selectedContact.country || ""} onChange={handleModalCountryChange} disabled={!isEditMode} InputLabelProps={{ shrink: true }}>
-                    <MenuItem value="">Select Country</MenuItem>
-                    {countries.map((c) => <MenuItem key={c.code} value={c.code}>{c.name}</MenuItem>)}
-                  </TextField>
+                  {isEditMode ? (
+                    <TextField select size="small" fullWidth label="Country" name="country"
+                      value={selectedContact.country || ""} onChange={handleModalCountryChange} InputLabelProps={{ shrink: true }}>
+                      <MenuItem value="">Select Country</MenuItem>
+                      {countries.map((c) => <MenuItem key={c.code} value={c.code}>{c.name}</MenuItem>)}
+                    </TextField>
+                  ) : (
+                    <TextField size="small" fullWidth label="Country" name="country"
+                      value={countries.find(c => c.code === selectedContact.country)?.name || selectedContact.country || ""}
+                      InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+                  )}
                 </Grid>
                 <Grid size={4}>
-                  <TextField select size="small" fullWidth label="State" name="state"
-                    value={selectedContact.state || ""} onChange={handleModalStateChange} disabled={!isEditMode || !modalStates.length} InputLabelProps={{ shrink: true }}>
-                    <MenuItem value="">Select State</MenuItem>
-                    {withCurrent(modalStates, selectedContact.state).map((s) => <MenuItem key={s.code ?? s} value={s.code ?? s}>{s.name ?? s}</MenuItem>)}
-                  </TextField>
+                  {isEditMode ? (
+                    <TextField select size="small" fullWidth label="State" name="state"
+                      value={selectedContact.state || ""} onChange={handleModalStateChange} disabled={!modalStates.length} InputLabelProps={{ shrink: true }}>
+                      <MenuItem value="">Select State</MenuItem>
+                      {modalStates.map((s) => <MenuItem key={s.code} value={s.code}>{s.name}</MenuItem>)}
+                    </TextField>
+                  ) : (
+                    <TextField size="small" fullWidth label="State" name="state"
+                      value={modalStates.find(s => s.code === selectedContact.state)?.name || selectedContact.state || ""}
+                      InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+                  )}
                 </Grid>
                 <Grid size={4}>
-                  <TextField select size="small" fullWidth label="City" name="city"
-                    value={selectedContact.city || ""} onChange={handleModalCityChange} disabled={!isEditMode || !modalCities.length} InputLabelProps={{ shrink: true }}>
-                    <MenuItem value="">Select City</MenuItem>
-                    {withCurrent(modalCities, selectedContact.city).map((ct) => <MenuItem key={ct} value={ct}>{ct}</MenuItem>)}
-                  </TextField>
+                  {isEditMode ? (
+                    <TextField select size="small" fullWidth label="City" name="city"
+                      value={selectedContact.city || ""} onChange={handleModalCityChange} disabled={!modalCities.length} InputLabelProps={{ shrink: true }}>
+                      <MenuItem value="">Select City</MenuItem>
+                      {modalCities.map((ct) => <MenuItem key={ct} value={ct}>{ct}</MenuItem>)}
+                    </TextField>
+                  ) : (
+                    <TextField size="small" fullWidth label="City" name="city"
+                      value={selectedContact.city || ""} InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+                  )}
                 </Grid>
                 <Grid size={4}>
-                  <TextField select size="small" fullWidth label="Zip Code" name="zipCode"
-                    value={selectedContact.zipCode || ""} onChange={handleContactChange} disabled={!isEditMode || !modalZips.length} InputLabelProps={{ shrink: true }}>
-                    <MenuItem value="">Select Zip</MenuItem>
-                    {withCurrent(modalZips, selectedContact.zipCode).map((z) => <MenuItem key={z} value={z}>{z}</MenuItem>)}
-                  </TextField>
+                  {isEditMode ? (
+                    <TextField select size="small" fullWidth label="Zip Code" name="zipCode"
+                      value={selectedContact.zipCode || ""} onChange={handleContactChange} disabled={!modalZips.length} InputLabelProps={{ shrink: true }}>
+                      <MenuItem value="">Select Zip</MenuItem>
+                      {modalZips.map((z) => <MenuItem key={z} value={z}>{z}</MenuItem>)}
+                    </TextField>
+                  ) : (
+                    <TextField size="small" fullWidth label="Zip Code" name="zipCode"
+                      value={selectedContact.zipCode || ""} InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+                  )}
                 </Grid>
                 <Grid size={4}>
-                  <TextField select size="small" fullWidth label="Organization" name="organization"
-                    value={selectedContact.organization || ""} onChange={handleContactChange} disabled={!isEditMode} InputLabelProps={{ shrink: true }}>
-                    <MenuItem value="Expleo">Expleo</MenuItem>
-                    <MenuItem value="Other">Other</MenuItem>
-                  </TextField>
+                  {isEditMode ? (
+                    <TextField select size="small" fullWidth label="Organization" name="organization"
+                      value={selectedContact.organization || ""} onChange={handleContactChange} InputLabelProps={{ shrink: true }}>
+                      <MenuItem value="Expleo">Expleo</MenuItem>
+                      <MenuItem value="Other">Other</MenuItem>
+                    </TextField>
+                  ) : (
+                    <TextField size="small" fullWidth label="Organization" name="organization"
+                      value={selectedContact.organization || ""} InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+                  )}
                 </Grid>
                 <Grid size={4}>
-                  <TextField select size="small" fullWidth label="Producer Code" name="producerCode"
-                    value={selectedContact.producerCode || ""} onChange={handleContactChange} disabled={!isEditMode} InputLabelProps={{ shrink: true }}>
-                    <MenuItem value="EXP-INS-01">EXP-INS-01</MenuItem>
-                  </TextField>
+                  {isEditMode ? (
+                    <TextField select size="small" fullWidth label="Producer Code" name="producerCode"
+                      value={selectedContact.producerCode || ""} onChange={handleContactChange} InputLabelProps={{ shrink: true }}>
+                      <MenuItem value="EXP-INS-01">EXP-INS-01</MenuItem>
+                    </TextField>
+                  ) : (
+                    <TextField size="small" fullWidth label="Producer Code" name="producerCode"
+                      value={selectedContact.producerCode || ""} InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+                  )}
                 </Grid>
               </Grid>
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16, paddingTop: 12, borderTop: "1px solid #e3e8ee" }}>

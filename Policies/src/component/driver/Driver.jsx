@@ -374,11 +374,11 @@ export default function Driver() {
                       { label: "Primary Email", field: "email", readOnly: true },
                     ].map(({ label, field, readOnly }) => (
                       <Grid item xs={12} key={field}>
-                        <TextField size="small" label={label} value={formData[field] || ""} fullWidth InputProps={{ readOnly }} />
+                        <TextField size="small" label={label} value={formData[field] || ""} fullWidth required InputProps={{ readOnly }} />
                       </Grid>
                     ))}
                     <Grid item xs={12}>
-                      <TextField size="small" select label="Marital Status" value={formData.maritalStatus || ""} fullWidth
+                      <TextField size="small" select label="Marital Status" value={formData.maritalStatus || ""} fullWidth required
                         onChange={(e) => setFormData({ ...formData, maritalStatus: e.target.value })}>
                         <MenuItem value="">Select</MenuItem>
                         <MenuItem value="single">Single</MenuItem>
@@ -406,7 +406,7 @@ export default function Driver() {
                       { label: "ZIP Code", field: "zipCode", readOnly: true },
                     ].map(({ label, field, readOnly }) => (
                       <Grid item xs={12} key={field}>
-                        <TextField size="small" label={label} value={formData[field] || ""} fullWidth InputProps={{ readOnly }} />
+                        <TextField size="small" label={label} value={formData[field] || ""} fullWidth required InputProps={{ readOnly }} />
                       </Grid>
                     ))}
                     <Grid item xs={12}>
@@ -427,7 +427,7 @@ export default function Driver() {
                   <div style={{ fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #e3e8ee" }}>License Information</div>
                   <Grid container spacing={1.5}>
                     <Grid item xs={12}>
-                      <TextField size="small" select label="Type of License" fullWidth value={formData.licenseType || ""}
+                      <TextField size="small" select label="Type of License" fullWidth required value={formData.licenseType || ""}
                         onChange={(e) => setFormData({ ...formData, licenseType: e.target.value })}>
                         <MenuItem value="">Select</MenuItem>
                         <MenuItem value="Light Motor Vehicle">Light Motor Vehicle</MenuItem>
@@ -435,7 +435,7 @@ export default function Driver() {
                       </TextField>
                     </Grid>
                     <Grid item xs={12}>
-                      <TextField size="small" select label="Country of License" fullWidth value={formData.licenseCountry || ""}
+                      <TextField size="small" select label="Country of License" fullWidth required value={formData.licenseCountry || ""}
                         onChange={(e) => setFormData({ ...formData, licenseCountry: e.target.value })}>
                         <MenuItem value="">Select</MenuItem>
                         <MenuItem value="United States">United States</MenuItem>
@@ -447,15 +447,15 @@ export default function Driver() {
                       </TextField>
                     </Grid>
                     <Grid item xs={12}>
-                      <TextField size="small" label="Date Obtained" type="date" fullWidth InputLabelProps={{ shrink: true }}
+                      <TextField size="small" label="Date Obtained" type="date" fullWidth required InputLabelProps={{ shrink: true }}
                         value={formData.licenseDate || ""} onChange={(e) => setFormData({ ...formData, licenseDate: e.target.value })} />
                     </Grid>
                     <Grid item xs={12}>
-                      <TextField size="small" label="Years of Driving Experience" fullWidth value={formData.drivingExperience || ""}
+                      <TextField size="small" label="Years of Driving Experience" fullWidth required value={formData.drivingExperience || ""}
                         onChange={(e) => setFormData({ ...formData, drivingExperience: e.target.value })} />
                     </Grid>
                     <Grid item xs={12}>
-                      <TextField size="small" select label="Accidents and Claims History" fullWidth value={formData.accidentsClaims || ""}
+                      <TextField size="small" select label="Accidents and Claims History" fullWidth required value={formData.accidentsClaims || ""}
                         onChange={(e) => setFormData({ ...formData, accidentsClaims: e.target.value })}>
                         <MenuItem value="">Select</MenuItem>
                         {["0", "1", "2", "3", "4", "5 or more"].map((v) => <MenuItem key={v} value={v}>{v}</MenuItem>)}
