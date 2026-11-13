@@ -16,9 +16,9 @@ export const searchAccountByContact = async (contactId) => {
 };
 
 // 🔎 Search account by fields
-export const searchAccount = async ({ accountNumber, firstName, lastName, dateOfBirth }) => {
+export const searchAccount = async ({ accountNumber, firstName, lastName, dateOfBirth, organization, city, zipCode, country }) => {
   const res = await api.get("/api/accounts", {
-    params: { accountNumber, firstName, lastName, dateOfBirth },
+    params: { accountNumber, firstName, lastName, dateOfBirth, organization, city, zipCode, country },
   });
   return res.data;
 };

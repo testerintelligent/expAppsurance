@@ -120,6 +120,7 @@ const PolicyDashboard = () => {
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
   const navigate = useNavigate();
+  const [actionsOpen, setActionsOpen] = useState(false);
 
   const summary = useMemo(() => {
     if (!insuranceData.length) return null;
@@ -193,6 +194,44 @@ const PolicyDashboard = () => {
           ))}
         </div>
       )}
+
+      {/* Actions toolbar */}
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 10, position: "relative" }}>
+        <div style={{ position: "relative" }}>
+          <button
+            onClick={() => setActionsOpen((o) => !o)}
+            style={{
+              background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2,
+              padding: "6px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer",
+              display: "flex", alignItems: "center", gap: 6,
+            }}
+          >
+            Actions ▾
+          </button>
+          {actionsOpen && (
+            <div
+              style={{
+                position: "absolute", right: 0, top: "100%", marginTop: 2,
+                background: "#fff", border: "1px solid #d7dbe2", borderRadius: 2,
+                boxShadow: "0 4px 12px rgba(0,0,0,0.12)", zIndex: 200, minWidth: 160,
+              }}
+              onMouseLeave={() => setActionsOpen(false)}
+            >
+              {[
+                { label: "New Account", action: () => { setActionsOpen(false); navigate("/account"); } },
+              ].map(({ label, action }) => (
+                <div key={label} onClick={action}
+                  style={{ padding: "8px 14px", fontSize: 12, cursor: "pointer", color: "#2d3e52", borderBottom: "1px solid #f0f2f5" }}
+                  onMouseEnter={e => e.currentTarget.style.background = "#edf4fb"}
+                  onMouseLeave={e => e.currentTarget.style.background = ""}
+                >
+                  {label}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
 
       <div
         style={{

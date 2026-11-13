@@ -21,7 +21,7 @@ import {
   Alert
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { searchContact, createContact, getContact, updateContact } from "./utils/contactAPI";
 import {
   createAccountForContact,
@@ -54,7 +54,11 @@ const formatDateForInput = (dateValue) => {
 };
 
 export default function Contact() {
-  const [tabValue, setTabValue] = useState(0);
+  const location = useLocation();
+  // If navigated here from "Create New Account", open the Create tab directly
+  const [tabValue, setTabValue] = useState(
+    location.state?.createNew ? 1 : 0
+  );
   const [searchData, setSearchData] = useState({
     contactType: "Person", // "Person" | "Company"
     firstName: "",
@@ -66,6 +70,9 @@ export default function Contact() {
     state: "",
     zipCode: "",
   });
+  // "Personal" | "Commercial" — toggle on the Create tab
+  const [contactCategory, setContactCategory] = useState("Personal");
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -78,10 +85,25 @@ export default function Contact() {
     city: "",
     state: "",
     zipCode: "",
-    country: "", // new
+    country: "",
     organization: "Expleo",
     producerCode: "EXP-INS-01",
   });
+
+  const [formDataCommercial, setFormDataCommercial] = useState({
+    companyName: "",   // stored as firstName for Commercial (or as organization)
+    email: "",
+    phone: "",
+    address: "",
+    street: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    country: "",
+    organization: "Expleo",
+    producerCode: "EXP-INS-01",
+  });
+
   const [searchResult, setSearchResult] = useState([]);
 
 
@@ -261,6 +283,10 @@ export default function Contact() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleChangeCommercial = (e) => {
+    setFormDataCommercial({ ...formDataCommercial, [e.target.name]: e.target.value });
+  };
+
   // Get all the contacts
   useEffect(() => {
     const fetchContacts = async () => {
@@ -380,27 +406,44 @@ export default function Contact() {
 
   const handleCreate = async () => {
     try {
-      const newContact = await createContact(formData);
-      const account = await createAccountForContact(newContact);
-      setSearchResult(newContact);
+      let contactPayload;
+      if (contactCategory === "Commercial") {
+        // Map Commercial form → Contact model
+        // Store company name in organization; leave firstName/lastName blank or use companyName
+        contactPayload = {
+          firstName:    formDataCommercial.companyName,  // display name fallback
+          lastName:     "",
+          organization: formDataCommercial.companyName,  // primary company identifier
+          email:        formDataCommercial.email,
+          phone:        formDataCommercial.phone,
+          address:      formDataCommercial.address,
+          street:       formDataCommercial.street,
+          city:         formDataCommercial.city,
+          state:        formDataCommercial.state,
+          zipCode:      formDataCommercial.zipCode,
+          country:      formDataCommercial.country,
+          producerCode: formDataCommercial.producerCode,
+        };
+      } else {
+        contactPayload = formData;
+      }
 
-      // Reset form after creation
+      const newContact = await createContact(contactPayload);
+      const accountType = contactCategory === "Commercial" ? "Corporate" : "Individual";
+      const account = await createAccountForContact(newContact, accountType);
+
+      // Reset forms after creation
       setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        dateOfBirth: "",
-        gender: "",
-        address: "",
-        street: "",
-        city: "",
-        state: "",
-        zipCode: "",
-        country: "", 
-        organization: "Expleo",
-        producerCode: "EXP-INS-01",
+        firstName: "", lastName: "", email: "", phone: "", dateOfBirth: "",
+        gender: "", address: "", street: "", city: "", state: "",
+        zipCode: "", country: "", organization: "Expleo", producerCode: "EXP-INS-01",
       });
+      setFormDataCommercial({
+        companyName: "", email: "", phone: "", address: "", street: "",
+        city: "", state: "", zipCode: "", country: "",
+        organization: "Expleo", producerCode: "EXP-INS-01",
+      });
+
       navigate("/account", { state: { account } });
     } catch (err) {
       alert(err.response?.data?.error || "Failed to create contact");
@@ -631,127 +674,258 @@ export default function Contact() {
       {/* ─── CREATE TAB ─── */}
       {tabValue === 1 && (
         <div>
+          {/* Personal / Commercial toggle */}
           <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
             <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
-              Personal Information
+              Contact Type
             </div>
-            <div style={{ padding: "12px 14px" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px 20px" }}>
-                {[
-                  { label: "First Name *", name: "firstName", type: "text" },
-                  { label: "Last Name *", name: "lastName", type: "text" },
-                  { label: "Date of Birth *", name: "dateOfBirth", type: "date" },
-                ].map(({ label, name, type }) => (
-                  <div key={name}>
-                    <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>{label}</label>
-                    <input type={type} name={name} value={formData[name]} onChange={handleChange}
-                      style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+            <div style={{ padding: "10px 14px", display: "flex", gap: 10, alignItems: "center" }}>
+              {["Personal", "Commercial"].map((cat) => (
+                <button key={cat} onClick={() => setContactCategory(cat)}
+                  style={{
+                    padding: "5px 20px", fontSize: 12, fontWeight: 600, borderRadius: 2,
+                    border: "1px solid #c5ccd5", cursor: "pointer",
+                    background: contactCategory === cat ? "#1f5fa6" : "#fff",
+                    color:      contactCategory === cat ? "#fff"    : "#4e5d6d",
+                  }}>
+                  {cat}
+                </button>
+              ))}
+              <span style={{ fontSize: 11, color: "#7a8a9a", marginLeft: 8 }}>
+                {contactCategory === "Personal" ? "Individual policyholder" : "Company / corporate account"}
+              </span>
+            </div>
+          </div>
+
+          {/* ── PERSONAL form ── */}
+          {contactCategory === "Personal" && (
+            <>
+              <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+                <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  Personal Information
+                </div>
+                <div style={{ padding: "12px 14px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px 20px" }}>
+                    {[
+                      { label: "First Name *", name: "firstName", type: "text" },
+                      { label: "Last Name *",  name: "lastName",  type: "text" },
+                      { label: "Date of Birth *", name: "dateOfBirth", type: "date" },
+                    ].map(({ label, name, type }) => (
+                      <div key={name}>
+                        <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>{label}</label>
+                        <input type={type} name={name} value={formData[name]} onChange={handleChange}
+                          style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                      </div>
+                    ))}
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Gender</label>
+                      <select name="gender" value={formData.gender} onChange={handleChange}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
+                        <option value="">Select</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Email</label>
+                      <input type="email" name="email" value={formData.email} onChange={handleChange}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Phone</label>
+                      <input type="text" name="phone" value={formData.phone} onChange={handleChange}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                    </div>
                   </div>
-                ))}
-                <div>
-                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Gender</label>
-                  <select name="gender" value={formData.gender} onChange={handleChange}
-                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
-                    <option value="">Select</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Email</label>
-                  <input type="email" name="email" value={formData.email} onChange={handleChange}
-                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
-                </div>
-                <div>
-                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Phone</label>
-                  <input type="text" name="phone" value={formData.phone} onChange={handleChange}
-                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
-            <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
-              Address
-            </div>
-            <div style={{ padding: "12px 14px" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px 20px" }}>
-                <div>
-                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Address</label>
-                  <input type="text" name="address" value={formData.address} onChange={handleChange}
-                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
-                </div>
-                <div>
-                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Street</label>
-                  <input type="text" name="street" value={formData.street} onChange={handleChange}
-                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
-                </div>
-                <div>
-                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Country</label>
-                  <select name="country" value={formData.country} onChange={handleCountryChange}
-                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
-                    <option value="">Select Country</option>
-                    {countries.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>State</label>
-                  <select name="state" value={formData.state} onChange={handleStateChange} disabled={!states.length}
-                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: states.length ? "#fff" : "#f8fafb" }}>
-                    <option value="">Select State</option>
-                    {states.map((s) => <option key={s.code} value={s.code}>{s.name}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>City</label>
-                  <select name="city" value={formData.city} onChange={handleCityChange} disabled={!cities.length}
-                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: cities.length ? "#fff" : "#f8fafb" }}>
-                    <option value="">Select City</option>
-                    {cities.map((ct) => <option key={ct} value={ct}>{ct}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Zip Code</label>
-                  <select name="zipCode" value={formData.zipCode} onChange={handleChange} disabled={!zips.length}
-                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: zips.length ? "#fff" : "#f8fafb" }}>
-                    <option value="">Select Zip</option>
-                    {zips.map((z) => <option key={z} value={z}>{z}</option>)}
-                  </select>
+              <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+                <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>Address</div>
+                <div style={{ padding: "12px 14px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px 20px" }}>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Address</label>
+                      <input type="text" name="address" value={formData.address} onChange={handleChange}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Street</label>
+                      <input type="text" name="street" value={formData.street} onChange={handleChange}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Country</label>
+                      <select name="country" value={formData.country} onChange={handleCountryChange}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
+                        <option value="">Select Country</option>
+                        {countries.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>State</label>
+                      <select name="state" value={formData.state} onChange={handleStateChange} disabled={!states.length}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: states.length ? "#fff" : "#f8fafb" }}>
+                        <option value="">Select State</option>
+                        {states.map((s) => <option key={s.code} value={s.code}>{s.name}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>City</label>
+                      <select name="city" value={formData.city} onChange={handleCityChange} disabled={!cities.length}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: cities.length ? "#fff" : "#f8fafb" }}>
+                        <option value="">Select City</option>
+                        {cities.map((ct) => <option key={ct} value={ct}>{ct}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Zip Code</label>
+                      <select name="zipCode" value={formData.zipCode} onChange={handleChange} disabled={!zips.length}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: zips.length ? "#fff" : "#f8fafb" }}>
+                        <option value="">Select Zip</option>
+                        {zips.map((z) => <option key={z} value={z}>{z}</option>)}
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
-            <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
-              Organization
-            </div>
-            <div style={{ padding: "12px 14px" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 20px", maxWidth: 520 }}>
-                <div>
-                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Organization</label>
-                  <select name="organization" value={formData.organization} onChange={handleChange}
-                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
-                    <option value="Expleo">Expleo</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Producer Code</label>
-                  <select name="producerCode" value={formData.producerCode} onChange={handleChange}
-                    style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
-                    <option value="EXP-INS-01">EXP-INS-01</option>
-                  </select>
+              <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+                <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>Organization</div>
+                <div style={{ padding: "12px 14px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 20px", maxWidth: 520 }}>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Organization</label>
+                      <select name="organization" value={formData.organization} onChange={handleChange}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
+                        <option value="Expleo">Expleo</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Producer Code</label>
+                      <select name="producerCode" value={formData.producerCode} onChange={handleChange}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
+                        <option value="EXP-INS-01">EXP-INS-01</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
+
+          {/* ── COMMERCIAL form ── */}
+          {contactCategory === "Commercial" && (
+            <>
+              <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+                <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  Company Information
+                </div>
+                <div style={{ padding: "12px 14px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px 20px" }}>
+                    <div style={{ gridColumn: "1 / -1" }}>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Company Name *</label>
+                      <input type="text" name="companyName" value={formDataCommercial.companyName} onChange={handleChangeCommercial}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", maxWidth: 400 }} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Email</label>
+                      <input type="email" name="email" value={formDataCommercial.email} onChange={handleChangeCommercial}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Phone</label>
+                      <input type="text" name="phone" value={formDataCommercial.phone} onChange={handleChangeCommercial}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+                <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>Address</div>
+                <div style={{ padding: "12px 14px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px 20px" }}>
+                    {[
+                      { label: "Address", name: "address" },
+                      { label: "Street",  name: "street"  },
+                    ].map(({ label, name }) => (
+                      <div key={name}>
+                        <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>{label}</label>
+                        <input type="text" name={name} value={formDataCommercial[name]} onChange={handleChangeCommercial}
+                          style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
+                      </div>
+                    ))}
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Country</label>
+                      <select name="country" value={formDataCommercial.country}
+                        onChange={(e) => { setFormDataCommercial(p => ({ ...p, country: e.target.value, state: "", city: "", zipCode: "" })); setStates(LOCATION_DATA.states[e.target.value] || []); setCities([]); setZips([]); }}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
+                        <option value="">Select Country</option>
+                        {countries.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>State</label>
+                      <select name="state" value={formDataCommercial.state} disabled={!states.length}
+                        onChange={(e) => { setFormDataCommercial(p => ({ ...p, state: e.target.value, city: "", zipCode: "" })); setCities(LOCATION_DATA.cities[e.target.value] || []); setZips([]); }}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: states.length ? "#fff" : "#f8fafb" }}>
+                        <option value="">Select State</option>
+                        {states.map((s) => <option key={s.code} value={s.code}>{s.name}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>City</label>
+                      <select name="city" value={formDataCommercial.city} disabled={!cities.length}
+                        onChange={(e) => { setFormDataCommercial(p => ({ ...p, city: e.target.value, zipCode: "" })); setZips(LOCATION_DATA.zips[e.target.value] || []); }}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: cities.length ? "#fff" : "#f8fafb" }}>
+                        <option value="">Select City</option>
+                        {cities.map((ct) => <option key={ct} value={ct}>{ct}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Zip Code</label>
+                      <select name="zipCode" value={formDataCommercial.zipCode} disabled={!zips.length}
+                        onChange={(e) => setFormDataCommercial(p => ({ ...p, zipCode: e.target.value }))}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: zips.length ? "#fff" : "#f8fafb" }}>
+                        <option value="">Select Zip</option>
+                        {zips.map((z) => <option key={z} value={z}>{z}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+                <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>Organization</div>
+                <div style={{ padding: "12px 14px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 20px", maxWidth: 520 }}>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Organization</label>
+                      <select name="organization" value={formDataCommercial.organization} onChange={handleChangeCommercial}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
+                        <option value="Expleo">Expleo</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Producer Code</label>
+                      <select name="producerCode" value={formDataCommercial.producerCode} onChange={handleChangeCommercial}
+                        style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", background: "#fff" }}>
+                        <option value="EXP-INS-01">EXP-INS-01</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
 
           <div style={{ display: "flex", justifyContent: "flex-end", paddingBottom: 16 }}>
             <button onClick={handleCreate}
               style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "6px 20px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
-              Create Contact
+              Create Contact &amp; Account
             </button>
           </div>
         </div>
