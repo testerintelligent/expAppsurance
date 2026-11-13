@@ -99,7 +99,19 @@ const PolicySummary = () => {
           </div>
           <div style={styles.headerSubText}>Issued: {formatDate(policy.issuedAt)}</div>
         </div>
-        <div style={{ marginLeft: 'auto' }}>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
+          {/* Back to Account — resolve contactId whether it's a populated object or a raw ObjectId */}
+          {(policy.contactId || policy.accountId) && (
+            <button
+              onClick={() => {
+                const contactId = policy.contactId?._id || policy.contactId;
+                navigate('/account', { state: { contact: { _id: contactId } } });
+              }}
+              style={{ background: '#fff', border: '1px solid #c5ccd5', color: '#1f5fa6', padding: '4px 12px', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}
+            >
+              ← Back to Account
+            </button>
+          )}
           <span
             style={{
               ...styles.statusBadge,
