@@ -116,7 +116,7 @@ const createAccount = async (req, res) => {
 // --- 2️⃣ Search Accounts ---
 const getAccounts = async (req, res) => {
   try {
-    const { accountNumber, firstName, lastName, dateOfBirth } = req.query;
+    const { accountNumber, firstName, lastName, dateOfBirth, organization, city, zipCode, country } = req.query;
     let filter = {};
 
     if (accountNumber) {
@@ -125,16 +125,20 @@ const getAccounts = async (req, res) => {
 
     let accounts;
 
-    if (firstName || lastName || dateOfBirth) {
+    if (firstName || lastName || dateOfBirth || organization || city || zipCode || country) {
       const contactFilter = {};
-      if (firstName) contactFilter.firstName = { $regex: new RegExp(firstName, "i") };
-      if (lastName) contactFilter.lastName = { $regex: new RegExp(lastName, "i") };
-      if (dateOfBirth) contactFilter.dateOfBirth = new Date(dateOfBirth);
+      if (firstName)    contactFilter.firstName    = { $regex: new RegExp(firstName,    "i") };
+      if (lastName)     contactFilter.lastName     = { $regex: new RegExp(lastName,     "i") };
+      if (organization) contactFilter.organization = { $regex: new RegExp(organization, "i") };
+      if (city)         contactFilter.city         = { $regex: new RegExp(city,         "i") };
+      if (zipCode)      contactFilter.zipCode      = { $regex: new RegExp(zipCode,      "i") };
+      if (country)      contactFilter.country      = { $regex: new RegExp(country,      "i") };
+      if (dateOfBirth)  contactFilter.dateOfBirth  = new Date(dateOfBirth);
 
       const contacts = await Contact.find(contactFilter, "_id");
       const contactIds = contacts.map((c) => c._id);
       // populate policies as well so UI can render policy rows
-      accounts = await Account.find({ customerId: { $in: contactIds } }).populate("customerId").populate("policies");
+      accounts = await Account.find({ ...filter, customerId: { $in: contactIds } }).populate("customerId").populate("policies");
     } else {
       accounts = await Account.find(filter).populate("customerId").populate("policies");
     }
