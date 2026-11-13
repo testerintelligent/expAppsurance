@@ -665,54 +665,94 @@ export default function Contact() {
                     />
                   </Grid>
                 ))}
+                {/* ── In VIEW mode render plain readOnly inputs so any stored value
+                    (including free-text values from older records) is always
+                    visible. In EDIT mode render the constrained select dropdowns. ── */}
                 <Grid size={4}>
-                  <TextField select size="small" fullWidth label="Gender" name="gender"
-                    value={selectedContact.gender || ""} onChange={handleContactChange} disabled={!isEditMode} InputLabelProps={{ shrink: true }}>
-                    <MenuItem value="">Select</MenuItem>
-                    <MenuItem value="Male">Male</MenuItem>
-                    <MenuItem value="Female">Female</MenuItem>
-                  </TextField>
+                  {isEditMode ? (
+                    <TextField select size="small" fullWidth label="Gender" name="gender"
+                      value={selectedContact.gender || ""} onChange={handleContactChange} InputLabelProps={{ shrink: true }}>
+                      <MenuItem value="">Select</MenuItem>
+                      <MenuItem value="Male">Male</MenuItem>
+                      <MenuItem value="Female">Female</MenuItem>
+                    </TextField>
+                  ) : (
+                    <TextField size="small" fullWidth label="Gender" name="gender"
+                      value={selectedContact.gender || ""} InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+                  )}
                 </Grid>
                 <Grid size={4}>
-                  <TextField select size="small" fullWidth label="Country" name="country"
-                    value={selectedContact.country || ""} onChange={handleModalCountryChange} disabled={!isEditMode} InputLabelProps={{ shrink: true }}>
-                    <MenuItem value="">Select Country</MenuItem>
-                    {countries.map((c) => <MenuItem key={c.code} value={c.code}>{c.name}</MenuItem>)}
-                  </TextField>
+                  {isEditMode ? (
+                    <TextField select size="small" fullWidth label="Country" name="country"
+                      value={selectedContact.country || ""} onChange={handleModalCountryChange} InputLabelProps={{ shrink: true }}>
+                      <MenuItem value="">Select Country</MenuItem>
+                      {countries.map((c) => <MenuItem key={c.code} value={c.code}>{c.name}</MenuItem>)}
+                    </TextField>
+                  ) : (
+                    <TextField size="small" fullWidth label="Country" name="country"
+                      value={countries.find(c => c.code === selectedContact.country)?.name || selectedContact.country || ""}
+                      InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+                  )}
                 </Grid>
                 <Grid size={4}>
-                  <TextField select size="small" fullWidth label="State" name="state"
-                    value={selectedContact.state || ""} onChange={handleModalStateChange} disabled={!isEditMode || !modalStates.length} InputLabelProps={{ shrink: true }}>
-                    <MenuItem value="">Select State</MenuItem>
-                    {modalStates.map((s) => <MenuItem key={s.code} value={s.code}>{s.name}</MenuItem>)}
-                  </TextField>
+                  {isEditMode ? (
+                    <TextField select size="small" fullWidth label="State" name="state"
+                      value={selectedContact.state || ""} onChange={handleModalStateChange} disabled={!modalStates.length} InputLabelProps={{ shrink: true }}>
+                      <MenuItem value="">Select State</MenuItem>
+                      {modalStates.map((s) => <MenuItem key={s.code} value={s.code}>{s.name}</MenuItem>)}
+                    </TextField>
+                  ) : (
+                    <TextField size="small" fullWidth label="State" name="state"
+                      value={modalStates.find(s => s.code === selectedContact.state)?.name || selectedContact.state || ""}
+                      InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+                  )}
                 </Grid>
                 <Grid size={4}>
-                  <TextField select size="small" fullWidth label="City" name="city"
-                    value={selectedContact.city || ""} onChange={handleModalCityChange} disabled={!isEditMode || !modalCities.length} InputLabelProps={{ shrink: true }}>
-                    <MenuItem value="">Select City</MenuItem>
-                    {modalCities.map((ct) => <MenuItem key={ct} value={ct}>{ct}</MenuItem>)}
-                  </TextField>
+                  {isEditMode ? (
+                    <TextField select size="small" fullWidth label="City" name="city"
+                      value={selectedContact.city || ""} onChange={handleModalCityChange} disabled={!modalCities.length} InputLabelProps={{ shrink: true }}>
+                      <MenuItem value="">Select City</MenuItem>
+                      {modalCities.map((ct) => <MenuItem key={ct} value={ct}>{ct}</MenuItem>)}
+                    </TextField>
+                  ) : (
+                    <TextField size="small" fullWidth label="City" name="city"
+                      value={selectedContact.city || ""} InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+                  )}
                 </Grid>
                 <Grid size={4}>
-                  <TextField select size="small" fullWidth label="Zip Code" name="zipCode"
-                    value={selectedContact.zipCode || ""} onChange={handleContactChange} disabled={!isEditMode || !modalZips.length} InputLabelProps={{ shrink: true }}>
-                    <MenuItem value="">Select Zip</MenuItem>
-                    {modalZips.map((z) => <MenuItem key={z} value={z}>{z}</MenuItem>)}
-                  </TextField>
+                  {isEditMode ? (
+                    <TextField select size="small" fullWidth label="Zip Code" name="zipCode"
+                      value={selectedContact.zipCode || ""} onChange={handleContactChange} disabled={!modalZips.length} InputLabelProps={{ shrink: true }}>
+                      <MenuItem value="">Select Zip</MenuItem>
+                      {modalZips.map((z) => <MenuItem key={z} value={z}>{z}</MenuItem>)}
+                    </TextField>
+                  ) : (
+                    <TextField size="small" fullWidth label="Zip Code" name="zipCode"
+                      value={selectedContact.zipCode || ""} InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+                  )}
                 </Grid>
                 <Grid size={4}>
-                  <TextField select size="small" fullWidth label="Organization" name="organization"
-                    value={selectedContact.organization || ""} onChange={handleContactChange} disabled={!isEditMode} InputLabelProps={{ shrink: true }}>
-                    <MenuItem value="Expleo">Expleo</MenuItem>
-                    <MenuItem value="Other">Other</MenuItem>
-                  </TextField>
+                  {isEditMode ? (
+                    <TextField select size="small" fullWidth label="Organization" name="organization"
+                      value={selectedContact.organization || ""} onChange={handleContactChange} InputLabelProps={{ shrink: true }}>
+                      <MenuItem value="Expleo">Expleo</MenuItem>
+                      <MenuItem value="Other">Other</MenuItem>
+                    </TextField>
+                  ) : (
+                    <TextField size="small" fullWidth label="Organization" name="organization"
+                      value={selectedContact.organization || ""} InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+                  )}
                 </Grid>
                 <Grid size={4}>
-                  <TextField select size="small" fullWidth label="Producer Code" name="producerCode"
-                    value={selectedContact.producerCode || ""} onChange={handleContactChange} disabled={!isEditMode} InputLabelProps={{ shrink: true }}>
-                    <MenuItem value="EXP-INS-01">EXP-INS-01</MenuItem>
-                  </TextField>
+                  {isEditMode ? (
+                    <TextField select size="small" fullWidth label="Producer Code" name="producerCode"
+                      value={selectedContact.producerCode || ""} onChange={handleContactChange} InputLabelProps={{ shrink: true }}>
+                      <MenuItem value="EXP-INS-01">EXP-INS-01</MenuItem>
+                    </TextField>
+                  ) : (
+                    <TextField size="small" fullWidth label="Producer Code" name="producerCode"
+                      value={selectedContact.producerCode || ""} InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+                  )}
                 </Grid>
               </Grid>
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16, paddingTop: 12, borderTop: "1px solid #e3e8ee" }}>
