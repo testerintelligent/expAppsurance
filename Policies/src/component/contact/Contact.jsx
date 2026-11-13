@@ -176,33 +176,36 @@ export default function Contact() {
   const navigate = useNavigate();
   const [contactDetails, setContactDetails] = useState([]);
 
-  // useEffect to initialize modal dropdown states when modal opens
+  // Keep the modal's dependent dropdown options in sync with the selected contact
   useEffect(() => {
-    if (showContact && selectedContact && selectedContact.country) {
-      console.log("Initializing modal with contact:", selectedContact);
-      
-      // Initialize states based on country
-      const statesForCountry = LOCATION_DATA.states[selectedContact.country] || [];
-      setModalStates(statesForCountry);
-      
-      // Initialize cities based on state
-      if (selectedContact.state) {
-        const citiesForState = LOCATION_DATA.cities[selectedContact.state] || [];
-        setModalCities(citiesForState);
-        
-        // Initialize zips based on city
-        if (selectedContact.city) {
-          const zipsForCity = LOCATION_DATA.zips[selectedContact.city] || [];
-          setModalZips(zipsForCity);
-        } else {
-          setModalZips([]);
-        }
-      } else {
-        setModalCities([]);
-        setModalZips([]);
+    if (!showContact || !selectedContact) return;
+    setModalStates(LOCATION_DATA.states[selectedContact.country] || []);
+    setModalCities(LOCATION_DATA.cities[selectedContact.state] || []);
+    setModalZips(LOCATION_DATA.zips[selectedContact.city] || []);
+  }, [showContact, selectedContact?.country, selectedContact?.state, selectedContact?.city]);
+
+  // Contacts saved before "country" was persisted (or with a state name instead of a
+  // code) would leave the dropdowns blank, so map them onto the dropdown values.
+  const normalizeLocation = (contact) => {
+    const norm = (v) => String(v || "").replace(/\s+/g, "").toLowerCase();
+    let { country, state, city } = contact;
+    if (!state && city) {
+      state = Object.keys(LOCATION_DATA.cities).find((code) => LOCATION_DATA.cities[code].includes(city));
+    }
+    for (const [countryCode, list] of Object.entries(LOCATION_DATA.states)) {
+      const match = list.find((s) => norm(s.code) === norm(state) || norm(s.name) === norm(state));
+      if (match && (!country || country === countryCode)) {
+        state = match.code;
+        country = countryCode;
+        break;
       }
     }
-  }, [showContact, selectedContact]);
+    return { ...contact, country: country || "", state: state || "", city: city || "" };
+  };
+
+  // Ensure a stored value that is not in the static list still shows in its dropdown
+  const withCurrent = (options, value) =>
+    value && !options.some((o) => (o.code ?? o) === value) ? [...options, value] : options;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -409,7 +412,7 @@ export default function Contact() {
 
   const handleView = (contact) => {
     console.log("Opening modal for contact:", contact);
-    setSelectedContact(contact);
+    setSelectedContact(normalizeLocation(contact));
     setIsEditMode(false); // Always open in view mode
     setShowContact(true);
   };
@@ -421,7 +424,12 @@ export default function Contact() {
     if (isEditMode) {
       // Save changes
       try {
-        await updateContact(selectedContact._id, selectedContact);
+        const saved = await updateContact(selectedContact._id, selectedContact);
+        // Refresh the lists so reopening the contact shows the saved values
+        const replace = (list) =>
+          Array.isArray(list) ? list.map((c) => (c._id === saved._id ? saved : c)) : list;
+        setSearchResult(replace);
+        setContactDetails(replace);
         setSnack({ open: true, msg: "Contact updated successfully.", severity: "success" });
       } catch (err) {
         setSnack({ open: true, msg: "Failed to update contact.", severity: "error" });
