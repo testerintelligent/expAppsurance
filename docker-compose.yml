@@ -34,7 +34,7 @@ services:
   # Billing Centre
   billingcentre:
     build:
-      context: ./billing-center
+      context: ./Billing
       dockerfile: Dockerfile.billing
       args:
         APP_ENV: ${APP_ENV:-production}
