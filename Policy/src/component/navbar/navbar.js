@@ -45,7 +45,7 @@ export default function Navbar() {
         onClick={() => navigate("/")}
       >
         <img
-          src={`${process.env.PUBLIC_URL}/i.png`}
+          src={`${process.env.PUBLIC_URL}/i.png?v=2`}
           alt="ExpleoSurance logo"
           style={{ width: 32, height: 32, objectFit: "contain", background: "transparent" }}
         />

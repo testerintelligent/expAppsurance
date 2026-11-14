@@ -16,7 +16,7 @@ export default function Navbar() {
         <div className="flex items-center px-3 lg:px-6 h-12">
           <div className="mr-4 flex items-center gap-2 cursor-pointer">
             <img
-              src={`${process.env.PUBLIC_URL}/i.png`}
+              src={`${process.env.PUBLIC_URL}/i.png?v=2`}
               alt="Expleosurance logo"
               className="h-8 w-8 object-contain bg-transparent"
               onClick={() => navigate("/")}

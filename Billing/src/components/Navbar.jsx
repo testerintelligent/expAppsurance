@@ -14,7 +14,7 @@ const Navbar = () => {
     <header className="h-14 w-full border-b-1 border-slate-600 bg-color flex items-center justify-between px-4 shadow z-10">
       <div className="flex items-center gap-2 cursor-pointer">
         <img
-          src="/i.png"
+          src="/i.png?v=2"
           alt="Expleosurance logo"
           className="h-8 w-8 object-contain bg-transparent"
           onClick={() => navigate("/")}
