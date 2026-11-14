@@ -19,7 +19,7 @@ services:
   # Claims Centre
   claim:
     build:
-      context: ./Claims
+      context: ./Claim
       dockerfile: Dockerfile.claim
       args:
         APP_ENV: ${APP_ENV:-production}
@@ -49,7 +49,7 @@ services:
   # Pricing app
   pricing:
     build:
-      context: ./pricing_app
+      context: ./Pricing
       dockerfile: Dockerfile.pricing
       args:
         APP_ENV: ${APP_ENV:-production}
