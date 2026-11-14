@@ -1,6 +1,6 @@
 # ============================================================
 # ExpleoSurance Monorepo — Root .gitignore
-# Covers: Policy, Claim, Billing, Server, Services,
+# Covers: Policy, Claims, Billing, Server, Services,
 #         Pricing (Node/React/Vite/Docker workspaces)
 # ============================================================
 
@@ -23,8 +23,8 @@ node_modules/
 !.env.example        # allow a safe template file
 !Policy/.env.development
 !Policy/.env.production
-!Claim/.env.development
-!Claim/.env.production
+!Claims/.env.development
+!Claims/.env.production
 !Billing/.env.development
 !Billing/.env.production
 !Pricing/.env.development

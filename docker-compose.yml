@@ -17,9 +17,9 @@ services:
     restart: unless-stopped
 
   # Claims Centre
-  claim:
+  claims:
     build:
-      context: ./Claim
+      context: ./Claims
       dockerfile: Dockerfile.claim
       args:
         APP_ENV: ${APP_ENV:-production}
