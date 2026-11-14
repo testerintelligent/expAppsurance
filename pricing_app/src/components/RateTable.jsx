@@ -29,21 +29,20 @@ const RateTable = () => {
     return age?.factor || 1;
   };
 
-  useEffect(() => {
-    if (premium.location.length === 0) return;
-
-    const defaults = {};
-    premium.location.forEach((loc) => {
-      defaults[loc.key] = "0-5";
-    });
-
-    // setSelectedAge(defaults);
-  }, [premium.location]);
+  const [status, setStatus] = useState("Loading rate tables...");
 
   useEffect(() => {
     const callRateTable = async () => {
-      const res = await axios.get(`${import.meta.env.VITE_PRICING_API_URL}/api/ratetable/`);
-      const apiData = res.data.data;
+      let apiData;
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_PRICING_API_URL}/api/ratetable/`,
+        );
+        apiData = res.data.data || [];
+      } catch (err) {
+        setStatus(`Could not load rate tables: ${err.message}`);
+        return;
+      }
 
       const locationData = apiData.find((item) => item.name === "RT_LOCATION");
       const vehicleAgeData = apiData.find(
@@ -58,6 +57,11 @@ const RateTable = () => {
         vehicleAge: vehicleAgeData?.data || [],
         basePremium: basePremiumData?.data || [],
       });
+      setStatus(
+        locationData?.data?.length
+          ? ""
+          : "No rows to show: the RT_LOCATION rate table is missing or empty.",
+      );
     };
 
     callRateTable();
@@ -90,10 +94,20 @@ const RateTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
+            {status && (
+              <TableRow>
+                <TableCell colSpan={7} align="center">
+                  {status}
+                </TableCell>
+              </TableRow>
+            )}
             {premium.location.map((loc, index) => {
               const baseRate = premium.basePremium?.[0]?.baseRate || 0;
               const vehicleType = premium.basePremium?.[0]?.key || "--";
-              const ageLabel = selectedAge[loc.key] || "0-5";
+              const firstAge = premium.vehicleAge[0];
+              const ageLabel =
+                selectedAge[loc.key] ||
+                (firstAge ? `${firstAge.min}-${firstAge.max}` : "");
               const vehicleFactor = getVehicleFactor(loc.key, ageLabel);
 
               const premiumAmount = baseRate * loc.factor * vehicleFactor;
