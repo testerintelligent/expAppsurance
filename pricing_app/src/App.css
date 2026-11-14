@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Content shell and compact overrides, matching the Policies app (Policies/src/App.css) */
+/* Content shell and compact overrides, matching the Policy app (Policy/src/App.css) */
 .policy-screen-shell {
   min-height: 100%;
   background: #eef2f5;

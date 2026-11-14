@@ -2,9 +2,9 @@
 
 services:
   # Policies Centre
-  policiescentre:
+  policy:
     build:
-      context: ./Policies
+      context: ./Policy
       dockerfile: Dockerfile.policy
       args:
         APP_ENV: ${APP_ENV:-production}
@@ -17,7 +17,7 @@ services:
     restart: unless-stopped
 
   # Claims Centre
-  claimscentre:
+  claim:
     build:
       context: ./Claims
       dockerfile: Dockerfile.claim
@@ -32,7 +32,7 @@ services:
     restart: unless-stopped
 
   # Billing Centre
-  billingcentre:
+  billing:
     build:
       context: ./Billing
       dockerfile: Dockerfile.billing
@@ -47,7 +47,7 @@ services:
     restart: unless-stopped
 
   # Pricing app
-  pricingapp:
+  pricing:
     build:
       context: ./pricing_app
       dockerfile: Dockerfile.pricing

@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 
-// Same shell as the Policies app: top navbar, collapsible sidebar, content area.
+// Same shell as the Policy app: top navbar, collapsible sidebar, content area.
 const DashboardLayout = () => {
   return (
     <div
