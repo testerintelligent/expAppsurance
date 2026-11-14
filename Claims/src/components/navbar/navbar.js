@@ -14,9 +14,15 @@ export default function Navbar() {
     <header className="grid grid-cols-2 border-b-4 border-slate-600 bg-color">
       <div className="  max-w-full mx-auto">
         <div className="flex items-center px-3 lg:px-6 h-12">
-          <div className="mr-4">
+          <div className="mr-4 flex items-center gap-2 cursor-pointer">
+            <img
+              src={`${process.env.PUBLIC_URL}/i.png`}
+              alt="Expleosurance logo"
+              className="h-8 w-8 object-contain bg-transparent"
+              onClick={() => navigate("/")}
+            />
             <h1
-              className="font-semibold text-white"
+              className="font-semibold text-white whitespace-nowrap"
               onClick={() => navigate("/")}
             >
               Expleosurance Claims

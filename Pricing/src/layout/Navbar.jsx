@@ -29,6 +29,11 @@ export default function Navbar() {
         }}
         onClick={() => navigate("/")}
       >
+        <img
+          src="/i.png"
+          alt="ExpleoSurance logo"
+          style={{ width: 32, height: 32, objectFit: "contain", background: "transparent" }}
+        />
         <span
           style={{
             fontSize: 14,
