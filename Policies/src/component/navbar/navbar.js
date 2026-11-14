@@ -45,7 +45,7 @@ export default function Navbar() {
         onClick={() => navigate("/")}
       >
         <span style={{ fontSize: 14, fontWeight: 700, color: "#fff", whiteSpace: "nowrap" }}>
-          ExpleoSurance PolicyCenter
+          ExpleoSurance Policy
         </span>
       </div>
 

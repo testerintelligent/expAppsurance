@@ -14,7 +14,7 @@ const Navbar = () => {
     <header className="h-14 w-full border-b-1 border-slate-600 bg-color flex items-center justify-between px-4 shadow z-10">
       <div className="flex">
         <h1 className="font-semibold text-white" onClick={() => navigate("/")}>
-          Expleosurance BillingCenter
+          Expleosurance Billing
         </h1>
       </div>
 

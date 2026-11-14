@@ -1,7 +1,7 @@
 import React from "react";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 
-// ─── GW PolicyCenter-style workflow context bar ───────────────────────────────
+// ─── GW Policy-style workflow context bar ───────────────────────────────
 // Shown at the top of every workflow screen (Driver → Vehicle → Quote → Payment).
 // Replaces the old dark #212121 box with a flat, light, GW-consistent band.
 
