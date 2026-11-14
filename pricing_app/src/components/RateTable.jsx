@@ -2,11 +2,8 @@ import {
   Table,
   TableBody,
   TableCell,
-  Container,
-  Paper,
   TableHead,
   TableRow,
-  Typography,
 } from "@mui/material";
 
 import { useEffect } from "react";
@@ -68,81 +65,112 @@ const RateTable = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-y-4 ">
-      <Typography
-        variant="h5"
-        className="bg-linear-to-r from-black via-violet-600 to-black bg-clip-text text-5xl font-extrabold text-transparent font-bold text-shadow-lg"
+    <div>
+      {/* Page title */}
+      <div
+        style={{
+          fontSize: 16,
+          fontWeight: 700,
+          color: "#2d3e52",
+          marginBottom: 12,
+        }}
       >
         Motor Insurance Premium Calculator
-      </Typography>
-      <Container
-        component={Paper}
-        className="!px-0"
-        style={{ maxHeight: 400, overflow: "auto" }}
-      >
-        <Table>
-          <TableHead className="bg-amber-400 text-white font-bold ">
-            <TableRow>
-              <TableCell>Vehicle Type</TableCell>
-              <TableCell>Location</TableCell>
-              <TableCell>Base Premium</TableCell>
-              <TableCell>Location Factor</TableCell>
-              <TableCell>Vehicle Age</TableCell>
-              <TableCell>Vehicle Factor</TableCell>
-              <TableCell>Premium Amount</TableCell>
-              {/* <TableCell>Actions</TableCell> */}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {status && (
+      </div>
+
+      <div style={{ border: "1px solid #d7dbe2", background: "#fff" }}>
+        <div
+          style={{
+            background: "#f3f6f9",
+            padding: "7px 12px",
+            borderBottom: "1px solid #d7dbe2",
+            fontSize: 11,
+            fontWeight: 700,
+            color: "#2e3e4c",
+            textTransform: "uppercase",
+            letterSpacing: 0.5,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <span>Rate Table</span>
+          <span
+            style={{ fontWeight: 400, color: "#4c5d72", textTransform: "none" }}
+          >
+            {premium.location.length} records
+          </span>
+        </div>
+        <div style={{ overflow: "auto" }}>
+          <Table>
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={7} align="center">
-                  {status}
-                </TableCell>
+                <TableCell>Vehicle Type</TableCell>
+                <TableCell>Location</TableCell>
+                <TableCell>Base Premium</TableCell>
+                <TableCell>Location Factor</TableCell>
+                <TableCell>Vehicle Age</TableCell>
+                <TableCell>Vehicle Factor</TableCell>
+                <TableCell>Premium Amount</TableCell>
+                {/* <TableCell>Actions</TableCell> */}
               </TableRow>
-            )}
-            {premium.location.map((loc, index) => {
-              const baseRate = premium.basePremium?.[0]?.baseRate || 0;
-              const vehicleType = premium.basePremium?.[0]?.key || "--";
-              const firstAge = premium.vehicleAge[0];
-              const ageLabel =
-                selectedAge[loc.key] ||
-                (firstAge ? `${firstAge.min}-${firstAge.max}` : "");
-              const vehicleFactor = getVehicleFactor(loc.key, ageLabel);
-
-              const premiumAmount = baseRate * loc.factor * vehicleFactor;
-
-              return (
-                <TableRow key={index}>
-                  <TableCell>{vehicleType}</TableCell>
-                  <TableCell>{loc.key}</TableCell>
-
-                  <TableCell>{baseRate}</TableCell>
-
-                  <TableCell>{loc.factor}</TableCell>
-
-                  <TableCell>
-                    <select
-                      value={ageLabel}
-                      onChange={(e) =>
-                        setSelectedAge((prev) => ({
-                          ...prev,
-                          [loc.key]: e.target.value,
-                        }))
-                      }
-                    >
-                      {premium.vehicleAge.map((age, i) => (
-                        <option key={i} value={`${age.min}-${age.max}`}>
-                          {age.min}-{age.max}
-                        </option>
-                      ))}
-                    </select>
+            </TableHead>
+            <TableBody>
+              {status && (
+                <TableRow>
+                  <TableCell colSpan={7} align="center">
+                    {status}
                   </TableCell>
+                </TableRow>
+              )}
+              {premium.location.map((loc, index) => {
+                const baseRate = premium.basePremium?.[0]?.baseRate || 0;
+                const vehicleType = premium.basePremium?.[0]?.key || "--";
+                const firstAge = premium.vehicleAge[0];
+                const ageLabel =
+                  selectedAge[loc.key] ||
+                  (firstAge ? `${firstAge.min}-${firstAge.max}` : "");
+                const vehicleFactor = getVehicleFactor(loc.key, ageLabel);
 
-                  <TableCell>{vehicleFactor}</TableCell>
+                const premiumAmount = baseRate * loc.factor * vehicleFactor;
 
-                  <TableCell>{premiumAmount}</TableCell>
-                  {/* <TableCell>
+                return (
+                  <TableRow key={index}>
+                    <TableCell>{vehicleType}</TableCell>
+                    <TableCell>{loc.key}</TableCell>
+
+                    <TableCell>{baseRate}</TableCell>
+
+                    <TableCell>{loc.factor}</TableCell>
+
+                    <TableCell>
+                      <select
+                        style={{
+                          border: "1px solid #c5ccd5",
+                          borderRadius: 2,
+                          padding: "2px 4px",
+                          fontSize: 12,
+                        }}
+                        value={ageLabel}
+                        onChange={(e) =>
+                          setSelectedAge((prev) => ({
+                            ...prev,
+                            [loc.key]: e.target.value,
+                          }))
+                        }
+                      >
+                        {premium.vehicleAge.map((age, i) => (
+                          <option key={i} value={`${age.min}-${age.max}`}>
+                            {age.min}-{age.max}
+                          </option>
+                        ))}
+                      </select>
+                    </TableCell>
+
+                    <TableCell>{vehicleFactor}</TableCell>
+
+                    <TableCell>{premiumAmount}</TableCell>
+                    {/* <TableCell>
                     <button
                       onClick={() => {
                         // send selected row data to redux
@@ -165,12 +193,13 @@ const RateTable = () => {
                       Edit
                     </button>
                   </TableCell> */}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </Container>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
     </div>
   );
 };

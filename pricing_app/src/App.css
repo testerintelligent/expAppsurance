@@ -1,3 +1,65 @@
 @import "tailwindcss";
 
+/* Content shell and compact overrides, matching the Policies app (Policies/src/App.css) */
+.policy-screen-shell {
+  min-height: 100%;
+  background: #eef2f5;
+  padding: 16px 18px;
+  text-align: left;
+}
 
+.policy-screen-shell .MuiPaper-root {
+  background: #ffffff;
+  border: 1px solid #d7dbe2;
+  box-shadow: none !important;
+}
+
+/* Form inputs */
+.policy-screen-shell .MuiInputBase-input,
+.policy-screen-shell .MuiSelect-select { font-size: 12px !important; }
+.policy-screen-shell .MuiInputLabel-root,
+.policy-screen-shell .MuiFormLabel-root { font-size: 12px !important; }
+.policy-screen-shell .MuiMenuItem-root { font-size: 12px !important; min-height: 30px !important; }
+
+/* Typography */
+.policy-screen-shell .MuiTypography-h5 { font-size: 14px !important; font-weight: 700 !important; color: #2d3e52 !important; }
+.policy-screen-shell .MuiTypography-h6 { font-size: 13px !important; font-weight: 600 !important; color: #2e3e4c !important; }
+.policy-screen-shell .MuiTypography-body1 { font-size: 12px !important; }
+.policy-screen-shell .MuiTypography-body2 { font-size: 11px !important; }
+.policy-screen-shell .MuiTypography-subtitle1,
+.policy-screen-shell .MuiTypography-subtitle2 { font-size: 12px !important; }
+
+/* Buttons */
+.policy-screen-shell .MuiButton-root {
+  font-size: 12px !important;
+  text-transform: none !important;
+  padding: 5px 14px !important;
+  box-shadow: none !important;
+  border-radius: 3px !important;
+  min-height: 28px !important;
+  line-height: 1.4 !important;
+}
+.policy-screen-shell .MuiButton-containedPrimary { background-color: #1f5fa6 !important; }
+.policy-screen-shell .MuiButton-containedPrimary:hover { background-color: #1a4f8c !important; }
+.policy-screen-shell .MuiButton-outlined { border-color: #c5ccd5 !important; color: #4e5d6d !important; }
+
+/* Tables */
+.policy-screen-shell .MuiTableCell-root {
+  font-size: 12px !important;
+  padding: 7px 10px !important;
+  border-color: #e3e8ee !important;
+  color: #3d5164 !important;
+}
+.policy-screen-shell .MuiTableCell-head {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  background-color: #f6f7f8 !important;
+  color: #31475f !important;
+  border-bottom: 2px solid #d7dbe2 !important;
+}
+.policy-screen-shell .MuiTableRow-root:nth-of-type(odd) .MuiTableCell-body { background-color: #f8fafb; }
+.policy-screen-shell .MuiTableRow-root:nth-of-type(even) .MuiTableCell-body { background-color: #ffffff; }
+.policy-screen-shell .MuiTableRow-root:hover .MuiTableCell-body { background-color: #edf4fb !important; }
+
+/* Divider */
+.policy-screen-shell .MuiDivider-root { border-color: #d7dbe2 !important; }
