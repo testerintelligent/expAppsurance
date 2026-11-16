@@ -20,17 +20,7 @@ node_modules/
 # ──────────────────────────────────────────────
 .env
 .env.*
-!.env.example        # allow a safe template file
-!Policy/.env.development
-!Policy/.env.production
-!Claims/.env.development
-!Claims/.env.production
-!Billing/.env.development
-!Billing/.env.production
-!Pricing/.env.development
-!Pricing/.env.production
-!Server/.env.development
-!Server/.env.production
+!.env.example        # allow safe template files only
 
 
 # ──────────────────────────────────────────────
@@ -111,7 +101,6 @@ desktop.ini
 # ──────────────────────────────────────────────
 # Docker
 # ──────────────────────────────────────────────
-.dockerignore
 docker-compose.override.yml
 
 
