@@ -55,9 +55,10 @@ const Contact = require('../Models/ContactDetails');
 const createContact = async (req, res) => {
   try {
     const data = { ...req.body };
-    // Coerce empty-string email → undefined before the pre('save') hook runs,
-    // so the sparse unique index is not polluted by blank values.
-    if (data.email === '' || data.email === null) delete data.email;
+    // Email is mandatory — fail fast with a clear message
+    if (!String(data.email || '').trim()) {
+      return res.status(400).json({ message: 'Error creating contact', error: 'Email is required.' });
+    }
 
     const newContact = new Contact(data);
     const savedContact = await newContact.save();
@@ -188,19 +189,14 @@ const editContact = async (req, res) => {
   try {
     const body = { ...req.body };
 
-    // Coerce empty-string email → $unset so the sparse unique index ignores it
-    // (findByIdAndUpdate bypasses pre('save') hooks, so we handle it here)
-    let update;
-    if (body.email === '' || body.email === null) {
-      delete body.email;
-      update = { $set: body, $unset: { email: '' } };
-    } else {
-      update = { $set: body };
+    // Email is mandatory — reject attempts to clear it
+    if ('email' in body && !String(body.email || '').trim()) {
+      return res.status(400).json({ message: 'Error updating contact', error: 'Email is required.' });
     }
 
     const updatedContact = await Contact.findByIdAndUpdate(
       req.params.id,
-      update,
+      { $set: body },
       { new: true, runValidators: true }
     );
     if (!updatedContact)

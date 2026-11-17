@@ -407,6 +407,14 @@ export default function Contact() {
     }
   };
 
+  // Email is mandatory for both create and edit; returns an error message or null
+  const validateEmail = (email) => {
+    const value = String(email || "").trim();
+    if (!value) return "Email is required.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Please enter a valid email address.";
+    return null;
+  };
+
   const handleCreate = async () => {
     try {
       let contactPayload;
@@ -430,6 +438,13 @@ export default function Contact() {
       } else {
         contactPayload = formData;
       }
+
+      const emailError = validateEmail(contactPayload.email);
+      if (emailError) {
+        alert(emailError);
+        return;
+      }
+      contactPayload = { ...contactPayload, email: contactPayload.email.trim() };
 
       const newContact = await createContact(contactPayload);
       const accountType = contactCategory === "Commercial" ? "Corporate" : "Individual";
@@ -465,6 +480,11 @@ export default function Contact() {
   };
   const handleEditToggle = async () => {
     if (isEditMode) {
+      const emailError = validateEmail(selectedContact.email);
+      if (emailError) {
+        setSnack({ open: true, msg: emailError, severity: "error" });
+        return; // Stay in edit mode until a valid email is entered
+      }
       // Save changes
       try {
         const saved = await updateContact(selectedContact._id, selectedContact);
@@ -735,8 +755,8 @@ export default function Contact() {
                       </select>
                     </div>
                     <div>
-                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Email</label>
-                      <input type="email" name="email" value={formData.email} onChange={handleChange}
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Email *</label>
+                      <input type="email" name="email" value={formData.email} onChange={handleChange} required
                         style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
                     </div>
                     <div>
@@ -841,8 +861,8 @@ export default function Contact() {
                         style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52", maxWidth: 400 }} />
                     </div>
                     <div>
-                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Email</label>
-                      <input type="email" name="email" value={formDataCommercial.email} onChange={handleChangeCommercial}
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Email *</label>
+                      <input type="email" name="email" value={formDataCommercial.email} onChange={handleChangeCommercial} required
                         style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
                     </div>
                     <div>
@@ -971,13 +991,15 @@ export default function Contact() {
                   { label: "First Name", name: "firstName", type: "text" },
                   { label: "Last Name",  name: "lastName",  type: "text" },
                   { label: "Date of Birth", name: "dateOfBirth", type: "date", isDate: true },
-                  { label: "Email",  name: "email",   type: "email" },
+                  { label: "Email *", name: "email",  type: "email", required: true },
                   { label: "Address", name: "address", type: "text" },
                   { label: "Street",  name: "street",  type: "text" },
-                ].map(({ label, name, type, isDate }) => (
+                ].map(({ label, name, type, isDate, required }) => (
                   <Grid size={6} key={name}>
                     <TextField size="small" fullWidth label={label} name={name}
                       type={type}
+                      error={Boolean(required && isEditMode && !String(selectedContact[name] || "").trim())}
+                      helperText={required && isEditMode && !String(selectedContact[name] || "").trim() ? `${label.replace(" *", "")} is required` : undefined}
                       value={isDate ? (formatDateForInput(selectedContact[name]) || "") : (selectedContact[name] || "")}
                       onChange={handleContactChange}
                       InputProps={{ readOnly: !isEditMode }}

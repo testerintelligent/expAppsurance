@@ -6,6 +6,7 @@ const contactSchema = new mongoose.Schema({
   lastName: { type: String, required: true, trim: true, minlength: 2 },
   email: {
     type: String,
+    required: [true, 'Email is required.'],
     unique: true,
     sparse: true,   // only indexes non-null values — blank strings must be coerced to null
     lowercase: true,
