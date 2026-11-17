@@ -4,23 +4,24 @@ const contactSchema = new mongoose.Schema({
   customerId: { type: String, unique: true, index: true },
   firstName: { type: String, required: true, trim: true, minlength: 2 },
   lastName: { type: String, required: true, trim: true, minlength: 2 },
-  email: { 
-    type: String, 
-    unique: true, 
-    sparse: true, 
-    lowercase: true, 
+  email: {
+    type: String,
+    unique: true,
+    sparse: true,   // only indexes non-null values — blank strings must be coerced to null
+    lowercase: true,
     trim: true,
     validate: {
-      validator: v => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), // email regex, optional
+      validator: v => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
       message: props => `${props.value} is not a valid email!`
     }
   },
-  phone: { 
-    type: String, 
+  phone: {
+    type: String,
+    required: [true, 'Phone number is required.'],
     trim: true,
     validate: {
-      validator: v => !v || /^\+?[1-9]\d{1,14}$/.test(v), // basic E.164 phone format, optional
-      message: props => `${props.value} is not a valid phone number!`
+      validator: v => /^\d{10}$/.test(v),   // exactly 10 digits
+      message: props => `${props.value} is not a valid phone number. Must be exactly 10 digits.`
     }
   },
   dateOfBirth: { type: Date, required: true, validate: {
@@ -43,6 +44,14 @@ const contactSchema = new mongoose.Schema({
 
 // Index compound example: fast lookup by name + dob
 contactSchema.index({ firstName: 1, lastName: 1, dateOfBirth: 1 });
+
+// Coerce empty-string email → undefined so the sparse unique index ignores it.
+// An empty string IS a value to MongoDB and would cause duplicate-key errors
+// when multiple contacts are saved without an email address.
+contactSchema.pre('save', function (next) {
+  if (this.email === '' || this.email === null) this.email = undefined;
+  next();
+});
 
 // Auto-generate customerId if new
 contactSchema.pre('save', function (next) {
