@@ -740,8 +740,11 @@ export default function Contact() {
                         style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
                     </div>
                     <div>
-                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Phone</label>
-                      <input type="text" name="phone" value={formData.phone} onChange={handleChange}
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Phone *</label>
+                      <input type="tel" name="phone" value={formData.phone} onChange={handleChange}
+                        maxLength={10} pattern="\d{10}" required
+                        placeholder="10-digit number"
+                        onInput={(e) => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10); }}
                         style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
                     </div>
                   </div>
@@ -843,8 +846,11 @@ export default function Contact() {
                         style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
                     </div>
                     <div>
-                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Phone</label>
-                      <input type="text" name="phone" value={formDataCommercial.phone} onChange={handleChangeCommercial}
+                      <label style={{ fontSize: 11, color: "#5a6a7a", fontWeight: 600, display: "block", marginBottom: 3 }}>Phone *</label>
+                      <input type="tel" name="phone" value={formDataCommercial.phone} onChange={handleChangeCommercial}
+                        maxLength={10} pattern="\d{10}" required
+                        placeholder="10-digit number"
+                        onInput={(e) => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10); }}
                         style={{ width: "100%", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 8px", fontSize: 12, color: "#2d3e52" }} />
                     </div>
                   </div>
@@ -963,12 +969,11 @@ export default function Contact() {
               <Grid container spacing={2}>
                 {[
                   { label: "First Name", name: "firstName", type: "text" },
-                  { label: "Last Name", name: "lastName", type: "text" },
+                  { label: "Last Name",  name: "lastName",  type: "text" },
                   { label: "Date of Birth", name: "dateOfBirth", type: "date", isDate: true },
-                  { label: "Email", name: "email", type: "email" },
-                  { label: "Phone", name: "phone", type: "text" },
+                  { label: "Email",  name: "email",   type: "email" },
                   { label: "Address", name: "address", type: "text" },
-                  { label: "Street", name: "street", type: "text" },
+                  { label: "Street",  name: "street",  type: "text" },
                 ].map(({ label, name, type, isDate }) => (
                   <Grid size={6} key={name}>
                     <TextField size="small" fullWidth label={label} name={name}
@@ -980,6 +985,23 @@ export default function Contact() {
                     />
                   </Grid>
                 ))}
+
+                {/* Phone — rendered separately to enforce 10-digit limit in edit mode */}
+                <Grid size={6}>
+                  <TextField
+                    size="small" fullWidth label="Phone *" name="phone"
+                    value={selectedContact.phone || ""}
+                    onChange={(e) => {
+                      // strip non-digits and cap at 10 characters in edit mode
+                      const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      handleContactChange({ target: { name: 'phone', value: digits } });
+                    }}
+                    InputProps={{ readOnly: !isEditMode }}
+                    inputProps={{ maxLength: 10, inputMode: 'numeric', pattern: '\\d{10}' }}
+                    placeholder={isEditMode ? "10-digit number" : ""}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
                 {/* ── In VIEW mode render plain readOnly inputs so any stored value
                     (including free-text values from older records) is always
                     visible. In EDIT mode render the constrained select dropdowns. ── */}
@@ -1073,7 +1095,7 @@ export default function Contact() {
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16, paddingTop: 12, borderTop: "1px solid #e3e8ee" }}>
                 <button onClick={handleOk}
                   style={{ background: "#f4f6f8", border: "1px solid #c5ccd5", borderRadius: 2, padding: "5px 14px", fontSize: 12, color: "#4e5d6d", cursor: "pointer" }}>
-                  OK
+                  Cancel
                 </button>
                 <button onClick={handleEditToggle}
                   style={{ background: "#1f5fa6", color: "#fff", border: "none", borderRadius: 2, padding: "5px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>

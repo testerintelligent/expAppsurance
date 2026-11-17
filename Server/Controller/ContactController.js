@@ -54,8 +54,12 @@ const Contact = require('../Models/ContactDetails');
  */
 const createContact = async (req, res) => {
   try {
-    // 1️⃣ Save the new contact
-    const newContact = new Contact(req.body);
+    const data = { ...req.body };
+    // Coerce empty-string email → undefined before the pre('save') hook runs,
+    // so the sparse unique index is not polluted by blank values.
+    if (data.email === '' || data.email === null) delete data.email;
+
+    const newContact = new Contact(data);
     const savedContact = await newContact.save();
     res.status(201).json(savedContact);
   } catch (err) {
@@ -182,9 +186,21 @@ const searchContact = async (req, res) => {
 // --- PUT: Edit Contact ---
 const editContact = async (req, res) => {
   try {
+    const body = { ...req.body };
+
+    // Coerce empty-string email → $unset so the sparse unique index ignores it
+    // (findByIdAndUpdate bypasses pre('save') hooks, so we handle it here)
+    let update;
+    if (body.email === '' || body.email === null) {
+      delete body.email;
+      update = { $set: body, $unset: { email: '' } };
+    } else {
+      update = { $set: body };
+    }
+
     const updatedContact = await Contact.findByIdAndUpdate(
       req.params.id,
-      { $set: req.body },
+      update,
       { new: true, runValidators: true }
     );
     if (!updatedContact)
