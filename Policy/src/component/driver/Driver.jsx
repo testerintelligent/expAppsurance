@@ -379,6 +379,7 @@ export default function Driver() {
                     ))}
                     <Grid item xs={12}>
                       <TextField size="small" select label="Marital Status" value={formData.maritalStatus || ""} fullWidth required
+                        sx={{ "& .MuiSelect-select": { height: "1.4375em", minHeight: "1.4375em", lineHeight: "1.4375em" } }}
                         onChange={(e) => setFormData({ ...formData, maritalStatus: e.target.value })}>
                         <MenuItem value="">Select</MenuItem>
                         <MenuItem value="single">Single</MenuItem>
