@@ -15,12 +15,12 @@ const Navbar = () => {
       <div className="flex items-center gap-2 cursor-pointer">
         <img
           src="/i.png?v=2"
-          alt="Expleosurance logo"
+          alt="EXurance logo"
           className="h-8 w-8 object-contain bg-transparent"
           onClick={() => navigate("/")}
         />
         <h1 className="font-semibold text-white whitespace-nowrap" onClick={() => navigate("/")}>
-          Expleosurance Billing
+          EXurance Billing
         </h1>
       </div>
 

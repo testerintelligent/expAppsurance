@@ -18,7 +18,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route
-            path="/expleosurance/payment-portal/pay"
+            path="/EXurance/payment-portal/pay"
             element={<PaymentPage />}
           />
         <Route

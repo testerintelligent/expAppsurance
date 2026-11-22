@@ -46,11 +46,11 @@ export default function Navbar() {
       >
         <img
           src={`${process.env.PUBLIC_URL}/i.png?v=2`}
-          alt="ExpleoSurance logo"
+          alt="EXurance logo"
           style={{ width: 32, height: 32, objectFit: "contain", background: "transparent" }}
         />
         <span style={{ fontSize: 14, fontWeight: 700, color: "#fff", whiteSpace: "nowrap" }}>
-          ExpleoSurance Policy
+          EXurance Policy
         </span>
       </div>
 

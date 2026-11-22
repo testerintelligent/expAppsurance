@@ -29,7 +29,7 @@ export default function PaymentPage() {
             </div>
           </div>
           <div style={{ padding: "10px 16px", borderTop: "1px solid #d7dbe2", fontSize: 11, color: "#6b7c93", lineHeight: 1.7 }}>
-            • Payments processed securely via Expleosurance Billing<br />
+            • Payments processed securely via EXurance Billing<br />
             • Accepted: Credit Card, Debit Card, Bank Transfer<br />
             • Data encrypted, PCI-DSS compliant
           </div>

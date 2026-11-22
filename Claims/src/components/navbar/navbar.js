@@ -17,7 +17,7 @@ export default function Navbar() {
           <div className="mr-4 flex items-center gap-2 cursor-pointer">
             <img
               src={`${process.env.PUBLIC_URL}/i.png?v=2`}
-              alt="Expleosurance logo"
+              alt="EXurance logo"
               className="h-8 w-8 object-contain bg-transparent"
               onClick={() => navigate("/")}
             />
@@ -25,7 +25,7 @@ export default function Navbar() {
               className="font-semibold text-white whitespace-nowrap"
               onClick={() => navigate("/")}
             >
-              Expleosurance Claims
+              EXurance Claims
             </h1>
           </div>
           <nav className="flex items-center gap-8 flex-1 text-sm overflow-x-auto ml-16 text-slate-50">

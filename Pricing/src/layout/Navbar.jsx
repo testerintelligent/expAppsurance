@@ -31,7 +31,7 @@ export default function Navbar() {
       >
         <img
           src="/favicon.svg"
-          alt="ExpleoSurance logo"
+          alt="EXurance logo"
           style={{ width: 32, height: 32, objectFit: "contain", background: "transparent" }}
         />
         <span
@@ -42,7 +42,7 @@ export default function Navbar() {
             whiteSpace: "nowrap",
           }}
         >
-          ExpleoSurance Pricing
+          EXurance Pricing
         </span>
       </div>
 
