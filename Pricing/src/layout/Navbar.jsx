@@ -42,7 +42,7 @@ export default function Navbar() {
             whiteSpace: "nowrap",
           }}
         >
-          ExpleoSurance PricingCenter
+          ExpleoSurance Pricing
         </span>
       </div>
 
