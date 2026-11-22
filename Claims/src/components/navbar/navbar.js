@@ -1,74 +1,105 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-import "./navbar.css";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import { logout } from "../../utils/logout";
 
 export default function Navbar() {
   const navigate = useNavigate();
+
   const handleLogout = () => {
-    logout(); // remove token
-    navigate("/login"); // redirect to login page
+    logout();
+    navigate("/login");
   };
+
+  const navItems = [
+    { label: "Claim", to: "/Claim" },
+    { label: "Search", to: "/search" },
+    { label: "Contact", to: "/contact" },
+    { label: "Administration", to: "/admin" },
+  ];
+
   return (
-    <header className="grid grid-cols-2 border-b-4 border-slate-600 bg-color">
-      <div className="  max-w-full mx-auto">
-        <div className="flex items-center px-3 lg:px-6 h-12">
-          <div className="mr-4 flex items-center gap-2 cursor-pointer">
-            <img
-              src={`${process.env.PUBLIC_URL}/i.png?v=2`}
-              alt="EXurance logo"
-              className="h-8 w-8 object-contain bg-transparent"
-              onClick={() => navigate("/")}
-            />
-            <h1
-              className="font-semibold text-white whitespace-nowrap"
-              onClick={() => navigate("/")}
-            >
-              EXurance Claims
-            </h1>
-          </div>
-          <nav className="flex items-center gap-8 flex-1 text-sm overflow-x-auto ml-16 text-slate-50">
-            {/* <NavDropdown label="Desktop" /> */}
-            <NavLink
-              to="/Claim"
-              className={({ isActive, isPending }) =>
-                isPending ? "pending" : isActive ? "nav-active" : ""
-              }
-            >
-              Claim
-            </NavLink>
-            <NavLink
-              to="/search"
-              className={({ isActive, isPending }) =>
-                isPending ? "pending" : isActive ? "nav-active" : ""
-              }
-            >
-              Search
-            </NavLink>
-            <NavLink
-              to="/contact"
-              className={({ isActive, isPending }) =>
-                isPending ? "pending" : isActive ? "nav-active" : ""
-              }
-            >
-              Contact
-            </NavLink>
-            <NavLink
-              to="/admin"
-              className={({ isActive, isPending }) =>
-                isPending ? "pending" : isActive ? "nav-active" : ""
-              }
-            >
-              Administration
-            </NavLink>
-          </nav>
-        </div>
+    <header
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        minHeight: 52,
+        background: "#4f3597",
+        padding: "0 16px 0 12px",
+        zIndex: 100,
+      }}
+    >
+      {/* Left: Title */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          paddingRight: 20,
+          minHeight: 40,
+          cursor: "pointer",
+        }}
+        onClick={() => navigate("/")}
+      >
+        <img
+          src={`${process.env.PUBLIC_URL}/i.png?v=2`}
+          alt="EXurance logo"
+          style={{ width: 32, height: 32, objectFit: "contain", background: "transparent" }}
+        />
+        <span style={{ fontSize: 14, fontWeight: 700, color: "#fff", whiteSpace: "nowrap" }}>
+          EXurance Claims
+        </span>
       </div>
-      <div className="grid justify-items-end">
+
+      {/* Center: Nav links */}
+      <nav
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 4,
+          flex: 1,
+          marginLeft: 16,
+          fontSize: 13,
+          overflowX: "auto",
+        }}
+      >
+        {navItems.map((item) => (
+          <NavLink
+            key={item.label}
+            to={item.to}
+            style={({ isActive }) => ({
+              textDecoration: "none",
+              color: isActive ? "#fff" : "rgba(255,255,255,0.8)",
+              padding: "6px 12px",
+              fontWeight: isActive ? 700 : 500,
+              background: isActive ? "rgba(255,255,255,0.18)" : "transparent",
+              borderBottom: isActive ? "2px solid #fff" : "2px solid transparent",
+              whiteSpace: "nowrap",
+              fontSize: 13,
+            })}
+          >
+            {item.label}
+          </NavLink>
+        ))}
+      </nav>
+
+      {/* Right: Notification + Logout */}
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <div style={{ position: "relative", cursor: "pointer" }}>
+          <NotificationsIcon style={{ color: "#fff", fontSize: 20 }} />
+        </div>
         <button
           onClick={handleLogout}
-          className="text-white font-semibold px-4 py-2 rounded hover:text-red-800"
+          style={{
+            background: "transparent",
+            border: "none",
+            color: "#fff",
+            fontWeight: 600,
+            cursor: "pointer",
+            fontSize: 13,
+            padding: "4px 0",
+          }}
         >
           Logout
         </button>

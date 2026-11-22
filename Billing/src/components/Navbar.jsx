@@ -1,53 +1,106 @@
-import { NavLink } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { logout } from "../../utils/logout.js";
 import NotificationButton from "./NotificationIcon";
-import "./navbar.css";
 
-const Navbar = () => {
+export default function Navbar() {
   const navigate = useNavigate();
+
   const handleLogout = () => {
-    logout(); // remove token
-    navigate("/login"); // redirect to login page
+    logout();
+    navigate("/login");
   };
+
+  const navItems = [
+    { label: "Policy", to: "/policy" },
+  ];
+
   return (
-    <header className="h-14 w-full border-b-1 border-slate-600 bg-color flex items-center justify-between px-4 shadow z-10">
-      <div className="flex items-center gap-2 cursor-pointer">
+    <header
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        minHeight: 52,
+        background: "#4f3597",
+        padding: "0 16px 0 12px",
+        zIndex: 100,
+      }}
+    >
+      {/* Left: Title */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          paddingRight: 20,
+          minHeight: 40,
+          cursor: "pointer",
+        }}
+        onClick={() => navigate("/")}
+      >
         <img
           src="/i.png?v=2"
           alt="EXurance logo"
-          className="h-8 w-8 object-contain bg-transparent"
-          onClick={() => navigate("/")}
+          style={{ width: 32, height: 32, objectFit: "contain", background: "transparent" }}
         />
-        <h1 className="font-semibold text-white whitespace-nowrap" onClick={() => navigate("/")}>
+        <span style={{ fontSize: 14, fontWeight: 700, color: "#fff", whiteSpace: "nowrap" }}>
           EXurance Billing
-        </h1>
+        </span>
       </div>
 
-      <nav className="flex items-center gap-8 flex-1 text-sm overflow-x-auto ml-16 text-slate-50">
-        <NavLink
-          to="/policy"
-          className={({ isActive, isPending }) =>
-            isPending ? "pending" : isActive ? "active" : ""
-          }
-        >
-          Policy
-        </NavLink>
+      {/* Center: Nav links */}
+      <nav
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 4,
+          flex: 1,
+          marginLeft: 16,
+          fontSize: 13,
+          overflowX: "auto",
+        }}
+      >
+        {navItems.map((item) => (
+          <NavLink
+            key={item.label}
+            to={item.to}
+            style={({ isActive }) => ({
+              textDecoration: "none",
+              color: isActive ? "#fff" : "rgba(255,255,255,0.8)",
+              padding: "6px 12px",
+              fontWeight: isActive ? 700 : 500,
+              background: isActive ? "rgba(255,255,255,0.18)" : "transparent",
+              borderBottom: isActive ? "2px solid #fff" : "2px solid transparent",
+              whiteSpace: "nowrap",
+              fontSize: 13,
+            })}
+          >
+            {item.label}
+          </NavLink>
+        ))}
       </nav>
-      <div>
-        <NotificationButton />
-      </div>
 
-      <div>
+      {/* Right: Notification + Logout */}
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <div style={{ color: "#fff" }}>
+          <NotificationButton />
+        </div>
         <button
           onClick={handleLogout}
-          className="text-white font-semibold px-4 py-2 rounded hover:text-red-800"
+          style={{
+            background: "transparent",
+            border: "none",
+            color: "#fff",
+            fontWeight: 600,
+            cursor: "pointer",
+            fontSize: 13,
+            padding: "4px 0",
+          }}
         >
           Logout
         </button>
       </div>
     </header>
   );
-};
-
-export default Navbar;
+}

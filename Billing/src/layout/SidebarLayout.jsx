@@ -119,27 +119,29 @@ const Sidebar = () => {
         width: isOpen ? 240 : 64,
         background: "#ffffff",
         borderRight: "1px solid #e0e0e0",
-        transition: "width 0.3s ease",
-        height: "auto",
+        transition: "width 0.25s ease",
         display: "flex",
         flexDirection: "column",
+        flexShrink: 0,
+        overflowX: "hidden",
       }}
     >
-      {/* Toggle Button */}
+      {/* Collapse toggle */}
       <div
         style={{
           display: "flex",
           justifyContent: isOpen ? "flex-end" : "center",
+          padding: "4px 4px 2px",
         }}
       >
         <IconButton onClick={() => setIsOpen(!isOpen)} size="small">
-          {isOpen ? <ChevronLeftIcon /> : <MenuIcon />}
+          {isOpen ? <ChevronLeftIcon fontSize="small" /> : <MenuIcon fontSize="small" />}
         </IconButton>
       </div>
 
       <Divider />
 
-      <List disablePadding sx={{ mt: 1 }}>
+      <List disablePadding sx={{ mt: 0.5 }}>
         {navItems.map((item, index) => (
           <NavLink
             key={index}
@@ -156,29 +158,24 @@ const Sidebar = () => {
                   sx={{
                     mx: 1,
                     my: 0.5,
-                    borderRadius: 2,
+                    borderRadius: 1,
                     justifyContent: isOpen ? "flex-start" : "center",
-                    px: 2,
+                    px: isOpen ? 1.5 : 1,
                     position: "relative",
-
-                    // Background
                     backgroundColor: isActive ? "#e8f0fa" : "transparent",
                     color: "#333",
-
                     "&:hover": {
                       backgroundColor: "#f0f4fb",
                     },
-
-                    // Left blue highlight bar
                     "&::after": isActive
                       ? {
                           content: '""',
                           position: "absolute",
                           left: 0,
-                          top: 8,
-                          bottom: 8,
-                          width: "4px",
-                          borderRadius: "4px",
+                          top: 6,
+                          bottom: 6,
+                          width: 4,
+                          borderRadius: "0 3px 3px 0",
                           backgroundColor: "#1f5fa6",
                         }
                       : {},
@@ -187,11 +184,10 @@ const Sidebar = () => {
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr: isOpen ? 2 : 0,
+                      mr: isOpen ? 1.5 : 0,
                       justifyContent: "center",
-
-                      // Icon color logic
                       color: isActive ? "#1f5fa6" : "#6b7280",
+                      "& .MuiSvgIcon-root": { fontSize: 19 },
                     }}
                   >
                     {item.icon}
@@ -201,9 +197,12 @@ const Sidebar = () => {
                     <ListItemText
                       primary={item.label}
                       primaryTypographyProps={{
-                        fontSize: "0.9rem",
-                        fontWeight: isActive ? 600 : 500,
-                        color: "#333",
+                        fontSize: "0.8rem",
+                        fontWeight: isActive ? 700 : 500,
+                        color: isActive ? "#1f2d3d" : "#3d5164",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                       }}
                     />
                   )}

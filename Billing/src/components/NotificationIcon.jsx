@@ -46,9 +46,9 @@ function NotificationButton() {
   return (
     <div>
       {/* Notification Icon */}
-      <IconButton color="inherit" onClick={handleOpen}>
+      <IconButton color="inherit" size="small" onClick={handleOpen}>
         <Badge badgeContent={notifications.length} color="error">
-          <NotificationsIcon />
+          <NotificationsIcon style={{ fontSize: 20 }} />
         </Badge>
       </IconButton>
 
