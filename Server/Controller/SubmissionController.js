@@ -52,6 +52,25 @@ exports.getSubmissionById = async (req, res) => {
   }
 };
 
+// Update the selected offering for a submission
+exports.updateSubmissionOffering = async (req, res) => {
+  try {
+    const { submissionId } = req.params;
+    const { offering } = req.body;
+    const submission = await SubmissionDetails.findOneAndUpdate(
+      { submissionId },
+      { offering },
+      { new: true, runValidators: true }
+    );
+    if (!submission) return res.status(404).json({ message: 'Submission not found' });
+    res.json({ submission });
+  } catch (err) {
+    console.error(err);
+    const status = err.name === 'ValidationError' ? 400 : 500;
+    res.status(status).json({ message: err.message || 'Failed to update offering' });
+  }
+};
+
 // Delete a submission
 exports.deleteSubmission = async (req, res) => {
   try {

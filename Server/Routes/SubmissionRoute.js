@@ -6,6 +6,7 @@ const submissionController = require('../Controller/SubmissionController');
 router.post('/', submissionController.createSubmission);
 router.get('/account/:accountId', submissionController.getSubmissionsByAccount);
 router.get('/:submissionId', submissionController.getSubmissionById);
+router.patch('/:submissionId/offering', submissionController.updateSubmissionOffering);
 router.delete('/:submissionId', submissionController.deleteSubmission);
 
 module.exports = router;

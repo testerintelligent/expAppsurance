@@ -19,3 +19,17 @@ export const updateSubmissionStatus = async (submissionId, status) => {
   });
   return res.data.submission;
 };
+
+// Get available offerings
+export const getOfferings = async () => {
+  const res = await api.get("/api/offerings");
+  return Array.isArray(res.data) ? res.data : [];
+};
+
+// Save selected offering on a submission
+export const updateSubmissionOffering = async (submissionId, offering) => {
+  const res = await api.patch(`/api/submissions/${submissionId}/offering`, {
+    offering,
+  });
+  return res.data.submission;
+};

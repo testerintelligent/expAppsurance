@@ -8,6 +8,10 @@ import {
   getDriversByAccount,
 } from "./driverAPI";
 import PrimaryDriverQuestion from "./IsNewDriver";
+import {
+  getOfferings,
+  updateSubmissionOffering,
+} from "../submission/submissionAPI";
 import { formatDateForInput } from "../../utils/dateFormatter";
 import {
   Box,
@@ -62,6 +66,19 @@ export default function Driver() {
   const [tab, setTab] = useState(0);
   const [errorOpen, setErrorOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  const DEFAULT_OFFERINGS = ["Basic Program", "Standard Program", "Premium Program"];
+  const [offerings, setOfferings] = useState(DEFAULT_OFFERINGS);
+  const [offering, setOffering] = useState(state?.offering || "");
+
+  // Load offerings from the database (fall back to defaults on failure)
+  useEffect(() => {
+    getOfferings()
+      .then((list) => {
+        if (list.length > 0) setOfferings(list.map((o) => o.name));
+      })
+      .catch((err) => console.error("Failed to load offerings:", err));
+  }, []);
 
   // Fetch existing drivers when isPrimaryDriver changes or when dealing with existing account
   useEffect(() => {
@@ -229,7 +246,15 @@ export default function Driver() {
       return;
     }
 
+    if (!offering) {
+      setErrorMsg("Offering Selection is required");
+      setErrorOpen(true);
+      return;
+    }
+
     try {
+      await updateSubmissionOffering(state.submissionId, offering);
+
       // If isPrimaryDriver is "no" and an existing driver is selected, skip creation
       if (isPrimaryDriver === "no" && selectedDriverId) {
         navigate("/vehicle", {
@@ -237,6 +262,7 @@ export default function Driver() {
             ...state,
             driverId: selectedDriverId,
             contact: formData,
+            offering,
           },
         });
         return;
@@ -265,6 +291,7 @@ export default function Driver() {
           driver: driver,
           contact: formData,
           driverForm: formData,
+          offering,
         },
       });
     } catch (err) {
@@ -283,6 +310,35 @@ export default function Driver() {
         effectiveDate={state?.effectiveDate || "-"}
         expiryDate={state?.expiryDate || "-"}
       />
+
+      {/* Offerings */}
+      <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
+        <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5 }}>
+          Offerings
+        </div>
+        <div style={{ padding: "12px 14px" }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                select
+                size="small"
+                label="Offering Selection"
+                name="offering"
+                value={offering}
+                onChange={(e) => setOffering(e.target.value)}
+                fullWidth
+                required
+              >
+                {offerings.map((name) => (
+                  <MenuItem key={name} value={name}>
+                    {name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+          </Grid>
+        </div>
+      </div>
 
       <div style={{ fontSize: 16, fontWeight: 700, color: "#2d3e52", marginBottom: 10 }}>Driver Details</div>
 

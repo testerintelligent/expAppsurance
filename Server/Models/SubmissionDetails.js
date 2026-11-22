@@ -9,6 +9,7 @@ const submissionSchema = new mongoose.Schema({
   effectiveDate: { type: Date, required: true },
   expirationDate: { type: Date, required: true },
   writtenDate: { type: Date, required: true },
+  offering: { type: String, enum: ['Basic Program', 'Standard Program', 'Premium Program'] },
   createdAt: { type: Date, default: Date.now },
 });
 
