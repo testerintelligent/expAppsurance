@@ -69,7 +69,7 @@ export default function Driver() {
 
   const DEFAULT_OFFERINGS = ["Basic Program", "Standard Program", "Premium Program"];
   const [offerings, setOfferings] = useState(DEFAULT_OFFERINGS);
-  const [offering, setOffering] = useState(state?.offering || "");
+  const [offering, setOffering] = useState(state?.offering || DEFAULT_OFFERINGS[0]);
 
   // Load offerings from the database (fall back to defaults on failure)
   useEffect(() => {
@@ -317,26 +317,26 @@ export default function Driver() {
           Offerings
         </div>
         <div style={{ padding: "12px 14px" }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                select
-                size="small"
-                label="Offering Selection"
-                name="offering"
-                value={offering}
-                onChange={(e) => setOffering(e.target.value)}
-                fullWidth
-                required
-              >
-                {offerings.map((name) => (
-                  <MenuItem key={name} value={name}>
-                    {name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-          </Grid>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <label htmlFor="offering-select" style={{ fontSize: 13, fontWeight: 600, color: "#2e3e4c", whiteSpace: "nowrap" }}>
+              Offering Selection <span style={{ color: "#d32f2f" }}>*</span>
+            </label>
+            <TextField
+              select
+              size="small"
+              id="offering-select"
+              name="offering"
+              value={offering}
+              onChange={(e) => setOffering(e.target.value)}
+              sx={{ width: "fit-content", minWidth: 170 }}
+            >
+              {offerings.map((name) => (
+                <MenuItem key={name} value={name}>
+                  {name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
         </div>
       </div>
 
