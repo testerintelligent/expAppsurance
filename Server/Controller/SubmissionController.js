@@ -1,6 +1,7 @@
 // Controller/SubmissionController.js
 const SubmissionDetails = require('../Models/SubmissionDetails');
 const AccountDetails = require('../Models/AccountDetails');
+const Qualification = require('../Models/Qualification');
 
 // Create a new submission
 exports.createSubmission = async (req, res) => {
@@ -52,14 +53,19 @@ exports.getSubmissionById = async (req, res) => {
   }
 };
 
-// Update the selected offering for a submission
+// Update the selected offering (and qualification answer) for a submission
 exports.updateSubmissionOffering = async (req, res) => {
   try {
     const { submissionId } = req.params;
-    const { offering } = req.body;
+    const { offering, qualifications = {} } = req.body;
+    const update = {};
+    if (offering !== undefined) update.offering = offering;
+    for (const { code } of Qualification.DEFAULT_QUALIFICATIONS) {
+      if (qualifications[code] !== undefined) update[code] = qualifications[code];
+    }
     const submission = await SubmissionDetails.findOneAndUpdate(
       { submissionId },
-      { offering },
+      update,
       { new: true, runValidators: true }
     );
     if (!submission) return res.status(404).json({ message: 'Submission not found' });

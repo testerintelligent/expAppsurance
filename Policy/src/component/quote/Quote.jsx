@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Box,
   Typography,
   Button,
-  Divider,
-  Tooltip,
-  Grid,
   Alert,
   Dialog,
   DialogTitle,
@@ -14,24 +10,10 @@ import {
   DialogActions,
   Snackbar,
 } from "@mui/material";
-import InfoIcon from "@mui/icons-material/InfoOutlined";
 import InfoBar from "../InfoBar";
 import { createQuote } from "./quoteAPI";
 import { COVERAGE_OPTIONS } from "../../constants/coverages";
 import { useWorkflowState } from "../../utils/workflowSession";
-import PersonIcon from "@mui/icons-material/Person";
-import EmailIcon from "@mui/icons-material/Email";
-import PhoneIcon from "@mui/icons-material/Phone";
-import HomeIcon from "@mui/icons-material/Home";
-import BadgeIcon from "@mui/icons-material/Badge";
-import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
-import FingerprintIcon from "@mui/icons-material/Fingerprint";
-import MapIcon from "@mui/icons-material/Map";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import SecurityIcon from "@mui/icons-material/Security";
-import LocalOfferIcon from "@mui/icons-material/LocalOffer";
-import VerifiedIcon from "@mui/icons-material/Verified";
 
 export default function Quote() {
   const state = useWorkflowState();
@@ -46,7 +28,6 @@ export default function Quote() {
   const expiryDate = state?.expiryDate || "-";
   const pricingData = state?.pricingData || {}; // Premium from pricing API
 
-  const [saveStatus, setSaveStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [errorSnackbar, setErrorSnackbar] = useState({ open: false, message: "" });
@@ -67,19 +48,6 @@ export default function Quote() {
   
   // Calculate final total
   const finalTotal = totalBeforeTax + taxAmount;
-
-  const getCoverageTooltip = (name) => {
-    const cov = COVERAGE_OPTIONS.find((c) => c.name === name);
-    return cov ? cov.description : "Coverage info not available";
-  };
-
-  const handleSaveQuote = async () => {
-    setSaveStatus("Saving quote...");
-    await new Promise((res) => setTimeout(res, 1200));
-    const quoteRef =
-      "Q" + Math.random().toString(36).substring(2, 9).toUpperCase();
-    setSaveStatus(`✅ Quote saved! Reference ID: ${quoteRef}`);
-  };
 
   const handleEdit = () => {
     setConfirmDialogOpen(true);
@@ -296,12 +264,6 @@ export default function Quote() {
               Edit Details
             </button>
           </div>
-
-          {saveStatus && (
-            <div style={{ marginTop: 10, padding: "6px 10px", background: "#edf7ee", border: "1px solid #c3e6cb", borderRadius: 2, fontSize: 12, color: "#1e5228" }}>
-              {saveStatus}
-            </div>
-          )}
         </div>
       </div>
 

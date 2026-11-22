@@ -1,19 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Box,
-  Typography,
-  Grid,
   TextField,
   MenuItem,
   Select,
   FormControl,
   InputLabel,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
   Button,
   Stepper,
   Step,
@@ -23,7 +15,7 @@ import {
   DialogActions,
   Button as MuiButton
 } from "@mui/material";
-import { ArrowBack, Payment as PaymentIcon } from "@mui/icons-material";
+import { ArrowBack } from "@mui/icons-material";
 import { createPolicy } from "../policy/policyAPI";
 import { createInvoice } from "../policy/invoiceApi";
 import "./payment.css";
@@ -50,7 +42,6 @@ export default function Payment() {
     basePremium = 0,
     selectedCoveragesTotal = 0,
     taxAmount = 0,
-    totalPremium: totalPremiumFromQuote = 0,
   } = state || {};
 
   const [billingMethod, setBillingMethod] = useState("Direct Bill");

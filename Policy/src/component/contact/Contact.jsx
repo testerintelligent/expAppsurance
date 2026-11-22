@@ -1,20 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  Tabs,
-  Tab,
-  Typography,
   TextField,
-  Button,
   Grid,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableHead,
-  TableRow,
   MenuItem,
   Modal,
   Snackbar,
@@ -29,14 +17,33 @@ import {
 } from "../account/accountAPI";
 import "./contact.css";
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-  return (
-    <div role="tabpanel" hidden={value !== index} {...other}>
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-    </div>
-  );
-}
+// --- Simple static location mapping for dependent dropdowns ---
+const LOCATION_DATA = {
+  countries: [
+    { code: 'US', name: 'United States' },
+    { code: 'IN', name: 'India' },
+  ],
+  states: {
+    US: [ { code: 'CA', name: 'California' }, { code: 'NY', name: 'New York' } ],
+    IN: [ { code: 'TN', name: 'Tamil Nadu' }, { code: 'KR', name: 'Karnataka' } ],
+  },
+  cities: {
+    CA: [ 'Los Angeles', 'San Francisco' ],
+    NY: [ 'New York', 'Buffalo' ],
+    TN: [ 'Chennai', 'Coimbatore' ],
+    KR: [ 'Bengaluru', 'Mysuru' ],
+  },
+  zips: {
+    'Los Angeles': [ '90001', '90002' ],
+    'San Francisco': [ '94102', '94103' ],
+    'New York': [ '10001', '10002' ],
+    'Buffalo': [ '14201' ],
+    'Chennai': [ '600001', '600002' ],
+    'Coimbatore': [ '641001', '641002' ],
+    'Bengaluru': [ '560001', '560002' ],
+    'Mysuru': [ '570001', '570002' ],
+  }
+};
 
 // Helper function to format date for input[type="date"]
 const formatDateForInput = (dateValue) => {
@@ -107,33 +114,6 @@ export default function Contact() {
   const [searchResult, setSearchResult] = useState([]);
 
 
-  // --- Simple static location mapping for dependent dropdowns ---
-  const LOCATION_DATA = {
-    countries: [
-      { code: 'US', name: 'United States' },
-      { code: 'IN', name: 'India' },
-    ],
-    states: {
-      US: [ { code: 'CA', name: 'California' }, { code: 'NY', name: 'New York' } ],
-      IN: [ { code: 'TN', name: 'Tamil Nadu' }, { code: 'KR', name: 'Karnataka' } ],
-    },
-    cities: {
-      CA: [ 'Los Angeles', 'San Francisco' ],
-      NY: [ 'New York', 'Buffalo' ],
-      TN: [ 'Chennai', 'Coimbatore' ],
-      KR: [ 'Bengaluru', 'Mysuru' ],
-    },
-    zips: {
-      'Los Angeles': [ '90001', '90002' ],
-      'San Francisco': [ '94102', '94103' ],
-      'New York': [ '10001', '10002' ],
-      'Buffalo': [ '14201' ],
-      'Chennai': [ '600001', '600002' ],
-      'Coimbatore': [ '641001', '641002' ],
-      'Bengaluru': [ '560001', '560002' ],
-      'Mysuru': [ '570001', '570002' ],
-    }
-  };
 
   const [countries] = useState(LOCATION_DATA.countries);
   const [states, setStates] = useState([]);
@@ -199,12 +179,13 @@ export default function Contact() {
   const [contactDetails, setContactDetails] = useState([]);
 
   // Keep the modal's dependent dropdown options in sync with the selected contact
+  const { country: modalCountry, state: modalState, city: modalCity } = selectedContact || {};
   useEffect(() => {
-    if (!showContact || !selectedContact) return;
-    setModalStates(LOCATION_DATA.states[selectedContact.country] || []);
-    setModalCities(LOCATION_DATA.cities[selectedContact.state] || []);
-    setModalZips(LOCATION_DATA.zips[selectedContact.city] || []);
-  }, [showContact, selectedContact?.country, selectedContact?.state, selectedContact?.city]);
+    if (!showContact) return;
+    setModalStates(LOCATION_DATA.states[modalCountry] || []);
+    setModalCities(LOCATION_DATA.cities[modalState] || []);
+    setModalZips(LOCATION_DATA.zips[modalCity] || []);
+  }, [showContact, modalCountry, modalState, modalCity]);
 
   // Contacts saved before "country" was persisted (or with a state name instead of a
   // code) would leave the dropdowns blank, so map them onto the dropdown values.
@@ -214,8 +195,9 @@ export default function Contact() {
     if (!state && city) {
       state = Object.keys(LOCATION_DATA.cities).find((code) => LOCATION_DATA.cities[code].includes(city));
     }
+    const target = norm(state);
     for (const [countryCode, list] of Object.entries(LOCATION_DATA.states)) {
-      const match = list.find((s) => norm(s.code) === norm(state) || norm(s.name) === norm(state));
+      const match = list.find((s) => norm(s.code) === target || norm(s.name) === target);
       if (match && (!country || country === countryCode)) {
         state = match.code;
         country = countryCode;
@@ -225,10 +207,6 @@ export default function Contact() {
     return { ...contact, country: country || "", state: state || "", city: city || "" };
   };
 
-  // Ensure a stored value that is not in the static list still shows in its dropdown
-  const withCurrent = (options, value) =>
-    value && !options.some((o) => (o.code ?? o) === value) ? [...options, value] : options;
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -237,14 +215,6 @@ export default function Contact() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0); // reset to first page when changing rows per page
   };
-
-  // Calculate paginated data safely
-  const paginatedData = Array.isArray(searchResult)
-    ? searchResult.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-    : [];
-
-  // Tab change handler
-  const handleTabChange = (event, newValue) => setTabValue(newValue);
 
   // Input handlers
   const handleSearchChange = (e) => {

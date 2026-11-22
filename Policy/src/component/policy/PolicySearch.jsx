@@ -1,23 +1,5 @@
 import React, { useState, useEffect } from "react";
 import api from "../../utils/api";
-import {
-  Box,
-  Typography,
-  TextField,
-  CircularProgress,
-  Grid,
-  Button,
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableContainer,
-  TableBody,
-  TablePagination,
-  Stack,
-} from "@mui/material";
-import { Search as SearchIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 const PolicySearch = () => {

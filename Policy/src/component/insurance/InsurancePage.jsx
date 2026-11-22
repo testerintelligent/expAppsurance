@@ -1,12 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../../utils/api";
-import { FaSearch } from "react-icons/fa";
+
+// Coverage options per policy type (static)
+const coverageMapping = {
+  Health: [
+    "Hospitalization costs",
+    "Treatment Cost",
+    "Emergency Services",
+    "Laboratory Expenses",
+    "Prescription Drugs",
+    "Day-care procedures",
+  ],
+  Life: ["Term", "Endowment", "Retirement", "Money-Back"],
+  Vehicle: [
+    "Third-Party Liability",
+    "Comprehensive",
+    "Personal Vehicle Damage",
+  ],
+};
 
 const InsurancePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const initialData = location.state?.formData || {};
+  const formDataFromState = location.state?.formData;
+  const initialData = useMemo(() => formDataFromState || {}, [formDataFromState]);
   const apiMethod = location.state?.apiMethod || "";
 
   const [contactData, setContactData] = useState([]);
@@ -16,7 +34,7 @@ const InsurancePage = () => {
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
-  const [currentField, setCurrentField] = useState("");
+  const [currentField] = useState("");
   const [customerId, setCustomerId] = useState("");
 
   const [insuranceData, setInsuranceData] = useState({
@@ -31,22 +49,6 @@ const InsurancePage = () => {
     ...initialData,
   });
 
-  const coverageMapping = {
-    Health: [
-      "Hospitalization costs",
-      "Treatment Cost",
-      "Emergency Services",
-      "Laboratory Expenses",
-      "Prescription Drugs",
-      "Day-care procedures",
-    ],
-    Life: ["Term", "Endowment", "Retirement", "Money-Back"],
-    Vehicle: [
-      "Third-Party Liability",
-      "Comprehensive",
-      "Personal Vehicle Damage",
-    ],
-  };
   useEffect(() => {
     api
       .get("/api/getContact")
@@ -86,7 +88,7 @@ const InsurancePage = () => {
   };
 
   const handleCustomerChange = (e) => {
-    contactData.filter((contact) => {
+    contactData.forEach((contact) => {
       if (contact.customerId === e.target.value) {
         setInsuranceData((prev) => ({ ...prev, customerId: contact._id }));
       }
@@ -101,7 +103,7 @@ const InsurancePage = () => {
     (option) => option.firstName + " " + option.lastName
   );
   const selectSuggestion = (field, value) => {
-    contactData.filter((contact) => {
+    contactData.forEach((contact) => {
       const name = contact.firstName + " " + contact.lastName;
       if (name === value) {
         setCustomerId(contact.customerId);

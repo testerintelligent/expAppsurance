@@ -2,16 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Box,
-  Typography,
   TextField,
   Button,
-  Paper,
   Grid,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
 } from "@mui/material";
 
 import { createSubmission } from "./submissionAPI"; // Adjust the path

@@ -2,17 +2,11 @@
 import React, { useEffect } from "react";
 import {
   Box,
-  Grid,
-  Typography,
-  Paper,
   Button,
-  Divider,
   Alert,
 } from "@mui/material";
 import {
   CheckCircle,
-  FileDownload,
-  ArrowBack,
   Home as HomeIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";

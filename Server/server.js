@@ -22,6 +22,8 @@ const rateBookRoutes = require("./Routes/rateBookRoutes")
 const pricingRoutes = require("./Routes/pricingRoutes")
 const offeringRoutes = require("./Routes/OfferingRoute");
 const Offering = require("./Models/Offering");
+const qualificationRoutes = require("./Routes/QualificationRoute");
+const Qualification = require("./Models/Qualification");
 
 // Load environment variables from .env
 dotenv.config();
@@ -56,6 +58,7 @@ app.use("/api/rateroutine", rateRoutineRoutes);
 app.use("/api/ratebook", rateBookRoutes);
 app.use("/api/pricing", pricingRoutes);
 app.use("/api/offerings", offeringRoutes);
+app.use("/api/qualifications", qualificationRoutes);
 
 // Root endpoint
 app.get("/", (req, res) => {
@@ -74,6 +77,11 @@ mongoose
       await Offering.seedDefaults();
     } catch (err) {
       console.error("❌ Failed to seed offerings:", err);
+    }
+    try {
+      await Qualification.seedDefaults();
+    } catch (err) {
+      console.error("❌ Failed to seed qualifications:", err);
     }
   })
   .catch((err) => console.error("❌ MongoDB connection error:", err));

@@ -1,4 +1,10 @@
 const mongoose = require('mongoose');
+const Qualification = require('./Qualification');
+
+// One field per qualification question, restricted to that question's options
+const qualificationFields = Object.fromEntries(
+  Qualification.DEFAULT_QUALIFICATIONS.map((q) => [q.code, { type: String, enum: q.options }])
+);
 
 const submissionSchema = new mongoose.Schema({
   submissionId: { type: String, unique: true, index: true },
@@ -10,6 +16,8 @@ const submissionSchema = new mongoose.Schema({
   expirationDate: { type: Date, required: true },
   writtenDate: { type: Date, required: true },
   offering: { type: String, enum: ['Basic Program', 'Standard Program', 'Premium Program'] },
+  // Qualification answers
+  ...qualificationFields,
   createdAt: { type: Date, default: Date.now },
 });
 

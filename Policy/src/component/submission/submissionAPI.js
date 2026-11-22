@@ -26,10 +26,17 @@ export const getOfferings = async () => {
   return Array.isArray(res.data) ? res.data : [];
 };
 
-// Save selected offering on a submission
-export const updateSubmissionOffering = async (submissionId, offering) => {
+// Get qualification questions (with options)
+export const getQualifications = async () => {
+  const res = await api.get("/api/qualifications");
+  return Array.isArray(res.data) ? res.data : [];
+};
+
+// Save selected offering (and qualification answers, keyed by question code) on a submission
+export const updateSubmissionOffering = async (submissionId, offering, qualifications) => {
   const res = await api.patch(`/api/submissions/${submissionId}/offering`, {
     offering,
+    qualifications,
   });
   return res.data.submission;
 };

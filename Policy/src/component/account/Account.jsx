@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../../utils/api";
 import {
-  Box,
-  TextField,
-  Button,
-  IconButton,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { searchAccountByContact, searchAccount } from "./accountAPI";
