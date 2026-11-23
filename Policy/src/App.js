@@ -17,6 +17,12 @@ const Payment = lazy(() => import("./component/payment/Payment"));
 const PolicyIssuance = lazy(() => import("./component/policy/PolicyIssuance"));
 const PolicySearch = lazy(() => import("./component/policy/PolicySearch"));
 const PolicySummary = lazy(() => import("./component/policy/PolicySummary"));
+const CommercialDriver = lazy(() =>
+  import("./component/commercial/CommercialDriver")
+);
+const CommercialVehicle = lazy(() =>
+  import("./component/commercial/CommercialVehicle")
+);
 const RequireAuth = lazy(() => import("./component/auth/RequireAuth"));
 const Login = lazy(() => import("./component/auth/Login"));
 const Signup = lazy(() => import("./component/auth/Signup"));
@@ -58,6 +64,8 @@ function App() {
               <Route path="/quote" element={<Quote />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/policy-issuance" element={<PolicyIssuance />} />
+              <Route path="/commercial-driver" element={<CommercialDriver />} />
+              <Route path="/commercial-vehicle" element={<CommercialVehicle />} />
               <Route path="/policy" element={<PolicySearch />} />
               <Route
                 path="/policy-summary/:policyNumber"
