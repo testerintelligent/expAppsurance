@@ -116,24 +116,40 @@ const createAccount = async (req, res) => {
 // --- 2️⃣ Search Accounts ---
 const getAccounts = async (req, res) => {
   try {
-    const { accountNumber, firstName, lastName, dateOfBirth, organization, city, zipCode, country } = req.query;
+    // Trim every incoming value; empty strings are treated as "not provided"
+    const q = {};
+    ["accountNumber", "firstName", "lastName", "dateOfBirth", "organization", "city", "zipCode", "country"]
+      .forEach((k) => { const v = (req.query[k] || "").toString().trim(); if (v) q[k] = v; });
+    const { accountNumber, firstName, lastName, dateOfBirth, organization, city, zipCode, country } = q;
+
+    // Case-insensitive "contains" match with user input escaped for regex safety
+    const contains = (v) => ({ $regex: v.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), $options: "i" });
+
     let filter = {};
 
     if (accountNumber) {
-      filter.accountId = accountNumber;
+      filter.accountId = contains(accountNumber);
     }
 
     let accounts;
 
     if (firstName || lastName || dateOfBirth || organization || city || zipCode || country) {
       const contactFilter = {};
-      if (firstName)    contactFilter.firstName    = { $regex: new RegExp(firstName,    "i") };
-      if (lastName)     contactFilter.lastName     = { $regex: new RegExp(lastName,     "i") };
-      if (organization) contactFilter.organization = { $regex: new RegExp(organization, "i") };
-      if (city)         contactFilter.city         = { $regex: new RegExp(city,         "i") };
-      if (zipCode)      contactFilter.zipCode      = { $regex: new RegExp(zipCode,      "i") };
-      if (country)      contactFilter.country      = { $regex: new RegExp(country,      "i") };
-      if (dateOfBirth)  contactFilter.dateOfBirth  = new Date(dateOfBirth);
+      if (firstName)    contactFilter.firstName    = contains(firstName);
+      if (lastName)     contactFilter.lastName     = contains(lastName);
+      if (organization) contactFilter.organization = contains(organization);
+      if (city)         contactFilter.city         = contains(city);
+      if (zipCode)      contactFilter.zipCode      = contains(zipCode);
+      if (country)      contactFilter.country      = contains(country);
+      if (dateOfBirth) {
+        // Match the whole day regardless of time-of-day stored
+        const start = new Date(dateOfBirth);
+        if (!isNaN(start)) {
+          const end = new Date(start);
+          end.setUTCDate(end.getUTCDate() + 1);
+          contactFilter.dateOfBirth = { $gte: start, $lt: end };
+        }
+      }
 
       const contacts = await Contact.find(contactFilter, "_id");
       const contactIds = contacts.map((c) => c._id);
