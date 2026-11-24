@@ -75,25 +75,23 @@ export default function NewSubmission() {
       console.log("neeSub", newSubmission);
 
       // 3️⃣ Navigate to next screen
-      if (product.name === "Personal Auto") {
-        const accountNumber = account.accountId || "";
-        const currentEffectiveDate = form.effectiveDate || "";
-        const currentExpirationDate = form.expirationDate || "";
+      const sharedState = {
+        contact: contact || {},
+        contactName: contact.name || account.name || "N/A",
+        accountId: account?._id || "",
+        accountNumber: account.accountId || "",
+        effectiveDate: form.effectiveDate || "",
+        expiryDate: form.expirationDate || "",
+        submissionId: newSubmission?.submissionId || "",
+        productName: product.name,
+        isExistingAccount: true,
+        account: account,
+      };
 
-        navigate("/offerings", {
-          state: {
-            contact: contact || {},
-            contactName: contact.name || account.name || "N/A",
-            accountId: account?._id || "",
-            accountNumber: accountNumber || "",
-            effectiveDate: currentEffectiveDate,
-            expiryDate: currentExpirationDate,
-            submissionId: newSubmission?.submissionId || "",
-            productName: product.name,
-            isExistingAccount: true,
-            account: account,
-          },
-        });
+      if (product.name === "Personal Auto" || product.name === "Commercial Auto") {
+        // Both auto products start with Offerings → Qualification; Qualification
+        // then routes to the product-specific driver screen.
+        navigate("/offerings", { state: sharedState });
       } else {
         navigate(`/submission-details/${product.name}`, {
           state: {

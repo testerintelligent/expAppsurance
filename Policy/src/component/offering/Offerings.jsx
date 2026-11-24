@@ -7,7 +7,7 @@ import { Box, TextField, MenuItem, Button, Snackbar, Alert } from "@mui/material
 
 const DEFAULT_OFFERINGS = ["Basic Program", "Standard Program", "Premium Program"];
 
-// Step 1 of the Personal Auto flow: Offerings → Qualification → Driver → Vehicle → ...
+// Step 1 of the Personal & Commercial Auto flows: Offerings → Qualification → Driver → Vehicle → ...
 export default function Offerings() {
   const state = useWorkflowState();
   const navigate = useNavigate();

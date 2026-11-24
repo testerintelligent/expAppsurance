@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const contactSchema = new mongoose.Schema({
   customerId: { type: String, unique: true, index: true },
   firstName: { type: String, required: true, trim: true, minlength: 2 },
-  lastName: { type: String, required: true, trim: true, minlength: 2 },
+  // Optional for Commercial contacts (companies have no last name)
+  lastName: { type: String, trim: true },
   email: {
     type: String,
     required: [true, 'Email is required.'],
@@ -25,9 +26,10 @@ const contactSchema = new mongoose.Schema({
       message: props => `${props.value} is not a valid phone number. Must be exactly 10 digits.`
     }
   },
-  dateOfBirth: { type: Date, required: true, validate: {
+  // Optional for Commercial contacts (companies have no date of birth)
+  dateOfBirth: { type: Date, validate: {
     validator: function(v) {
-      return v < new Date();
+      return !v || v < new Date();
     },
     message: 'Date of birth must be in the past.'
   }},
@@ -43,8 +45,8 @@ const contactSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now, index: true },
 });
 
-// Index compound example: fast lookup by name + dob
-contactSchema.index({ firstName: 1, lastName: 1, dateOfBirth: 1 });
+// Compound index for personal contact lookup (sparse — null lastName/DOB for Commercial contacts)
+contactSchema.index({ firstName: 1, lastName: 1, dateOfBirth: 1 }, { sparse: true });
 
 // Coerce empty-string email → undefined so the sparse unique index ignores it.
 // An empty string IS a value to MongoDB and would cause duplicate-key errors
@@ -63,9 +65,9 @@ contactSchema.pre('save', function (next) {
   next();
 });
 
-// Helper method: full name
+// Helper method: full name (returns company name alone for Commercial contacts)
 contactSchema.methods.getFullName = function () {
-  return `${this.firstName} ${this.lastName}`;
+  return this.lastName ? `${this.firstName} ${this.lastName}` : this.firstName;
 };
 
 // Static method: find by full name (case insensitive)

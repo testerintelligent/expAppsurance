@@ -19,7 +19,7 @@ const DEFAULT_QUALIFICATIONS = [
   { code: "coverageDeclinedInPast", question: "Was a policy or coverage declined in the past?", options: YES_NO },
 ];
 
-// Step 2 of the Personal Auto flow: Offerings → Qualification → Driver → Vehicle → ...
+// Step 2 of the auto flows: Offerings → Qualification → Driver (Personal) / Commercial Driver → ...
 export default function Qualification() {
   const state = useWorkflowState();
   const navigate = useNavigate();
@@ -27,6 +27,7 @@ export default function Qualification() {
   const [qualificationQuestions, setQualificationQuestions] = useState(DEFAULT_QUALIFICATIONS);
   const [qualifications, setQualifications] = useState(state?.qualifications || {});
   const [saving, setSaving] = useState(false);
+  const [submitted, setSubmitted] = useState(false); // highlight empty fields once Next is clicked
   const [errorOpen, setErrorOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -45,6 +46,8 @@ export default function Qualification() {
     setErrorOpen(true);
   };
 
+  const isMissing = (q) => q.required !== false && !qualifications[q.code];
+
   const handleBack = () => {
     navigate("/offerings", { state: { ...state, qualifications } });
   };
@@ -59,18 +62,19 @@ export default function Qualification() {
       return;
     }
 
-    const unanswered = qualificationQuestions.find(
-      (q) => q.required !== false && !qualifications[q.code]
-    );
+    setSubmitted(true);
+    const unanswered = qualificationQuestions.find(isMissing);
     if (unanswered) {
-      showError(`Please answer: ${unanswered.question}`);
+      // Empty fields are highlighted inline; focus the first one
+      document.getElementById(`qualification-${unanswered.code}`)?.focus();
       return;
     }
 
     setSaving(true);
     try {
       await updateSubmissionOffering(state.submissionId, state.offering, qualifications);
-      navigate("/driver", { state: { ...state, qualifications } });
+      const nextPath = state?.productName === "Commercial Auto" ? "/commercial-driver" : "/driver";
+      navigate(nextPath, { state: { ...state, qualifications } });
     } catch (err) {
       showError(err.response?.data?.message || "Failed to save qualification");
     } finally {
@@ -109,7 +113,10 @@ export default function Qualification() {
                   value={qualifications[q.code] || ""}
                   onChange={(e) => setQualifications((prev) => ({ ...prev, [q.code]: e.target.value }))}
                   SelectProps={{ displayEmpty: true }}
-                  sx={{ width: "fit-content", minWidth: 170, "& .MuiSelect-select": { py: 0.125, fontSize: 13 } }}
+                  error={submitted && isMissing(q)}
+                  helperText={submitted && isMissing(q) ? "This field is required" : ""}
+                  FormHelperTextProps={{ sx: { mx: 0, mt: 0.25, fontSize: 11 } }}
+                  sx={{ width: "fit-content", minWidth: 170, my: 0.5, "& .MuiSelect-select": { py: 0.125, fontSize: 13 } }}
                 >
                   <MenuItem value="" disabled>
                     <em>-- Select --</em>

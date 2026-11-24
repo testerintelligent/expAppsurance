@@ -59,7 +59,12 @@ export default function Payment() {
   const totalTax = taxAmount || Math.round(totalBeforeTax * 0.18);
   const totalCost = totalBeforeTax + totalTax;
 
-  const policyHolder = `${contact.firstName || ""} ${contact.lastName || ""}`;
+  // For Commercial Auto the contact record stores the company name in
+  // `organization` (or `firstName`); for Personal Auto it's first + last.
+  const isCommercial = (state?.productName || "").toLowerCase().includes("commercial");
+  const policyHolder = isCommercial
+    ? contact.organization || contact.firstName || "Commercial Account"
+    : `${contact.firstName || ""} ${contact.lastName || ""}`.trim();
 
   const getScheduleRows = () => {
     let periods = 1;
@@ -100,7 +105,7 @@ export default function Payment() {
         paymentRef,
         accountDetails,
         policyNumber,
-        productType: "Auto",
+        productType: state?.productName || "Auto",
       };
 
       console.log("Creating policy with data:", policyData);
