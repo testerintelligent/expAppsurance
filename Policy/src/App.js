@@ -10,6 +10,10 @@ const Account = lazy(() => import("./component/account/Account"));
 const NewSubmission = lazy(() =>
   import("./component/submission/NewSubmission")
 );
+const Offerings = lazy(() => import("./component/offering/Offerings"));
+const Qualification = lazy(() =>
+  import("./component/qualification/Qualification")
+);
 const Driver = lazy(() => import("./component/driver/Driver"));
 const Vehicle = lazy(() => import("./component/vehicle/Vehicle"));
 const Quote = lazy(() => import("./component/quote/Quote"));
@@ -59,6 +63,8 @@ function App() {
               <Route path="/contact" element={<Contact />}></Route>
               <Route path="/account" element={<Account />}></Route>
               <Route path="/new-submission" element={<NewSubmission />} />
+              <Route path="/offerings" element={<Offerings />} />
+              <Route path="/qualification" element={<Qualification />} />
               <Route path="/driver" element={<Driver />} />
               <Route path="/vehicle" element={<Vehicle />} />
               <Route path="/quote" element={<Quote />} />

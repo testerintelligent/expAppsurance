@@ -1,13 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import InfoBar from "../InfoBar";
 import { useNavigate } from "react-router-dom";
 import { useWorkflowState } from "../../utils/workflowSession";
 import { createDriverForSubmission } from "../driver/driverAPI";
-import {
-  getOfferings,
-  getQualifications,
-  updateSubmissionOffering,
-} from "../submission/submissionAPI";
 import {
   Box,
   Grid,
@@ -20,42 +15,6 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-
-// ─── Fallback qualification questions ────────────────────────────────────────
-// Used if the API call fails; mirrors Server/Models/Qualification.js.
-const YES_NO = ["Yes", "No"];
-const DEFAULT_QUALIFICATIONS = [
-  {
-    code: "currentlyInsured",
-    question: "Is the applicant currently insured?",
-    options: [
-      "Yes",
-      "No - New Driver",
-      "No - previous policy not renewed",
-      "Not known",
-    ],
-  },
-  {
-    code: "licenseCurrentlySuspended",
-    question: "Is the applicant's license currently canceled or suspended?",
-    options: YES_NO,
-  },
-  {
-    code: "licenseCanceledInPast",
-    question: "Was the applicant's license canceled in the past?",
-    options: YES_NO,
-  },
-  {
-    code: "trafficViolationInPast",
-    question: "Has the driver had a traffic violation in the past?",
-    options: YES_NO,
-  },
-  {
-    code: "coverageDeclinedInPast",
-    question: "Was a policy or coverage declined in the past?",
-    options: YES_NO,
-  },
-];
 
 // ─── Blank driver form — same shape as Personal Auto ─────────────────────────
 const emptyForm = {
@@ -106,40 +65,6 @@ export default function CommercialDriver() {
   const [tab, setTab] = useState(0);
   const [errorOpen, setErrorOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-
-  // ─── Offerings ──────────────────────────────────────────────────────────
-  const DEFAULT_OFFERINGS = [
-    "Basic Program",
-    "Standard Program",
-    "Premium Program",
-  ];
-  const [offerings, setOfferings] = useState(DEFAULT_OFFERINGS);
-  const [offering, setOffering] = useState(
-    state?.offering || DEFAULT_OFFERINGS[0]
-  );
-
-  // ─── Qualifications ─────────────────────────────────────────────────────
-  const [qualificationQuestions, setQualificationQuestions] = useState(
-    DEFAULT_QUALIFICATIONS
-  );
-  const [qualifications, setQualifications] = useState(
-    state?.qualifications || {}
-  );
-
-  useEffect(() => {
-    getOfferings()
-      .then((list) => {
-        if (list.length > 0) setOfferings(list.map((o) => o.name));
-      })
-      .catch((err) => console.error("Failed to load offerings:", err));
-
-    getQualifications()
-      .then((list) => {
-        const valid = list.filter((q) => q.code && q.options?.length);
-        if (valid.length > 0) setQualificationQuestions(valid);
-      })
-      .catch((err) => console.error("Failed to load qualifications:", err));
-  }, []);
 
   // ─── Validation — same required fields as Personal Auto ──────────────────
   const validateForm = () => {
@@ -192,29 +117,8 @@ export default function CommercialDriver() {
       setErrorOpen(true);
       return;
     }
-    if (!offering) {
-      setErrorMsg("Offering Selection is required");
-      setErrorOpen(true);
-      return;
-    }
-    const unanswered = qualificationQuestions.find(
-      (q) => q.required !== false && !qualifications[q.code]
-    );
-    if (unanswered) {
-      setErrorMsg(`Please answer: ${unanswered.question}`);
-      setErrorOpen(true);
-      return;
-    }
-
     try {
-      // 1️⃣ Save offering + qualification answers on the submission
-      await updateSubmissionOffering(
-        state.submissionId,
-        offering,
-        qualifications
-      );
-
-      // 2️⃣ Create the driver — submissionId links it to the commercial account/contact
+      // Create the driver — submissionId links it to the commercial account/contact
       const payload = {
         ...formData,
         drivingExperience: Number(formData.drivingExperience),
@@ -226,7 +130,7 @@ export default function CommercialDriver() {
         payload
       );
 
-      // 3️⃣ Navigate to commercial vehicle screen
+      // Navigate to commercial vehicle screen
       navigate("/commercial-vehicle", {
         state: {
           ...state,
@@ -234,8 +138,6 @@ export default function CommercialDriver() {
           driver: driver,
           contact: formData,          // driver's own contact detail
           driverForm: formData,
-          offering,
-          qualifications,
         },
       });
     } catch (err) {
@@ -266,94 +168,6 @@ export default function CommercialDriver() {
         effectiveDate={state?.effectiveDate || "-"}
         expiryDate={state?.expiryDate || "-"}
       />
-
-      {/* ── Offerings ────────────────────────────────────────────────────── */}
-      <div
-        style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}
-      >
-        <div
-          style={{
-            background: "#f3f6f9", padding: "7px 12px",
-            borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700,
-            color: "#2e3e4c", textTransform: "capitalize", letterSpacing: 0.5,
-          }}
-        >
-          Offerings
-        </div>
-        <div style={{ padding: "12px 14px" }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <label
-              htmlFor="offering-select"
-              style={{ fontSize: 13, fontWeight: 400, color: "#2e3e4c", whiteSpace: "nowrap" }}
-            >
-              Offering Selection <span style={{ color: "#d32f2f" }}>*</span>
-            </label>
-            <TextField
-              select size="small" id="offering-select" value={offering}
-              onChange={(e) => setOffering(e.target.value)}
-              sx={{ width: "fit-content", minWidth: 170, "& .MuiSelect-select": { py: 0.125, fontSize: 13 } }}
-            >
-              {offerings.map((name) => (
-                <MenuItem key={name} value={name}>{name}</MenuItem>
-              ))}
-            </TextField>
-          </Box>
-        </div>
-      </div>
-
-      {/* ── Qualification ─────────────────────────────────────────────────── */}
-      <div
-        style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}
-      >
-        <div
-          style={{
-            background: "#f3f6f9", padding: "7px 12px",
-            borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700,
-            color: "#2e3e4c", textTransform: "capitalize", letterSpacing: 0.5,
-          }}
-        >
-          Qualification
-        </div>
-        <div style={{ padding: "12px 14px" }}>
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", sm: "max-content max-content" },
-              alignItems: "center",
-              columnGap: 1.5,
-              rowGap: 0,
-            }}
-          >
-            {qualificationQuestions.map((q) => (
-              <React.Fragment key={q.code}>
-                <label
-                  htmlFor={`qualification-${q.code}`}
-                  style={{ fontSize: 13, fontWeight: 400, color: "#2e3e4c" }}
-                >
-                  {q.question}
-                  {q.required !== false && (
-                    <span style={{ color: "#d32f2f" }}> *</span>
-                  )}
-                </label>
-                <TextField
-                  select size="small" id={`qualification-${q.code}`}
-                  value={qualifications[q.code] || ""}
-                  onChange={(e) =>
-                    setQualifications((prev) => ({ ...prev, [q.code]: e.target.value }))
-                  }
-                  SelectProps={{ displayEmpty: true }}
-                  sx={{ width: "fit-content", minWidth: 170, "& .MuiSelect-select": { py: 0.125, fontSize: 13 } }}
-                >
-                  <MenuItem value="" disabled><em>-- Select --</em></MenuItem>
-                  {q.options.map((opt) => (
-                    <MenuItem key={opt} value={opt}>{opt}</MenuItem>
-                  ))}
-                </TextField>
-              </React.Fragment>
-            ))}
-          </Box>
-        </div>
-      </div>
 
       {/* ── Driver Details heading ────────────────────────────────────────── */}
       <div style={{ fontSize: 16, fontWeight: 700, color: "#2d3e52", marginBottom: 10 }}>
@@ -595,8 +409,14 @@ export default function CommercialDriver() {
         </div>
       )}
 
-      {/* ── Next button ───────────────────────────────────────────────────── */}
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2, pb: 2 }}>
+      {/* ── Back / Next buttons ───────────────────────────────────────────── */}
+      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2, pb: 2 }}>
+        <Button
+          variant="text" size="small"
+          onClick={() => navigate("/qualification", { state: { ...state, driverForm: formData } })}
+        >
+          Back
+        </Button>
         <Button variant="contained" size="small" onClick={handleNext}>
           Next
         </Button>

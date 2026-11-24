@@ -88,10 +88,10 @@ export default function NewSubmission() {
         account: account,
       };
 
-      if (product.name === "Personal Auto") {
-        navigate("/driver", { state: sharedState });
-      } else if (product.name === "Commercial Auto") {
-        navigate("/commercial-driver", { state: sharedState });
+      if (product.name === "Personal Auto" || product.name === "Commercial Auto") {
+        // Both auto products start with Offerings → Qualification; Qualification
+        // then routes to the product-specific driver screen.
+        navigate("/offerings", { state: sharedState });
       } else {
         navigate(`/submission-details/${product.name}`, {
           state: {
