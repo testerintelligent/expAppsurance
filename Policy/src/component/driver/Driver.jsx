@@ -413,14 +413,15 @@ export default function Driver() {
                   <div style={{ fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #e3e8ee" }}>Address</div>
                   <Grid container spacing={1.5}>
                     {[
-                      { label: "Country", field: "country", readOnly: true },
-                      { label: "Address 1", field: "address", readOnly: true },
-                      { label: "City", field: "city", readOnly: true },
-                      { label: "State", field: "state", readOnly: true },
-                      { label: "ZIP Code", field: "zipCode", readOnly: true },
-                    ].map(({ label, field, readOnly }) => (
+                      { label: "Country", field: "country" },
+                      { label: "Address 1", field: "address" },
+                      { label: "City", field: "city" },
+                      { label: "State", field: "state" },
+                      { label: "ZIP Code", field: "zipCode" },
+                    ].map(({ label, field }) => (
                       <Grid item xs={12} key={field}>
-                        <TextField size="small" label={label} value={formData[field] || ""} fullWidth required InputProps={{ readOnly }} />
+                        <TextField size="small" label={label} value={formData[field] || ""} fullWidth required
+                          onChange={(e) => setFormData((prev) => ({ ...prev, [field]: e.target.value }))} />
                       </Grid>
                     ))}
                     <Grid item xs={12}>
