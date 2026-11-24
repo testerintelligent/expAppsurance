@@ -80,7 +80,7 @@ export default function NewSubmission() {
         const currentEffectiveDate = form.effectiveDate || "";
         const currentExpirationDate = form.expirationDate || "";
 
-        navigate("/driver", {
+        navigate("/offerings", {
           state: {
             contact: contact || {},
             contactName: contact.name || account.name || "N/A",

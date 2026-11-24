@@ -8,11 +8,6 @@ import {
   getDriversByAccount,
 } from "./driverAPI";
 import PrimaryDriverQuestion from "./IsNewDriver";
-import {
-  getOfferings,
-  getQualifications,
-  updateSubmissionOffering,
-} from "../submission/submissionAPI";
 import { formatDateForInput } from "../../utils/dateFormatter";
 import {
   Box,
@@ -27,20 +22,6 @@ import {
   Alert,
   CircularProgress,
 } from "@mui/material";
-
-// Fallback qualification questions (used if the API call fails); mirrors Server/Models/Qualification.js
-const YES_NO = ["Yes", "No"];
-const DEFAULT_QUALIFICATIONS = [
-  {
-    code: "currentlyInsured",
-    question: "Is the applicant currently insured?",
-    options: ["Yes", "No - New Driver", "No - previous policy not renewed", "Not known"],
-  },
-  { code: "licenseCurrentlySuspended", question: "Is the applicant's license currently canceled or suspended?", options: YES_NO },
-  { code: "licenseCanceledInPast", question: "Was the applicant's license canceled in the past?", options: YES_NO },
-  { code: "trafficViolationInPast", question: "Has the driver had a traffic violation in the past?", options: YES_NO },
-  { code: "coverageDeclinedInPast", question: "Was a policy or coverage declined in the past?", options: YES_NO },
-];
 
 // Blank driver form
 const emptyForm = {
@@ -83,30 +64,6 @@ export default function Driver() {
   const [tab, setTab] = useState(0);
   const [errorOpen, setErrorOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-
-  const DEFAULT_OFFERINGS = ["Basic Program", "Standard Program", "Premium Program"];
-  const [offerings, setOfferings] = useState(DEFAULT_OFFERINGS);
-  const [offering, setOffering] = useState(state?.offering || DEFAULT_OFFERINGS[0]);
-
-  const [qualificationQuestions, setQualificationQuestions] = useState(DEFAULT_QUALIFICATIONS);
-  const [qualifications, setQualifications] = useState(state?.qualifications || {});
-
-  // Load offerings from the database (fall back to defaults on failure)
-  useEffect(() => {
-    getOfferings()
-      .then((list) => {
-        if (list.length > 0) setOfferings(list.map((o) => o.name));
-      })
-      .catch((err) => console.error("Failed to load offerings:", err));
-
-    // Load qualification questions/options from the database (fall back to defaults)
-    getQualifications()
-      .then((list) => {
-        const valid = list.filter((q) => q.code && q.options?.length);
-        if (valid.length > 0) setQualificationQuestions(valid);
-      })
-      .catch((err) => console.error("Failed to load qualifications:", err));
-  }, []);
 
   // Fetch existing drivers when isPrimaryDriver changes or when dealing with existing account
   useEffect(() => {
@@ -278,24 +235,9 @@ export default function Driver() {
       return;
     }
 
-    if (!offering) {
-      setErrorMsg("Offering Selection is required");
-      setErrorOpen(true);
-      return;
-    }
-
-    const unanswered = qualificationQuestions.find(
-      (q) => q.required !== false && !qualifications[q.code]
-    );
-    if (unanswered) {
-      setErrorMsg(`Please answer: ${unanswered.question}`);
-      setErrorOpen(true);
-      return;
-    }
-
+    // Offering and qualification answers are captured (and saved) on the
+    // previous /offerings and /qualification pages; they travel on `state`.
     try {
-      await updateSubmissionOffering(state.submissionId, offering, qualifications);
-
       // If isPrimaryDriver is "no" and an existing driver is selected, skip creation
       if (isPrimaryDriver === "no" && selectedDriverId) {
         navigate("/vehicle", {
@@ -303,8 +245,6 @@ export default function Driver() {
             ...state,
             driverId: selectedDriverId,
             contact: formData,
-            offering,
-            qualifications,
           },
         });
         return;
@@ -333,8 +273,6 @@ export default function Driver() {
           driver: driver,
           contact: formData,
           driverForm: formData,
-          offering,
-          qualifications,
         },
       });
     } catch (err) {
@@ -353,73 +291,6 @@ export default function Driver() {
         effectiveDate={state?.effectiveDate || "-"}
         expiryDate={state?.expiryDate || "-"}
       />
-
-      {/* Offerings */}
-      <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
-        <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "capitalize", letterSpacing: 0.5 }}>
-          Offerings
-        </div>
-        <div style={{ padding: "12px 14px" }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <label htmlFor="offering-select" style={{ fontSize: 13, fontWeight: 400, color: "#2e3e4c", whiteSpace: "nowrap" }}>
-              Offering Selection <span style={{ color: "#d32f2f" }}>*</span>
-            </label>
-            <TextField
-              select
-              size="small"
-              id="offering-select"
-              name="offering"
-              value={offering}
-              onChange={(e) => setOffering(e.target.value)}
-              sx={{ width: "fit-content", minWidth: 170, "& .MuiSelect-select": { py: 0.125, fontSize: 13 } }}
-            >
-              {offerings.map((name) => (
-                <MenuItem key={name} value={name}>
-                  {name}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Box>
-        </div>
-      </div>
-
-      {/* Qualification */}
-      <div style={{ border: "1px solid #d7dbe2", background: "#fff", marginBottom: 14 }}>
-        <div style={{ background: "#f3f6f9", padding: "7px 12px", borderBottom: "1px solid #d7dbe2", fontSize: 11, fontWeight: 700, color: "#2e3e4c", textTransform: "capitalize", letterSpacing: 0.5 }}>
-          Qualification
-        </div>
-        <div style={{ padding: "12px 14px" }}>
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "max-content max-content" }, alignItems: "center", columnGap: 1.5, rowGap: 0 }}>
-            {qualificationQuestions.map((q) => (
-              <React.Fragment key={q.code}>
-                <label htmlFor={`qualification-${q.code}`} style={{ fontSize: 13, fontWeight: 400, color: "#2e3e4c" }}>
-                  {q.question}
-                  {q.required !== false && <span style={{ color: "#d32f2f" }}> *</span>}
-                </label>
-                <TextField
-                  select
-                  size="small"
-                  id={`qualification-${q.code}`}
-                  name={q.code}
-                  value={qualifications[q.code] || ""}
-                  onChange={(e) => setQualifications((prev) => ({ ...prev, [q.code]: e.target.value }))}
-                  SelectProps={{ displayEmpty: true }}
-                  sx={{ width: "fit-content", minWidth: 170, "& .MuiSelect-select": { py: 0.125, fontSize: 13 } }}
-                >
-                  <MenuItem value="" disabled>
-                    <em>-- Select --</em>
-                  </MenuItem>
-                  {q.options.map((opt) => (
-                    <MenuItem key={opt} value={opt}>
-                      {opt}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </React.Fragment>
-            ))}
-          </Box>
-        </div>
-      </div>
 
       <div style={{ fontSize: 16, fontWeight: 700, color: "#2d3e52", marginBottom: 10 }}>Driver Details</div>
 
@@ -632,8 +503,9 @@ export default function Driver() {
           )}
 
           {/* Next button */}
-          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2, pb: 2 }}>
-            <Button variant="contained" size="small" onClick={handleNext}>Next</Button>
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2, pb: 2, border: "none !important" }}>
+            <Button variant="text" size="small" disableElevation sx={{ border: "none", boxShadow: "none" }} onClick={() => navigate("/qualification", { state })}>Back</Button>
+            <Button variant="contained" size="small" disableElevation sx={{ border: "none", boxShadow: "none" }} onClick={handleNext}>Next</Button>
           </Box>
         </>
       )}
