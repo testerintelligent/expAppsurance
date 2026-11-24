@@ -46,7 +46,21 @@ export default function Qualification() {
     setErrorOpen(true);
   };
 
-  const isMissing = (q) => q.required !== false && !qualifications[q.code];
+  // Default every unanswered Yes/No question to "No" when the page opens.
+  // "Is the applicant currently insured?" stays on "-- Select --" so the user must choose.
+  // Re-runs when questions load from the API; never overwrites answers already given.
+  useEffect(() => {
+    setQualifications((prev) => {
+      const next = { ...prev };
+      qualificationQuestions.forEach((q) => {
+        if (next[q.code] || q.code === "currentlyInsured") return;
+        if (q.options.includes("No")) next[q.code] = "No";
+      });
+      return next;
+    });
+  }, [qualificationQuestions]);
+
+  const isMissing =(q) => q.required !== false && !qualifications[q.code];
 
   const handleBack = () => {
     navigate("/offerings", { state: { ...state, qualifications } });
