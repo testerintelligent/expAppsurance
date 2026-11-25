@@ -3,23 +3,32 @@ const RateRoutine = require("../Models/RateRoutine");
 const { getFactor, getValue } = require("./rateTableService");
 const evaluate = require("./formulaEvaluator");
 
+// The UI sends display names ("Personal Auto"); rate books and the base-rate
+// table are keyed by code ("PERSONAL_AUTO"). Accept either form.
+const toProductCode = (product) =>
+  String(product || "").trim().toUpperCase().replace(/[\s-]+/g, "_");
+
 const calculatePremium = async (product, policyDate, input) => {
+  const productCode = toProductCode(product);
 
   const date = new Date(policyDate || new Date());
 
   // Pick correct version
   const rateBook = await RateBook.findOne({
-    product,
+    product: productCode,
     status: "ACTIVE",
     effectiveStartDate: { $lte: date },
     effectiveEndDate: { $gte: date }
   });
 
-  if (!rateBook) throw new Error("No RateBook found");
+  if (!rateBook)
+    throw new Error(
+      `No active RateBook found for ${productCode} on ${date.toISOString().slice(0, 10)}`
+    );
 
   let vars = { ...input };
 
-  vars.baseRate = await getValue("RT_BASE_PREMIUM", product, "baseRate");
+  vars.baseRate = await getValue("RT_BASE_PREMIUM", productCode, "baseRate");
 
   vars.countryFactor = await getFactor("RT_COUNTRY", input.country);
   vars.stateFactor = await getFactor("RT_STATE", input.state);

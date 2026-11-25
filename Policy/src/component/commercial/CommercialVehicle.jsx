@@ -10,7 +10,7 @@ import {
   MenuItem,
 } from "@mui/material";
 
-import { createVehicleForSubmission, calculatePremium } from "../vehicle/vehicleAPI";
+import { createVehicleForSubmission } from "../vehicle/vehicleAPI";
 import {
   COMMERCIAL_COVERAGE_OPTIONS,
   COMMERCIAL_DEFAULT_COVERAGES,
@@ -178,7 +178,7 @@ export default function CommercialVehicle() {
     return true;
   };
 
-  // ─── Quote / next ─────────────────────────────────────────────────────
+  // ─── Save vehicle and go to Risk Analysis ────────────────────────────
   const handleNext = async () => {
     if (!validateForm()) {
       setErrorOpen(true);
@@ -196,49 +196,12 @@ export default function CommercialVehicle() {
       const payload = { ...vehicleData, coverages };
       await createVehicleForSubmission(submissionId, payload);
 
-      // Attempt to get a base premium from the pricing microservice.
-      // Fall back to a sensible commercial default (₹2,500) if it fails.
-      let pricingResult = { premium: 2500 };
-      try {
-        const vehicleAge =
-          currentYear - parseInt(vehicleData.year || currentYear);
-        const licenseTypeMap = {
-          "CDL Class A": "HMV",
-          "CDL Class B": "HMV",
-          "CDL Class C": "LMV",
-          "Light Motor Vehicle": "LMV",
-          "Heavy Motor Vehicle": "HMV",
-        };
-        const pricingPayload = {
-          product: state?.productName || "Commercial Auto",
-          policyDate:
-            state?.effectiveDate || new Date().toISOString().split("T")[0],
-          input: {
-            country: contact?.country || "India",
-            state: vehicleData.stateRegistered || contact?.city || "",
-            city: contact?.city || "",
-            licenseType:
-              licenseTypeMap[state?.driver?.licenseType] || "HMV",
-            drivingExperience:
-              parseInt(state?.driver?.drivingExperience) || 0,
-            claimHistory: parseInt(state?.driver?.accidentsClaims) || 0,
-            vehicleAge,
-          },
-        };
-        pricingResult = await calculatePremium(pricingPayload);
-      } catch (_) {
-        // Pricing microservice unavailable — use default
-        console.warn(
-          "Pricing API unavailable; using commercial default premium."
-        );
-      }
-
-      navigate("/quote", {
+      // Pricing / quoting now happens on Policy Review (after Risk Analysis)
+      navigate("/risk-analysis", {
         state: {
           ...state,
           vehicleData,
           coverages,
-          pricingData: pricingResult,
         },
       });
     } catch (err) {
@@ -729,7 +692,7 @@ export default function CommercialVehicle() {
           Back
         </Button>
         <Button variant="contained" size="small" onClick={handleNext}>
-          Quote
+          Next
         </Button>
       </Box>
 

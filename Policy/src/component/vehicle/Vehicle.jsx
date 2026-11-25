@@ -10,7 +10,7 @@ import {
   MenuItem,
 } from "@mui/material";
 
-import { createVehicleForSubmission, calculatePremium } from "./vehicleAPI";
+import { createVehicleForSubmission } from "./vehicleAPI";
 import { COVERAGE_OPTIONS, DEFAULT_COVERAGES } from "../../constants/coverages";
 import { useWorkflowState } from "../../utils/workflowSession";
 
@@ -44,29 +44,6 @@ export default function Vehicle() {
     "Andhra Pradesh",
     "Maharashtra",
   ];
-
-  const stateCodeMap = {
-    // Short codes from Contact form
-    TN: "Tamil Nadu",
-    KR: "Karnataka",
-    KL: "Kerala",
-    AP: "Andhra Pradesh",
-    MH: "Maharashtra",
-    CA: "California",
-    NY: "New York",
-    "Tamil Nadu": "Tamil Nadu",
-    Karnataka: "Karnataka",
-    Kerala: "Kerala",
-    "Andhra Pradesh": "Andhra Pradesh",
-    Maharashtra: "Maharashtra",
-    California: "California",
-    "New York": "New York",
-  };
-
-  const getFullStateName = (stateInput) => {
-    if (!stateInput) return "Tamil Nadu";
-    return stateCodeMap[stateInput] || stateInput;
-  };
 
   const [coverages, setCoverages] = useState(
     state?.coverages || DEFAULT_COVERAGES
@@ -153,51 +130,12 @@ export default function Vehicle() {
 
       await createVehicleForSubmission(submissionId, payload);
 
-      // Build pricing API payload from all screen data
-      console.log("State data:", state);
-
-      // Calculate vehicle age from year (2025 = 1 year old, 2024 = 2 years old, etc.)
-      const currentYear = new Date().getFullYear();
-      const vehicleAge = currentYear - parseInt(vehicleData.year);
-
-      // Map licenseType full name to abbreviation
-      const licenseTypeMap = {
-        "Light Motor Vehicle": "LMV",
-        "Heavy Motor Vehicle": "HMV",
-      };
-      const licenseTypeAbbrev =
-        licenseTypeMap[state?.driver?.licenseType] || "LMV";
-
-      const pricingPayload = {
-        product: state?.productName,
-        policyDate:
-          state?.effectiveDate || new Date().toISOString().split("T")[0],
-        input: {
-          country: state?.contact?.country || "India",
-          state: getFullStateName(
-            state?.contact?.state ||
-              state?.contact?.stateCode ||
-              vehicleData.stateRegistered
-          ),
-          city: state?.contact?.city || "",
-          licenseType: licenseTypeAbbrev,
-          drivingExperience: parseInt(state?.driver?.drivingExperience) || 0,
-          claimHistory: parseInt(state?.driver?.claimHistory) || 0,
-          vehicleAge: vehicleAge,
-        },
-      };
-
-      console.log("Calling pricing API with payload:", pricingPayload);
-
-      const pricingResult = await calculatePremium(pricingPayload);
-      console.log("Pricing API Response:", pricingResult);
-
-      navigate("/quote", {
+      // Pricing / quoting now happens on the Risk Analysis screen
+      navigate("/risk-analysis", {
         state: {
           ...state,
           vehicleData,
           coverages,
-          pricingData: pricingResult,
         },
       });
     } catch (err) {
@@ -326,7 +264,7 @@ export default function Vehicle() {
           Back
         </Button>
         <Button variant="contained" size="small" onClick={handleNext}>
-          Quote
+          Next
         </Button>
       </Box>
 

@@ -55,7 +55,8 @@ export default function Quote() {
 
   const handleConfirmEdit = () => {
     setConfirmDialogOpen(false);
-    navigate("/vehicle", { state: { ...state, readOnly: false } });
+    const isCommercial = (state?.productName || "").toLowerCase().includes("commercial");
+    navigate(isCommercial ? "/commercial-vehicle" : "/vehicle", { state: { ...state, readOnly: false } });
   };
 
   const handleCancelEdit = () => {
