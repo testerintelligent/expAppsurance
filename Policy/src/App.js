@@ -16,6 +16,8 @@ const Qualification = lazy(() =>
 );
 const Driver = lazy(() => import("./component/driver/Driver"));
 const Vehicle = lazy(() => import("./component/vehicle/Vehicle"));
+const RiskAnalysis = lazy(() => import("./component/riskAnalysis/RiskAnalysis"));
+const PolicyReview = lazy(() => import("./component/policyReview/PolicyReview"));
 const Quote = lazy(() => import("./component/quote/Quote"));
 const Payment = lazy(() => import("./component/payment/Payment"));
 const PolicyIssuance = lazy(() => import("./component/policy/PolicyIssuance"));
@@ -67,6 +69,8 @@ function App() {
               <Route path="/qualification" element={<Qualification />} />
               <Route path="/driver" element={<Driver />} />
               <Route path="/vehicle" element={<Vehicle />} />
+              <Route path="/risk-analysis" element={<RiskAnalysis />} />
+              <Route path="/policy-review" element={<PolicyReview />} />
               <Route path="/quote" element={<Quote />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/policy-issuance" element={<PolicyIssuance />} />
